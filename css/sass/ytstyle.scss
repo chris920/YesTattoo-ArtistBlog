@@ -1,0 +1,1467 @@
+//Reset
+@import "_reset.scss";
+
+//Definings
+@import "libraries/_variables.scss";
+@import "libraries/_mixins.scss";
+
+//Page Specifics
+@import "pages/_home.scss";
+
+//bootstrap
+@import "vendor/assets/stylesheets/bootstrap-YTCustom.scss";
+
+
+////////// Body & Footer
+body {
+    padding: 100px 0px 0 0;
+    min-height: 100%;
+}
+h5 {   //used for location and other muted text
+    color: $gray;
+}
+input, input.span,.input-group {
+    margin-bottom: 10px;
+}
+footer {
+    background-color: black;
+}
+.tab-content {
+    margin-bottom: 80px;
+}
+*[href] { 
+    cursor: pointer; 
+}
+
+.lg8container {
+    @extend .col-md-8;
+    @extend .col-md-offset-2;
+    @extend .col-sm-10;
+    @extend .col-sm-offset-1;
+    @extend .col-xs-12;
+    @extend .col-xs-offset-0;
+}
+.md8container {
+    @extend .col-md-8;
+    @extend .col-md-offset-2;
+    @extend .col-xs-10;
+    @extend .col-xs-offset-1;
+}
+.lg6container {
+    @extend .col-lg-6;
+    @extend .col-lg-offset-3;
+    @extend .col-md-8;
+    @extend .col-md-offset-2;
+    @extend .col-xs-12;
+    @extend .col-xs-offset-0;
+}
+.md6container {
+    @extend .col-md-6;
+    @extend .col-md-offset-3;
+    @extend .col-xs-10;
+    @extend .col-xs-offset-1;
+}
+.menu-bg {
+    position: fixed;
+    height: 100px;
+    z-index: -10;
+    top: 0px;
+    background-color: black;
+    width: 100%;
+}
+.load-fader { //lord vador?
+    @include gradient-vertical-three-colors($start-color: $gray-light, $mid-color: rgba(217, 217, 217, 0.1), $color-stop: 60%, $end-color: rgba(217, 217, 217, 0));
+    height: 200px;
+}
+.load {
+    z-index: -1;
+    width: 100%;
+    position: fixed;
+    bottom: 115px;
+    text-align: center;
+    @media screen and (max-width: $screen-sm) {
+        bottom: 180px;
+    }
+    img {
+    margin-right: auto;
+    margin-left: auto;
+    }
+}
+
+// Janky footer highlight effect
+// .ytfooter {
+//     height: 100px;
+//     opacity: .3;
+//     @include slowtofast(0.85,.1s);
+//     &:hover { opacity: 1; }
+// }
+
+.footerlinks > a, .footerlinks > p {
+    display: inline-block;
+    color: #c9c9c9;
+    margin: 30px 5px 40px 15px;
+    float: right !important;
+    @include slowtofast(0.65,.2s);
+    &:hover {
+        color: #fff;
+        opacity: 1;
+        text-decoration:none; }
+}
+
+.main-nav-item {
+  @include transition(0.2s ease);
+  border-top: 0px solid $gray-light;
+  border-bottom: 4px solid transparent;
+  padding-left: 40px;
+  &:hover {
+      border-top: 4px solid $brand-primary;
+      border-bottom: 0px solid transparent !important; 
+  }
+}
+
+
+
+////////// Logos & Icons
+
+.main-logo {
+    float: left;
+    width: 180px;
+    background: url('../img/yestattoo-small-clean.png') no-repeat left center;
+    background-size: 100%;
+    &:active,&.active,&:hover {
+        @include transition(0.5s ease);
+        background: url('../img/yestattoo-small.png') no-repeat left center;
+        background-size: 100%;
+    }
+    @media screen and (max-width: $screen-sm) {
+        margin-left: 10px;
+    }
+}
+.author-logo {
+    float: left;
+    width: 320px;
+    margin: auto;
+    background: url('../img/yestattoo-authors.png') no-repeat left center;
+    background-size: 100%;
+}
+
+.icon-book {
+    display: inline-block;
+    height: 10px;
+    background-image: url('../img/icon-book.png') no-repeat center center;
+    background-position: center center;
+}
+
+.twitter-icon {
+    background-image: url('../img/twitter.png');
+}
+.facebook-icon{
+    background-image: url('../img/facebook.png');
+}
+.instagram-icon{
+    background-image: url('../img/instagram.png');
+}   
+.social-icon {
+    height: 48px;
+    width: 48px;
+    margin: 10px 10px 0 0;
+    float: left;
+    opacity: .8;
+    @include slowtofast(0.80,.32s);
+    @media screen and (max-width: $screen-sm) {
+        float: right;
+    }
+    &:hover {
+        margin: 10px 10px 0 0;
+        background-position: 0px -48px;
+        opacity: .95; }
+}
+
+
+
+//flat icons from flaticon.com
+@font-face {
+    font-family: "Flaticon";
+    src: url("../fonts/flaticon.eot");
+    src: url("../fonts/flaticon.eot#iefix") format("embedded-opentype"),
+    url("../fonts/flaticon.woff") format("woff"),
+    url("../fonts/flaticon.ttf") format("truetype"),
+    url("../fonts/flaticon.svg") format("svg");
+    font-weight: normal;
+    font-style: normal;
+}
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
+    font-family: Flaticon;
+    font-size: 20px;
+    position: relative;
+    top: 2px;
+    right: 4px;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}.flaticon-book104:before {
+    content: "\e000";
+}
+.flaticon-camera4:before {
+    content: "\e001";
+    font-size: 18px;
+    right: 5px;
+}
+.flaticon-cellphone5:before {
+    content: "\e002";
+}
+.flaticon-close20:before {
+    content: "\e003";
+}
+.flaticon-creative4:before {
+    content: "\e004";
+}
+.flaticon-earth39:before {
+    content: "\e005";
+}
+.flaticon-external2:before {
+    content: "\e006";
+}
+.flaticon-home73:before {
+    content: "\e007";
+}
+.flaticon-information:before {
+    content: "\e008";
+    right: 2px;
+}
+.flaticon-left65:before {
+    content: "\e009\00a0";
+}
+.flaticon-link35:before {
+    content: "\e00a";
+}
+.flaticon-magnifier10:before {
+    content: "\e00b";
+}
+.flaticon-mechanical:before {
+    content: "\e00c";
+}
+.flaticon-message7:before {
+    content: "\e00d";
+}
+.flaticon-phone13:before {
+    content: "\e00e";
+}
+.flaticon-placeholder8:before {
+    content: "\e00f";
+}
+.flaticon-right52:before {
+    content: "\00a0\e010";
+}
+.flaticon-screen14:before {
+    content: "\e011";
+}
+.flaticon-send5:before {
+    content: "\e012";
+}
+.flaticon-settings13:before {
+    content: "\e013";
+}
+.flaticon-tattoo1:before {
+    content: "\e014";
+}
+.flaticon-trophy4:before {
+    content: "\e015";
+}
+.flaticon-up49:before {
+    content: "\e016";
+    right: 0px;
+}
+.flaticon-user56:before {
+    content: "\e017";
+}
+
+
+
+//profile social icons
+.facebook, .twitter, .instagram, .tumblr, .message, .link {
+    display: inline-block; 
+    font-family: 'SocialGlyphs';
+    text-align: center;
+    color: white;
+    width:44px;
+    height:44px;
+    font-size:32px;
+    border-radius: $border-radius-base;
+    line-height:1.2;
+    font-weight:light;
+    @include transition(all 0.3s ease);
+    &:hover {
+        text-decoration: none;
+        color: white; }
+    &:after {
+        text-decoration: none; }
+    &:active {
+        color: $brand-primary; }
+}
+.facebook {
+    &:hover {
+        background-color: #4f78b4; }
+    &:after {
+        content: "A"; }
+}
+.twitter {
+    &:hover {
+        background-color: #4e9edc; }
+    &:after {
+        content: "B"; }
+}
+.instagram {
+    &:hover {
+        background-color: #49709b; }
+    &:after {
+        content: "E"; }
+}
+.tumblr {
+    &:hover {
+        background-color: #466484; }
+    &:after {
+        content: "T"; }
+}
+.message {
+    &:hover {
+        background-color: $brand-primary; }
+    &:after {
+        content: "W"; 
+        font-size:34px; }
+}
+.link {
+    &:hover {
+        background-color: $brand-primary; }
+    &:after {
+        font-family: Flaticon;
+        font-size:24px;
+        content: "\e00a"; }
+}
+
+
+@font-face {
+    font-family: 'SocialGlyphs';
+    src: url('../fonts/socialglyphs-webfont.eot');
+    src: url('../fonts/socialglyphs-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/socialglyphs-webfont.woff') format('woff'),
+         url('../fonts/socialglyphs-webfont.ttf') format('truetype'),
+         url('../fonts/socialglyphs-webfont.svg#SocialGlyphsRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+////////// image content 
+.tattooContainer{
+    @extend .col-sm-3;
+    @extend .col-xs-6;
+}
+#artistsPage .tattooContainer, #homePage .tattooContainer{
+    @extend .col-xs-3;
+}
+#portfolioTab .tattooContainer, #tattoosPage .tattooContainer, #shopProfile .tattooContainer  {
+    padding-bottom: 5px;
+}
+.tab-content .tattooContainer {
+    background-color: $gray-light; //for more arrow
+}
+
+.tattooImg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+span.text-content {
+        bottom: 5px;
+        color: white;
+        cursor: pointer;
+        display: table;
+        position: absolute;
+        padding: 10px;
+        width: 100%;
+        background-color: $black-trans;
+    &:span {
+        display: table-cell; }
+    .artistName {
+        margin: 0px; }
+    .artistLoc {
+        margin: 5px 0 0 0; 
+        color: $gray-light; }
+    .artistProf {
+        right: 10px;
+        bottom: 10px;
+        display: table;
+        float: right; }
+}
+
+span.hover-text-content {
+        bottom: -30px;
+        color: white;
+        cursor: pointer;
+        display: table;
+        position: absolute;
+        padding: 10px;
+        width: 100%;
+        background-color: rgba(0,0,0,0);
+          -webkit-opacity: 0;
+          -moz-opacity: 0;
+          opacity: 0;
+        @include transition(all .2s ease);
+    &:span {
+        display: table-cell; }
+    .artistName {
+        margin: 0px; }
+    .artistLoc {
+        margin: 5px 0 0 0; 
+        color: $gray-light; }
+    .artistProf {
+        right: 10px;
+        bottom: 10px;
+        display: table;
+        float: right; }
+}
+
+.tattooContainer:hover span.hover-text-content {
+    background-color: $black-trans;
+    bottom: 5px;
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+}
+
+span.hover-content {
+        text-align: center;
+        display: table;
+        color: white;
+        cursor: pointer;
+        position: absolute;
+        padding: 10px;
+        width: 100%;
+        top: 30px;
+        -webkit-opacity: 0;
+        -moz-opacity: 0;
+        opacity: 0;
+        @include transition(all .2s ease);
+    &:span {
+        display: table-cell;
+    }
+}
+.tattooContainer:hover span.hover-content {
+    top: 0px;
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+}
+
+////////// Buttons 
+
+.btn-lg {
+    @extend .btn;
+    @extend .btn-primary;
+    border-radius: 8px / 12px;
+    min-width: 140px;
+    border: 5px solid $gray-light;
+    outline:0 solid transparent;
+    outline-offset:-5px;
+    @include transition(all .5s ease);
+    &:hover { 
+        border: 5px solid $gray-lighter;
+        outline: 3px solid $gray-light;
+        outline-offset:3px;
+        background-color: $brand-primary;
+        @include transition(all 0.3s ease); }
+    &:active {
+        outline: 5px solid transparent;
+        outline-offset:10px;
+        @include transition(all 0.2s ease); } 
+}
+
+.btn-submit {
+    @extend .btn;
+    border-radius: 4px / 6px;
+    background-color: $brand-primary;
+    color: $gray-lighter;
+    outline:0 solid transparent;
+    outline-offset:-4px;
+    @include transition(all .5s ease);
+    &:hover { 
+        outline: 2px solid rgba(255,255,255,.3);
+        color: white;
+        outline-offset:3px;
+        background-color: $brand-primary;
+        @include transition(all 0.3s ease); }
+    &:active {
+        outline: 5px solid transparent;
+        outline-offset:10px;
+        @include transition(all 0.2s ease); } 
+}
+
+.btn-link {
+    @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
+    background-color: rgba(0,0,0,0);
+    border-radius: 4px / 6px;
+    border: 0px;
+    color: $gray;
+    outline:0 solid transparent;
+    outline-offset:-4px;
+    text-decoration: none;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.1); 
+    @include transition(all .5s ease);
+    &:hover { 
+        outline: 2px solid rgba(255,255,255,.3);
+        outline-offset:3px;
+        color: white;
+        background-color: rgba(0,0,0,0);
+        text-decoration: none;
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1); 
+        @include transition(all 0.3s ease); }
+    &:active,  &:visited, &:focus {
+        outline: 1px solid transparent;
+        outline-offset:3px;
+        background-color: $brand-primary;
+        text-decoration: none;
+        @include transition(all 0.2s ease); } 
+}
+
+.btn-tag {
+    @extend .btn;
+    @include button-size($padding-xs-vertical, $padding-xs-horizontal, $font-size-small, $line-height-small, $border-radius-small);
+    border-radius: 4px / 6px;
+    margin-bottom: 5px;
+    color: $gray;
+    background-color: transparent;
+    border-color: $gray-lightish;
+    &:hover, &.active { 
+        border: inherit $btn-default-border;
+        background-color: rgba(0,0,0,1);
+        color: white;
+        @include transition(all 0.3s ease); }
+    &:active {
+        background-color: $brand-primary;
+        color: white;
+        @include transition(all 0.2s ease); } 
+}
+
+.hover-content .btn-tag {
+    @include button-variant($gray-light, $gray-trans, $gray-trans);
+    outline:0 solid transparent;
+    outline-offset:-4px;
+    @include transition(all .5s ease);
+    &:hover { 
+        outline: 2px solid rgba(255,255,255,.3);
+        outline-offset:3px;
+        background-color: rgba(0,0,0,1);
+        color: white;
+        @include transition(all 0.3s ease); }
+    &:active {
+        outline: 1px solid transparent;
+        outline-offset:3px;
+        background-color: $brand-primary;
+        @include transition(all 0.2s ease); } 
+    &.active {
+        background-color: rgba(0,0,0,1);
+        color: white;
+    }
+}
+
+.tagFilters {
+    max-width: 600px;
+    min-width: 200px; //for more arrow cover
+    margin: 0 auto;
+    padding: 30px 0;
+    text-align: center;
+    @media screen and (max-width: $screen-sm) {
+        padding: 10px 0 20px 0;
+    }
+}
+
+.back-to-top {
+    cursor: pointer;
+    position: fixed;
+    top: 130px;
+    right: 30px;
+    display:none;
+}
+
+
+////////// Search forms
+
+.form-inline {
+    text-align: center;
+    span {
+        width: 100%;
+        text-align: left;
+        @media screen and (min-width: $screen-sm) {
+            width: 600px;
+        }
+    }
+    .search-input {
+        width: 100%;
+        @media screen and (min-width: $screen-sm) {
+            width: 600px;
+        }
+    }
+    .twitter-typeahead:before {
+        z-index: 1010;
+        font-family: Flaticon;
+        font-size: 20px;
+        position: absolute;
+        display: inline-block;
+        top: 8px;
+        right: 8px;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        content: "\e00b";
+    }
+}
+
+
+////////// PAGE SPECIFIC 
+
+////// Home page
+.intro {
+    padding: 40px;
+    color: inherit;
+    background-color: $gray-lighter;
+    text-align: center;
+}
+#homePage {
+    .answer {
+        background-color: $gray-dark;
+        padding: 0px;
+        color: white;
+        text-align: justify; }
+    .artistName {
+        margin-bottom: 0px; }
+    .artistLoc {
+        color: $gray; }
+    .page-header {
+        margin: 100px 0 22px}
+}
+.page-header i {
+    color: $gray;
+    position: relative;
+
+    left: 5px;
+    bottom: 3px;
+}
+.featuredArtists {
+    background-color: $gray-light; //for load fader
+    span {
+        color: $gray; //for username
+        &:before {
+            content: "\00a0\00a0/\00a0"
+        }
+    }
+}
+.featuredArtist {
+    margin-bottom: 100px;
+}
+.artistTitleBG {
+    width: 100%;
+    padding: 10px;
+    background-color: $gray-lighter;
+    @media screen and (max-width: $screen-sm) {
+        float: none;
+        text-align: center; }
+    &:hover {
+        background-color: white;
+        @include transition(all 0.4s ease); }
+    &:hover .artistProf{
+        border: 2px solid $gray;
+        @include transition(all 0.4s ease); }
+}
+.questionContainer {
+    background-color: $gray-dark;
+    padding: 80px;
+    margin: 0px -80px;
+    p {
+        color: $gray; }
+}
+.portfolioContainer {
+    background-color: $gray-lighter;
+    padding: 5px;
+    overflow: auto;
+}
+
+////// Artists page
+.artistsSearch {
+    @extend .row;
+    background-color: $gray-light;
+
+}
+.artistThumb { 
+    @extend .lg6container;
+    background-color: $gray-lighter;
+    border-left: 40px solid $gray-light;
+    padding: 0px;
+    margin-top: 20px;
+    @media screen and (max-width: $screen-sm) {
+        border-left: 20px solid $gray-light;
+        border-right: 20px solid $gray-light;
+    }
+    .artistProf {
+        position: absolute;
+        left: -22px;
+        top: 20px;
+        border: 4px solid $gray-light;
+        @media screen and (min-width: $screen-lg) {
+            top: 12px;
+            left: -32px;
+        }
+    }
+    .artistTitleBG, .tattooImg, [class|=col] {
+        padding: 0px;
+    }
+    .artistName {
+        margin-top: 26px;
+        margin-bottom: 0px;
+        text-align: left;
+        @media screen and (min-width: $screen-lg) {
+            margin-top: 16px;
+        }
+    }
+    .artistLoc {
+        margin-top: 0px;
+        text-align: left;
+    }
+    &:hover {
+        background-color: white;
+        @include transition(all 0.4s ease);
+    }
+    &:hover .artistProf{
+        border: 4px solid white;
+        @include transition(all 0.4s ease);
+    }
+}
+
+
+////// Tattoos page
+.tattoosContainer {
+    margin-top: 20px;
+}
+
+
+////// Profile Page
+
+.userHead {
+    padding: 40px 0;
+    background-color:$gray-lighter;
+    @media screen and (max-width: $screen-sm) {
+        float: none;
+        text-align: center; }
+    h3 {
+        margin-top: 0; }
+    h5 {
+        margin-top: 0; }
+    p {
+        margin-top:auto;
+        margin-bottom:auto; 
+        text-align: justify; 
+        @media screen and (max-width: $screen-sm) {
+            float: none;
+            padding: 20px;
+            -moz-text-align-last: center;
+            text-align-last: center;}
+    }
+    span {
+        margin-right: 10px;
+        color: $gray-light-opaque; }
+}
+
+.profHead {
+    min-height:220px;
+    padding: 20px 0;
+    background-color:$gray-darker;
+    color:white;
+    @media screen and (max-width: $screen-sm) {
+        float: none;
+        text-align: center;
+    }
+    span { // username
+        color: $gray;
+        &:before {
+            content: "\00a0\00a0/\00a0"
+        }
+    }
+}
+
+// profile picture
+.largeprofpic {
+    width: 140px;
+    height: 140px;
+    -webkit-border-radius: 99em;
+    -moz-border-radius: 99em;
+    border-radius: 99em;
+    border: 5px solid $gray-dark;
+    box-shadow: 2px 5px 3px rgba(0, 0, 0, 0.1); 
+}
+
+.artistProf {
+    background-color: $gray-lighter;
+    -webkit-border-radius: 99em;
+    -moz-border-radius: 99em;
+    border-radius: 99em;
+    border: 2px solid $gray-light;
+    width: 64px;
+    height: auto;
+    &:hover { 
+        background-color: $gray-light;
+        border: 2px solid white;
+        @include transition(all 0.3s ease); }
+    &:active, &.active, &:visited, &:focus {
+        border: 2px solid $brand-primary;
+        @include transition(all 0.2s ease); } 
+}
+
+.profButtons {
+    margin-top: 20px;
+    float: right;
+    @media screen and (max-width: $screen-sm) {
+        margin-top: 0px;
+        margin-bottom: 20px;
+        float: none;
+        text-align: center;
+    }
+}
+
+//Profile nav
+#artistProfile .container-fluid, #artistProfile .tagFilters, #artistProfile .tattooImg  { //for more arrow cover
+    background-color: $gray-light;
+}
+.profNavBG {
+    position: relative;
+    height: 80px;  //prevents content from jumping when affix is active
+    margin: 40px 0 20px 0;
+}
+
+.profNavContainer {
+    margin: -2px;
+    z-index: 10;
+    background-color: $gray-light;
+    padding: 0px 0 0px 0;
+    width: 100%;
+}
+.affix {
+    position: fixed;
+    top: 100px;
+    background-color: $gray-light-opaque;
+    @include box-shadow(0px 1px 3px 2px rgba(0,0,0,0.4));
+    @include transition(all 0.3s ease);
+}
+
+
+.nav-tabs {
+    border-bottom: 1px solid $nav-tabs-border-color;
+    > li {
+        float: left;
+        margin-bottom: -1px;
+        > a {
+            color: $gray;
+            margin-right: 2px;
+            line-height: $line-height-base;
+            border: 1px solid transparent;
+            border-radius: $border-radius-base $border-radius-base 0 0;
+            &:hover {
+                border-color: $nav-tabs-link-hover-border-color $nav-tabs-link-hover-border-color $nav-tabs-border-color;
+                @include transition(all 0.4s ease);
+            }
+            &:active {
+                color: $brand-primary;
+                @include transition(all 0.2s ease); } 
+        }
+    }
+    &.active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $nav-tabs-active-link-hover-color;
+        background-color: $nav-tabs-active-link-hover-bg;
+        border: 1px solid $nav-tabs-active-link-hover-border-color;
+        border-bottom-color: transparent;
+        cursor: default;
+        @include transition(all 0.3s ease);
+      }
+  }
+    @media screen and (max-width: $screen-sm-min) {
+        width: 100%;
+        > li {
+            float: none;
+            display: table-cell;
+            width: 1%;
+              > a {
+                padding-left: 0px;
+                padding-right: 0px;
+                text-align: center;
+                margin-bottom: 0;
+              }
+        }
+    }
+}
+
+/*About artist & Featured artist interview questions*/
+.answer {
+    color: #707070;
+    background-color: $gray-lighter;
+    padding: 40px;
+    text-align: justify;
+    @media screen and (max-width: $screen-sm) {
+        padding: 10px;
+    }
+    &:before {
+        font-family: Flaticon;
+        font-style: normal;
+        @extend .flaticon-left65:before;
+        color: $gray-light; }
+    &:after {
+        font-family: Flaticon;
+        font-style: normal;
+        @extend .flaticon-right52:before;
+        color: $gray-light; }
+}
+#aboutTab p {
+    text-align: justify;
+}
+
+/*Google maps*/
+#map {
+    margin-top: 20px;
+    width: 100%;
+    height: 500px;
+    border: 1px solid $gray-lighter
+}
+
+
+////// Upload post tattoo
+#upload .modal-content {
+    text-align: center;
+}
+
+.btn-file {
+    overflow: hidden;
+    position: relative;
+    vertical-align: middle;
+    > input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        font-size: 23px;
+        height: auto;
+        width: 100%;
+        direction: ltr;
+        cursor: pointer;
+    }
+}
+
+.fileinput {
+    display: inline-block;
+    .form-control {
+      cursor: text;
+    }
+    .thumbnail {
+        max-width: 300px;
+        overflow: hidden;
+        display: inline-block;
+        margin-bottom: 5px;
+        vertical-align: middle;
+        text-align: center;
+    }
+    .thumbnail > img {
+        max-height: 100%;
+        max-width: 100%;
+    }
+    .btn {
+      vertical-align: middle;
+    }
+}
+
+.fileinput-exists .fileinput-new,
+.fileinput-new .fileinput-exists {
+  display: none;
+}
+.fileinput-inline .fileinput-controls {
+  display: inline;
+}
+.fileinput-filename {
+  vertical-align: middle;
+  display: inline-block;
+  overflow: hidden;
+}
+.form-control .fileinput-filename {
+  vertical-align: bottom;
+}
+.fileinput.input-group {
+  display: table;
+}
+.fileinput.input-group > * {
+  position: relative;
+  z-index: 2;
+}
+.fileinput.input-group > .btn-file {
+  z-index: 1;
+}
+.fileinput-new.input-group .btn-file,
+.fileinput-new .input-group .btn-file {
+  border-radius: 0 4px 4px 0;
+}
+.fileinput-new.input-group .btn-file.btn-xs,
+.fileinput-new .input-group .btn-file.btn-xs,
+.fileinput-new.input-group .btn-file.btn-sm,
+.fileinput-new .input-group .btn-file.btn-sm {
+  border-radius: 0 3px 3px 0;
+}
+.fileinput-new.input-group .btn-file.btn-lg,
+.fileinput-new .input-group .btn-file.btn-lg {
+  border-radius: 0 6px 6px 0;
+}
+.form-group.has-warning .fileinput .fileinput-preview {
+  color: #8a6d3b;
+}
+.form-group.has-warning .fileinput .thumbnail {
+  border-color: #faebcc;
+}
+.form-group.has-error .fileinput .fileinput-preview {
+  color: #a94442;
+}
+.form-group.has-error .fileinput .thumbnail {
+  border-color: #ebccd1;
+}
+.form-group.has-success .fileinput .fileinput-preview {
+  color: #3c763d;
+}
+.form-group.has-success .fileinput .thumbnail {
+  border-color: #d6e9c6;
+}
+.input-group-addon:not(:first-child) {
+  border-left: 0;
+}
+
+
+////// Join page
+.lightContainer {
+    @extend .md8container;
+    color: #707070;
+    background-color: $gray-lighter;
+    margin-top: 80px;
+    padding: 40px;
+    text-align: center;
+    @media screen and (max-width: $screen-sm) {
+        padding: 10px;
+    }
+}
+
+#join > div > div > button.btn-link {
+    color: $gray-dark;
+}
+
+.artistRegistration {
+    display: none;
+}
+.showArtistRegistration {
+    display: block;
+    margin-bottom: 10px;
+}
+
+////// author page
+
+#authorsPage {
+    .aboutContainer {
+        color: white;
+        margin-bottom: 40px;
+        text-align: justify;
+        padding: 40px 20px;
+        @media screen and (min-width: $screen-sm) {
+            margin-bottom: 80px;
+
+        }
+    }
+    .aboutContainer h3, .aboutContainer a {
+        text-align: center;
+        font-weight: bold;
+    }
+    .aboutContainer a {
+        float: right;
+    }
+    .tattooImg {
+        padding:0;
+    }
+}
+.authorContainer {
+    color: white;
+    margin-bottom: 20px;
+    background-color: $gray-dark;
+    @media screen and (min-width: $screen-sm) {
+        margin-bottom: 40px;
+    }
+}
+.authorContainer {
+    h3 {
+        margin: 0;
+    }
+    span {
+        margin-right: 10px;
+        color: $gray;
+    }
+    p {
+        position: relative;
+    }
+}
+.authorImgContainer {
+    height: 300px;
+    overflow: hidden;
+    position: relative; 
+    img {
+        position: absolute; 
+        top: 0; 
+        left: -40%;
+        height: 300px;
+        @media screen and (min-width: $screen-sm) {
+            left: -20%; }
+        @media screen and (min-width: $screen-md) {
+            left: 0; }
+    }
+}
+.authorBio {
+    position: relative;
+    text-align: justify;
+    overflow: hidden;
+    margin: 20px 20px 60px 20px;
+    height: 220px;
+    @media screen and (min-width: $screen-sm) {
+        margin: 40px 40px 70px 40px;
+        height: 180px;
+    }
+}
+.authorLinks {
+    position: absolute;
+    bottom: 10px;  //link buttons have a 10px bottom margin
+    right: 20px;
+    @media screen and (min-width: $screen-sm) {
+        bottom: 10px;  //link buttons have a 10px bottom margin
+        right: 30px;
+    }
+}
+.fadeout {
+    position: absolute; 
+    bottom: 0em;
+    width:100%;
+    height: 2.8em;
+    background: -webkit-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        $gray-dark 100% ); 
+    background-image: -moz-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        $gray-dark 100% );
+    background-image: -o-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        $gray-dark 100% );
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        $gray-dark 100% );
+    background-image: -ms-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        $gray-dark 100% );
+} 
+
+
+////// about page
+
+#aboutPage {
+    color: white;
+}
+
+.aboutIntro {
+    text-align: center;
+    background: $gray;
+    background: url(../img/aboutbg.png) no-repeat center center scroll; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    h3 {
+        color: $brand-primary;
+        font-weight: bold; }
+    h2 {
+        color: white;
+        font-weight: bold; }
+    > div {
+        padding-top: 120px;
+        padding-bottom: 120px; }
+}
+.aboutContainer {
+    text-align: justify;
+    padding: 80px 0;
+    background-color: $gray-darker;
+    @media screen and (max-width: $screen-sm) {
+        padding: 40px 0; }
+}
+.contactContainer {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px;
+    color: $gray-darker; 
+    background-color: $gray-light;
+    @media screen and (max-width: $screen-sm) {
+        padding: 40px; }
+}
+.darkContainer {
+    padding: 80px 0;
+    background-color: $gray-dark;
+    & p {
+        padding-right: 20px; }
+    @media screen and (max-width: $screen-sm) {
+        padding: 40px 0;
+        & p {
+            padding-right: 0px; }
+    }
+
+}
+
+
+//////  settings edit profile page &  Author Dash 
+#settings, #authorDash {
+    background-color: black;
+    color: white;
+}
+
+#settings {
+    padding-bottom: 80px;
+    h3 {
+        border-bottom: 1px solid $gray;
+    }
+    p {
+        padding: 5px;
+        display: block;
+    }
+    .btn-group {
+        padding-bottom: 20px;
+    }
+}
+
+////// 
+table {
+    margin: 40px auto;
+}
+td {
+    vertical-align:middle !important;
+    border-top: 1px solid $gray-darker !important;
+    & a {
+        float: right;
+    }
+}
+th {
+    vertical-align:middle !important;
+    border-top: 0.5px solid $gray-darker !important;
+    color: $gray-lighter !important;
+}
+
+.nav-pills {
+    padding: 20px 20px;
+    background-color: $gray-darkest;
+    text-align: center;
+    > li > a:hover {
+    background-color: $gray-darker;
+    color: white;
+    }
+    > li > a {
+    color: $gray;
+    }
+    > a:last-child {
+        float: right;
+        margin-left: 40px;
+        margin-top: 20px;
+    }
+    @media screen and (max-width: $screen-sm) {
+        > li {
+        width: 100%;
+        }
+        > a:last-child {
+            float: none;
+            margin-left: 0px;
+        }
+    }
+}
+
+
+//////  login & register Modal
+// --------------------------------------------------
+
+// .modal-open      - body class for killing the scroll
+// .modal           - container to scroll within
+// .modal-dialog    - positioning shell for the actual modal
+// .modal-content   - actual modal w/ bg and corners and shit
+
+// Kill the scroll on the body
+.modal-open {
+  overflow: hidden;
+}
+
+// Container that the modal scrolls within
+.modal {
+  display: none;
+  overflow: auto;
+  overflow-y: scroll;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $zindex-modal;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+
+  // When fading in the modal, animate it to slide down
+  &.fade .modal-dialog {
+    @include translate(0, -25%);
+    @include transition-transform(0.5s ease-out);
+  }
+  &.in .modal-dialog { @include translate(0, 0)}
+}
+
+// Shell div to position the modal with bottom padding
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 20px;
+}
+
+// Actual modal
+.modal-content {
+    padding-top: 100px;
+  position: relative;
+  // background-color: $modal-content-bg;
+  background-clip: padding-box;
+  // Remove focus outline from opened modal
+  outline: none;
+}
+
+// Modal background
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $zindex-modal-background;
+  background-color: $modal-backdrop-bg;
+  // Fade for backdrop
+  &.fade { @include opacity(0); }
+  &.in { @include opacity($modal-backdrop-opacity); }
+}
+
+// Modal header
+// Top section of the modal w/ title and dismiss
+.modal-header {
+  padding: $modal-title-padding;
+  min-height: ($modal-title-padding + $modal-title-line-height);
+}
+// Close icon
+.modal-header .close {
+  margin-top: -60px;
+  font-size: 60px;
+  color: $gray-light;
+  &:active {
+    color: $brand-primary;
+  }
+}
+
+// Title text within header
+.modal-title {
+    color: white;
+    text-align: center;
+    margin: 0;
+    line-height: $modal-title-line-height;
+}
+
+// Modal body
+// Where all modal content resides (sibling of .modal-header and .modal-footer)
+.modal-body {
+    color: $gray-light;
+    position: relative;
+    padding: $modal-inner-padding;
+}
+
+// Footer (for actions)
+.modal-footer {
+  margin-top: 15px;
+  padding: ($modal-inner-padding - 1) $modal-inner-padding $modal-inner-padding;
+  text-align: center;
+  &.btn-link {
+    float: right;
+    @media screen and (max-width: $screen-sm-min) {
+        float: none;
+    }
+  }
+  // border-top: 1px solid $black-trans;
+  @include clearfix(); // clear it in case folks use .pull-* classes on buttons
+}
+
+// Scale up the modal
+@media (min-width: $screen-sm-min) {
+  // Automatically set modal's width for larger viewports
+  .modal-dialog {
+    width: $modal-md;
+    margin: 30px auto;
+  }
+
+  // Modal sizes
+  .modal-sm { width: $modal-sm; }
+}
+
+@media (min-width: $screen-md-min) {
+  .modal-lg { width: $modal-lg; }
+}
+
+
+//////// Typeahead.js
+.tt-dropdown-menu {
+  text-align: left;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 100%;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  background-clip: padding-box;
+}
+.tt-hint {
+    color: $gray-light;
+}
+.tt-suggestion > p {
+  display: block;
+  padding: 3px 12px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.428571429;
+  color: $gray;
+  white-space: nowrap;
+}
+.tt-suggestion > p:hover,
+.tt-suggestion > p:focus,
+.tt-suggestion.tt-cursor p {
+  color: black;
+  text-decoration: none;
+  outline: 0;
+  background-color: $dropdown-link-hover-bg;
+}
+.twitter-typeahead {
+    width: 100%;
+}

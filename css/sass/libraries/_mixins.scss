@@ -1,0 +1,7 @@
+@mixin slowtofast($peak, $dur) {
+	-webkit-transition: all cubic-bezier($peak / 8, $peak / 3, $peak, $peak / 3 - .5) $dur;
+	   -moz-transition: all cubic-bezier($peak / 8, $peak / 3, $peak, $peak / 3 - .5) $dur;
+		 -o-transition: all cubic-bezier($peak / 8, $peak / 3, $peak, $peak / 3 - .5) $dur;
+		-ms-transition: all cubic-bezier($peak / 8, $peak / 3, $peak, $peak / 3 - .5) $dur;
+			transition: all cubic-bezier($peak / 8, $peak / 3, $peak, $peak / 3 - .5) $dur;
+}
