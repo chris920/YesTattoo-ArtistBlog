@@ -38,6 +38,8 @@ App.Models.Artist = Backbone.Model.extend({
 	    city:"",
 	    state:"",
 	    country:"",
+	    lat:27,
+	    lng:-82,
 	    fb:"",
 	    email:"",
 	    a3:"",
@@ -62,20 +64,48 @@ App.Views.ArtistProfile = Backbone.View.extend({
 	model: App.Models.Artist,
 	id: 'artistProfile',
 	template: _.template($("#artistTemplate").html()),
+	events: {
+		'click [href="#shopTab"]': 'renderMap'
+	},
 	initialize: function(){
 		// this.model.on('change', this.render, this);
 		// this.model.on('destroy', this.remove, this);
 	},
-	render: function(){
-		var attributes = this.model.toJSON();
-		this.$el.html(this.template(attributes));
-
-		// var html = this.template();
-		// $(this.el).append(html);
-		return this;
-	},
 	remove: function(){
 		this.$el.remove();
+	},
+
+	//render map, using underscore to delay the trigger because of hidden tab / responsive issue
+	renderMap: _.debounce(function() {
+
+		// Initiate Google map
+    	var mapStyles = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}];
+	    var mapLocation = new google.maps.LatLng( this.model.get('lat') , this.model.get('lng') );
+	    var mapOptions = { zoom: 12, center: mapLocation, styles: mapStyles, scrollwheel: false, panControl: false, mapTypeControl: false };
+	    var mapElement = document.getElementById('map');
+	    this.map = new google.maps.Map(mapElement, mapOptions);
+	    var mapMarker = new google.maps.Marker({
+	        animation: google.maps.Animation.DROP,
+	        position: mapLocation,
+	        map: this.map,
+	        icon: ' img/mapmarker.png'
+	    });
+    }, 200),
+
+	centerMap: function() {
+		// for responsive, resizes maps to the center
+		var center = this.map.getCenter();
+		google.maps.event.trigger(this.map, "resize");
+		this.map.setCenter(center); 
+	},
+	render: function(){
+		// This is a artists object of the attributes of the models.
+		var attributes = this.model.toJSON();
+
+	  	// Pass this object onto the template function, returns an HTML string. Then use jQuerry to insert the html
+		this.$el.html(this.template(attributes));
+
+		return this;
 	}
 });
 App.Views.Intro = Backbone.View.extend({
