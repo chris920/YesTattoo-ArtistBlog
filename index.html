@@ -12,17 +12,20 @@
 
 
   <body>
-     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand main-logo" href="/"></a>
+
+    <script type="text/html" id="navTemplate">
+       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <a class="navbar-brand main-logo" href="/"></a>
+          </div>
+          <ul class="nav navbar-nav navbar-right">
+              <li><a href="/register" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Subscribe ~ Join</a></li>
+          </ul>
         </div>
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="/register" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Subscribe ~ Join</a></li>
-        </ul>
       </div>
-    </div>
-    <div class="menu-bg"></div>
+      <div class="menu-bg"></div>
+    </script>
 
   <section class="app">
   </section>
@@ -31,7 +34,7 @@
     <script type="text/html" id="introTemplate">
       <div class="intro">
         <div class="l6container">        
-          <h4>Welcome to YesTattoo! <a href="/register">Subscribe</a> for featured artists and launch updates.</br></br> Support your artist and send us your tattoo via <a href="http://www.instagram.com/yestattoo">#YesTattoo.</a> </h4>
+          <h4>Welcome to YesTattoo! <a href="/register">Subscribe</a> for featured artists and other updates.</br></br> Support your artist and send us your tattoo via <a href="http://www.instagram.com/yestattoo">#YesTattoo.</a></h4></br>
           <button type="button" class="btn-lg" href="/about">About</button>
         </div>
       </div>
@@ -57,10 +60,10 @@
                 <button type="button" class="btn btn-link pull-right"><a href="/uname">More...</a></button>
               </div>
               <div class="portfolioContainer">
-                <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl1-thumb.jpg" class="tattooImg"></a>
-                <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl2-thumb.jpg" class="tattooImg"></a>
-                <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl3-thumb.jpg" class="tattooImg"></a>
-                <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl4-thumb.jpg" class="tattooImg"></a>
+                <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl1.jpg" class="tattooImg"></a>
+                <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl2.jpg" class="tattooImg"></a>
+                <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl3.jpg" class="tattooImg"></a>
+                <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl4.jpg" class="tattooImg"></a>
               </div>
             </div>
 
@@ -136,7 +139,7 @@
             <div class="featuredArtist">            
               <div class="row artistTitleBG">
                 <div class="col-sm-2">
-                  <img class="artistProf" src="img/profs/BridgetTunstall.jpg" alt="Artist Prof">
+                  <img class="artistProf" src="img/profs/booganut.jpg" alt="Artist Prof">
                 </div>
                 <div class="col-sm-10 artistTitles">
                   <h4 class="artistName"><a href="/booganut">Bridget Tunstall</a><span>booganut</span></h4>
@@ -232,8 +235,6 @@
       <div class="load"><img src="img/yt-loadmore.png"></div>
     </script>
 
-
-
     <!-- Artist profile -->
     <script type="text/html" id="artistTemplate">
       <div class="profHead">
@@ -286,10 +287,10 @@
           </div>  
           <div class="container">          
             <div class="row">
-              <a href="#" class="tattooContainer"><img src="img/tattoos/<%= username %>1.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/<%= username %>2.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/<%= username %>3.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/<%= username %>4.jpg" class="tattooImg"></a>
+              <a href="img/tattoos/<%= username %>1.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>1.jpg" class="tattooImg"></a>
+              <a href="img/tattoos/<%= username %>2.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>2.jpg" class="tattooImg"></a>
+              <a href="img/tattoos/<%= username %>3.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>3.jpg" class="tattooImg"></a>
+              <a href="img/tattoos/<%= username %>4.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>4.jpg" class="tattooImg"></a>
             </div>
           </div>
         </div> 
@@ -325,20 +326,21 @@
     <script type="text/html" id="registerTemplate">
       <div class="container">
         <div class="lightContainer">
-          <h2 class="text-center">Subscribe</h2>
-          <p class="text-center">Reserve your Yes.Tattoo/Username. Get featured artists and launch updates via email.</p>
-          <form class="" role="form">
+          <h2 class="text-center">Join</h2>
+          <p class="text-center">Reserve your username. Subscribe to new featured artists. Stay up to date with YesTattoo.</p>
+          <form class="signupForm" role="form">
+            <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Yes.Tattoo /</span>
               <input type="text" class="form-control" id="inputUsername" placeholder="Username">
             </div>
             <input type="email" class="form-control" id="inputEmail" placeholder="Email">
             <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-            <div class="artistRegistration">
+            <div class="artistRegistration" style="display: none;">
               <input type="tel" class="form-control" id="inputPhone" placeholder="Phone Number">
-              <input type="text" class="form-control" id="inputPassword" placeholder="Name">
+              <input type="text" class="form-control" id="inputName" placeholder="Name">
             </div>
-            <a href="#" class="showArtistRegistration">Are you an artist or shop?</a>
+            <a class="toggleArtistRegistration">Are you an artist or shop?</a></br>
             <button type="submit" class="btn-submit">Submit</button>
           </form> 
         </div>
@@ -384,15 +386,9 @@
         </div>
         <div class="lg8container">
           <div class="contactContainer">
-              <h3> Subscribe </h3> 
-              <p> For launch updates and featured artists.</p>
-                <input type="email" class="form-control" id="inputEmail" placeholder="Email">
-                <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-              <button type="button" class="btn-submit">Subscribe</button>
-              <h3> Contact Us </h3> 
-              <p> To be featured, send us your tattoo by tagging YesTattoo on Instagram. 
-              For everything else, shoot us an email at </p>
-              <button type="button" class="btn-submit" href="mailto:contact@yestattoo.com?Subject=Hello%20YesTattoo" target="_top">Contact</button>
+            <h3> Contact Us </h3> 
+            <p> To be featured, send us your tattoo by tagging YesTattoo on Instagram. 
+            For everything else, shoot us an email at <a href="mailto:contact@yestattoo.com?Subject=Hello%20YesTattoo" >contact@yestattoo.com</a></p>
           </div>
         </div>
       </div>
@@ -402,12 +398,12 @@
     <a id="back-to-top" href="#" class="btn btn-link back-to-top" role="button" title="Scroll to the top!!!" data-toggle="tooltip" data-placement="left"><span class="flaticon-up49"></span></a>
 
 
-    <script src="js/libs/jquery.min.js"></script>
+    <script src="js/libs/jquery-1.11.1.js"></script>
     <script src="js/libs/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDND9JGq1-cU9bJy12cTy1-nTNq0a96sOY&sensor=false&libraries=places"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
-    <script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
+    <script src="http://www.parsecdn.com/js/parse-1.2.13.js"></script>
     
     <script src="js/libs/locationpicker.jquery.js"></script>
     <script src="js/libs/typeahead.bundle.min.js"></script>

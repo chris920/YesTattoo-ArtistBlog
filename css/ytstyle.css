@@ -4841,19 +4841,29 @@ span.hover-content {
   margin-top: 80px;
   padding: 40px;
   text-align: center; }
-  @media screen and (max-width: 768px) {
+  @media screen and (min-width: 768px) {
     .lightContainer {
-      padding: 10px; } }
+      padding: 80px; } }
+  @media screen and (min-width: 992px) {
+    .lightContainer {
+      padding: 120px; } }
 
-#join > div > div > button.btn-link {
-  color: #4d4d4d; }
+#register .ligtContainer {
+  margin-top: 0;
+  margin-bottom: 100px; }
 
-.artistRegistration {
-  display: none; }
-
-.showArtistRegistration {
+.toggleArtistRegistration {
   display: block;
   margin-bottom: 10px; }
+
+@-webkit-keyframes pulse {
+  50% {
+    color: #1a1a1a; } }
+.error {
+  color: #c42020;
+  font-size: 1.2em;
+  padding: 5px;
+  -webkit-animation: pulse 2s infinite alternate; }
 
 #authorsPage .aboutContainer {
   color: white;

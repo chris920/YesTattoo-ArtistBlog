@@ -126,12 +126,12 @@ $(window).scroll(function () {
     }
 });
 
-////// Prototype Registration ~ Invite artist
-$( '.showArtistRegistration' ).click(function( e ) {
-  e.preventDefault();
-  $('div.artistRegistration').css('display','block');
-  $( this ).hide();
-});
+// ////// Prototype Registration ~ Invite artist
+// $( '.showArtistRegistration' ).click(function( e ) {
+//   e.preventDefault();
+//   $('div.artistRegistration').css('display','block');
+//   $( this ).hide();
+// });
 
 
 

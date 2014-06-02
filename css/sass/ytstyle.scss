@@ -1045,7 +1045,7 @@ span.hover-content {
 }
 
 
-////// Join page
+////// Join ~ register page
 .lightContainer {
     @extend .md8container;
     color: #707070;
@@ -1053,22 +1053,34 @@ span.hover-content {
     margin-top: 80px;
     padding: 40px;
     text-align: center;
-    @media screen and (max-width: $screen-sm) {
-        padding: 10px;
+    @media screen and (min-width: $screen-sm) {
+        padding: 80px;
+    }
+    @media screen and (min-width: $screen-md) {
+        padding: 120px;
     }
 }
-
-#join > div > div > button.btn-link {
-    color: $gray-dark;
+#register .ligtContainer {
+    margin-top: 0;
+    margin-bottom: 100px;
 }
 
-.artistRegistration {
-    display: none;
-}
-.showArtistRegistration {
+.toggleArtistRegistration {
     display: block;
     margin-bottom: 10px;
 }
+@-webkit-keyframes pulse {
+     50% {color: $gray-darker;}
+}
+.error {
+    color: $brand-primary;
+    font-size: 1.2em;
+    padding: 5px;
+    -webkit-animation: pulse 2s infinite alternate;
+}
+
+
+
 
 ////// author page
 
