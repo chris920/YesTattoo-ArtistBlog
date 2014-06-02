@@ -131,7 +131,6 @@ $( '.showArtistRegistration' ).click(function( e ) {
   e.preventDefault();
   $('div.artistRegistration').css('display','block');
   $( this ).hide();
-
 });
 
 

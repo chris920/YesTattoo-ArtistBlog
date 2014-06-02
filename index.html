@@ -70,7 +70,7 @@
                   <img class="artistProf" src="img/profs/ironpaws.jpg" alt="Artist Prof">
                 </div>
                 <div class="col-sm-10 artistTitles">
-                  <h4 class="artistName" href="/ironpaws">Ben Martinez<span>ironpaws</span></h4>
+                  <h4 class="artistName"><a href="/ironpaws">Ben Martinez</a><span>ironpaws</span></h4>
                   <p class="artistLoc">GoodTimes Tattoo / Salt Lake City, Utah, USA</p>
                 </div>
               </div>
@@ -93,7 +93,7 @@
                   <img class="artistProf" src="img/profs/cmarek.jpg" alt="Artist Prof">
                 </div>
                 <div class="col-sm-10 artistTitles">
-                  <h4 class="artistName" href="/cmarek">Christian Marek<span>cmarek</span></h4>
+                  <h4 class="artistName"><a href="/cmarek">Christian Marek</a><span>cmarek</span></h4>
                   <p class="artistLoc">Sacred Art Tattoo / Tucson Arizona, USA</p>
                 </div>
               </div>
@@ -116,7 +116,7 @@
                   <img class="artistProf" src="img/profs/nickdevine.jpg" alt="Artist Prof">
                 </div>
                 <div class="col-sm-10 artistTitles">
-                  <h4 class="artistName" href="/uname">Nick Devine<span>nickdevine</span></h4>
+                  <h4 class="artistName"><a href="/nickdevine">Nick Devine</a><span>nickdevine</span></h4>
                   <p class="artistLoc">Helter Skelter Tattoo Studio / St. Helens, State, USA</p>
                 </div>
               </div>
@@ -139,7 +139,7 @@
                   <img class="artistProf" src="img/profs/BridgetTunstall.jpg" alt="Artist Prof">
                 </div>
                 <div class="col-sm-10 artistTitles">
-                  <h4 class="artistName" href="/uname">Bridget Tunstall<span>booganut</span></h4>
+                  <h4 class="artistName"><a href="/booganut">Bridget Tunstall</a><span>booganut</span></h4>
                   <p class="artistLoc">Leviathan Tattoo Gallery / Richmond, Victoria, Australia</p>
                 </div>
               </div>
@@ -159,10 +159,10 @@
             <div class="featuredArtist">            
               <div class="row artistTitleBG">
                 <div class="col-sm-2">
-                  <img class="artistProf" src="img/profs/tattooalgarcia.jpg" alt="Artist Prof">
+                  <img class="artistProf" src="img/profs/algarcia.jpg" alt="Artist Prof">
                 </div>
                 <div class="col-sm-10 artistTitles">
-                  <h4 class="artistName" href="/uname">Al Garcia<span>algarcia</span></h4>
+                  <h4 class="artistName"><a href="/algarcia">Al Garcia</a><span>algarcia</span></h4>
                   <p class="artistLoc">Reserve Tattoo Co / Mentor, Ohio, USA</p>
                 </div>
               </div>
@@ -172,10 +172,10 @@
                 <button href="/uname" type="button" class="btn btn-link pull-right">More...</button>
               </div>
               <div class="portfolioContainer">
-                <a href="#" class="tattooContainer"><img src="img/tattoos/tattooalgarcia1.jpg" class="tattooImg"></a>
-                <a href="#" class="tattooContainer"><img src="img/tattoos/tattooalgarcia2.jpg" class="tattooImg"></a>
-                <a href="#" class="tattooContainer"><img src="img/tattoos/tattooalgarcia3.jpg" class="tattooImg"></a>
-                <a href="#" class="tattooContainer"><img src="img/tattoos/tattooalgarcia4.jpg" class="tattooImg"></a>
+                <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia1.jpg" class="tattooImg"></a>
+                <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia2.jpg" class="tattooImg"></a>
+                <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia3.jpg" class="tattooImg"></a>
+                <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia4.jpg" class="tattooImg"></a>
               </div>
             </div>
 
@@ -185,7 +185,7 @@
                   <img class="artistProf" src="img/profs/joseperezjrtattoos.jpg" alt="Artist Prof">
                 </div>
                 <div class="col-sm-10 artistTitles">
-                  <h4 class="artistName" href="/uname">Jose Perez Jr.<span>joseperezjrtattoos</span></h4>
+                  <h4 class="artistName"><a href="/joseperezjrtattoos">Jose Perez Jr.</a><span>joseperezjrtattoos</span></h4>
                   <p class="artistLoc">Dark Water Tattoos / Bridgeview, Illinois, USA</p>
                 </div>
               </div>
@@ -208,7 +208,7 @@
                   <img class="artistProf" src="img/profs/drewromero.jpg" alt="Artist Prof">
                 </div>
                 <div class="col-sm-10 artistTitles">
-                  <h4 class="artistName" href="/uname">Drew Romero<span>drewromero</span></h4>
+                  <h4 class="artistName"><a href="/drewromero">Drew Romero</a><span>drewromero</span></h4>
                   <p class="artistLoc">Ghost House Collective / Derby, DE1 1RS, UK</p>
                 </div>
               </div>
@@ -241,24 +241,23 @@
           <div class="row">    
             <br>
             <div class="col-md-2 col-sm-3">
-              <a class="" href=""><img alt="Profile Picture" src="img/profs/davidbruehl.jpg" class="largeprofpic"></a>
+              <a class="" href=""><img alt="Profile Picture" src="img/profs/<%= username %>.jpg" class="largeprofpic"></a>
             </div>
             <div class="col-md-4 col-sm-4">
-              <h3>David Bruehl<span>davidbruehl</spam></h3>
+              <h3><%= name %><span><%= username %></span></h3>
               <div class="row">
                 <div class="col-sm-12">
-                  <h5>RedLetter1 Tattoo</h5>
-                  <h5 href="https://www.google.com/maps/place/217+S+Cedar+Ave/@27.941897,-82.465071,17z">Tampa, Florida, USA</h5>
+                  <h5><%= shop %></h5>
+                  <h5><%= city %>, <%= state %>, <%= country %></h5>
                 </div>
               </div>
             </div>
             <div class="col-md-6 col-sm-5">
               <div class="profButtons">
-                <a href="https://www.facebook.com/pages/Redletter1/220288017997279" class="facebook" title="Facebook"></a>
-                <a href="https://twitter.com/davidbruehl" class="twitter" title="Twitter"></a>
-                <a href="http://instagram.com/davidbruehl" class="instagram" title="Instagram"></a>
-                <a href="http://www.davidbruehl.com/" class="link" title="Link"></a>
-                <a href="mailto:davidbruehl@gmail.com?Subject=YesTattoo%20Message" class="message" title="Message"></a>
+                <a href= "<%= fb %>" class="facebook" title="Facebook"></a>
+                <a href="http://instagram.com/<%= ig %>" class="instagram" title="Instagram"></a>
+                <a href="<%= website %>" class="link" title="Link"></a>
+                <a href="mailto:<%= email %>?Subject=YesTattoo%20Message" class="message" title="Message"></a>
               </div>
             </div>
           </div>
@@ -287,48 +286,26 @@
           </div>  
           <div class="container">          
             <div class="row">
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl1-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl2-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl3-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl4-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl5-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl6-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl7-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl8-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl9-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl10-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl11-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl12-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl13-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl14-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl15-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl16-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl17-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl18-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl19-thumb.jpg" class="tattooImg"></a>
-              <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl20-thumb.jpg" class="tattooImg"></a>
+              <a href="#" class="tattooContainer"><img src="img/tattoos/<%= username %>1.jpg" class="tattooImg"></a>
+              <a href="#" class="tattooContainer"><img src="img/tattoos/<%= username %>2.jpg" class="tattooImg"></a>
+              <a href="#" class="tattooContainer"><img src="img/tattoos/<%= username %>3.jpg" class="tattooImg"></a>
+              <a href="#" class="tattooContainer"><img src="img/tattoos/<%= username %>4.jpg" class="tattooImg"></a>
             </div>
           </div>
-          <div class="load-fader"></div>
-          <div class="load"><img src="img/yt-loadmore.png"></div>
         </div> 
 
         <!-- About Tab -->
         <div class="tab-pane fade" id="aboutTab">
           <div class="container">          
             <div class="md8container">
-              <h3>About Artist Name</h3>
-              <p>I work at Redletter1 Tattoo Workspace in historic Hyde Park in Tampa, FL.<br><br>
-              I’m happy to take on clients for new projects, tattoo or otherwise.
-              Please contact me anytime by calling or texting 813-205-1879 or through this site (http://www.brhltattoo.com/) and we can set up an appointment.
-              I focus on a bold, graphic, refined approach to tattooing influenced by folk traditions. My favorite subject matter are women, flowers, birds and other animals, and Americana imagery, especially the old west.<br><br>
-              Thank you so much for looking at my work, I hope you enjoy it.
+              <h3>About <%= name %></h3>
+              <p><%= desc %>
               </p><hr><br>
               <h3>Featured Interview</h3>
-              <h5>Q1 ~ What inspires you to tattoo? </h5>
-              <p class="answer">Painting, of course, and Im starting to get into some craft stuff and assemblage. Ive really been feeling the need to build things lately!</p>
-              <h5>Q2 ~ What was your first tattoo? <h5>
-              <p class="answer">Growing up in Oklahoma, I was hindered by my states illegality of tattooing. I finally ended up getting tattooed by a guy who had set up an underground shop. The tattoo was a sacred heart. I drew something to give him an idea of what I wanted, expecting him to draw something original, but he just copied what I had drawn verbatim. It came out nice, considering...</p>
+              <h5>Q1 ~ <%= q1 %> </h5>
+              <p class="answer"><%= a1 %></p>
+              <h5>Q2 ~ <%= q2 %> <h5>
+              <p class="answer"><%= a2 %></p>
               <i class="pull-right">Featured on June 1st, 2014 by Author Name</i>
             </div>
           </div>
@@ -336,7 +313,7 @@
         <!-- Shop Tab -->
         <div class="tab-pane fade" id="shopTab">
           <div class="container">
-            <h3 href="">RedLetter1 Tattoo</3>
+            <h3 href=""><%= shop %></3>
             <div id="map"></div>
           </div>
         </div>
