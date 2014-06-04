@@ -63,7 +63,9 @@ App.Models.Artist = Backbone.Model.extend({
 });
 
 
-App.Models.FeaturedArtist = Backbone.Model.extend({});
+App.Models.FeaturedArtist = Backbone.Model.extend({
+
+});
 
 
 ///////// Views
@@ -74,14 +76,6 @@ App.Views.ArtistProfile = Backbone.View.extend({
 	events: {
 		'click [href="#shopTab"]': 'renderMap'
 	},
-	initialize: function(){
-		// this.model.on('change', this.render, this);
-		// this.model.on('destroy', this.remove, this);
-	},
-	remove: function(){
-		this.$el.remove();
-	},
-
 	//render map, using underscore _.debounce to delay the trigger because of hidden tab / responsive issue
 	renderMap: _.debounce(function() {
 		// Initiate Google map
@@ -94,7 +88,7 @@ App.Views.ArtistProfile = Backbone.View.extend({
 	        animation: google.maps.Animation.DROP,
 	        position: mapLocation,
 	        map: this.map,
-	        icon: ' img/mapmarker-alt.png'
+	        icon: ' img/mapmarker.png'
 	    });
     }, 200),
 
@@ -117,10 +111,31 @@ App.Views.ArtistProfile = Backbone.View.extend({
 
 App.Views.Intro = Backbone.View.extend({
 	id: 'homePage',
-	template: _.template($("#introTemplate").html()),
+	introTemplate: _.template($("#introTemplate").html()),
+	featuredContainerTemplate: _.template($("#featuredContainerTemplate").html()),
 	render: function(){
-		var html = this.template();
+		var html = this.introTemplate();
 		$(this.el).append(html);
+		var html = this.featuredContainerTemplate();
+		$(this.el).append(html);
+		return this;
+	}
+});
+
+App.Views.FeaturedArtist = Backbone.View.extend({
+	className: 'featuredArtist',
+	template: _.template($("#featuredArtistTemplate").html()),
+    events: {
+      'click button, .artistProf, h4': 'viewProfile'
+    },
+	viewProfile: function(){
+		//navigate to the specific model's username
+		Backbone.history.navigate(this.model.attributes.username, {trigger: true});
+		$("html, body").animate({ scrollTop: 0 }, 200);
+	},
+	render: function(){
+		var attributes = this.model.toJSON();
+		$(this.el).append(this.template(attributes));
 		return this;
 	}
 });
@@ -162,7 +177,6 @@ App.Views.Register = Backbone.View.extend({
 		var password = this.$("#inputPassword").val();
 		var type = 'user';
 
-
     	if($(".artistRegistration").is(':visible')){
 			var phone = this.$("#inputPhone").val();
 			var name = this.$("#inputName").val();
@@ -192,33 +206,26 @@ App.Views.Register = Backbone.View.extend({
 		return this;
 	}
 });
-App.Views.FeaturedArtist = Backbone.View.extend({
-	// events: {
-	// 	"click": "viewProfile"
-	// },
-	// viewProfile: function(){
-
-	// }
-});
-
 
 ///////// Collections
 App.Collections.Artists = Backbone.Collection.extend({
 	model: App.Models.Artist
 });
 
-App.Views.ArtistProfiles = Backbone.View.extend({});
+App.Collections.FeaturedArtists = Backbone.Collection.extend({
 
-App.Views.FeaturedArtists = Backbone.Collection.extend({});
+});
+
+
 
 
 ///////// Routers
 App.Router = new (Backbone.Router.extend({
 	routes: {
-		"": 	  			"index",
-		"about":   			"about",
-		"register":         "register",
-		":uname":   		"showArtist"
+		"":						"home",
+		"about":   				"about",
+		"register":        	    "register",
+		":uname":   			"showProfile"
 	},
 	initialize: function(){
 		//temp demo data, populates collection of artists
@@ -411,13 +418,24 @@ App.Router = new (Backbone.Router.extend({
 			]
 		);
 		
+		//temp create a featured artist collection
+		App.Collections.featuredArtists = new App.Collections.FeaturedArtists({});
+
 	},
-	index: function(){
+	home: function(){
 		var intro = new App.Views.Intro();
 		$('.app').html(intro.render().el);
-		hideMore(); //prototype load more
+
+		//temp render 3 featured artists
+		var featuredArtist = new App.Views.FeaturedArtist({model: App.Collections.artists.models[0]});
+		$('#featuredArtists').append(featuredArtist.render().el);
+		var featuredArtist = new App.Views.FeaturedArtist({model: App.Collections.artists.models[1]});
+		$('#featuredArtists').append(featuredArtist.render().el);
+		var featuredArtist = new App.Views.FeaturedArtist({model: App.Collections.artists.models[2]});
+		$('#featuredArtists').append(featuredArtist.render().el);
+
 	},
-	showArtist: function(uname){
+	showProfile: function(uname){
 		//selects particular profile to render
 		var artist = App.Collections.artists.findWhere({username: uname});
 		
@@ -443,8 +461,7 @@ App.Router = new (Backbone.Router.extend({
 		$('.app').html(about.render().el);
 		var register = new App.Views.Register();
 		$('.app').append(register.render().el);
-	}
-	,
+	},
 	register: function(){
 		var register = new App.Views.Register();
 		$('.app').html(register.render().el);

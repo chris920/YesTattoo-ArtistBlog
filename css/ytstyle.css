@@ -3953,12 +3953,12 @@ footer {
 .main-logo {
   float: left;
   width: 180px;
-  background: url("../img/yestattoo-small-clean.png") no-repeat left center;
+  background: url("../img/yestattoologo.png") no-repeat left center;
   background-size: 100%; }
   .main-logo:active, .main-logo.active, .main-logo:hover {
     -webkit-transition: 0.5s ease;
     transition: 0.5s ease;
-    background: url("../img/yestattoo-small.png") no-repeat left center;
+    background: url("../img/yestattoologo2.png") no-repeat left center;
     background-size: 100%; }
   @media screen and (max-width: 768px) {
     .main-logo {
@@ -4453,15 +4453,6 @@ span.hover-content {
   background-color: #e6e6e6;
   text-align: center; }
 
-#homePage .answer {
-  background-color: #4d4d4d;
-  padding: 0px;
-  color: white;
-  text-align: justify; }
-#homePage .artistName {
-  margin-bottom: 0px; }
-#homePage .artistLoc {
-  color: gray; }
 #homePage .page-header {
   margin: 100px 0 22px; }
 
@@ -4471,11 +4462,20 @@ span.hover-content {
   left: 5px;
   bottom: 3px; }
 
-.featuredArtists {
+#featuredArtists {
   background-color: #d9d9d9; }
-  .featuredArtists span {
+  #featuredArtists .answer {
+    background-color: #4d4d4d;
+    padding: 0px;
+    color: white;
+    text-align: justify; }
+  #featuredArtists .artistName {
+    margin-bottom: 0px; }
+  #featuredArtists .artistLoc {
     color: gray; }
-    .featuredArtists span:before {
+  #featuredArtists span {
+    color: gray; }
+    #featuredArtists span:before {
       content: "\00a0\00a0/\00a0"; }
 
 .featuredArtist {

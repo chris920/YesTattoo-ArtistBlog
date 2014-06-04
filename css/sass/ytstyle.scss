@@ -126,11 +126,11 @@ footer {
 .main-logo {
     float: left;
     width: 180px;
-    background: url('../img/yestattoo-small-clean.png') no-repeat left center;
+    background: url('../img/yestattoologo.png') no-repeat left center;
     background-size: 100%;
     &:active,&.active,&:hover {
         @include transition(0.5s ease);
-        background: url('../img/yestattoo-small.png') no-repeat left center;
+        background: url('../img/yestattoologo2.png') no-repeat left center;
         background-size: 100%;
     }
     @media screen and (max-width: $screen-sm) {
@@ -631,15 +631,6 @@ span.hover-content {
     text-align: center;
 }
 #homePage {
-    .answer {
-        background-color: $gray-dark;
-        padding: 0px;
-        color: white;
-        text-align: justify; }
-    .artistName {
-        margin-bottom: 0px; }
-    .artistLoc {
-        color: $gray; }
     .page-header {
         margin: 100px 0 22px}
 }
@@ -650,7 +641,16 @@ span.hover-content {
     left: 5px;
     bottom: 3px;
 }
-.featuredArtists {
+#featuredArtists {
+    .answer {
+        background-color: $gray-dark;
+        padding: 0px;
+        color: white;
+        text-align: justify; }
+    .artistName {
+        margin-bottom: 0px; }
+    .artistLoc {
+        color: $gray; }
     background-color: $gray-light; //for load fader
     span {
         color: $gray; //for username
