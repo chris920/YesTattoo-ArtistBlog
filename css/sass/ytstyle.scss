@@ -129,7 +129,7 @@ footer {
     background: url('../img/yestattoologo.png') no-repeat left center;
     background-size: 100%;
     &:active,&.active,&:hover {
-        @include transition(0.5s ease);
+        @include transition(3s ease);
         background: url('../img/yestattoologo2.png') no-repeat left center;
         background-size: 100%;
     }

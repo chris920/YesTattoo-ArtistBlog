@@ -52,17 +52,18 @@
         <div class="load-fader"></div>
         <div class="load"><img src="img/yt-loadmore.png"></div>
       </div>
+
     </script>
 
     <script type="text/html" id="featuredArtistTemplate">
-          
+
         <div class="row artistTitleBG">
           <div class="col-sm-2">
             <img class="artistProf" src="img/profs/<%= username %>.jpg" alt="Artist Prof">
           </div>
           <div class="col-sm-10 artistTitles">
-            <h4 class="artistName"><%= name %><span> / <%= username %></span></h4>
-            <p class="artistLoc">RedLetter Tattoo / Tampa, Florida, USA</p>
+            <h4 class="artistName"><%= name %><span> <%= username %></span></h4>
+            <p class="artistLoc"><%= shop %> / <%= city %>, <%= state %>, <%= country %></p>
           </div>
         </div>
         <div class="questionContainer">

@@ -3956,8 +3956,8 @@ footer {
   background: url("../img/yestattoologo.png") no-repeat left center;
   background-size: 100%; }
   .main-logo:active, .main-logo.active, .main-logo:hover {
-    -webkit-transition: 0.5s ease;
-    transition: 0.5s ease;
+    -webkit-transition: 3s ease;
+    transition: 3s ease;
     background: url("../img/yestattoologo2.png") no-repeat left center;
     background-size: 100%; }
   @media screen and (max-width: 768px) {
