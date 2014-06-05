@@ -34,24 +34,6 @@ var navHeight = $('.navbar').outerHeight(true) + 10;
 var footerHeight = $('footer').outerHeight(true) + 10;
 
 
-// Tab submenu
-
-$('#profMenu a[href="#portfolioTab"]').click(function (e) {
-    e.preventDefault()  
-    $('#profMenu a[href="#portfolioTab"]').tab('show')
-});
-$('#profMenu a[href="#aboutTab"]').click(function (e) {
-  e.preventDefault()    
-  $('#profMenu a[href="#aboutTab"]').tab('show')
-});
-$('#profMenu a[href="#shopTab"]').click(function (e) {
-  e.preventDefault()    
-  $('#profMenu a[href="#shopTab"]').tab('show')
-  setTimeout(centerMap, 250); //responsive fix, recenters map.
-});
-
-
-
 
 ////// Uplad Tattoo
 

@@ -82,8 +82,27 @@ App.Views.ArtistProfile = Parse.View.extend({
 	id: 'artistProfile',
 	template: _.template($("#artistTemplate").html()),
 	events: {
-		'click [href="#shopTab"]': 'renderMap'
+		'click [href="#portfolioTab"]': 'portfolioTab',
+		'click [href="#aboutTab"]': 'aboutTab',
+		'click [href="#shopTab"]': 'shopTab'
 	},
+	portfolioTab: function(e){
+	    e.preventDefault();
+	    $(this).tab('show');
+	    // $('#profMenu a[href="#portfolioTab"]').tab('show')
+	},
+	aboutTab: function(e){
+	    e.preventDefault();
+	    $(this).tab('show');
+	    //  $('#profMenu a[href="#aboutTab"]').tab('show')
+	},
+	shopTab: function(e){
+	    e.preventDefault();
+	    $(this).tab('show');
+	    this.renderMap();
+	    // $('#profMenu a[href="#shopTab"]').tab('show')
+	},
+
 	//render map, using underscore _.debounce to delay the trigger because of hidden tab / responsive issue
 	renderMap: _.debounce(function() {
 		// Initiate Google map
@@ -108,7 +127,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 	},
 	render: function(){
 		// This is a artists object of the attributes of the models.
-		var attributes = this.model.toJSON();
+		var attributes = this.model.attributes
 
 	  	// Pass this object onto the template function, returns an HTML string. Then use jQuerry to insert the html
 		this.$el.html(this.template(attributes));
@@ -140,14 +159,12 @@ App.Views.FeaturedArtists = Parse.View.extend({
       return this;
     },
     events: {
-     	'scroll': 'scrollChecker'
-    //  	,
-    //  	'click #loaders': 'loadMore'
-    // },
-    // loadMore: function() {
-    // 	//// Eventually will fetch the next month of artists and change loader counter
-    // 	console.log('load more triggered');
-		
+     	'scroll': 'scrollChecker',
+     	'click #loaders': 'loadMore'
+    },
+    loadMore: function() {
+    	/// Eventually will fetch the next month of artists and change loader counter
+    	console.log('load more triggered');
     },
     scrollChecker: function () {
     	//checks the height and fades the artist in    	
@@ -161,10 +178,10 @@ App.Views.FeaturedArtists = Parse.View.extend({
     },
     addAll: function(){
     	this.$el.empty();
-    	//renders all the featured artists in collection
+    	// Renders all the featured artists in collection
     	this.collection.forEach(this.addOne);
 
-    	//temp load more function
+    	/// temp load more function
     	$('#homePage .featuredArtist:gt(2)').hide();
 		
 	},
@@ -282,11 +299,11 @@ App.Router = new (Parse.Router.extend({
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
-		//temp demo data, populates collection of artists
+		/// temp demo data, populates collection of artists
 		App.Collections.artists = new App.Collections.Artists();
 		App.Collections.artists.fetch();
 
-		//temp create a featured artist collection
+		/// temp create a featured artist collection
 		App.Collections.featuredArtists = new App.Collections.FeaturedArtists();
 
 	},
@@ -294,48 +311,32 @@ App.Router = new (Parse.Router.extend({
 		var intro = new App.Views.Intro();
 		$('.app').html(intro.render().el);
 
+		/// temp fetch all artists. new collection that grabs featured artists info by month
 		var featuredArtists = new App.Views.FeaturedArtists({collection: App.Collections.artists});
 		featuredArtists.render();
 
-
-
-
-
-
-
-		
-
+	
 	},
 	showProfile: function(uname){
-		//selects particular profile to render, eventually will change to get specific artist from server.
-		console.log(uname);
-		var artists = App.Collections.artists.toJSON() 
-		console.log(artists);
-		var artist = artists.findWhere({username: uname});
-		console.log(artist);
-		
-		// If artist name is not found,
-		//do nothing
-		if (artist === undefined){
+		// create a new instance of the artist collection
+		this.artist = new App.Collections.Artists;
 
+		// define the parse query to get the user from the router
+		this.artist.query = new Parse.Query(App.Models.Artist);
+		this.artist.query.equalTo("username", uname);
 
+		// find the first object with the above query
+		this.artist.query.first({
+		  success: function(results) {
+		  	// render out the profile page
+		  	App.Views.artistProfile = new App.Views.ArtistProfile({model: results});
+		  	$('.app').html(App.Views.artistProfile.render().el);
 
-
-
-
-
-
-
-			console.log('Nothing found at '+uname)
-		} else {
-			//otherwise, create a new instance of the artist profile
-			var artistProfile = new App.Views.ArtistProfile({model: artist});
-
-			//render the artist profile
-			$('.app').html(artistProfile.render().el);
-
-			hideMore(); ////prototype load more
-		};
+		  },
+		  error: function(error) {
+		    console.log("Error: " + error.code + " " + error.message);
+		  }
+		});
 		
 	},
 	about: function(){
