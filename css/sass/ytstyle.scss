@@ -83,8 +83,14 @@ footer {
         bottom: 180px;
     }
     img {
-    margin-right: auto;
-    margin-left: auto;
+        margin-right: auto;
+        margin-left: auto;
+    }
+}
+.end {
+    text-align: center;
+    img {
+        height: 200px;
     }
 }
 
@@ -129,20 +135,13 @@ footer {
     background: url('../img/yestattoologo.png') no-repeat left center;
     background-size: 100%;
     &:active,&.active,&:hover {
-        @include transition(3s ease);
+        @include transition(1.3s ease);
         background: url('../img/yestattoologo2.png') no-repeat left center;
         background-size: 100%;
     }
     @media screen and (max-width: $screen-sm) {
         margin-left: 10px;
     }
-}
-.author-logo {
-    float: left;
-    width: 320px;
-    margin: auto;
-    background: url('../img/yestattoo-authors.png') no-repeat left center;
-    background-size: 100%;
 }
 
 .icon-book {
@@ -1057,15 +1056,14 @@ span.hover-content {
         padding: 80px;
     }
     @media screen and (min-width: $screen-md) {
-        padding: 120px;
+        padding: 80px 120px;
     }
 }
-#register .ligtContainer {
-    margin-top: 0;
+#join  {
     margin-bottom: 100px;
 }
 
-.toggleArtistRegistration {
+.toggleArtist {
     display: block;
     margin-bottom: 10px;
 }
@@ -1092,7 +1090,6 @@ span.hover-content {
         padding: 40px 20px;
         @media screen and (min-width: $screen-sm) {
             margin-bottom: 80px;
-
         }
     }
     .aboutContainer h3, .aboutContainer a {
@@ -1188,6 +1185,12 @@ span.hover-content {
 
 #aboutPage {
     color: white;
+    .instagram,.facebook,.twitter {
+        font-size: 72px;
+        width: 88px;
+        height: 88px;
+        margin: 20px;
+    }
 }
 
 .aboutIntro {

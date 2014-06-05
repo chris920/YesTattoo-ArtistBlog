@@ -3925,6 +3925,11 @@ footer {
     margin-right: auto;
     margin-left: auto; }
 
+.end {
+  text-align: center; }
+  .end img {
+    height: 200px; }
+
 .footerlinks > a, .footerlinks > p {
   display: inline-block;
   color: #c9c9c9;
@@ -3956,20 +3961,13 @@ footer {
   background: url("../img/yestattoologo.png") no-repeat left center;
   background-size: 100%; }
   .main-logo:active, .main-logo.active, .main-logo:hover {
-    -webkit-transition: 3s ease;
-    transition: 3s ease;
+    -webkit-transition: 1.3s ease;
+    transition: 1.3s ease;
     background: url("../img/yestattoologo2.png") no-repeat left center;
     background-size: 100%; }
   @media screen and (max-width: 768px) {
     .main-logo {
       margin-left: 10px; } }
-
-.author-logo {
-  float: left;
-  width: 320px;
-  margin: auto;
-  background: url("../img/yestattoo-authors.png") no-repeat left center;
-  background-size: 100%; }
 
 .icon-book {
   display: inline-block;
@@ -4846,13 +4844,12 @@ span.hover-content {
       padding: 80px; } }
   @media screen and (min-width: 992px) {
     .lightContainer {
-      padding: 120px; } }
+      padding: 80px 120px; } }
 
-#register .ligtContainer {
-  margin-top: 0;
+#join {
   margin-bottom: 100px; }
 
-.toggleArtistRegistration {
+.toggleArtist {
   display: block;
   margin-bottom: 10px; }
 
@@ -4946,6 +4943,11 @@ span.hover-content {
 
 #aboutPage {
   color: white; }
+  #aboutPage .instagram, #aboutPage .facebook, #aboutPage .twitter {
+    font-size: 72px;
+    width: 88px;
+    height: 88px;
+    margin: 20px; }
 
 .aboutIntro {
   text-align: center;

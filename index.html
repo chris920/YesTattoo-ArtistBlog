@@ -20,7 +20,7 @@
             <a class="navbar-brand main-logo" href="/"></a>
           </div>
           <ul class="nav navbar-nav navbar-right">
-              <li><a href="/register" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Subscribe ~ Join</a></li>
+              <li><a href="/join" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
           </ul>
         </div>
       </div>
@@ -34,7 +34,7 @@
     <script type="text/html" id="introTemplate">
       <div class="intro">
         <div class="l6container">        
-          <h4>Welcome to YesTattoo! <a href="/register">Subscribe</a> for featured artists and other updates.</br></br> Support your artist and send us your tattoo via <a href="http://www.instagram.com/yestattoo">#YesTattoo.</a></h4></br>
+          <h4>Welcome to YesTattoo! <a href="/join">Subscribe/join</a> for featured artists and other updates.</br></br> Support your artist and send us your tattoo with <a href="http://www.instagram.com/yestattoo">#YesTattoo.</a></h4></br>
           <button type="button" class="btn-lg" href="/about">About</button>
         </div>
       </div>
@@ -48,11 +48,14 @@
           </div>
         </div>
       </div>
-      <div id="loaders">
+      <div id="loaders" style="display: none">
         <div class="load-fader"></div>
         <div class="load"><img src="img/yt-loadmore.png"></div>
       </div>
-
+      <div class="end" style="display: none">
+        <img src="img/yt-featuredend.png">
+        <h5>Come back tomorrow</h5>
+      </div>
     </script>
 
     <script type="text/html" id="featuredArtistTemplate">
@@ -90,7 +93,7 @@
               <img alt="Profile Picture" src="img/profs/<%= username %>.jpg" class="largeprofpic">
             </div>
             <div class="col-md-4 col-sm-4">
-              <h3><%= name %><span><%= username %></span></h3>
+              <h3><%= name %><span><%= username %> </span></h3>
               <div class="row">
                 <div class="col-sm-12">
                   <h5><%= shop %></h5>
@@ -167,8 +170,8 @@
     </script>
 
 
-    <!-- Registration page -->
-    <script type="text/html" id="registerTemplate">
+    <!-- Join page -->
+    <script type="text/html" id="joinTemplate">
       <div class="container">
         <div class="lightContainer">
           <h2 class="text-center">Join</h2>
@@ -181,11 +184,14 @@
             </div>
             <input type="email" class="form-control" id="inputEmail" placeholder="Email">
             <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-            <div class="artistRegistration" style="display: none;">
-              <input type="tel" class="form-control" id="inputPhone" placeholder="Phone Number">
-              <input type="text" class="form-control" id="inputName" placeholder="Name">
+            <div class="artistForm" style="display: none;">
+              <input type="tel" class="form-control" id="inputShop" placeholder="Shop Name">
+              <select class="form-control" id="inputType">
+                <option>artist</option>
+                <option>shop</option>
+              </select>
             </div>
-            <a class="toggleArtistRegistration">Are you an artist or shop?</a></br>
+            <a class="toggleArtist">Are you an artist or shop?</a></br>
             <button type="submit" class="btn-submit">Submit</button>
           </form> 
         </div>
@@ -202,8 +208,13 @@
           </div>
         </div>
         <div class="aboutContainer row">
-          <p class="lg6container" >YesTattoo is dedicated to connecting artists with their canvases. You are that canvas and you are the art. Finding the right artist can be hard. Too often tattoos online do not give credit the artist. That’s why we set out to create YesTattoo. Our mission is to find THE best and most talented artists from around the world.</br></br>
-          We are building the website and mobile app to bring you one step closer to that perfect artist. Find the right style, color and flavor. Build your collection. Check out our Featured Artist Gallery for a sneak peak.</p>
+          <p class="lg6container">YesTattoo is dedicated to connecting artists with their canvases. You are that canvas and you are the art. Finding the right artist can be hard. Too often tattoos online do not give credit the artist. That’s why we set out to create YesTattoo. Our mission is to find THE best and most talented artists from around the world.</br></br>
+            We are building the website and mobile app to bring you one step closer to that perfect artist. Find the right style, color and flavor. Build your collection.</br></br></p>
+            <p class="lg6container text-center">
+            Check out our Featured Artist Gallery for a sneak peak.</br></br>
+          <a href="http://www.instagram.com/yestattoo" class="instagram" title="Instagram"></a>
+          <a href= "https://www.facebook.com/pages/YesTattoo/587599791252654" class="facebook" title="Facebook"></a>
+          <a href="https://www.twitter.com/YesTattoo" class="twitter" title="Twitter"></a></p>
         </div>
         <div class="row darkContainer">
           <div class="lg8container">
@@ -266,8 +277,8 @@
         <div class="row">
           <div class="col-sm-6 col-xs-12">
             <a href="http://www.instagram.com/yestattoo" target="_blank"><i class="instagram-icon social-icon"></i></a>
-            <a href="https://www.twitter.com/YesTattoo" target="_blank"><i class="social-icon twitter-icon"></i></a>
             <a href="https://www.facebook.com/pages/YesTattoo/587599791252654" target="_blank"><i class="social-icon facebook-icon"></i></a>
+            <a href="https://www.twitter.com/YesTattoo" target="_blank"><i class="social-icon twitter-icon"></i></a>
           </div>
           <div class="col-sm-6 col-xs-12 footerlinks">
             <a href="/">YesTattoo, Inc.</a>

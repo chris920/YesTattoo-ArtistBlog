@@ -16,7 +16,6 @@ var App = new (Parse.View.extend({
 		"click [href^='/']": function(e){
 			e.preventDefault();
 			Parse.history.navigate(e.target.pathname, {trigger: true});
-			console.log('bb nav triggered'); //event test
 			$("html, body").animate({ scrollTop: 0 }, 200);
 		},
 		//above target.pathname does not work for buttons.... Need to move to the view
@@ -34,7 +33,7 @@ var App = new (Parse.View.extend({
 		return this;
 	},
 	start: function(){
-		Parse.history.start({pushState: true, root: '/'});
+		Parse.history.start({pushState: false, root: '/'});
 	}
 }))({el: document.body});
 
@@ -84,7 +83,8 @@ App.Views.ArtistProfile = Parse.View.extend({
 	events: {
 		'click [href="#portfolioTab"]': 'portfolioTab',
 		'click [href="#aboutTab"]': 'aboutTab',
-		'click [href="#shopTab"]': 'shopTab'
+		'click [href="#shopTab"]': 'shopTab',
+		'scroll': 'activateAffix'
 	},
 	portfolioTab: function(e){
 	    e.preventDefault();
@@ -101,6 +101,12 @@ App.Views.ArtistProfile = Parse.View.extend({
 	    $(this).tab('show');
 	    this.renderMap();
 	    // $('#profMenu a[href="#shopTab"]').tab('show')
+	},
+	activateAffix: function(){
+		/// *Is there a better place for affix avtivation?
+		$('.profNavContainer').affix({
+		      offset: { top: $('.profHead').outerHeight(true) + 40 }
+		});
 	},
 
 	//render map, using underscore _.debounce to delay the trigger because of hidden tab / responsive issue
@@ -153,6 +159,18 @@ App.Views.FeaturedArtists = Parse.View.extend({
 	el: '#featuredArtists',
     initialize: function () {
     	this.collection.on('reset', this.render, this);
+
+    	$(window).scroll(function () {
+	    	//checks the height and fades the artist in    	
+			if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+			 	$('.featuredArtist:hidden:first').fadeIn("slow");
+				//show end when all featured artist's have been shown
+				if($('.featuredArtist:last').is(':visible')) {
+			 		$('#homePage .end').fadeIn();
+				}
+			}
+		});
+
     },
     render: function () {
       this.addAll();
@@ -167,13 +185,9 @@ App.Views.FeaturedArtists = Parse.View.extend({
     	console.log('load more triggered');
     },
     scrollChecker: function () {
-    	//checks the height and fades the artist in    	
-		if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
-		  $('.featuredArtist:hidden:first').fadeIn("slow");
-		  if($('.featuredArtist:eq(6)').is(':visible')) {
-		    $('#homePage .load-fader, #homePage .load').hide();
-		  }
-		}
+
+    	console.log('scroll triggered');
+
 
     },
     addAll: function(){
@@ -181,13 +195,12 @@ App.Views.FeaturedArtists = Parse.View.extend({
     	// Renders all the featured artists in collection
     	this.collection.forEach(this.addOne);
 
-    	/// temp load more function
+    	//// hide for featured artist fade in
     	$('#homePage .featuredArtist:gt(2)').hide();
 		
 	},
 	addOne: function(artist){
 		var featuredArtist = new App.Views.FeaturedArtist({model: artist});
-		console.log(artist);
 		$('#featuredArtists').append(featuredArtist.render().el);
 		//renders an additional featured artist
 	}
@@ -221,24 +234,26 @@ App.Views.About = Parse.View.extend({
 	}
 });
 
-App.Views.Register = Parse.View.extend({
-	id: 'register',
-	template: _.template($("#registerTemplate").html()),
+App.Views.Join = Parse.View.extend({
+	id: 'join',
+	template: _.template($("#joinTemplate").html()),
 	events: {
-		'click .toggleArtistRegistration': 'toggleArtistRegistration',
+		'click .toggleArtist': 'toggleArtist',
 		"submit form.signupForm": "signUp"
 	},
     initialize: function() {
       _.bindAll(this, "signUp");
     },
-	toggleArtistRegistration: function(e) {
+	toggleArtist: function(e) {
 		e.preventDefault();
-    	if($(".artistRegistration").is(':hidden')){
-			$('.artistRegistration').fadeIn();
-			$('.toggleArtistRegistration').text("Actually, not an artist...");
-    	} else if ($(".artistRegistration").is(':visible')) {
-			$('.artistRegistration').fadeOut();
-			$('.toggleArtistRegistration').text("Artist or shop?");
+    	if($(".artistForm").is(':hidden')){
+			$('.artistForm').fadeIn();
+			$('.toggleArtist').text("Actually, not an artist or shop...");
+			$('#inputType').val('artist');
+    	} else if ($(".artistForm").is(':visible')) {
+			$('.artistForm').fadeOut();
+			$('.toggleArtist').text("Artist or shop?");
+			$('#inputType').val('user');
     	}; 
     },
     signUp: function(e) {
@@ -249,12 +264,11 @@ App.Views.Register = Parse.View.extend({
 		var type = 'user';
 
     	if($(".artistRegistration").is(':visible')){
-			var phone = this.$("#inputPhone").val();
-			var name = this.$("#inputName").val();
-			type = 'artist';
+			var shop = this.$("#inputShop").val();
+			type = this.$("#inputType").val();
     	};
       
-		Parse.User.signUp(username, password, { email: email, type: type, phone: phone, name: name, ACL: new Parse.ACL() }, {
+		Parse.User.signUp(username, password, { email: email, type: type, shop: shop, ACL: new Parse.ACL() }, {
 			success: function(user) {
 				App.Router.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Thanks for joining!</h3>");
@@ -295,7 +309,7 @@ App.Router = new (Parse.Router.extend({
 	routes: {
 		"":						"home",
 		"about":   				"about",
-		"register":        	    "register",
+		"join":        		    "join",
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
@@ -329,8 +343,8 @@ App.Router = new (Parse.Router.extend({
 		this.artist.query.first({
 		  success: function(results) {
 		  	// render out the profile page
-		  	App.Views.artistProfile = new App.Views.ArtistProfile({model: results});
-		  	$('.app').html(App.Views.artistProfile.render().el);
+		  	var artistProfile = new App.Views.ArtistProfile({model: results});
+		  	$('.app').html(artistProfile.render().el);
 
 		  },
 		  error: function(error) {
@@ -342,12 +356,12 @@ App.Router = new (Parse.Router.extend({
 	about: function(){
 		var about = new App.Views.About();
 		$('.app').html(about.render().el);
-		var register = new App.Views.Register();
-		$('.app').append(register.render().el);
+		var join = new App.Views.Join();
+		$('.app').append(join.render().el);
 	},
-	register: function(){
-		var register = new App.Views.Register();
-		$('.app').html(register.render().el);
+	join: function(){
+		var join = new App.Views.Join();
+		$('.app').html(join.render().el);
 	}
 }));
 

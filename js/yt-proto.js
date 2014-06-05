@@ -96,35 +96,56 @@ var hideMore = function() {
 }
 hideMore();
 
-$(window).scroll(function () {
-    if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
-      $('.featuredArtist:hidden:first').fadeIn("slow");
-      if($('.featuredArtist:eq(7)').is(':visible')) {
-        $('#homePage .load-fader, #homePage .load').hide();
-      }
-    }
-});
-$(window).scroll(function () {
-    if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
-      $('#portfolioTab .tattooImg:hidden:first').fadeIn("slow");
-      $('#portfolioTab .tattooImg:hidden:first').fadeIn("slow");
-      $('#portfolioTab .tattooImg:hidden:first').fadeIn("slow");
-      $('#portfolioTab .tattooImg:hidden:first').fadeIn("slow");
-      if($('#portfolioTab .tattooImg:eq(19)').is(':visible')) {
-        $('#artistProfile .load-fader, #artistProfile .load').hide();
-      }
-    }
-});
-$(window).scroll(function () {
-    if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
-      for (var i = 0; i < 8; i++){
-        $('#artistsPage .artistThumb:hidden:first').fadeIn("slow");
-      }
-      if($('#artistsPage .artistThumb:eq(23)').is(':visible')) {
-        $('#artistsPage .load-fader, #artistsPage .load').hide();
-      }
-    }
-});
+    // example for show hide... doesn't work
+        // $('#homePage .load-fader, #homePage .load').hide();
+        // $(window).scroll(function () {
+        //     //checks the height and fades the artist in     
+        //     if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+        //         $('.featuredArtist:hidden:first').fadeIn("slow");
+        //         $('#homePage .load-fader, #homePage .load').show();
+        //         //show or hide the load fader
+        //         console.log('scrolled');
+        //         if($('.featuredArtist:last').is(':visible')) {
+        //             $('#homePage .load-fader, #homePage .load').hide();
+        //             /// show a No more artists indication
+        //             console.log('visible');
+        //         } else {
+        //             $('#homePage .load-fader, #homePage .load').show();
+        //             console.log('invisible');
+        //         }
+        //     }
+        // });
+
+
+// $(window).scroll(function () {
+//     if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+//       $('.featuredArtist:hidden:first').fadeIn("slow");
+//       if($('.featuredArtist:last').is(':visible')) {
+//         $('#homePage .load-fader, #homePage .load').hide();
+//       }
+//     }
+// });
+// $(window).scroll(function () {
+//     if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+//       $('#portfolioTab .tattooImg:hidden:first').fadeIn("slow");
+//       $('#portfolioTab .tattooImg:hidden:first').fadeIn("slow");
+//       $('#portfolioTab .tattooImg:hidden:first').fadeIn("slow");
+//       $('#portfolioTab .tattooImg:hidden:first').fadeIn("slow");
+//       if($('#portfolioTab .tattooImg:eq(19)').is(':visible')) {
+//         $('#artistProfile .load-fader, #artistProfile .load').hide();
+//       }
+//     }
+// });
+// $(window).scroll(function () {
+//     if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+//       for (var i = 0; i < 8; i++){
+//         $('#artistsPage .artistThumb:hidden:first').fadeIn("slow");
+//       }
+//       if($('#artistsPage .artistThumb:eq(23)').is(':visible')) {
+//         $('#artistsPage .load-fader, #artistsPage .load').hide();
+//       }
+//     }
+// });
 
 // ////// Prototype Registration ~ Invite artist
 // $( '.showArtistRegistration' ).click(function( e ) {

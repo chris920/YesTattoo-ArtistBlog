@@ -20,21 +20,6 @@ $(document).ready(function(){
 });
 
 
-////// Profile Pages
-
-// Affix menu
-$('.profNavContainer').affix({
-      offset: {
-        top: $('.profHead').outerHeight(true) + 40
-      }
-});
-
-var $body   = $(document.body);
-var navHeight = $('.navbar').outerHeight(true) + 10;
-var footerHeight = $('footer').outerHeight(true) + 10;
-
-
-
 ////// Uplad Tattoo
 
 
