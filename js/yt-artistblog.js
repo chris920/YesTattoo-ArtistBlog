@@ -3,8 +3,8 @@
 Parse.$ = jQuery;
 
 // Initialize Parse with DEMO Parse application javascript keys
-Parse.initialize("joOsSXgFk7vRHT5N6DHOg6dogxBhk73FF88qNZly",
-               "rAUugyr5fxT1InmnL7IPwhOBG8mXvF1eQRwyMObt");
+Parse.initialize("ROfcxRBpwDCFNI4DZluo4Q6okc6cFzUHgqOURSCf",
+               "NI5bHQ6J0aCD4rc95ORxuFAtAIZLpLNDLRLuCrwY");
 
 
 var App = new (Parse.View.extend({
@@ -39,39 +39,20 @@ var App = new (Parse.View.extend({
 
 
 ///////// Models
-App.Models.Artist = Parse.Object.extend({
-	className: "Artists",
+App.Models.Artist = Parse.User.extend({
+	className: "User",
 	defaults: function() {
       return {
-	    username:"",
-	    name:"",
-        type: 'artist',
-	    shop:"",
-	    website:"",
-	    ig:"",
-	    address:"",
-	    city:"",
-	    state:"",
-	    country:"",
 	    lat:37.8029802,
 	    lng:-122.41325749999999,
-	    fb:"",
-	    email:"",
-	    a3:"",
-	    a2:"",
-	    a1:"",
-	    q3:"",
-	    q2:"",
-	    q1:"",
-	    desc:"",
         contacted: false
       };
 	}
 });
 
 
-App.Models.FeaturedArtist = Parse.Object.extend({
-	className: "Artists"
+App.Models.FeaturedArtist = Parse.User.extend({
+	className: "User"
 });
 
 
@@ -103,7 +84,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 	    // $('#profMenu a[href="#shopTab"]').tab('show')
 	},
 	activateAffix: function(){
-		/// *Is there a better place for affix avtivation?
+		/// *Is there a better place to activate the affix?
 		$('.profNavContainer').affix({
 		      offset: { top: $('.profHead').outerHeight(true) + 40 }
 		});
@@ -160,6 +141,7 @@ App.Views.FeaturedArtists = Parse.View.extend({
     initialize: function () {
     	this.collection.on('reset', this.render, this);
 
+    	/// *better place to put this?
     	$(window).scroll(function () {
 	    	//checks the height and fades the artist in    	
 			if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
@@ -185,7 +167,6 @@ App.Views.FeaturedArtists = Parse.View.extend({
     	console.log('load more triggered');
     },
     scrollChecker: function () {
-
     	console.log('scroll triggered');
 
 
@@ -249,11 +230,11 @@ App.Views.Join = Parse.View.extend({
     	if($(".artistForm").is(':hidden')){
 			$('.artistForm').fadeIn();
 			$('.toggleArtist').text("Actually, not an artist or shop...");
-			$('#inputType').val('artist');
+			$('#inputRole').val('artist');
     	} else if ($(".artistForm").is(':visible')) {
 			$('.artistForm').fadeOut();
 			$('.toggleArtist').text("Artist or shop?");
-			$('#inputType').val('user');
+			$('#inputRole').val('user');
     	}; 
     },
     signUp: function(e) {
@@ -261,14 +242,14 @@ App.Views.Join = Parse.View.extend({
 		var username = this.$("#inputUsername").val();
 		var email = this.$("#inputEmail").val();
 		var password = this.$("#inputPassword").val();
-		var type = 'user';
+		var role = 'user';
 
     	if($(".artistRegistration").is(':visible')){
 			var shop = this.$("#inputShop").val();
-			type = this.$("#inputType").val();
+			role = this.$("#inputRole").val();
     	};
       
-		Parse.User.signUp(username, password, { email: email, type: type, shop: shop, ACL: new Parse.ACL() }, {
+		Parse.User.signUp(username, password, { email: email, role: role, shop: shop, ACL: new Parse.ACL() }, {
 			success: function(user) {
 				App.Router.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Thanks for joining!</h3>");
@@ -315,32 +296,42 @@ App.Router = new (Parse.Router.extend({
 	initialize: function(){
 		/// temp demo data, populates collection of artists
 		App.Collections.artists = new App.Collections.Artists();
-		App.Collections.artists.fetch();
+		
 
-		/// temp create a featured artist collection
-		App.Collections.featuredArtists = new App.Collections.FeaturedArtists();
+		// find all artists featured this month
+		App.Collections.artists.query = new Parse.Query(App.Models.Artist);
+		App.Collections.artists.query.equalTo("featuremonth", 6);  
+		App.Collections.artists.query.find({
+		  success: function(artists) {
+		    console.log(artists);
+		    App.Collections.featuredArtists = new App.Collections.FeaturedArtists(artists);
+		  },
+		  error: function(artists, message){
+		  	console.log(message);
+		  }
+		});
+
+		
+
+		//google analtic tracking
+		 this.bind('route', this._pageView);
 
 	},
 	home: function(){
 		var intro = new App.Views.Intro();
 		$('.app').html(intro.render().el);
 
-		/// temp fetch all artists. new collection that grabs featured artists info by month
-		var featuredArtists = new App.Views.FeaturedArtists({collection: App.Collections.artists});
-		featuredArtists.render();
-
+		App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
+		App.Views.featuredArtists.render();
 	
 	},
 	showProfile: function(uname){
-		// create a new instance of the artist collection
-		this.artist = new App.Collections.Artists;
-
 		// define the parse query to get the user from the router
-		this.artist.query = new Parse.Query(App.Models.Artist);
-		this.artist.query.equalTo("username", uname);
+		App.Collections.artists.query = new Parse.Query(App.Models.Artist);
+		App.Collections.artists.query.equalTo("username", uname);
 
 		// find the first object with the above query
-		this.artist.query.first({
+		App.Collections.artists.query.first({
 		  success: function(results) {
 		  	// render out the profile page
 		  	var artistProfile = new App.Views.ArtistProfile({model: results});
@@ -362,6 +353,11 @@ App.Router = new (Parse.Router.extend({
 	join: function(){
 		var join = new App.Views.Join();
 		$('.app').html(join.render().el);
+	},
+	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/
+	_pageView: function() {
+	  var path = Backbone.history.getFragment();
+	  ga('send', 'pageview', {page: "/" + path});
 	}
 }));
 

@@ -4836,7 +4836,6 @@ span.hover-content {
 .lightContainer {
   color: #707070;
   background-color: #e6e6e6;
-  margin-top: 80px;
   padding: 40px;
   text-align: center; }
   @media screen and (min-width: 768px) {
@@ -4847,7 +4846,7 @@ span.hover-content {
       padding: 80px 120px; } }
 
 #join {
-  margin-bottom: 100px; }
+  margin: 100px 0; }
 
 .toggleArtist {
   display: block;
