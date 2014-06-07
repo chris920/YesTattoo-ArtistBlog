@@ -296,22 +296,6 @@ App.Router = new (Parse.Router.extend({
 	initialize: function(){
 		/// temp demo data, populates collection of artists
 		App.Collections.artists = new App.Collections.Artists();
-		
-
-		// find all artists featured this month
-		App.Collections.artists.query = new Parse.Query(App.Models.Artist);
-		App.Collections.artists.query.equalTo("featuremonth", 6);  
-		App.Collections.artists.query.find({
-		  success: function(artists) {
-		    console.log(artists);
-		    App.Collections.featuredArtists = new App.Collections.FeaturedArtists(artists);
-		  },
-		  error: function(artists, message){
-		  	console.log(message);
-		  }
-		});
-
-		
 
 		//google analtic tracking
 		 this.bind('route', this._pageView);
@@ -321,8 +305,20 @@ App.Router = new (Parse.Router.extend({
 		var intro = new App.Views.Intro();
 		$('.app').html(intro.render().el);
 
-		App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
-		App.Views.featuredArtists.render();
+		// find all artists featured this month
+		App.Collections.artists.query = new Parse.Query(App.Models.Artist);
+		App.Collections.artists.query.equalTo("featuremonth", 6);  
+		App.Collections.artists.query.find({
+		  success: function(artists) {
+		    console.log(artists);
+		    App.Collections.featuredArtists = new App.Collections.FeaturedArtists(artists);
+			App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
+			App.Views.featuredArtists.render();
+		  },
+		  error: function(artists, message){
+		  	console.log(message);
+		  }
+		});
 	
 	},
 	showProfile: function(uname){
