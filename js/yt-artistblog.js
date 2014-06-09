@@ -272,6 +272,16 @@ App.Views.Join = Parse.View.extend({
 		return this;
 	}
 });
+App.Views.Login = Parse.View.extend({
+	id: 'loginContainer',
+	template: _.template($("#loginTemplate").html()),
+	render: function(){
+		var html = this.template();
+		$(this.el).html(html);
+		return this;
+	}
+});
+
 
 ///////// Collections
 App.Collections.Artists = Parse.Collection.extend({
@@ -291,6 +301,7 @@ App.Router = new (Parse.Router.extend({
 		"":						"home",
 		"about":   				"about",
 		"join":        		    "join",
+		"login":        		"login",
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
@@ -299,6 +310,11 @@ App.Router = new (Parse.Router.extend({
 
 		//google analtic tracking
 		 this.bind('route', this._pageView);
+
+
+		//render the login view
+		 var login = new App.Views.Login();
+		$('.app').after(login.render().el);
 
 	},
 	home: function(){
@@ -310,7 +326,6 @@ App.Router = new (Parse.Router.extend({
 		App.Collections.artists.query.equalTo("featuremonth", 6);  
 		App.Collections.artists.query.find({
 		  success: function(artists) {
-		    console.log(artists);
 		    App.Collections.featuredArtists = new App.Collections.FeaturedArtists(artists);
 			App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
 			App.Views.featuredArtists.render();
@@ -350,6 +365,10 @@ App.Router = new (Parse.Router.extend({
 		var join = new App.Views.Join();
 		$('.app').html(join.render().el);
 	},
+	login: function(){
+		$('#login').modal('show')
+	},
+
 	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/
 	_pageView: function() {
 	  var path = Backbone.history.getFragment();
