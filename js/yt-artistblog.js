@@ -23,17 +23,26 @@ var App = new (Parse.View.extend({
 			e.preventDefault();
 			Parse.history.navigate('/about', {trigger: true});
 			$("html, body").animate({ scrollTop: 0 }, 200);
-		}
+		},
+		"click #logout": "logout"
 	},
 	id: 'nav',
 	template: _.template($("#navTemplate").html()),
-	initialize: function() {
+	renderNav: function() {
 		var html = this.template();
 		$(this.el).append(html);
 		return this;
 	},
 	start: function(){
 		Parse.history.start({pushState: false, root: '/'});
+		this.renderNav();
+	},
+	logout: function(e){
+		Parse.User.logOut();
+		this.renderNav();
+		$('.intro').html("<h3>You are logged out</h3>");
+		var login = new App.Views.Login();
+		$("html, body").animate({ scrollTop: 0 }, 200);
 	}
 }))({el: document.body});
 
@@ -144,7 +153,7 @@ App.Views.FeaturedArtists = Parse.View.extend({
     	/// *better place to put this?
     	$(window).scroll(function () {
 	    	//checks the height and fades the artist in    	
-			if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+			if ($(document).height() - 1 <= $(window).scrollTop() + $(window).height()) {
 			 	$('.featuredArtist:hidden:first').fadeIn("slow");
 				//show end when all featured artist's have been shown
 				if($('.featuredArtist:last').is(':visible')) {
@@ -253,6 +262,7 @@ App.Views.Join = Parse.View.extend({
 			success: function(user) {
 				App.Router.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Thanks for joining!</h3>");
+				App.renderNav();
 				self.undelegateEvents();
 				delete self;
 			},
@@ -272,9 +282,49 @@ App.Views.Join = Parse.View.extend({
 		return this;
 	}
 });
+
 App.Views.Login = Parse.View.extend({
 	id: 'loginContainer',
 	template: _.template($("#loginTemplate").html()),
+    initialize: function() {
+      _.bindAll(this, "logIn");
+
+      //render the login
+      $('.login').html(this.render().el);
+
+    },
+    events: {
+      "submit form.loginForm": "logIn"
+    },
+    logIn: function(e){
+      var self = this;
+      var username = this.$("#loginUsername").val();
+      var password = this.$("#loginPassword").val();
+
+      Parse.User.logIn(username, password, {
+        success: function(user) {
+			App.Router.navigate('/', {trigger: true});
+			console.log(user)
+			$('.intro').html("<h3>Welcome back "+Parse.User.current().getUsername()+"!</h3>");
+			$('#login').modal('hide');
+			App.renderNav();
+			$("html, body").animate({ scrollTop: 0 }, 200);
+			self.undelegateEvents();
+			delete self;
+        },
+
+        error: function(user, error) {
+        	console.log(error);
+        	$(".loginForm .error").html("Invalid username or password. Please try again.").show();
+        	$(".loginForm button").removeAttr("disabled");
+        }
+      });
+
+      this.$(".loginForm button").attr("disabled", "disabled");
+
+      return false;
+
+    },
 	render: function(){
 		var html = this.template();
 		$(this.el).html(html);
@@ -311,15 +361,13 @@ App.Router = new (Parse.Router.extend({
 		//google analtic tracking
 		 this.bind('route', this._pageView);
 
-
-		//render the login view
-		 var login = new App.Views.Login();
-		$('.app').after(login.render().el);
-
 	},
 	home: function(){
 		var intro = new App.Views.Intro();
 		$('.app').html(intro.render().el);
+
+		//create the login view
+		var login = new App.Views.Login();
 
 		// find all artists featured this month
 		App.Collections.artists.query = new Parse.Query(App.Models.Artist);
