@@ -224,6 +224,88 @@ App.Views.About = Parse.View.extend({
 	}
 });
 
+App.Views.Settings = Parse.View.extend({
+	id: 'settings',
+	artistTemplate: _.template($("#artistSettingsTemplate").html()),
+	initialize: function(){
+		// Grabs the users attributes
+		this.attributes = Parse.User.current().attributes
+
+	},
+    events: {
+    	"submit form.infoForm": "saveInfo",
+    	"submit form.profileForm": "saveProfile"
+    },
+    saveInfo: function(e){
+    	e.preventDefault();
+    	var user = Parse.User.current();
+    	user.set("username", this.$("#editUsername").val());
+    	user.set("email", this.$("#editEmail").val());
+    	user.set("name", this.$("#editName").val());
+		user.save(null, {
+		success: function(user) {
+				// flash the success class
+			$(".infoForm").each(function(){
+			    $(".input-group").addClass("has-success").fadeIn("slow");
+			    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
+			});
+		},
+		error: function(user, error) {
+			$(".infoForm .error").html(error.message).show();
+		}
+		});
+    },
+    saveProfile: function(e){
+    	e.preventDefault();
+    	var user = Parse.User.current();
+    	user.set("shop", this.$("#editShop").val());
+    	user.set("desc", this.$("#editAbout").val());
+    	user.set("website", this.$("#editWebsite").val());
+    	user.set("fb", this.$("#editFB").val());
+    	user.set("ig", this.$("#editInstagram").val());
+    	user.set("twitter", this.$("#editTwitter").val());
+		user.save(null, {
+		success: function(user) {
+				// flash the success class
+			$(".profileForm").each(function(){
+			    $(".input-group").addClass("has-success").fadeIn("slow");
+			    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
+			});
+		},
+		error: function(user, error) {
+			$(".profileForm .error").html(error.message).show();
+		}
+		});
+    },
+	render: function(){
+
+	  	// Pass the attributes onto the template function, returns an HTML string. Then use jQuerry to insert the html
+		this.$el.html(this.artistTemplate(this.attributes));
+
+		return this;
+
+	},
+	renderMap: function(e){
+		///map style is defined twice...
+		var mapStyles = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}];
+	  
+		$('#settingsMap').locationpicker({
+			location: {latitude: this.attributes.lat, longitude: this.attributes.lng},
+			radius: 0,
+			zoom: 12,
+			enableAutocomplete: true,
+			enableReverseGeocode: true,
+			styles: mapStyles,
+			inputBinding: {
+				locationNameInput: $('#settingsMapAddress')
+			},
+			onlocationnotfound: function(locationName) {
+				alert("Couldn't find "+locationName+", Try another address?");
+			}
+		});
+	}
+});
+
 App.Views.Join = Parse.View.extend({
 	id: 'join',
 	template: _.template($("#joinTemplate").html()),
@@ -255,7 +337,7 @@ App.Views.Join = Parse.View.extend({
 
     	if($(".artistRegistration").is(':visible')){
 			var shop = this.$("#inputShop").val();
-			role = this.$("#inputRole").val();
+			role = this.$("#inputRole").val().toLowerCase();
     	};
       
 		Parse.User.signUp(username, password, { email: email, role: role, shop: shop, ACL: new Parse.ACL() }, {
@@ -303,10 +385,10 @@ App.Views.Login = Parse.View.extend({
 
       Parse.User.logIn(username, password, {
         success: function(user) {
+        	$('#login').modal('hide');
 			App.Router.navigate('/', {trigger: true});
 			console.log(user)
 			$('.intro').html("<h3>Welcome back "+Parse.User.current().getUsername()+"!</h3>");
-			$('#login').modal('hide');
 			App.renderNav();
 			$("html, body").animate({ scrollTop: 0 }, 200);
 			self.undelegateEvents();
@@ -352,6 +434,7 @@ App.Router = new (Parse.Router.extend({
 		"about":   				"about",
 		"join":        		    "join",
 		"login":        		"login",
+		"settings":        		"settings",
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
@@ -371,6 +454,7 @@ App.Router = new (Parse.Router.extend({
 
 		// find all artists featured this month
 		App.Collections.artists.query = new Parse.Query(App.Models.Artist);
+		/// temp set featured artist month manually
 		App.Collections.artists.query.equalTo("featuremonth", 6);  
 		App.Collections.artists.query.find({
 		  success: function(artists) {
@@ -416,10 +500,19 @@ App.Router = new (Parse.Router.extend({
 	login: function(){
 		$('#login').modal('show')
 	},
+	settings: function(){
+		///need to render the correct user type settings
+
+		var settings = new App.Views.Settings();
+
+		$('.app').html(settings.render().el);
+
+		settings.renderMap();
+	},
 
 	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/
 	_pageView: function() {
-	  var path = Backbone.history.getFragment();
+	  var path = Parse.history.getFragment();
 	  ga('send', 'pageview', {page: "/" + path});
 	}
 }));
