@@ -242,17 +242,18 @@ App.Views.Settings = Parse.View.extend({
     	user.set("username", this.$("#editUsername").val());
     	user.set("email", this.$("#editEmail").val());
     	user.set("name", this.$("#editName").val());
-		user.save(null, {
-		success: function(user) {
+		user.save(null,{
+			success: function(user) {
 				// flash the success class
-			$(".infoForm").each(function(){
-			    $(".input-group").addClass("has-success").fadeIn("slow");
-			    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
-			});
-		},
-		error: function(user, error) {
-			$(".infoForm .error").html(error.message).show();
-		}
+				console.log("successssssssssssss");
+				$(".infoForm").each(function(){
+				    $(".input-group").addClass("has-success").fadeIn("slow");
+				    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
+				});
+			},
+			error: function(user, error) {
+				$(".infoForm .error").html(error.message).show();
+			}
 		});
     },
     saveProfile: function(e){
@@ -264,17 +265,17 @@ App.Views.Settings = Parse.View.extend({
     	user.set("fb", this.$("#editFB").val());
     	user.set("ig", this.$("#editInstagram").val());
     	user.set("twitter", this.$("#editTwitter").val());
-		user.save(null, {
-		success: function(user) {
+		user.save(null,{
+			success: function(user) {
 				// flash the success class
-			$(".profileForm").each(function(){
-			    $(".input-group").addClass("has-success").fadeIn("slow");
-			    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
-			});
-		},
-		error: function(user, error) {
-			$(".profileForm .error").html(error.message).show();
-		}
+				$(".profileForm").each(function(){
+				    $(".input-group").addClass("has-success").fadeIn("slow");
+				    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
+				});
+			},
+			error: function(user, error) {
+				$(".profileForm .error").html(error.message).show();
+			}
 		});
     },
 	render: function(){
@@ -337,7 +338,7 @@ App.Views.Join = Parse.View.extend({
 
     	if($(".artistRegistration").is(':visible')){
 			var shop = this.$("#inputShop").val();
-			role = this.$("#inputRole").val().toLowerCase();
+			role = this.$("#inputRole").val()
     	};
       
 		Parse.User.signUp(username, password, { email: email, role: role, shop: shop, ACL: new Parse.ACL() }, {

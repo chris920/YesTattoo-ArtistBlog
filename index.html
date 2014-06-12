@@ -111,20 +111,32 @@
               <img alt="Profile Picture" src="img/profs/<%= username %>.jpg" class="largeprofpic">
             </div>
             <div class="col-md-4 col-sm-4">
-              <h3><%= name %><span><%= username %> </span></h3>
+              <h3><%= typeof(name)!== 'undefined' ?  name : '' %><span><%= username %> </span></h3>
               <div class="row">
                 <div class="col-sm-12">
-                  <h5><%= shop %></h5>
-                  <h5><%= city %>, <%= state %>, <%= country %></h5>
+                  <h5><%= typeof(shop)!== 'undefined' ?  shop : '' %></h5>
+                  <h5><%= typeof(city)!== 'undefined' ?  city : '' %>, <%= typeof(state)!== 'undefined' ?  state : '' %>, <%= typeof(country)!== 'undefined' ?  country : '' %></h5>
                 </div>
               </div>
             </div>
             <div class="col-md-6 col-sm-5">
               <div class="profButtons">
-                <a href= "<%= fb %>" class="facebook" title="Facebook"></a>
-                <a href="http://instagram.com/<%= ig %>" class="instagram" title="Instagram"></a>
-                <a href="<%= website %>" class="link" title="Link"></a>
-                <a href="mailto:<%= email %>?Subject=YesTattoo%20Message" class="message" title="Message"></a>
+                <% if (typeof(fb) !== 'undefined') { %>
+                  <a href= "<%= fb %>" class="facebook" title="Facebook"></a> 
+                <% } %>
+                <% if (typeof(ig) !== 'undefined') { %>
+                  <a href="http://instagram.com/<%= ig %>" class="instagram" title="Instagram"></a> 
+                <% } %>
+                <% if (typeof(twitter) !== 'undefined') { %>
+                  <a href= "<%= twitter %>" class="twitter" title="Twitter"></a> 
+                <% } %>
+                <% if (typeof(website) !== 'undefined') { %>
+                  <a href="<%= website %>" class="link" title="Link"></a>
+                <% } %>
+                <% if (typeof(email) !== 'undefined') { %>
+                  <a href="mailto:<%= email %>?Subject=YesTattoo%20Message" class="message" title="Message"></a>
+                <% } %>
+                
               </div>
             </div>
           </div>
@@ -165,22 +177,26 @@
         <div class="tab-pane fade" id="aboutTab">
           <div class="container">          
             <div class="md8container">
-              <h3>About <%= name %></h3>
-              <p><%= desc %>
-              </p><hr><br>
-              <h3>Featured Interview</h3>
-              <h5>Q1 ~ <%= q1 %> </h5>
-              <p class="answer"><%= a1 %></p>
-              <h5>Q2 ~ <%= q2 %> <h5>
-              <p class="answer"><%= a2 %></p>
-              <i class="pull-right">Featured on June 1st, 2014 by Author Name</i>
+              <h3>About <%= typeof(name)!== 'undefined' ?  name : '' %></h3>
+
+                <% if (typeof(desc) !== 'undefined') { %>
+                  <p><%= desc %></p><hr><br>
+                <% } %>
+                <% if (typeof(a1) !== 'undefined') { %>
+                  <h3>Featured Interview</h3>
+                  <h5>Q1 ~ <%= q1 %> </h5>
+                  <p class="answer"><%= a1 %></p>
+                  <h5>Q2 ~ <%= q2 %> <h5>
+                  <p class="answer"><%= a2 %></p>
+                  <i class="pull-right">Featured on June 1st, 2014 by Author Name</i>
+                <% } %>
             </div>
           </div>
         </div>
         <!-- Shop Tab -->
         <div class="tab-pane fade" id="shopTab">
           <div class="container">
-            <h3 href=""><%= shop %></3>
+            <h3 href=""><%= typeof(shop)!== 'undefined' ?  shop : '' %></3>
             <div id="map"></div>
           </div>
         </div>
@@ -205,8 +221,8 @@
             <div class="artistForm" style="display: none;">
               <input type="text" class="form-control" id="inputShop" placeholder="Shop Name">
               <select class="form-control" id="inputRole">
-                <option>Artist</option>
-                <option>Shop</option>
+                <option value="artist">Artist</option>
+                <option value="shop">Shop</option>
               </select>
             </div>
             <a class="toggleArtist">Are you an artist or shop?</a></br>
