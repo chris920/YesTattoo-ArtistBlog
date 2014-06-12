@@ -73,6 +73,21 @@
                 gMapContext.geodecoder.geocode({latLng: gMapContext.location}, function(results, status){
                     if (status == google.maps.GeocoderStatus.OK && results.length > 0){
                         gMapContext.locationName = results[0].formatted_address;
+
+                        // ~~ gets the formatted location name
+                        for (var i = 0; i < results[0].address_components.length; i++)
+                        {
+                            var addr = results[0].address_components[i];
+                            // check if this entry in address_components has a type of country
+                            if (addr.types[0] == "locality") 
+                                var city = addr.long_name;
+                            if (addr.types[0] == "administrative_area_level_1") 
+                                var state = addr.long_name;
+                            if (addr.types[0] == "country") 
+                                var country = addr.short_name;
+                            gMapContext.locationNameFormatted = city + ", " + state + ", " + country
+                        }
+
                     }
                     if (callback) {
                         callback.call(this, gMapContext);
@@ -101,6 +116,10 @@
     function updateInputValues(inputBinding, gmapContext){
         if (!inputBinding) return;
         var currentLocation = GmUtility.locationFromLatLng(gmapContext.location);
+
+        // ~~ creates formatted location name
+        var currentLocationNameFormatted = gmapContext.locationNameFormatted;
+
         if (inputBinding.latitudeInput) {
             inputBinding.latitudeInput.val(currentLocation.latitude);
         }
@@ -121,7 +140,7 @@
 		          inputBinding.radiusInput.on("change", function() {
 		              gmapContext.radius = $(this).val();
 		              GmUtility.setPosition(gmapContext, gmapContext.location, function(context){
-		              	context.settings.onchanged(GmUtility.locationFromLatLng(context.location), context.radius, false);
+		              	context.settings.onchanged(GmUtility.locationFromLatLng(context.location), context.locationNameFormatted, context.radius, false);
 		              });
 		          });
             }
@@ -135,21 +154,21 @@
                     }
                     GmUtility.setPosition(gmapContext, place.geometry.location, function(context) {		                    
                         updateInputValues(inputBinding, context);
-                        context.settings.onchanged(GmUtility.locationFromLatLng(context.location), context.radius, false);
+                        context.settings.onchanged(GmUtility.locationFromLatLng(context.location), context.locationNameFormatted, context.radius, false);
                     });
                 });
             }
             if (inputBinding.latitudeInput) {
             	inputBinding.latitudeInput.on("change", function() {
             		GmUtility.setPosition(gmapContext, new google.maps.LatLng($(this).val(), gmapContext.location.lng()), function(context){
-		              	context.settings.onchanged(GmUtility.locationFromLatLng(context.location), context.radius, false);
+		              	context.settings.onchanged(GmUtility.locationFromLatLng(context.location), context.locationNameFormatted, context.radius, false);
 		            });
             	});
             }
             if (inputBinding.longitudeInput) {
             	inputBinding.longitudeInput.on("change", function() {
             		GmUtility.setPosition(gmapContext, new google.maps.LatLng(gmapContext.location.lat(), $(this).val()), function(context){
-		              	context.settings.onchanged(GmUtility.locationFromLatLng(context.location), context.radius, false);
+		              	context.settings.onchanged(GmUtility.locationFromLatLng(context.location), context.locationNameFormatted, context.radius, false);
 		            });
             	});
             }
@@ -175,6 +194,12 @@
                         var location = GmUtility.locationFromLatLng(gmapContext.location);
                         location.radius = gmapContext.radius;
                         location.name = gmapContext.locationName;
+
+
+                        // ~~ assigns formatted location name
+                        location.nameFormatted = gmapContext.locationNameFormatted;
+
+
                         return location;
                     } else { // Setter
                         if (params.radius) {
@@ -235,8 +260,13 @@
             google.maps.event.addListener(gmapContext.marker, "dragend", function(event) {
                 GmUtility.setPosition(gmapContext, gmapContext.marker.position, function(context){
                     var currentLocation = GmUtility.locationFromLatLng(gmapContext.location);
-                    context.settings.onchanged(currentLocation, context.radius, true);
+
+                    // ~~ passes the formatted location name
+                    var currentLocationNameFormatted = gmapContext.locationNameFormatted;
+
+                    context.settings.onchanged(currentLocation, currentLocationNameFormatted, context.radius, true);
                     updateInputValues(gmapContext.settings.inputBinding, gmapContext);
+
                 });
             });
             GmUtility.setPosition(gmapContext, new google.maps.LatLng(settings.location.latitude, settings.location.longitude), function(context){
@@ -261,7 +291,7 @@
         },
         enableAutocomplete: false,
         enableReverseGeocode: true,
-        onchanged: function(currentLocation, radius, isMarkerDropped) {},
+        onchanged: function(currentLocation, currentLocationNameFormatted, radius, isMarkerDropped) {},
         onlocationnotfound: function(locationName) {},
         oninitialized: function (component) {}
 

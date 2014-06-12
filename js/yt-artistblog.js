@@ -52,8 +52,19 @@ App.Models.Artist = Parse.User.extend({
 	className: "User",
 	defaults: function() {
       return {
-	    lat:37.8029802,
-	    lng:-122.41325749999999,
+	    username:"",
+	    name:"",
+	    shop:"",
+	    website:"",
+	    ig:"",
+	    fb:"",
+	    twitter:"".
+	    address:"",
+	    email:"",
+	    q1:"",
+	    desc:"",
+	   	author:"",
+	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999}),
         contacted: false
       };
 	}
@@ -103,7 +114,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 	renderMap: _.debounce(function() {
 		// Initiate Google map
     	var mapStyles = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}];
-	    var mapLocation = new google.maps.LatLng( this.model.get('lat') , this.model.get('lng') );
+	    var mapLocation = new google.maps.LatLng( this.model.attributes.location.latitude , this.model.attributes.location.longitude );
 	    var mapOptions = { zoom: 12, center: mapLocation, styles: mapStyles, scrollwheel: false, panControl: false, mapTypeControl: false };
 	    var mapElement = document.getElementById('map');
 	    this.map = new google.maps.Map(mapElement, mapOptions);
@@ -228,6 +239,9 @@ App.Views.Settings = Parse.View.extend({
 	id: 'settings',
 	artistTemplate: _.template($("#artistSettingsTemplate").html()),
 	initialize: function(){
+		// refresh the users attributes in case changes have been made
+		Parse.User.current().fetch()
+
 		// Grabs the users attributes
 		this.attributes = Parse.User.current().attributes
 
@@ -300,7 +314,7 @@ App.Views.Settings = Parse.View.extend({
 		var mapStyles = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}];
 	  
 		$('#settingsMap').locationpicker({
-			location: {latitude: this.attributes.lat, longitude: this.attributes.lng},
+			location: {latitude: this.attributes.location.latitude, longitude: this.attributes.location.longitude},
 			radius: 0,
 			zoom: 12,
 			enableAutocomplete: true,
@@ -309,8 +323,28 @@ App.Views.Settings = Parse.View.extend({
 			inputBinding: {
 				locationNameInput: $('#settingsMapAddress')
 			},
+			onchanged: function(currentLocation, currentLocationNameFormatted) {
+
+		    	var user = Parse.User.current();
+		    	var point = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
+		    	user.set("location", point);
+		    	user.set("address", $("#settingsMapAddress").val());
+		    	user.set("locationName", currentLocationNameFormatted);
+				user.save(null,{
+					success: function(user) {
+						// flash the success class
+						$(".editLocation").addClass("has-success").fadeIn("slow");
+						setTimeout(function() { $(".editLocation").removeClass("has-success") }, 2400);
+					
+						$("#locationSettings ~ .error").hide();
+					},
+					error: function(user, error) {
+						$(".profileForm .error").html(error.message).show();
+					}
+				});
+			},	
 			onlocationnotfound: function(locationName) {
-				alert("Couldn't find "+locationName+", Try another address?");
+				$("#locationSettings ~ .error").html("Couldn't find "+locationName+", Try another address?").show();				
 			}
 		});
 	}

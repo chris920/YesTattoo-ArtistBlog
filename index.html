@@ -84,7 +84,7 @@
           </div>
           <div class="col-sm-10 artistTitles">
             <h4 class="artistName"><%= name %><span> <%= username %></span></h4>
-            <p class="artistLoc"><%= shop %> / <%= city %>, <%= state %>, <%= country %></p>
+            <p class="artistLoc"><%= (shop) ?  shop : '' %> / <%= (locationName)  ?  locationName : '' %></p>
           </div>
         </div>
         <div class="questionContainer">
@@ -115,7 +115,7 @@
               <div class="row">
                 <div class="col-sm-12">
                   <h5><%= (shop) ?  shop : '' %></h5>
-                  <h5><%= (city) ?  city : '' %>, <%= typeof(state)!== 'undefined' ?  state : '' %>, <%= (country) ?  country : '' %></h5>
+                  <h5><%= (locationName) ?  locationName : '' %></h5>
                 </div>
               </div>
             </div>
@@ -128,7 +128,7 @@
                   <a href="http://instagram.com/<%= ig %>" class="instagram" title="Instagram"></a> 
                 <% } %>
                 <% if (twitter) { %>
-                  <a href= "<%= twitter %>" class="twitter" title="Twitter"></a> 
+                  <a href= "<%= twitter %>" class="twitter" title="Twitter"></a>
                 <% } %>
                 <% if (website) { %>
                   <a href="<%= website %>" class="link" title="Link"></a>
@@ -347,22 +347,25 @@
             <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Yes.Tattoo /#</span>
-              <input type="text" class="form-control" id="editUsername" placeholder="Username" value="<%= typeof(username)!== 'undefined' ?  username : '' %>">
+              <input type="text" class="form-control" id="editUsername" placeholder="Username" value="<%= (username) ?  username : '' %>">
             </div>
             <a id="forgotPassword">Update password?</a></br></br>
             <div class="input-group">
               <span class="input-group-addon">Email </span>
-              <input type="email" class="form-control" id="editEmail" placeholder="Email" value="<%= typeof(email)!== 'undefined' ?  email : '' %>">
+              <input type="email" class="form-control" id="editEmail" placeholder="Email" value="<%= (email) ?  email : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Name </span>
-              <input type="text" class="form-control" id="editName" placeholder="Name" value="<%= typeof(name)!== 'undefined' ?  name : '' %>">
+              <input type="text" class="form-control" id="editName" placeholder="Name" value="<%= (name) ?  name : '' %>">
             </div>
             <button type="submit" class="btn-submit">Submit</button>
           </form> 
 
           <h3 id="locationSettings">Shop Location</h3>
-          <p>Search by name or location</p><input type="text" class="form-control" id="settingsMapAddress">
+          <div class="error" style="display:none"></div>
+          <div class="editLocation">
+            <p>Search by name or location</p><input type="text" class="form-control" id="settingsMapAddress">
+          </div>
           <div id="settingsMap" style="width: 100%; height: 240px;"></div>
 
           <h3 id="profileSettings">Profile</h3>
@@ -370,27 +373,27 @@
             <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Shop Name </span>
-              <input type="text" class="form-control" id="editShop" placeholder="Shop Name" value="<%= typeof(shop)!== 'undefined' ?  shop : '' %>">
+              <input type="text" class="form-control" id="editShop" placeholder="Shop Name" value="<%= (shop) ?  shop : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">About </span>
-              <textarea class="form-control" id="editAbout" rows="8" placeholder="About" ><%= typeof(desc)!== 'undefined' ?  desc : '' %></textarea>
+              <textarea class="form-control" id="editAbout" rows="8" placeholder="About" ><%= (desc) ?  desc : '' %></textarea>
             </div>
             <div class="input-group">
               <span class="input-group-addon">Personal or Shop Link </span>
-              <input type="text" class="form-control" id="editWebsite" placeholder="Website" value="<%= typeof(website)!== 'undefined' ?  website : '' %>">
+              <input type="text" class="form-control" id="editWebsite" placeholder="Website" value="<%= (website) ?  website : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Facebook Link</span>
-              <input type="text" class="form-control" id="editFB" placeholder="Facebook Link" value="<%= typeof(fb)!== 'undefined' ?  fb : '' %>">
+              <input type="text" class="form-control" id="editFB" placeholder="Facebook Link" value="<%= (fb) ?  fb : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Instagram Name</span>
-              <input type="text" class="form-control" id="editInstagram" placeholder="Instagram Name" value="<%= typeof(ig)!== 'undefined' ?  ig : '' %>">
+              <input type="text" class="form-control" id="editInstagram" placeholder="Instagram Name" value="<%= (ig) ?  ig : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Twitter Name</span>
-              <input type="text" class="form-control" id="editTwitter" placeholder="Twitter Name" value="<%= typeof(twitter)!== 'undefined' ?  twitter : '' %>">
+              <input type="text" class="form-control" id="editTwitter" placeholder="Twitter Name" value="<%= (twitter) ?  twitter : '' %>">
             </div>
 
             <button type="submit" class="btn-submit">Submit</button>

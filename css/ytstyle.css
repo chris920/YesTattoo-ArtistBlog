@@ -4998,7 +4998,8 @@ span.hover-content {
 #settings {
   padding-bottom: 80px; }
   #settings h3 {
-    border-bottom: 1px solid gray; }
+    border-bottom: 1px solid gray;
+    margin-top: 40px; }
   #settings p {
     padding: 5px;
     display: block; }
