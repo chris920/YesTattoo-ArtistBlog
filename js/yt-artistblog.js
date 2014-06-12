@@ -233,8 +233,9 @@ App.Views.Settings = Parse.View.extend({
 
 	},
     events: {
-    	"submit form.infoForm": "saveInfo",
-    	"submit form.profileForm": "saveProfile"
+    	"submit form.infoForm": 	"saveInfo",
+    	"submit form.profileForm": 	"saveProfile",
+    	"click li": 				"scrollTo"
     },
     saveInfo: function(e){
     	e.preventDefault();
@@ -277,6 +278,14 @@ App.Views.Settings = Parse.View.extend({
 				$(".profileForm .error").html(error.message).show();
 			}
 		});
+    },
+    scrollTo: function(e){
+    	//get the section to scroll to from the data target attribute
+    	var section = $(e.currentTarget).data('target');
+    	//scroll to that section, less the nav bar height.
+	   	$('html, body').animate({
+	        scrollTop: $(section).offset().top - 110
+	    }, 1200);
     },
 	render: function(){
 

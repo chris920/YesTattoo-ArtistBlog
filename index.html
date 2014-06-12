@@ -111,29 +111,29 @@
               <img alt="Profile Picture" src="img/profs/<%= username %>.jpg" class="largeprofpic">
             </div>
             <div class="col-md-4 col-sm-4">
-              <h3><%= typeof(name)!== 'undefined' ?  name : '' %><span><%= username %> </span></h3>
+              <h3><%= (name) ?  name : '' %><span><%= username %> </span></h3>
               <div class="row">
                 <div class="col-sm-12">
-                  <h5><%= typeof(shop)!== 'undefined' ?  shop : '' %></h5>
-                  <h5><%= typeof(city)!== 'undefined' ?  city : '' %>, <%= typeof(state)!== 'undefined' ?  state : '' %>, <%= typeof(country)!== 'undefined' ?  country : '' %></h5>
+                  <h5><%= (shop) ?  shop : '' %></h5>
+                  <h5><%= (city) ?  city : '' %>, <%= typeof(state)!== 'undefined' ?  state : '' %>, <%= (country) ?  country : '' %></h5>
                 </div>
               </div>
             </div>
             <div class="col-md-6 col-sm-5">
               <div class="profButtons">
-                <% if (typeof(fb) !== 'undefined') { %>
+                <% if (fb) { %>
                   <a href= "<%= fb %>" class="facebook" title="Facebook"></a> 
                 <% } %>
-                <% if (typeof(ig) !== 'undefined') { %>
+                <% if (ig) { %>
                   <a href="http://instagram.com/<%= ig %>" class="instagram" title="Instagram"></a> 
                 <% } %>
-                <% if (typeof(twitter) !== 'undefined') { %>
+                <% if (twitter) { %>
                   <a href= "<%= twitter %>" class="twitter" title="Twitter"></a> 
                 <% } %>
-                <% if (typeof(website) !== 'undefined') { %>
+                <% if (website) { %>
                   <a href="<%= website %>" class="link" title="Link"></a>
                 <% } %>
-                <% if (typeof(email) !== 'undefined') { %>
+                <% if (email) { %>
                   <a href="mailto:<%= email %>?Subject=YesTattoo%20Message" class="message" title="Message"></a>
                 <% } %>
                 
@@ -177,12 +177,12 @@
         <div class="tab-pane fade" id="aboutTab">
           <div class="container">          
             <div class="md8container">
-              <h3>About <%= typeof(name)!== 'undefined' ?  name : '' %></h3>
+              <h3>About <%= (name) ?  name : '' %> </h3>
 
-                <% if (typeof(desc) !== 'undefined') { %>
+                <% if (desc) { %>
                   <p><%= desc %></p><hr><br>
                 <% } %>
-                <% if (typeof(a1) !== 'undefined') { %>
+                <% if (a1) { %>
                   <h3>Featured Interview</h3>
                   <h5>Q1 ~ <%= q1 %> </h5>
                   <p class="answer"><%= a1 %></p>
@@ -196,7 +196,7 @@
         <!-- Shop Tab -->
         <div class="tab-pane fade" id="shopTab">
           <div class="container">
-            <h3 href=""><%= typeof(shop)!== 'undefined' ?  shop : '' %></3>
+            <h3 href=""><%= (shop) ?  shop : '' %></3>
             <div id="map"></div>
           </div>
         </div>
@@ -334,10 +334,10 @@
         <div class="">
           <ul class="nav nav-pills nav-justified">
             <li class="active"><a><span class="flaticon-settings13"></span><strong>Settings</strong></a></li>
-            <li><a href="#infoSettings"><span class="flaticon-information"></span>Info</a></li>
-            <li><a href="#locationSettings"><span class="flaticon-home73"></span>Location</a></li>
-            <li><a href="#profileSettings"><span class="flaticon-user56"></span>Profile</a></li>
-            <li><a href="#notificationSettings"><span class="flaticon-send5"></span>Notifications</a></li>
+            <li data-target="#infoSettings"><a><span class="flaticon-information"></span>Info</a></li>
+            <li data-target="#locationSettings"><a><span class="flaticon-home73"></span>Location</a></li>
+            <li data-target="#profileSettings"><a><span class="flaticon-user56"></span>Profile</a></li>
+            <li data-target="#notificationSettings"><a><span class="flaticon-send5"></span>Notifications</a></li>
           </ul>
         </div>
 
