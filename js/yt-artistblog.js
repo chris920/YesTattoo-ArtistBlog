@@ -58,7 +58,7 @@ App.Models.Artist = Parse.User.extend({
 	    website:"",
 	    ig:"",
 	    fb:"",
-	    twitter:"".
+	    twitter:"",
 	    address:"",
 	    email:"",
 	    q1:"",
@@ -249,6 +249,7 @@ App.Views.Settings = Parse.View.extend({
     events: {
     	"submit form.infoForm": 	"saveInfo",
     	"submit form.profileForm": 	"saveProfile",
+    	"click #forgotPassword": 	"resetPassword",
     	"click li": 				"scrollTo"
     },
     saveInfo: function(e){
@@ -260,7 +261,6 @@ App.Views.Settings = Parse.View.extend({
 		user.save(null,{
 			success: function(user) {
 				// flash the success class
-				console.log("successssssssssssss");
 				$(".infoForm").each(function(){
 				    $(".input-group").addClass("has-success").fadeIn("slow");
 				    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
@@ -291,6 +291,22 @@ App.Views.Settings = Parse.View.extend({
 			error: function(user, error) {
 				$(".profileForm .error").html(error.message).show();
 			}
+		});
+    },
+    resetPassword: function(e) {
+    	e.preventDefault();
+    	email = Parse.User.current().attributes.email
+		Parse.User.requestPasswordReset(email, {
+		  success: function() {
+		    // Password reset request was sent successfully
+		    console.log('successsssss')
+		    $('#forgotPassword').html('Check your email for the password reset link!')
+		    self.undelegateEvents();
+		  },
+		  error: function(error) {
+		    // Show the error message somewhere
+		    $(".profileForm .error").html(error.message).show();
+		  }
 		});
     },
     scrollTo: function(e){
@@ -420,7 +436,9 @@ App.Views.Login = Parse.View.extend({
 
     },
     events: {
-      "submit form.loginForm": "logIn"
+      "submit form.loginForm": 		"logIn",
+      "click #forgotPassword": 		"passwordForm",
+      // "submit form.passwordForm": 	"resetPassword"
     },
     logIn: function(e){
       var self = this;
@@ -438,18 +456,20 @@ App.Views.Login = Parse.View.extend({
 			self.undelegateEvents();
 			delete self;
         },
-
         error: function(user, error) {
         	console.log(error);
         	$(".loginForm .error").html("Invalid username or password. Please try again.").show();
         	$(".loginForm button").removeAttr("disabled");
         }
       });
-
       this.$(".loginForm button").attr("disabled", "disabled");
-
       return false;
+    },
+    passwordForm: function(e){
+    	console.log('password form triggered')
 
+		var forgotPassword = new App.Views.ForgotPassword();
+		$('.app').html(forgotPassword.render().el);
     },
 	render: function(){
 		var html = this.template();
@@ -458,6 +478,35 @@ App.Views.Login = Parse.View.extend({
 	}
 });
 
+App.Views.ForgotPassword = Parse.View.extend({
+	id: 'password',
+	template: _.template($("#passwordResetTemplate").html()),
+    events: {
+      "submit form.passwordForm": 	"resetPassword"
+    },
+    resetPassword: function(e){
+    	e.preventDefault();
+    	console.log('password reset triggered')
+    	var info = $("#inputInfo").val();
+		Parse.User.requestPasswordReset(info, {
+		  success: function() {
+		    // Password reset request was sent successfully
+		    console.log('successsssss')
+		    this.$('p').html('Check your email for the password reset link!')
+		    setTimeout(function() { App.Router.navigate('/', {trigger: true}) }, 2400);
+		  },
+		  error: function(error) {
+		    // Show the error message somewhere
+		    $(".passwordForm .error").html(error.message).show();
+		  }
+		});
+    },
+	render: function(){
+		var html = this.template();
+		$(this.el).html(html);
+		return this;
+	}
+});
 
 ///////// Collections
 App.Collections.Artists = Parse.Collection.extend({
