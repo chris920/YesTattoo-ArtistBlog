@@ -11,6 +11,15 @@ var App = new (Parse.View.extend({
 	Models: {},
 	Views: {},
 	Collections: {},
+
+	id: 'nav',
+	template: _.template($("#navTemplate").html()),
+	start: function(){
+		Parse.history.start({pushState: false, root: '/'});
+
+		// render initial nav / modals
+		this.render();
+	},
 	events: {
 		//simplifies html to use routers where needed
 		"click [href^='/']": function(e){
@@ -24,25 +33,31 @@ var App = new (Parse.View.extend({
 			Parse.history.navigate('/about', {trigger: true});
 			$("html, body").animate({ scrollTop: 0 }, 200);
 		},
+		"click #upload": "upload",
 		"click #logout": "logout"
 	},
-	id: 'nav',
-	template: _.template($("#navTemplate").html()),
-	renderNav: function() {
-		var html = this.template();
-		$(this.el).append(html);
-		return this;
-	},
-	start: function(){
-		Parse.history.start({pushState: false, root: '/'});
-		this.renderNav();
+	upload: function(e){
+		e.preventDefault();
+		$('#upload').modal('show')
 	},
 	logout: function(e){
 		Parse.User.logOut();
-		this.renderNav();
+		this.render();
 		$('.intro').html("<h3>You are logged out</h3>");
-		var login = new App.Views.Login();
+		Parse.history.navigate('', {trigger: true});
 		$("html, body").animate({ scrollTop: 0 }, 200);
+	},
+	render: function() {
+		//renders the nav, which has an if current user statement in template.
+		$('.navs').html(this.template());
+
+		//renders the upload modal if the user is logged in, otherwise renders the login modal.
+		if (Parse.User.current()) {
+			var upload = new App.Views.ArtistUpload();
+		} else {
+			var login = new App.Views.Login();
+		};
+
 	}
 }))({el: document.body});
 
@@ -299,7 +314,6 @@ App.Views.Settings = Parse.View.extend({
 		Parse.User.requestPasswordReset(email, {
 		  success: function() {
 		    // Password reset request was sent successfully
-		    console.log('successsssss')
 		    $('#forgotPassword').html('Check your email for the password reset link!')
 		    self.undelegateEvents();
 		  },
@@ -404,7 +418,7 @@ App.Views.Join = Parse.View.extend({
 			success: function(user) {
 				App.Router.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Thanks for joining!</h3>");
-				App.renderNav();
+				App.render();
 				self.undelegateEvents();
 				delete self;
 			},
@@ -425,20 +439,41 @@ App.Views.Join = Parse.View.extend({
 	}
 });
 
+App.Views.ArtistUpload = Parse.View.extend({
+	el: $('#upload'),
+	template: _.template($("#artistUploadTemplate").html()),
+    initialize: function() {
+
+    	//render the upload modal
+    	this.render();
+
+    },
+    events: {
+      "button": 		"close",
+    },
+	close: function(){
+		this.$el.modal('hide');
+	},
+	render: function(){
+		this.$el.html(this.template());
+		return this;
+
+	}
+});
+
 App.Views.Login = Parse.View.extend({
-	id: 'loginContainer',
+	el: $('#login'),
 	template: _.template($("#loginTemplate").html()),
     initialize: function() {
-      _.bindAll(this, "logIn");
+     	_.bindAll(this, "logIn");
 
-      //render the login
-      $('.login').html(this.render().el);
+    	//render the login modal
+    	this.render();
 
     },
     events: {
       "submit form.loginForm": 		"logIn",
-      "click #forgotPassword": 		"passwordForm",
-      // "submit form.passwordForm": 	"resetPassword"
+      "click #forgotPassword": 		"passwordForm"
     },
     logIn: function(e){
       var self = this;
@@ -448,10 +483,9 @@ App.Views.Login = Parse.View.extend({
       Parse.User.logIn(username, password, {
         success: function(user) {
         	$('#login').modal('hide');
-			App.Router.navigate('/', {trigger: true});
-			console.log(user)
+			Parse.history.navigate('/', {trigger: true});
 			$('.intro').html("<h3>Welcome back "+Parse.User.current().getUsername()+"!</h3>");
-			App.renderNav();
+			App.render();
 			$("html, body").animate({ scrollTop: 0 }, 200);
 			self.undelegateEvents();
 			delete self;
@@ -466,14 +500,11 @@ App.Views.Login = Parse.View.extend({
       return false;
     },
     passwordForm: function(e){
-    	console.log('password form triggered')
-
 		var forgotPassword = new App.Views.ForgotPassword();
 		$('.app').html(forgotPassword.render().el);
     },
 	render: function(){
-		var html = this.template();
-		$(this.el).html(html);
+		this.$el.html(this.template());
 		return this;
 	}
 });
@@ -486,14 +517,12 @@ App.Views.ForgotPassword = Parse.View.extend({
     },
     resetPassword: function(e){
     	e.preventDefault();
-    	console.log('password reset triggered')
     	var info = $("#inputInfo").val();
 		Parse.User.requestPasswordReset(info, {
 		  success: function() {
 		    // Password reset request was sent successfully
-		    console.log('successsssss')
 		    this.$('p').html('Check your email for the password reset link!')
-		    setTimeout(function() { App.Router.navigate('/', {trigger: true}) }, 2400);
+		    setTimeout(function() { Parse.history.navigate('', {trigger: true}) }, 2400);
 		  },
 		  error: function(error) {
 		    // Show the error message somewhere
@@ -526,6 +555,7 @@ App.Router = new (Parse.Router.extend({
 		"":						"home",
 		"about":   				"about",
 		"join":        		    "join",
+		"upload":        		"upload",
 		"login":        		"login",
 		"settings":        		"settings",
 		":uname":   			"showProfile"
@@ -535,15 +565,13 @@ App.Router = new (Parse.Router.extend({
 		App.Collections.artists = new App.Collections.Artists();
 
 		//google analtic tracking
-		 this.bind('route', this._pageView);
+		this.bind('route', this._pageView);
 
 	},
 	home: function(){
 		var intro = new App.Views.Intro();
 		$('.app').html(intro.render().el);
 
-		//create the login view
-		var login = new App.Views.Login();
 
 		// find all artists featured this month
 		App.Collections.artists.query = new Parse.Query(App.Models.Artist);
@@ -590,8 +618,11 @@ App.Router = new (Parse.Router.extend({
 		var join = new App.Views.Join();
 		$('.app').html(join.render().el);
 	},
+	upload: function(){
+		$('#upload').modal('show');
+	},
 	login: function(){
-		$('#login').modal('show')
+		$('#login').modal('show');
 	},
 	settings: function(){
 		///need to render the correct user type settings

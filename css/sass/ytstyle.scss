@@ -935,8 +935,14 @@ span.hover-content {
 
 
 ////// Upload post tattoo
-#upload .modal-content {
-    text-align: center;
+#upload {
+    .modal-content {
+        text-align: center;    
+    }
+    .btn-link {
+        margin: 80px;
+    }
+    
 }
 
 .btn-file {

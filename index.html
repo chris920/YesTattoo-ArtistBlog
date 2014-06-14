@@ -28,6 +28,7 @@
                   <ul class="dropdown-menu">
                     <li><a href="/<% print(Parse.User.current().getUsername()) %>"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
                     <li class="divider"></li>
+                   <li><a href="/upload" class="main-nav-item" data-toggle="modal" data-target="#upload"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
                     <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
                     <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
                   </ul>
@@ -36,7 +37,7 @@
               <% } else { %>
 
                 <li><a href="/join" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
-                <li><a href="#" class="main-nav-item" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
+                <li><a href="/login" class="main-nav-item" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
 
               <% } %>
 
@@ -45,8 +46,14 @@
       </div>
       <div class="menu-bg"></div>
     </script>
-  <div class="login"></div>
-  <section class="app"></section>
+
+    <div class="navs"></div>
+
+    <div class="modal fade" tabindex="-1" id="login" role="dialog" aria-labelledby="loginModal" aria-hidden="true"></div>
+
+    <div class="modal fade" id="upload" tabindex="-1" role="dialog" aria-labelledby="uploadModal" aria-hidden="true"></div>
+
+    <section class="app"></section>
 
     <!-- Landing Home Page / Featured Artists Page-->
     <script type="text/html" id="introTemplate">
@@ -234,7 +241,6 @@
 
     <!-- Login page / modal + forgot password -->
     <script type="text/html" id="loginTemplate">
-      <div class="modal fade" tabindex="-1" id="login" role="dialog" aria-labelledby="loginModal" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -274,7 +280,6 @@
             </div>
           </div>
         </div>
-      </div>
     </script>
 
     <script type="text/html" id="passwordResetTemplate">
@@ -444,6 +449,32 @@
       </div>
     </script>
 
+    <!-- artist post, upload and edit tattoo Modal -->
+    <script type="text/html" id="artistUploadTemplate">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h3 class="modal-title" id="uploadModal">Upload Tattoo</h3>
+            </div>
+            <div class="modal-body">
+              <div class="fileinput fileinput-new" data-provides="fileinput">
+                <div class="fileinput-preview thumbnail" data-trigger="fileinput"></div>
+                <div class="row">
+                  <span class="btn-file"><span class="btn-submit fileinput-new">Choose image</span>
+
+                  <span class="btn-link fileinput-exists">Cancel</span><input type="file" name="..."></span>
+                  <a href="#" class="btn-link fileinput-exists" data-dismiss="fileinput">Delete</a>
+
+                  <form class="fileinput-exists" role="form">
+                    <button type="submit" class="btn-submit">Submit</button>
+                  </form> 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </script>
 
     <!-- Scroll to top button-->
     <a id="back-to-top" href="#" class="btn btn-link back-to-top" role="button" title="Scroll to the top!!!" data-toggle="tooltip" data-placement="left"><span class="flaticon-up49"></span></a>

@@ -4723,6 +4723,8 @@ span.hover-content {
 
 #upload .modal-content {
   text-align: center; }
+#upload .btn-link {
+  margin: 80px; }
 
 .btn-file {
   overflow: hidden;
