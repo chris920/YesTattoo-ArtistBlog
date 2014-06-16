@@ -27,18 +27,19 @@ var App = new (Parse.View.extend({
 			Parse.history.navigate(e.target.pathname, {trigger: true});
 			$("html, body").animate({ scrollTop: 0 }, 200);
 		},
-		//above target.pathname does not work for buttons.... Need to move to the view
-		"click [href='/about']": function(e){
-			e.preventDefault();
-			Parse.history.navigate('/about', {trigger: true});
-			$("html, body").animate({ scrollTop: 0 }, 200);
-		},
-		"click #upload": "upload",
-		"click #logout": "logout"
+		///above target.pathname does not work for buttons.... Need to move to clean up
+		"click [href='/about']": "about",
+		"click [href='/tattoo/new']": 	"upload",
+		"click #logout": 				"logout"
+	},
+	about: function(e){
+		e.preventDefault();
+		Parse.history.navigate('/about', {trigger: true});
+		$("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	upload: function(e){
 		e.preventDefault();
-		$('#upload').modal('show')
+		Parse.history.navigate('/tattoo/new', {trigger: true});
 	},
 	logout: function(e){
 		Parse.User.logOut();
@@ -51,12 +52,7 @@ var App = new (Parse.View.extend({
 		//renders the nav, which has an if current user statement in template.
 		$('.navs').html(this.template());
 
-		//renders the upload modal if the user is logged in, otherwise renders the login modal.
-		if (Parse.User.current()) {
-			var upload = new App.Views.ArtistUpload();
-		} else {
-			var login = new App.Views.Login();
-		};
+		var login = new App.Views.Login();
 
 	}
 }))({el: document.body});
@@ -85,6 +81,15 @@ App.Models.Artist = Parse.User.extend({
 	}
 });
 
+App.Models.Tattoo = Parse.User.extend({
+	className: "Tattoo",
+	defaults: function() {
+      return {
+	    artist:"",
+	    uploader:""
+      };
+	}
+});
 
 App.Models.FeaturedArtist = Parse.User.extend({
 	className: "User"
@@ -265,7 +270,8 @@ App.Views.Settings = Parse.View.extend({
     	"submit form.infoForm": 	"saveInfo",
     	"submit form.profileForm": 	"saveProfile",
     	"click #forgotPassword": 	"resetPassword",
-    	"click li": 				"scrollTo"
+    	"click li": 				"scrollTo",
+    	"click [href='/tattoo/new']": 		"upload"
     },
     saveInfo: function(e){
     	e.preventDefault();
@@ -330,6 +336,10 @@ App.Views.Settings = Parse.View.extend({
 	   	$('html, body').animate({
 	        scrollTop: $(section).offset().top - 110
 	    }, 1200);
+    },
+    upload: function(e){
+    	e.preventDefault();
+    	Parse.history.navigate('/tattoo/new', {trigger: true});
     },
 	render: function(){
 
@@ -440,7 +450,7 @@ App.Views.Join = Parse.View.extend({
 });
 
 App.Views.ArtistUpload = Parse.View.extend({
-	el: $('#upload'),
+	id: 'upload',
 	template: _.template($("#artistUploadTemplate").html()),
     initialize: function() {
 
@@ -449,15 +459,62 @@ App.Views.ArtistUpload = Parse.View.extend({
 
     },
     events: {
-      "button": 		"close",
+      "submit form": 		"save",
     },
-	close: function(){
-		this.$el.modal('hide');
+	save: function(e){
+		$("#upload button").attr("disabled", "disabled");
+		e.preventDefault();
+		console.log('form submitted')
+		var fileUpload = $("#fileUpload")[0];
+		if (fileUpload.files.length > 0) {
+			var upload = fileUpload.files[0];
+			var name = "tattoo.jpg";
+			console.log('upload created');
+			console.log(upload);
+			var file = new Parse.File(name, upload);
+			console.log('file created');
+			console.log(file);
+			file.save().then(function() {
+				var tattoo = new App.Models.Tattoo();
+				tattoo.set("file", file);
+				tattoo.set("artist", Parse.User.current().getUsername());
+				console.log('tattoo created');
+				console.log(tattoo);
+				tattoo.save(null,{
+					success: function(user) {
+				    	var user = Parse.User.current();
+				    	var tattoos = user.relation("tattoos");
+				    	console.log('relationship created');
+				    	tattoos.add(tattoo);
+						user.save(null,{
+							success: function(user) {
+								console.log(user);
+								console.log('image saved to user');
+								Parse.history.navigate(Parse.User.current().getUsername(), {trigger: true});
+							},
+							error: function(user, error) {
+								$("#upload .error").html(error.message).show();
+								$("#upload button").removeAttr("disabled");
+							}
+						});
+					},
+					error: function(user, error) {
+						$("#upload .error").html(error.message).show();
+						$("#upload button").removeAttr("disabled");
+					}
+				});
+
+			}, function(error) {
+			  // The file either could not be read, or could not be saved to Parse.
+				console.log(error);
+				$("#upload .error").html(error.message).show();
+				$("#upload button").removeAttr("disabled");
+			});
+		}
 	},
 	render: function(){
 		this.$el.html(this.template());
 		return this;
-
 	}
 });
 
@@ -555,9 +612,9 @@ App.Router = new (Parse.Router.extend({
 		"":						"home",
 		"about":   				"about",
 		"join":        		    "join",
-		"upload":        		"upload",
 		"login":        		"login",
 		"settings":        		"settings",
+		"tattoo/new": 			"upload",
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
@@ -618,9 +675,6 @@ App.Router = new (Parse.Router.extend({
 		var join = new App.Views.Join();
 		$('.app').html(join.render().el);
 	},
-	upload: function(){
-		$('#upload').modal('show');
-	},
 	login: function(){
 		$('#login').modal('show');
 	},
@@ -633,7 +687,10 @@ App.Router = new (Parse.Router.extend({
 
 		settings.renderMap();
 	},
-
+	upload: function(){
+		var upload = new App.Views.ArtistUpload();
+		$('.app').html(upload.render().el);
+	},
 	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/
 	_pageView: function() {
 	  var path = Parse.history.getFragment();

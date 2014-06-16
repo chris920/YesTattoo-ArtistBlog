@@ -28,7 +28,7 @@
                   <ul class="dropdown-menu">
                     <li><a href="/<% print(Parse.User.current().getUsername()) %>"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
                     <li class="divider"></li>
-                   <li><a href="/upload" class="main-nav-item" data-toggle="modal" data-target="#upload"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
+                   <li><a href="/tattoo/new" class="main-nav-item"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
                     <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
                     <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
                   </ul>
@@ -50,8 +50,6 @@
     <div class="navs"></div>
 
     <div class="modal" tabindex="-1" id="login" role="dialog" aria-labelledby="loginModal" aria-hidden="true"></div>
-
-    <div class="modal" id="upload" tabindex="-1" role="dialog" aria-labelledby="uploadModal" aria-hidden="true"></div>
 
     <section class="app"></section>
 
@@ -215,7 +213,7 @@
     <script type="text/html" id="joinTemplate">
       <div class="container">
         <div class="lightContainer">
-          <h2 class="text-center">Join</h2>
+          <h3 class="text-center">Join</h3>
           <p class="text-center">Reserve your username. Subscribe to new featured artists. Stay up to date with YesTattoo.</p>
           <form class="signupForm" role="form">
             <div class="error" style="display:none"></div>
@@ -285,7 +283,7 @@
     <script type="text/html" id="passwordResetTemplate">
       <div class="container">
         <div class="lightContainer">
-          <h2 class="text-center">Password Reset</h2>
+          <h3 class="text-center">Password Reset</h3>
           <p class="text-center">Don&#39;t worry, we have all been there....</p>
           <form class="passwordForm" role="form">
             <div class="error" style="display:none"></div>
@@ -423,6 +421,8 @@
 
           </form>
 
+          <a href="/tattoo/new" class="btn"><span class="flaticon-camera4"></span>Upload Tattoo</a>
+
           <h3 id="notificationSettings">Notifications</h3>
           <p>Featured Artists</p>          
           <div class="btn-group" data-toggle="buttons" id="toggleFeatured">
@@ -451,29 +451,25 @@
 
     <!-- artist post, upload and edit tattoo Modal -->
     <script type="text/html" id="artistUploadTemplate">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h3 class="modal-title" id="uploadModal">Upload Tattoo</h3>
-            </div>
-            <div class="modal-body">
-              <div class="fileinput fileinput-new" data-provides="fileinput">
-                <div class="fileinput-preview thumbnail" data-trigger="fileinput"></div>
-                <div class="row">
-                  <span class="btn-file"><span class="btn-submit fileinput-new">Choose image</span>
+      <div class="container">
+        <div class="lightContainer">
+          <h3 class="text-center">Upload Tattoo</h3>
+            <div class="error text-center" style="display:none"></div>
+            <div class="fileinput fileinput-new" data-provides="fileinput">
+              <div class="fileinput-preview thumbnail" data-trigger="fileinput"></div>
+              <div class="row">
+                <span class="btn-file"><span class="btn-submit fileinput-new">Choose image</span>
 
-                  <span class="btn-link fileinput-exists">Cancel</span><input type="file" name="..."></span>
-                  <a href="#" class="btn-link fileinput-exists" data-dismiss="fileinput">Delete</a>
+                <span class="btn-link fileinput-exists">Cancel</span><input type="file" id="fileUpload" name="..."></span>
+                <a href="#" class="btn-link fileinput-exists" data-dismiss="fileinput">Delete</a>
 
-                  <form class="fileinput-exists" role="form">
-                    <button type="submit" class="btn-submit">Submit</button>
-                  </form> 
-                </div>
+                <form class="fileinput-exists" role="form">
+                  <button type="submit" class="btn-submit">Submit</button>
+                </form> 
               </div>
             </div>
-          </div>
         </div>
+      </div>
     </script>
 
     <!-- Scroll to top button-->
