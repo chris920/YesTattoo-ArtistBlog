@@ -22,15 +22,16 @@ var App = new (Parse.View.extend({
 	},
 	events: {
 		//simplifies html to use routers where needed
-		"click [href^='/']": function(e){
+		"click [href^='/']": 			"links",
+		///above target.pathname does not work for buttons.... Need to move to clean up
+		"click [href='/about']": 		"about",
+		"click [href='/tattoo/new']": 	"upload",
+		"click #logout": 				"logout"
+	},
+	links: function(e){
 			e.preventDefault();
 			Parse.history.navigate(e.target.pathname, {trigger: true});
 			$("html, body").animate({ scrollTop: 0 }, 200);
-		},
-		///above target.pathname does not work for buttons.... Need to move to clean up
-		"click [href='/about']": "about",
-		"click [href='/tattoo/new']": 	"upload",
-		"click #logout": 				"logout"
 	},
 	about: function(e){
 		e.preventDefault();
@@ -73,6 +74,8 @@ App.Models.Artist = Parse.User.extend({
 	    address:"",
 	    email:"",
 	    q1:"",
+	    q2:"",
+	    q3:"",
 	    desc:"",
 	   	author:"",
 	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999}),
@@ -81,7 +84,7 @@ App.Models.Artist = Parse.User.extend({
 	}
 });
 
-App.Models.Tattoo = Parse.User.extend({
+App.Models.Tattoo = Parse.Object.extend({
 	className: "Tattoo",
 	defaults: function() {
       return {
@@ -159,6 +162,39 @@ App.Views.ArtistProfile = Parse.View.extend({
 	  	// Pass this object onto the template function, returns an HTML string. Then use jQuerry to insert the html
 		this.$el.html(this.template(attributes));
 
+		return this;
+	}
+});
+
+App.Views.Tattoos = Parse.View.extend({
+	el: '.tattoos',
+	template: _.template($("#tattooTemplate").html()),
+
+    render: function () {
+      this.renderTattoos();
+      return this;
+    },
+	renderTattoos: function(e){
+    	this.$el.empty();
+    	// Renders all the featured artists in collection
+    	this.collection.forEach(this.renderTattoo);
+
+	},
+	renderTattoo: function(tattoo){
+		var tattoo = new App.Views.Tattoo({model: tattoo});
+		$('.tattoos').append(tattoo.render().el);
+		//renders an additional featured artist
+	}
+
+
+});
+
+App.Views.Tattoo = Parse.View.extend({
+	className: 'Tattoo',
+	template: _.template($("#tattooTemplate").html()),
+	render: function(){
+		var attributes = this.model.toJSON();
+		$(this.el).append(this.template(attributes));
 		return this;
 	}
 });
@@ -410,7 +446,7 @@ App.Views.Join = Parse.View.extend({
 			$('.artistForm').fadeOut();
 			$('.toggleArtist').text("Artist or shop?");
 			$('#inputRole').val('user');
-    	}; 
+    	};
     },
     signUp: function(e) {
 		var self = this;
@@ -464,32 +500,21 @@ App.Views.ArtistUpload = Parse.View.extend({
 	save: function(e){
 		$("#upload button").attr("disabled", "disabled");
 		e.preventDefault();
-		console.log('form submitted')
 		var fileUpload = $("#fileUpload")[0];
 		if (fileUpload.files.length > 0) {
 			var upload = fileUpload.files[0];
 			var name = "tattoo.jpg";
-			console.log('upload created');
-			console.log(upload);
 			var file = new Parse.File(name, upload);
-			console.log('file created');
-			console.log(file);
 			file.save().then(function() {
 				var tattoo = new App.Models.Tattoo();
 				tattoo.set("file", file);
 				tattoo.set("artist", Parse.User.current().getUsername());
-				console.log('tattoo created');
-				console.log(tattoo);
 				tattoo.save(null,{
 					success: function(user) {
 				    	var user = Parse.User.current();
 				    	var tattoos = user.relation("tattoos");
-				    	console.log('relationship created');
-				    	tattoos.add(tattoo);
 						user.save(null,{
 							success: function(user) {
-								console.log(user);
-								console.log('image saved to user');
 								Parse.history.navigate(Parse.User.current().getUsername(), {trigger: true});
 							},
 							error: function(user, error) {
@@ -599,6 +624,10 @@ App.Collections.Artists = Parse.Collection.extend({
 	model: App.Models.Artist
 });
 
+App.Collections.Tattoos = Parse.Collection.extend({
+	model: App.Models.Tattoo
+});
+
 App.Collections.FeaturedArtists = Parse.Collection.extend({
 	model: App.Models.Artist
 });
@@ -657,6 +686,20 @@ App.Router = new (Parse.Router.extend({
 		  	// render out the profile page
 		  	var artistProfile = new App.Views.ArtistProfile({model: results});
 		  	$('.app').html(artistProfile.render().el);
+
+		  	App.tattoos = results.relation('tattoos');
+		  	var query = App.tattoos.query();
+		  	query.find({
+		  		success: function(tats) {
+
+		  			var tattoos = new App.Collections.Tattoos(tats);
+
+		  			var portfolio = new App.Views.Tattoos({collection: tattoos});
+
+		  			portfolio.render();
+
+		  		}
+		  	});
 
 		  },
 		  error: function(error) {

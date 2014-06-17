@@ -169,7 +169,8 @@
           <div class="tagFilters" data-toggle="buttons">
           </div>  
           <div class="container">          
-            <div class="row">
+            <div class="row tattoos">
+
               <a href="img/tattoos/<%= username %>1.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>1.jpg" class="tattooImg"></a>
               <a href="img/tattoos/<%= username %>2.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>2.jpg" class="tattooImg"></a>
               <a href="img/tattoos/<%= username %>3.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>3.jpg" class="tattooImg"></a>
@@ -183,17 +184,24 @@
           <div class="container">          
             <div class="md8container">
               <h3>About <%= (name) ?  name : '' %> </h3>
-
                 <% if (desc) { %>
                   <p><%= desc %></p><hr><br>
                 <% } %>
-                <% if (a1) { %>
+                <% if (q1) { %>
                   <h3>Featured Interview</h3>
                   <h5>Q1 ~ <%= q1 %> </h5>
                   <p class="answer"><%= a1 %></p>
-                  <h5>Q2 ~ <%= q2 %> <h5>
+                <% } %>
+                <% if (q2) { %>
+                  <h5>Q2 ~ <%= q2 %> </h5>
                   <p class="answer"><%= a2 %></p>
-                  <i class="pull-right">Featured on June 1st, 2014 by Author Name</i>
+                <% } %>
+                <% if (q3) { %>
+                  <h5>Q3 ~ <%= q3 %> <h5>
+                  <p class="answer"><%= a3 %></p>
+                <% } %>
+                <% if (q1) { %>
+                  <i class="pull-right">Featured on <%= featuremonth %> / <%= featureyear %> by <%= author %></i>
                 <% } %>
             </div>
           </div>
@@ -208,6 +216,9 @@
       </div>
     </script>
 
+    <script type="text/html" id="tattooTemplate">
+      <a href="<%= file.url %>" class="tattooContainer"><img src="<%= file.url %>" class="tattooImg"></a>
+    </script>
 
     <!-- Join page -->
     <script type="text/html" id="joinTemplate">
