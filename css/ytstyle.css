@@ -3878,9 +3878,8 @@ button.close {
 @media print {
   .hidden-print {
     display: none !important; } }
-body {
-  padding: 100px 0px 0 0;
-  min-height: 100%; }
+body, html {
+  height: 100%; }
 
 h5 {
   color: gray; }
@@ -3888,8 +3887,43 @@ h5 {
 input, input.span, .input-group {
   margin-bottom: 10px; }
 
-footer {
+#footer {
   background-color: black; }
+
+#wrap {
+  padding-bottom: 100px;
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 100px auto -150px; }
+  @media screen and (min-width: 768px) {
+    #wrap {
+      margin: 100px auto -100px; } }
+
+#push, #footer {
+  height: 150px; }
+  @media screen and (min-width: 768px) {
+    #push, #footer {
+      height: 100px; } }
+
+.footerlinks > a, .footerlinks > p {
+  display: inline-block;
+  color: #c9c9c9;
+  margin: 20px 5px 15px 15px;
+  float: right !important;
+  -webkit-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
+  -moz-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
+  -o-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
+  -ms-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
+  transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s; }
+  .footerlinks > a:hover, .footerlinks > p:hover {
+    color: #fff;
+    opacity: 1;
+    text-decoration: none; }
+  @media screen and (min-width: 768px) {
+    .footerlinks > a, .footerlinks > p {
+      margin: 40px 5px 30px 15px; } }
 
 .tab-content {
   margin-bottom: 80px; }
@@ -3930,21 +3964,6 @@ footer {
   .end img {
     height: 200px; }
 
-.footerlinks > a, .footerlinks > p {
-  display: inline-block;
-  color: #c9c9c9;
-  margin: 30px 5px 40px 15px;
-  float: right !important;
-  -webkit-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
-  -moz-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
-  -o-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
-  -ms-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
-  transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s; }
-  .footerlinks > a:hover, .footerlinks > p:hover {
-    color: #fff;
-    opacity: 1;
-    text-decoration: none; }
-
 .main-nav-item {
   -webkit-transition: 0.2s ease;
   transition: 0.2s ease;
@@ -3969,12 +3988,6 @@ footer {
     .main-logo {
       margin-left: 10px; } }
 
-.icon-book {
-  display: inline-block;
-  height: 10px;
-  background-image: url("../img/icon-book.png") no-repeat center center;
-  background-position: center center; }
-
 .twitter-icon {
   background-image: url("../img/twitter.png"); }
 
@@ -3987,7 +4000,7 @@ footer {
 .social-icon {
   height: 48px;
   width: 48px;
-  margin: 10px 10px 0 0;
+  margin: 25px 10px 0 0;
   float: left;
   opacity: .8;
   -webkit-transition: all cubic-bezier(0.1, 0.26667, 0.8, -0.23333) 0.32s;
@@ -3999,7 +4012,7 @@ footer {
     .social-icon {
       float: right; } }
   .social-icon:hover {
-    margin: 10px 10px 0 0;
+    margin: 15px 10px 0 0;
     background-position: 0px -48px;
     opacity: .95; }
 
@@ -4721,10 +4734,8 @@ span.hover-content {
   height: 500px;
   border: 1px solid #e6e6e6; }
 
-#upload .modal-content {
-  text-align: center; }
 #upload .btn-link {
-  margin: 80px; }
+  margin-right: 20px; }
 
 .btn-file {
   overflow: hidden;
@@ -4979,7 +4990,7 @@ span.hover-content {
   text-align: center;
   max-width: 600px;
   margin: 0 auto;
-  padding: 80px;
+  padding: 80px 80px 0 80px;
   color: #1a1a1a;
   background-color: #d9d9d9; }
   @media screen and (max-width: 768px) {
@@ -4997,16 +5008,14 @@ span.hover-content {
       .darkContainer p {
         padding-right: 0px; } }
 
-#settings {
-  padding-bottom: 80px; }
-  #settings h3 {
-    border-bottom: 1px solid gray;
-    margin-top: 40px; }
-  #settings p {
-    padding: 5px;
-    display: block; }
-  #settings .btn-group {
-    padding-bottom: 20px; }
+#settings h3 {
+  border-bottom: 1px solid gray;
+  margin-top: 40px; }
+#settings p {
+  padding: 5px;
+  display: block; }
+#settings .btn-group {
+  padding-bottom: 20px; }
 
 .nav-pills {
   padding: 20px 20px;

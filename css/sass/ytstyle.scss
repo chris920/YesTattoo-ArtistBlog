@@ -13,9 +13,9 @@
 
 
 ////////// Body & Footer
-body {
-    padding: 100px 0px 0 0;
-    min-height: 100%;
+body, html {
+
+    height: 100%;
 }
 h5 {   //used for location and other muted text
     color: $gray;
@@ -23,9 +23,54 @@ h5 {   //used for location and other muted text
 input, input.span,.input-group {
     margin-bottom: 10px;
 }
-footer {
+
+//Sticky footer wrap, placeholder and footer 
+#footer {
     background-color: black;
 }
+#wrap {
+    padding-bottom: 100px;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    /* Negative indent footer by it's height */
+    margin: 100px auto -150px;
+    @media screen and (min-width: $screen-sm) {
+        margin: 100px auto -100px;
+    }
+}
+#push, #footer {
+    height: 150px;
+    @media screen and (min-width: $screen-sm) {
+        height: 100px;
+    }
+}
+
+// @media (max-width: 767px) {
+//     #footer {
+//       margin-left: -20px;
+//       margin-right: -20px;
+//       padding-left: 20px;
+//       padding-right: 20px;
+//     }
+// }
+
+
+.footerlinks > a, .footerlinks > p {
+    display: inline-block;
+    color: #c9c9c9;
+    margin: 20px 5px 15px 15px;
+    float: right !important;
+    @include slowtofast(0.65,.2s);
+    &:hover {
+        color: #fff;
+        opacity: 1;
+        text-decoration:none; }
+    @media screen and (min-width: $screen-sm) {
+        margin: 40px 5px 30px 15px;
+    }
+}
+
 .tab-content {
     margin-bottom: 80px;
 }
@@ -94,25 +139,6 @@ footer {
     }
 }
 
-// Janky footer highlight effect
-// .ytfooter {
-//     height: 100px;
-//     opacity: .3;
-//     @include slowtofast(0.85,.1s);
-//     &:hover { opacity: 1; }
-// }
-
-.footerlinks > a, .footerlinks > p {
-    display: inline-block;
-    color: #c9c9c9;
-    margin: 30px 5px 40px 15px;
-    float: right !important;
-    @include slowtofast(0.65,.2s);
-    &:hover {
-        color: #fff;
-        opacity: 1;
-        text-decoration:none; }
-}
 
 .main-nav-item {
   @include transition(0.2s ease);
@@ -142,13 +168,7 @@ footer {
     }
 }
 
-.icon-book {
-    display: inline-block;
-    height: 10px;
-    background-image: url('../img/icon-book.png') no-repeat center center;
-    background-position: center center;
-}
-
+// footer icons
 .twitter-icon {
     background-image: url('../img/twitter.png');
 }
@@ -161,7 +181,7 @@ footer {
 .social-icon {
     height: 48px;
     width: 48px;
-    margin: 10px 10px 0 0;
+    margin: 25px 10px 0 0;
     float: left;
     opacity: .8;
     @include slowtofast(0.80,.32s);
@@ -169,7 +189,7 @@ footer {
         float: right;
     }
     &:hover {
-        margin: 10px 10px 0 0;
+        margin: 15px 10px 0 0;
         background-position: 0px -48px;
         opacity: .95; }
 }
@@ -1220,7 +1240,7 @@ span.hover-content {
     text-align: center;
     max-width: 600px;
     margin: 0 auto;
-    padding: 80px;
+    padding: 80px 80px 0 80px;
     color: $gray-darker; 
     background-color: $gray-light;
     @media screen and (max-width: $screen-sm) {
@@ -1243,7 +1263,6 @@ span.hover-content {
 //////  settings edit profile page
 
 #settings {
-    padding-bottom: 80px;
     h3 {
         border-bottom: 1px solid $gray;
         margin-top: 40px;
