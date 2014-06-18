@@ -28,7 +28,7 @@ input, input.span,.input-group {
 #footer {
     background-color: black;
 }
-#wrap {
+#body {
     padding-bottom: 100px;
     min-height: 100%;
     height: auto !important;
@@ -45,17 +45,6 @@ input, input.span,.input-group {
         height: 100px;
     }
 }
-
-// @media (max-width: 767px) {
-//     #footer {
-//       margin-left: -20px;
-//       margin-right: -20px;
-//       padding-left: 20px;
-//       padding-right: 20px;
-//     }
-// }
-
-
 .footerlinks > a, .footerlinks > p {
     display: inline-block;
     color: #c9c9c9;
@@ -70,6 +59,7 @@ input, input.span,.input-group {
         margin: 40px 5px 30px 15px;
     }
 }
+
 
 .tab-content {
     margin-bottom: 80px;

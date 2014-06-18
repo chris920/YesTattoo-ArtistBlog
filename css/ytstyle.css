@@ -3890,7 +3890,7 @@ input, input.span, .input-group {
 #footer {
   background-color: black; }
 
-#wrap {
+#body {
   padding-bottom: 100px;
   min-height: 100%;
   height: auto !important;
@@ -3898,7 +3898,7 @@ input, input.span, .input-group {
   /* Negative indent footer by it's height */
   margin: 100px auto -150px; }
   @media screen and (min-width: 768px) {
-    #wrap {
+    #body {
       margin: 100px auto -100px; } }
 
 #push, #footer {
