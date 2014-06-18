@@ -18,30 +18,35 @@
         <div class="container">
           <div class="navbar-header">
             <a class="navbar-brand main-logo" href="/"></a>
+            <button type="button" class="navbar-toggle btn btn-link" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span>Menu    </span>
+          </button>
           </div>
-          <ul class="nav navbar-nav navbar-right">
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
 
-              <% if (Parse.User.current()) { %>
+                <% if (Parse.User.current()) { %>
 
-                <li class="dropdown">
-                  <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><% print(Parse.User.current().getUsername()) %> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="/<% print(Parse.User.current().getUsername()) %>"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
-                    <li class="divider"></li>
-                   <li><a href="/tattoo/new" class="main-nav-item"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
-                    <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
-                    <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
-                  </ul>
-                </li>
+                  <li class="dropdown">
+                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><% print(Parse.User.current().getUsername()) %> <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="/<% print(Parse.User.current().getUsername()) %>"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
+                      <li class="divider"></li>
+                     <li><a href="/tattoo/new"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
+                      <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
+                      <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
+                    </ul>
+                  </li>
 
-              <% } else { %>
+                <% } else { %>
 
-                <li><a href="/join" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
-                <li><a href="/login" class="main-nav-item" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
+                  <li><a href="/join" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
+                  <li><a href="/login" class="main-nav-item" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
 
-              <% } %>
-
-          </ul>
+                <% } %>
+            </ul>
+          </div>
         </div>
       </div>
       <div class="menu-bg"></div>
@@ -428,11 +433,13 @@
               <input type="text" class="form-control" id="editTwitter" placeholder="Twitter Name" value="<%= (twitter) ?  twitter : '' %>">
             </div>
 
+            <a href="/tattoo/new" class="btn btn-link"><span class="flaticon-camera4"></span>Upload Tattoo</a>
+
             <button type="submit" class="btn-submit">Submit</button>
 
           </form>
 
-          <a href="/tattoo/new" class="btn"><span class="flaticon-camera4"></span>Upload Tattoo</a>
+     
 
           <h3 id="notificationSettings">Notifications</h3>
           <p>Featured Artists</p>          
@@ -470,12 +477,11 @@
               <div class="fileinput-preview thumbnail" data-trigger="fileinput"></div>
               <div class="row">
                 <span class="btn-file"><span class="btn-submit fileinput-new">Choose image</span>
-
-                <span class="btn-link fileinput-exists">Cancel</span><input type="file" id="fileUpload" name="..."></span>
-                <a href="#" class="btn-link fileinput-exists" data-dismiss="fileinput">Delete</a>
-
+                <input type="file" id="fileUpload" name="..."></span>
                 <form class="fileinput-exists" role="form">
-                  <button type="submit" class="btn-submit">Submit</button>
+                  <span href="#" class="fileinput-exists btn btn-link" data-dismiss="fileinput">X</span>
+                  <button href="#" class="btn btn-link">Delete</button>
+                  <button type="submit" id="delete" class="btn-submit">Submit</button>
                 </form> 
               </div>
             </div>
@@ -492,7 +498,7 @@
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDND9JGq1-cU9bJy12cTy1-nTNq0a96sOY&sensor=false&libraries=places"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
-    <script src="http://www.parsecdn.com/js/parse-1.2.13.js"></script>
+    <script src="http://www.parsecdn.com/js/parse-1.2.18.js"></script>
     
     <script src="js/libs/locationpicker.jquery.js"></script>
     <script src="js/libs/typeahead.bundle.min.js"></script>

@@ -89,7 +89,7 @@ App.Models.Tattoo = Parse.Object.extend({
 	defaults: function() {
       return {
 	    artist:"",
-	    uploader:""
+	    by:""
       };
 	}
 });
@@ -185,7 +185,6 @@ App.Views.Tattoos = Parse.View.extend({
 		$('.tattoos').append(tattoo.render().el);
 		//renders an additional featured artist
 	}
-
 
 });
 
@@ -453,13 +452,9 @@ App.Views.Join = Parse.View.extend({
 		var username = this.$("#inputUsername").val();
 		var email = this.$("#inputEmail").val();
 		var password = this.$("#inputPassword").val();
-		var role = 'user';
-
-    	if($(".artistRegistration").is(':visible')){
-			var shop = this.$("#inputShop").val();
-			role = this.$("#inputRole").val()
-    	};
-      
+		var shop = this.$("#inputShop").val();
+		var role = this.$("#inputRole").val()
+      	
 		Parse.User.signUp(username, password, { email: email, role: role, shop: shop, ACL: new Parse.ACL() }, {
 			success: function(user) {
 				App.Router.navigate('/', {trigger: true});
@@ -492,10 +487,11 @@ App.Views.ArtistUpload = Parse.View.extend({
 
     	//render the upload modal
     	this.render();
-
+	
     },
     events: {
       "submit form": 		"save",
+      "click #delete": 		"delete"
     },
 	save: function(e){
 		$("#upload button").attr("disabled", "disabled");
@@ -536,6 +532,9 @@ App.Views.ArtistUpload = Parse.View.extend({
 				$("#upload button").removeAttr("disabled");
 			});
 		}
+	},
+	delete: function(e){
+		Parse.history.navigate(Parse.User.current().getUsername(), {trigger: true});
 	},
 	render: function(){
 		this.$el.html(this.template());
