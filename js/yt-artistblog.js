@@ -79,8 +79,7 @@ App.Models.Artist = Parse.User.extend({
 	    desc:"",
 	   	author:"",
 	   	locationName:"",
-	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999}),
-        contacted: false
+	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999})
       };
 	}
 });
@@ -224,6 +223,10 @@ App.Views.MyTattoo = Parse.View.extend({
 	edit: function(){
 		var edit = new App.Views.ArtistEdit({model: this.model});
 		$('.app').html(edit.render().el);
+
+		// place the image into the edit preview
+		var file = this.model.get("file");
+		$("img")[0].src = file.url();
 	},
 	render: function(){
 		var attributes = this.model.toJSON();
@@ -559,7 +562,7 @@ App.Views.ArtistEdit = Parse.View.extend({
 	id: 'edit',
 	template: _.template($("#artistEditTemplate").html()),
     initialize: function() {
-    	Parse.history.navigate("edit", {trigger: true});
+    	Parse.history.navigate("myprofile/edit", {trigger: true});
     },
     events: {
       "click #cancel": 		"cancel",
@@ -678,8 +681,7 @@ App.Router = new (Parse.Router.extend({
 		"join":        		    "join",
 		"login":        		"login",
 		"settings":        		"settings",
-		"myprofile":       		"myprofile",
-		"edit":     	   		"edit",
+		"myprofile":   			"myprofile",
 		"tattoo/new": 			"upload",
 		":uname":   			"showProfile"
 	},

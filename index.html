@@ -435,6 +435,7 @@
           <h3 id="profileSettings">Profile</h3>
           <form class="profileForm" role="form">
             <div class="error" style="display:none"></div>
+
             <div class="input-group">
               <span class="input-group-addon">Shop Name </span>
               <input type="text" class="form-control" id="editShop" placeholder="Shop Name" value="<%= (shop) ?  shop : '' %>">
@@ -461,13 +462,9 @@
             </div>
 
             <a href="/tattoo/new" class="btn btn-link"><span class="flaticon-camera4"></span>Upload Tattoo</a>
-
             <button type="submit" class="btn-submit">Submit</button>
-
           </form>
-
      
-
           <h3 id="notificationSettings">Notifications</h3>
           <p>Featured Artists</p>          
           <div class="btn-group" data-toggle="buttons" id="toggleFeatured">
@@ -487,10 +484,7 @@
               <input type="radio" name="options" id="updateOff"> Off
             </label>
           </div>
-
-
         </div>
-
       </div>
     </script>
 
@@ -505,9 +499,8 @@
               <div class="row">
                 <span class="btn-file"><span class="btn-submit fileinput-new">Choose image</span>
                 <input type="file" id="fileUpload" name="..."></span>
-                <form class="fileinput-exists" role="form">
+                <form class="fileinput-exists" role="form"> <hr>
                   <span href="#" class="fileinput-exists btn btn-link" data-dismiss="fileinput">X</span>
-
                   <button type="submit" class="btn-submit">Submit</button>
                 </form> 
               </div>
@@ -521,8 +514,8 @@
       <div class="container">
         <div class="lightContainer">
           <h3 class="text-center">Edit Tattoo</h3>
-          <div class="fileinput-preview thumbnail"><img src=""></div>
-          <div class="row">
+          <img src="" class="tattooImg">
+          <div class="row"> <hr>
             <button href="#" id="cancel" class="btn btn-link">Cancel</button>
             <button href="#" id="delete" class="btn btn-link">Delete</button>
           </div>
