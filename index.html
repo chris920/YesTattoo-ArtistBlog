@@ -246,7 +246,7 @@
           <a >
             <img src="<%= file.url %>" class="tattooImg">
             <span class="hover-content" data-toggle="buttons"><span>
-              <button type="button" class="btn-submit btn-block delete">Edit</button>
+              <button type="button" class="btn-submit btn-block">Edit</button>
             </span></span>
           </a>
         </div>
@@ -494,7 +494,7 @@
       </div>
     </script>
 
-    <!-- artist post, upload and edit tattoo Modal -->
+    <!-- artist post, upload tattoo Modal -->
     <script type="text/html" id="artistUploadTemplate">
       <div class="container">
         <div class="lightContainer">
@@ -507,7 +507,7 @@
                 <input type="file" id="fileUpload" name="..."></span>
                 <form class="fileinput-exists" role="form">
                   <span href="#" class="fileinput-exists btn btn-link" data-dismiss="fileinput">X</span>
-                  <button href="#" id="delete" class="btn btn-link">Delete</button>
+
                   <button type="submit" class="btn-submit">Submit</button>
                 </form> 
               </div>
@@ -515,6 +515,21 @@
         </div>
       </div>
     </script>
+
+    <!-- artist edit tattoo Modal -->
+    <script type="text/html" id="artistEditTemplate">
+      <div class="container">
+        <div class="lightContainer">
+          <h3 class="text-center">Edit Tattoo</h3>
+          <div class="fileinput-preview thumbnail"><img src=""></div>
+          <div class="row">
+            <button href="#" id="cancel" class="btn btn-link">Cancel</button>
+            <button href="#" id="delete" class="btn btn-link">Delete</button>
+          </div>
+        </div>
+      </div>
+    </script>
+    
 
     <!-- Scroll to top button-->
     <a id="back-to-top" href="#" class="btn btn-link back-to-top" role="button" title="Scroll to the top!!!" data-toggle="tooltip" data-placement="left"><span class="flaticon-up49"></span></a>

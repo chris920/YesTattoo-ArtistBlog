@@ -17,7 +17,7 @@ var App = new (Parse.View.extend({
 	start: function(){
 		Parse.history.start({pushState: false, root: '/'});
 
-		// render initial nav / modals
+		// render initial nav 
 		this.render();
 	},
 	events: {
@@ -218,6 +218,13 @@ App.Views.MyTattoos = Parse.View.extend({
 App.Views.MyTattoo = Parse.View.extend({
 	className: 'Tattoo',
 	template: _.template($("#myTattooTemplate").html()),
+	events: {
+		'click button': 'edit'
+	},
+	edit: function(){
+		var edit = new App.Views.ArtistEdit({model: this.model});
+		$('.app').html(edit.render().el);
+	},
 	render: function(){
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
@@ -261,8 +268,8 @@ App.Views.FeaturedArtists = Parse.View.extend({
       return this;
     },
     events: {
-     	'scroll': 'scrollChecker',
-     	'click #loaders': 'loadMore'
+     	'scroll': 			'scrollChecker',
+     	'click #loaders': 	'loadMore'
     },
     loadMore: function() {
     	/// Eventually will fetch the next month of artists and change loader counter
@@ -510,15 +517,8 @@ App.Views.Join = Parse.View.extend({
 App.Views.ArtistUpload = Parse.View.extend({
 	id: 'upload',
 	template: _.template($("#artistUploadTemplate").html()),
-    initialize: function() {
-
-    	//render the upload modal
-    	this.render();
-	
-    },
     events: {
-      "submit form": 		"save",
-      "click #delete": 		"delete"
+      "submit form": 		"save"
     },
 	save: function(e){
 		$("#upload button").attr("disabled", "disabled");
@@ -549,8 +549,28 @@ App.Views.ArtistUpload = Parse.View.extend({
 			});
 		}
 	},
+	render: function(){
+		this.$el.html(this.template());
+		return this;
+	}
+});
+
+App.Views.ArtistEdit = Parse.View.extend({
+	id: 'edit',
+	template: _.template($("#artistEditTemplate").html()),
+    initialize: function() {
+    	Parse.history.navigate("edit", {trigger: true});
+    },
+    events: {
+      "click #cancel": 		"cancel",
+      "click #delete": 		"delete"
+    },
+	cancel: function(e){
+		Parse.history.navigate("myprofile", {trigger: true});
+	},
 	delete: function(e){
-		Parse.history.navigate(Parse.User.current().getUsername(), {trigger: true});
+		this.model.destroy();
+		Parse.history.navigate("myprofile", {trigger: true});
 	},
 	render: function(){
 		this.$el.html(this.template());
@@ -659,6 +679,7 @@ App.Router = new (Parse.Router.extend({
 		"login":        		"login",
 		"settings":        		"settings",
 		"myprofile":       		"myprofile",
+		"edit":     	   		"edit",
 		"tattoo/new": 			"upload",
 		":uname":   			"showProfile"
 	},
