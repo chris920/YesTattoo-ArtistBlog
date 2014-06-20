@@ -78,7 +78,6 @@ App.Models.Artist = Parse.User.extend({
 	    q3:"",
 	    desc:"",
 	   	author:"",
-	   	prof:"",
 	   	locationName:"",
 	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999})
       };
@@ -398,7 +397,7 @@ App.Views.Settings = Parse.View.extend({
 			this.user.set("prof", file);
 			this.user.save().then(function (user) {
 				/// update the profile thubmnail.
-				var file = user.get("prof");
+				var file = user.get("profThumb");
 				$(".artistProf")[0].src = file.url();
 				$("#profUpload").removeAttr("disabled");
 			}, function(error) {
@@ -482,7 +481,7 @@ App.Views.Settings = Parse.View.extend({
 	},
 	renderProf: function(e){
 		if(this.user.get("prof")) {
-			var file = this.user.get("prof");
+			var file = this.user.get("profThumb");
 			$(".artistProf")[0].src = file.url();
 		}
 	}

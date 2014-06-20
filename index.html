@@ -109,7 +109,7 @@
     <script type="text/html" id="featuredArtistTemplate">
         <div class="row artistTitleBG">
           <div class="col-sm-2">
-            <img class="artistProf" src="<% if (typeof(prof)!== 'undefined') { print(prof.url()) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
+            <img class="artistProf" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
           </div>
           <div class="col-sm-10 artistTitles">
             <h4 class="artistName"><%= name %><span> <%= username %></span></h4>
@@ -136,7 +136,7 @@
           <div class="row">    
             <br>
             <div class="col-md-2 col-sm-3">
-              <img alt="Profile Picture" src="<% if (typeof(prof)!== 'undefined') { print(prof.url()) } else { %> img/tattooicon.png <% } %>" class="largeprofpic">
+              <img alt="Profile Picture" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/tattooicon.png <% } %>" class="largeprofpic">
             </div>
             <div class="col-md-4 col-sm-4">
               <h3><%= (name) ?  name : '' %><span><%= username %> </span></h3>
