@@ -107,10 +107,9 @@
     </script>
 
     <script type="text/html" id="featuredArtistTemplate">
-
         <div class="row artistTitleBG">
           <div class="col-sm-2">
-            <img class="artistProf" src="img/profs/<%= username %>.jpg" alt="Artist Prof">
+            <img class="artistProf" src="<% if (typeof(prof)!== 'undefined') { print(prof.url()) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
           </div>
           <div class="col-sm-10 artistTitles">
             <h4 class="artistName"><%= name %><span> <%= username %></span></h4>
@@ -123,12 +122,11 @@
           <button type="button" class="btn btn-link pull-right">More...</button>
         </div>
         <div class="portfolioContainer">
-          <a href="img/tattoos/<%= username %>1.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>1.jpg" class="tattooImg"></a>
-          <a href="img/tattoos/<%= username %>2.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>2.jpg" class="tattooImg"></a>
-          <a href="img/tattoos/<%= username %>3.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>3.jpg" class="tattooImg"></a>
-          <a href="img/tattoos/<%= username %>4.jpg" class="tattooContainer"><img src="img/tattoos/<%= username %>4.jpg" class="tattooImg"></a>
+          <a href="/<%= username %>" class="tattooContainer"><img src="img/tattoos/<%= username %>1.jpg" class="tattooImg"></a>
+          <a href="/<%= username %>" class="tattooContainer"><img src="img/tattoos/<%= username %>2.jpg" class="tattooImg"></a>
+          <a href="/<%= username %>" class="tattooContainer"><img src="img/tattoos/<%= username %>3.jpg" class="tattooImg"></a>
+          <a href="/<%= username %>" class="tattooContainer"><img src="img/tattoos/<%= username %>4.jpg" class="tattooImg"></a>
         </div>
-
     </script>
 
     <!-- Artist profile -->
@@ -138,7 +136,7 @@
           <div class="row">    
             <br>
             <div class="col-md-2 col-sm-3">
-              <img alt="Profile Picture" src="img/profs/<%= username %>.jpg" class="largeprofpic">
+              <img alt="Profile Picture" src="<% if (typeof(prof)!== 'undefined') { print(prof.url()) } else { %> img/tattooicon.png <% } %>" class="largeprofpic">
             </div>
             <div class="col-md-4 col-sm-4">
               <h3><%= (name) ?  name : '' %><span><%= username %> </span></h3>
@@ -436,6 +434,11 @@
           <form class="profileForm" role="form">
             <div class="error" style="display:none"></div>
 
+           <div class="row"> 
+               <span class="btn-file"><img class="artistProf" src="img/tattooicon.png" alt="Artist Prof"><span class="btn-submit">Choose Profile Picture</span>
+               <input type="file" id="profUpload" name="..."></span>
+            </div>
+
             <div class="input-group">
               <span class="input-group-addon">Shop Name </span>
               <input type="text" class="form-control" id="editShop" placeholder="Shop Name" value="<%= (shop) ?  shop : '' %>">
@@ -545,7 +548,7 @@
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
       ga('create', 'UA-51701131-1', 'yes.tattoo');
       ga('send', 'pageview');

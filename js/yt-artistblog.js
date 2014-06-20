@@ -78,6 +78,7 @@ App.Models.Artist = Parse.User.extend({
 	    q3:"",
 	    desc:"",
 	   	author:"",
+	   	prof:"",
 	   	locationName:"",
 	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999})
       };
@@ -331,27 +332,28 @@ App.Views.Settings = Parse.View.extend({
 	id: 'settings',
 	artistTemplate: _.template($("#artistSettingsTemplate").html()),
 	initialize: function(){
-		// refresh the users attributes in case changes have been made
-		Parse.User.current().fetch()
 
-		// Grabs the users attributes
-		this.attributes = Parse.User.current().attributes
+		// assigns the users attributes
+		this.user = Parse.User.current()
+
+		// refresh the users attributes in case changes have been made, this may no longer be needed after updated parse...
+		this.user.fetch();
 
 	},
     events: {
-    	"submit form.infoForm": 	"saveInfo",
-    	"submit form.profileForm": 	"saveProfile",
-    	"click #forgotPassword": 	"resetPassword",
-    	"click li": 				"scrollTo",
-    	"click [href='/tattoo/new']": 		"upload"
+    	"submit form.infoForm": 		"saveInfo",
+    	"submit form.profileForm": 		"saveProfile",
+    	"change #profUpload": 			"updateProf",
+    	"click #forgotPassword": 		"resetPassword",
+    	"click li": 					"scrollTo",
+    	"click [href='/tattoo/new']": 	"upload"
     },
     saveInfo: function(e){
     	e.preventDefault();
-    	var user = Parse.User.current();
-    	user.set("username", this.$("#editUsername").val());
-    	user.set("email", this.$("#editEmail").val());
-    	user.set("name", this.$("#editName").val());
-		user.save(null,{
+    	this.user.set("username", this.$("#editUsername").val());
+    	this.user.set("email", this.$("#editEmail").val());
+    	this.user.set("name", this.$("#editName").val());
+		this.user.save(null,{
 			success: function(user) {
 				// flash the success class
 				$(".infoForm").each(function(){
@@ -366,14 +368,13 @@ App.Views.Settings = Parse.View.extend({
     },
     saveProfile: function(e){
     	e.preventDefault();
-    	var user = Parse.User.current();
-    	user.set("shop", this.$("#editShop").val());
-    	user.set("desc", this.$("#editAbout").val());
-    	user.set("website", this.$("#editWebsite").val());
-    	user.set("fb", this.$("#editFB").val());
-    	user.set("ig", this.$("#editInstagram").val());
-    	user.set("twitter", this.$("#editTwitter").val());
-		user.save(null,{
+    	this.user.set("shop", this.$("#editShop").val());
+    	this.user.set("desc", this.$("#editAbout").val());
+    	this.user.set("website", this.$("#editWebsite").val());
+    	this.user.set("fb", this.$("#editFB").val());
+    	this.user.set("ig", this.$("#editInstagram").val());
+    	this.user.set("twitter", this.$("#editTwitter").val());
+		this.user.save(null,{
 			success: function(user) {
 				// flash the success class
 				$(".profileForm").each(function(){
@@ -386,9 +387,30 @@ App.Views.Settings = Parse.View.extend({
 			}
 		});
     },
+    updateProf: function(e) {
+		e.preventDefault();
+		$("#profUpload").attr("disabled", "disabled");
+		var prof = $("#profUpload")[0];
+		if (prof.files.length > 0) {
+			var upload = prof.files[0];
+			var name = this.user.getUsername() + "prof.jpg";
+			var file = new Parse.File(name, upload);
+			this.user.set("prof", file);
+			this.user.save().then(function (user) {
+				/// update the profile thubmnail.
+				var file = user.get("prof");
+				$(".artistProf")[0].src = file.url();
+				$("#profUpload").removeAttr("disabled");
+			}, function(error) {
+				console.log(error);
+				$(".error")[2].html(error.message).show();
+				$("#profUpload").removeAttr("disabled");
+			});
+		}
+    },
     resetPassword: function(e) {
     	e.preventDefault();
-    	email = Parse.User.current().attributes.email
+    	email = this.user.attributes.email
 		Parse.User.requestPasswordReset(email, {
 		  success: function() {
 		    // Password reset request was sent successfully
@@ -416,7 +438,7 @@ App.Views.Settings = Parse.View.extend({
 	render: function(){
 
 	  	// Pass the attributes onto the template function, returns an HTML string. Then use jQuerry to insert the html
-		this.$el.html(this.artistTemplate(this.attributes));
+		this.$el.html(this.artistTemplate(this.user.attributes));
 
 		return this;
 
@@ -426,7 +448,7 @@ App.Views.Settings = Parse.View.extend({
 		var mapStyles = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}];
 	  
 		$('#settingsMap').locationpicker({
-			location: {latitude: this.attributes.location.latitude, longitude: this.attributes.location.longitude},
+			location: {latitude: this.user.attributes.location.latitude, longitude: this.user.attributes.location.longitude},
 			radius: 0,
 			zoom: 12,
 			enableAutocomplete: true,
@@ -436,13 +458,11 @@ App.Views.Settings = Parse.View.extend({
 				locationNameInput: $('#settingsMapAddress')
 			},
 			onchanged: function(currentLocation, currentLocationNameFormatted) {
-
-		    	var user = Parse.User.current();
 		    	var point = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
-		    	user.set("location", point);
-		    	user.set("address", $("#settingsMapAddress").val());
-		    	user.set("locationName", currentLocationNameFormatted);
-				user.save(null,{
+		    	this.user.set("location", point);
+		    	this.user.set("address", $("#settingsMapAddress").val());
+		    	this.user.set("locationName", currentLocationNameFormatted);
+				this.user.save(null,{
 					success: function(user) {
 						// flash the success class
 						$(".editLocation").addClass("has-success").fadeIn("slow");
@@ -459,6 +479,12 @@ App.Views.Settings = Parse.View.extend({
 				$("#locationSettings ~ .error").html("Couldn't find "+locationName+", Try another address?").show();				
 			}
 		});
+	},
+	renderProf: function(e){
+		if(this.user.get("prof")) {
+			var file = this.user.get("prof");
+			$(".artistProf")[0].src = file.url();
+		}
 	}
 });
 
@@ -524,12 +550,12 @@ App.Views.ArtistUpload = Parse.View.extend({
       "submit form": 		"save"
     },
 	save: function(e){
-		$("#upload button").attr("disabled", "disabled");
 		e.preventDefault();
+		$("#upload button").attr("disabled", "disabled");
 		var fileUpload = $("#fileUpload")[0];
 		if (fileUpload.files.length > 0) {
 			var upload = fileUpload.files[0];
-			var name = "tattoo.jpg";
+			var name = Parse.User.current().getUsername() + "tattoo.jpg";
 			var file = new Parse.File(name, upload);
 			file.save().then(function(file) {
 				var tattoo = new App.Models.Tattoo();
@@ -562,7 +588,7 @@ App.Views.ArtistEdit = Parse.View.extend({
 	id: 'edit',
 	template: _.template($("#artistEditTemplate").html()),
     initialize: function() {
-    	Parse.history.navigate("myprofile/edit", {trigger: true});
+    	Parse.history.navigate("myprofile/edit", {trigger: false, replace: true}); //replace does not work in the current version of parse(Backbone .9)
     },
     events: {
       "click #cancel": 		"cancel",
@@ -763,6 +789,7 @@ App.Router = new (Parse.Router.extend({
 		$('.app').html(settings.render().el);
 
 		settings.renderMap();
+		settings.renderProf();
 	},
 	myprofile: function(){
 
