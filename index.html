@@ -122,10 +122,6 @@
           <button type="button" class="btn btn-link pull-right">More...</button>
         </div>
         <div class="portfolioContainer">
-          <a href="/<%= username %>" class="tattooContainer"><img src="img/tattoos/<%= username %>1.jpg" class="tattooImg"></a>
-          <a href="/<%= username %>" class="tattooContainer"><img src="img/tattoos/<%= username %>2.jpg" class="tattooImg"></a>
-          <a href="/<%= username %>" class="tattooContainer"><img src="img/tattoos/<%= username %>3.jpg" class="tattooImg"></a>
-          <a href="/<%= username %>" class="tattooContainer"><img src="img/tattoos/<%= username %>4.jpg" class="tattooImg"></a>
         </div>
     </script>
 
@@ -177,8 +173,13 @@
             <div class="container">
               <ul class="nav nav-tabs" id="profMenu">
                   <li class="active"><a href="#portfolioTab" data-toggle="tab"><span class="flaticon-tattoo1"></span>Portfolio</a></li>
-                  <li><a href="#aboutTab" data-toggle="tab"><span class="flaticon-information"></span>About</a></li>
-                  <li><a href="#shopTab" data-toggle="tab"><span class="flaticon-home73"></span>Map</a></li>
+                  <% if (desc) { %>
+                    <li><a href="#aboutTab" data-toggle="tab"><span class="flaticon-information"></span>About</a></li>
+                  <% } %>
+                  <% if (shop) { %>
+                    <li><a href="#shopTab" data-toggle="tab"><span class="flaticon-home73"></span>Map</a></li>
+                  <% } %>
+
               </ul>
             </div>
           </div>
@@ -236,13 +237,13 @@
     </script>
 
     <script type="text/html" id="tattooTemplate">
-      <a class="tattooContainer"><img src="<%= file.url %>" class="tattooImg"></a>
+      <a class="tattooContainer"><img src="<%= fileThumb.url %>" class="tattooImg"></a>
     </script>
 
     <script type="text/html" id="myTattooTemplate">
         <div class=" tattooContainer">
           <a >
-            <img src="<%= file.url %>" class="tattooImg">
+            <img src="<%= fileThumb.url %>" class="tattooImg">
             <span class="hover-content" data-toggle="buttons"><span>
               <button type="button" class="btn-submit btn-block">Edit</button>
             </span></span>

@@ -103,12 +103,15 @@ App.Models.FeaturedArtist = Parse.User.extend({
 App.Views.ArtistProfile = Parse.View.extend({
 	model: App.Models.Artist,
 	id: 'artistProfile',
+	initialize: function() {
+		_.bindAll(this, 'activateAffix');
+		$(window).scroll(this.activateAffix);
+	},
 	template: _.template($("#artistTemplate").html()),
 	events: {
 		'click [href="#portfolioTab"]': 'portfolioTab',
-		'click [href="#aboutTab"]': 'aboutTab',
-		'click [href="#shopTab"]': 'shopTab',
-		'scroll': 'activateAffix'
+		'click [href="#aboutTab"]': 	'aboutTab',
+		'click [href="#shopTab"]': 		'shopTab',
 	},
 	portfolioTab: function(e){
 	    e.preventDefault();
@@ -131,6 +134,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 		$('.profNavContainer').affix({
 		      offset: { top: $('.profHead').outerHeight(true) + 40 }
 		});
+
 	},
 
 	//render map, using underscore _.debounce to delay the trigger because of hidden tab / responsive issue
@@ -303,7 +307,7 @@ App.Views.FeaturedArtist = Parse.View.extend({
 	className: 'featuredArtist',
 	template: _.template($("#featuredArtistTemplate").html()),
     events: {
-      'click button, .artistProf, h4': 'viewProfile'
+      'click button, .artistProf, h4, a': 'viewProfile'
     },
 	viewProfile: function(){
 		//navigate to the specific model's username
@@ -311,8 +315,21 @@ App.Views.FeaturedArtist = Parse.View.extend({
 		$("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	render: function(){
+		var that = this;
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
+
+		// get 4 tattoos from the artist and append them to the container
+	  	var tattoos = this.model.relation('tattoos');
+	  	var query = tattoos.query();
+	  	query.limit(4);
+	  	query.find().then(function(tats) {
+  			_.each(tats, function(tat) {
+  				var thumb = tat.get('fileThumbSmall').url();
+  				this.$('.portfolioContainer').append(_.template('<a class="tattooContainer"><img src='+thumb+' class="tattooImg"></a>'));
+  			}, that);
+	  	});
+
 		return this;
 	}
 });
@@ -546,7 +563,12 @@ App.Views.ArtistUpload = Parse.View.extend({
 	id: 'upload',
 	template: _.template($("#artistUploadTemplate").html()),
     events: {
-      "submit form": 		"save"
+    	"click [data-dismiss='fileinput'],[data-trigger='fileinput']": 		"clear",
+     	"submit form": 														"save"
+    },
+    clear: function(){
+    	console.log('clear called');
+    	$("#upload .error").hide();
     },
 	save: function(e){
 		e.preventDefault();
@@ -563,6 +585,7 @@ App.Views.ArtistUpload = Parse.View.extend({
 				return tattoo.save();
 
 			}).then(function (tattoo) {
+				// adds the tattoo to the user
 				var user = Parse.User.current();
 				var tattoos = user.relation("tattoos");
 				tattoos.add(tattoo);
