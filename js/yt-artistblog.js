@@ -729,8 +729,8 @@ App.Router = new (Parse.Router.extend({
 		"join":        		    "join",
 		"login":        		"login",
 		"settings":        		"settings",
-		"myprofile":   			"myprofile",
-		"tattoo/new": 			"upload",
+		"myprofile/:role":   	"myProfile",
+		"tattoo/new/:role": 	"upload",
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
@@ -813,10 +813,18 @@ App.Router = new (Parse.Router.extend({
 		settings.renderMap();
 		settings.renderProf();
 	},
-	myprofile: function(){
+	myProfile: function(role){
 
 		var user = Parse.User.current()
-	 	var myProfile = new App.Views.ArtistProfile({model: user});
+		
+		if (role === 'artist'){
+			var myProfile = new App.Views.ArtistProfile({model: user});
+		} else {
+			console.log('user profile role triggered....')
+			var myProfile = new App.Views.ArtistProfile({model: user});
+			/// var myProfile = new App.Views.UserProfile({model: user});
+		}
+		
 	  	$('.app').html(myProfile.render().el);
 
 	  	var tattoos = user.relation('tattoos');
@@ -830,8 +838,15 @@ App.Router = new (Parse.Router.extend({
 	  	});
 
 	},
-	upload: function(){
-		var upload = new App.Views.ArtistUpload();
+	upload: function(role){
+		if (role === 'artist'){
+			var upload = new App.Views.ArtistUpload();
+		} else {
+			console.log('user upload role triggered....')
+			var upload = new App.Views.ArtistUpload();
+			/// var upload = new App.Views.UserUpload();
+		}
+		
 		$('.app').html(upload.render().el);
 	},
 	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/

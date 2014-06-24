@@ -51,25 +51,38 @@
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
 
-                <% if (Parse.User.current()) { %>
+                <% if (!Parse.User.current()) { %>
+                  <li><a href="/join" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
+                  <li><a href="/login" class="main-nav-item" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
 
-                  <li class="dropdown">
+                <% } else if(Parse.User.current().attributes.role === 'user') { %>
+
+                 <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><% print(Parse.User.current().getUsername()) %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                      <li><a href="/myprofile"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
+                      <li><a href="/myprofile/user"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
                       <li class="divider"></li>
-                     <li><a href="/tattoo/new"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
-                      <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
+                     <li><a href="/tattoo/new/user"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
+                      <li><a href="user/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
                       <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
                     </ul>
                   </li>
 
                 <% } else { %>
 
-                  <li><a href="/join" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
-                  <li><a href="/login" class="main-nav-item" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
+                  <li class="dropdown">
+                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><% print(Parse.User.current().getUsername()) %> <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="/myprofile/artist"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
+                      <li class="divider"></li>
+                     <li><a href="/tattoo/new/artist"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
+                      <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
+                      <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
+                    </ul>
+                  </li>
 
                 <% } %>
+                
             </ul>
           </div>
         </div>

@@ -315,7 +315,7 @@ $(document).ready(function(){
                                 var state = addr.long_name;
                             if (addr.types[0] == "country") 
                                 var country = addr.long_name;
-                            gMapContext.locationNameFormatted = (typeof city !== "undefined" ? city +", ": '') + (typeof state !== "undefined" ? state +", ": '') + (typeof country !== "undefined" ? country +", ": '')
+                            gMapContext.locationNameFormatted = (typeof city !== "undefined" ? city +", ": '') + (typeof state !== "undefined" ? state +", ": '') + (typeof country !== "undefined" ? country: '')
                         }
 
                     }
