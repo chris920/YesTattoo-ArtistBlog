@@ -60,7 +60,7 @@ var App = new (Parse.View.extend({
 
 
 ///////// Models
-App.Models.Artist = Parse.User.extend({
+App.Models.User = Parse.User.extend({
 	className: "User",
 	defaults: function() {
       return {
@@ -101,7 +101,7 @@ App.Models.FeaturedArtist = Parse.User.extend({
 
 ///////// Views
 App.Views.ArtistProfile = Parse.View.extend({
-	model: App.Models.Artist,
+	model: App.Models.User,
 	id: 'artistProfile',
 	initialize: function() {
 		_.bindAll(this, 'activateAffix');
@@ -116,18 +116,15 @@ App.Views.ArtistProfile = Parse.View.extend({
 	portfolioTab: function(e){
 	    e.preventDefault();
 	    $(this).tab('show');
-	    // $('#profMenu a[href="#portfolioTab"]').tab('show')
 	},
 	aboutTab: function(e){
 	    e.preventDefault();
 	    $(this).tab('show');
-	    //  $('#profMenu a[href="#aboutTab"]').tab('show')
 	},
 	shopTab: function(e){
 	    e.preventDefault();
 	    $(this).tab('show');
 	    this.renderMap();
-	    // $('#profMenu a[href="#shopTab"]').tab('show')
 	},
 	activateAffix: function(){
 		/// *Is there a better place to activate the affix?
@@ -166,6 +163,33 @@ App.Views.ArtistProfile = Parse.View.extend({
 	  	// Pass this object onto the template function, returns an HTML string. Then use jQuerry to insert the html
 		this.$el.html(this.template(attributes));
 
+		return this;
+	}
+});
+
+App.Views.UserProfile = Parse.View.extend({
+	model: App.Models.User,
+	id: 'userProfile',
+	initialize: function() {
+		_.bindAll(this, 'activateAffix');
+		$(window).scroll(this.activateAffix);
+	},
+	template: _.template($("#userTemplate").html()),
+	events: {
+		'click [href="#collectionTab"]': 'collectionTab'
+	},
+	collectionTab: function(e){
+	    e.preventDefault();
+	    $(this).tab('show');
+	},
+	activateAffix: function(){
+		$('.profNavContainer').affix({
+		      offset: { top: $('.userHead').outerHeight(true) + 40 }
+		});
+	},
+	render: function(){
+		var attributes = this.model.attributes
+		this.$el.html(this.template(attributes));
 		return this;
 	}
 });
@@ -707,7 +731,7 @@ App.Views.ForgotPassword = Parse.View.extend({
 
 ///////// Collections
 App.Collections.Artists = Parse.Collection.extend({
-	model: App.Models.Artist
+	model: App.Models.User
 });
 
 App.Collections.Tattoos = Parse.Collection.extend({
@@ -715,7 +739,7 @@ App.Collections.Tattoos = Parse.Collection.extend({
 });
 
 App.Collections.FeaturedArtists = Parse.Collection.extend({
-	model: App.Models.Artist
+	model: App.Models.User
 });
 
 
@@ -729,8 +753,8 @@ App.Router = new (Parse.Router.extend({
 		"join":        		    "join",
 		"login":        		"login",
 		"settings":        		"settings",
-		"myprofile/:role":   	"myProfile",
-		"tattoo/new/:role": 	"upload",
+		"myprofile":  	 		"myProfile",
+		"tattoo/new": 			"upload",
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
@@ -747,7 +771,7 @@ App.Router = new (Parse.Router.extend({
 
 
 		// find all artists featured this month
-		App.Collections.artists.query = new Parse.Query(App.Models.Artist);
+		App.Collections.artists.query = new Parse.Query(App.Models.User);
 		/// temp set featured artist month manually
 		App.Collections.artists.query.equalTo("featuremonth", 6);  
 		App.Collections.artists.query.find({
@@ -764,15 +788,19 @@ App.Router = new (Parse.Router.extend({
 	},
 	showProfile: function(uname){
 		// define the parse query to get the user from the router
-		App.Collections.artists.query = new Parse.Query(App.Models.Artist);
-		App.Collections.artists.query.equalTo("username", uname);
+		var query = new Parse.Query(App.Models.User);
+		query.equalTo("username", uname);
 
 		// find the first object with the above query
-		App.Collections.artists.query.first({
+		query.first({
 		  success: function(user) {
 		  	// render out the profile page
-		  	var artistProfile = new App.Views.ArtistProfile({model: user});
-		  	$('.app').html(artistProfile.render().el);
+			if (user.attributes.role === 'user'){
+				var profile = new App.Views.UserProfile({model: user});
+			} else {
+				var profile = new App.Views.ArtistProfile({model: user});
+			}
+		  	$('.app').html(profile.render().el);
 
 		  	var tattoos = user.relation('tattoos');
 		  	var query = tattoos.query();
@@ -813,16 +841,12 @@ App.Router = new (Parse.Router.extend({
 		settings.renderMap();
 		settings.renderProf();
 	},
-	myProfile: function(role){
-
+	myProfile: function(){
 		var user = Parse.User.current()
-		
-		if (role === 'artist'){
-			var myProfile = new App.Views.ArtistProfile({model: user});
+		if (user.attributes.role === 'user'){
+			var myProfile = new App.Views.UserProfile({model: user});
 		} else {
-			console.log('user profile role triggered....')
 			var myProfile = new App.Views.ArtistProfile({model: user});
-			/// var myProfile = new App.Views.UserProfile({model: user});
 		}
 		
 	  	$('.app').html(myProfile.render().el);
@@ -838,8 +862,8 @@ App.Router = new (Parse.Router.extend({
 	  	});
 
 	},
-	upload: function(role){
-		if (role === 'artist'){
+	upload: function(){
+		if (user.attributes.role === 'user'){
 			var upload = new App.Views.ArtistUpload();
 		} else {
 			console.log('user upload role triggered....')

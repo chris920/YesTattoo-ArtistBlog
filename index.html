@@ -63,7 +63,7 @@
                       <li><a href="/myprofile/user"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
                       <li class="divider"></li>
                      <li><a href="/tattoo/new/user"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
-                      <li><a href="user/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
+                      <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
                       <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
                     </ul>
                   </li>
@@ -82,7 +82,7 @@
                   </li>
 
                 <% } %>
-                
+
             </ul>
           </div>
         </div>
@@ -263,6 +263,51 @@
           </a>
         </div>
     </script>
+
+    <!-- User profile -->
+    <script type="text/html" id="userTemplate">
+      <div class="container">
+        <div class="row userHead">
+          <div class="col-xs-12 col-sm-4 col-sm-offset-1">
+            <h3><%= (name) ?  name : '' %><br><span> / <%= username %> </span></h3>
+            <h5 ><%= (locationName) ?  locationName : '' %></h5>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <% if (desc) { %>
+               <p><span>Bio</span><%= desc %></p><br>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="container-fluid">
+        <div class="profNavBG">
+          <div class="profNavContainer col-xs-12 affix-top">
+            <div class="container">
+              <ul class="nav nav-tabs" id="profMenu">
+                  <li class="active"><a href="#portfolioTab" data-toggle="tab"><span class="flaticon-book104"></span>Collection</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="tab-content">
+        <!-- Collection Tab -->
+        <div class="tab-pane fade in active" id="collectionTab">
+          <div class="tagFilters" data-toggle="buttons">
+          </div>  
+          <div class="container">          
+            <div class="row tattoos">
+
+            </div>
+          </div>
+        </div> 
+
+    </script>
+
 
     <!-- Join page -->
     <script type="text/html" id="joinTemplate">
@@ -505,7 +550,7 @@
       </div>
     </script>
 
-    <!-- artist post, upload tattoo Modal -->
+    <!-- artist post, upload tattoo -->
     <script type="text/html" id="artistUploadTemplate">
       <div class="container">
         <div class="lightContainer">
@@ -526,7 +571,7 @@
       </div>
     </script>
 
-    <!-- artist edit tattoo Modal -->
+    <!-- artist edit tattoo -->
     <script type="text/html" id="artistEditTemplate">
       <div class="container">
         <div class="lightContainer">
