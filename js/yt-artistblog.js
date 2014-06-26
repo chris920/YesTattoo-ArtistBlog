@@ -416,7 +416,7 @@ App.Views.Settings = Parse.View.extend({
 	initialize: function(){
 
 		// assigns the users attributes
-		this.user = Parse.User.current()
+		this.user = Parse.User.current();
 
 		// refresh the users attributes in case changes have been made, this may no longer be needed after updated parse...
 		this.user.fetch();
@@ -526,11 +526,13 @@ App.Views.Settings = Parse.View.extend({
 
 	},
 	renderMap: function(e){
+		var user = this.user
+
 		///map style is defined twice...
 		var mapStyles = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}];
 	  
 		$('#settingsMap').locationpicker({
-			location: {latitude: this.user.attributes.location.latitude, longitude: this.user.attributes.location.longitude},
+			location: {latitude: user.attributes.location.latitude, longitude: user.attributes.location.longitude},
 			radius: 0,
 			zoom: 12,
 			enableAutocomplete: true,
@@ -541,10 +543,10 @@ App.Views.Settings = Parse.View.extend({
 			},
 			onchanged: function(currentLocation, currentLocationNameFormatted) {
 		    	var point = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
-		    	this.user.set("location", point);
-		    	this.user.set("address", $("#settingsMapAddress").val());
-		    	this.user.set("locationName", currentLocationNameFormatted);
-				this.user.save(null,{
+		    	user.set("location", point);
+		    	user.set("address", $("#settingsMapAddress").val());
+		    	user.set("locationName", currentLocationNameFormatted);
+				user.save(null,{
 					success: function(user) {
 						// flash the success class
 						$(".editLocation").addClass("has-success").fadeIn("slow");
@@ -562,7 +564,7 @@ App.Views.Settings = Parse.View.extend({
 			}
 		});
 	},
-	renderProf: function(e){
+	renderProf: function(){
 		if(this.user.get("prof")) {
 			var file = this.user.get("profThumb");
 			$(".artistProf")[0].src = file.url();
@@ -579,9 +581,9 @@ App.Views.Join = Parse.View.extend({
 	},
     initialize: function() {
       _.bindAll(this, "signUp");
+
     },
-	toggleArtist: function(e) {
-		e.preventDefault();
+	toggleArtist: function() {
     	if($(".artistForm").is(':hidden')){
 			$('.artistForm').fadeIn();
 			$('.toggleArtist').text("Actually, not an artist or shop...");
@@ -592,13 +594,13 @@ App.Views.Join = Parse.View.extend({
 			$('#inputRole').val('user');
     	};
     },
-    signUp: function(e) {
+    signUp: function() {
 		var self = this;
 		var username = this.$("#inputUsername").val();
 		var email = this.$("#inputEmail").val();
 		var password = this.$("#inputPassword").val();
 		var shop = this.$("#inputShop").val();
-		var role = this.$("#inputRole").val()
+		var role = this.$("#inputRole").val();
       	
 		Parse.User.signUp(username, password, { email: email, role: role, shop: shop, ACL: new Parse.ACL() }, {
 			success: function(user) {
@@ -625,9 +627,9 @@ App.Views.Join = Parse.View.extend({
 	}
 });
 
-App.Views.ArtistUpload = Parse.View.extend({
+App.Views.Upload = Parse.View.extend({
 	id: 'upload',
-	template: _.template($("#artistUploadTemplate").html()),
+	template: _.template($("#uploadTemplate").html()),
     events: {
     	"click [data-dismiss='fileinput'],[data-trigger='fileinput']": 		"clear",
      	"submit form": 														"upload"
@@ -646,8 +648,14 @@ App.Views.ArtistUpload = Parse.View.extend({
 			file.save().then(function(file) {
 				var tattoo = new App.Models.Tattoo();
 				tattoo.set("file", file);
-				tattoo.set("uploader", Parse.User.current());///need to choose artist for user upload
-				tattoo.set("artist", Parse.User.current());
+				tattoo.set("uploader", Parse.User.current());
+				if (Parse.User.current().attributes.role === 'artist') {
+					tattoo.set("artist", Parse.User.current());
+					tattoo.set("artistName", Parse.User.current().attributes.name );
+                } else {
+                	tattoo.set("artistName", this.$("#editArtistName").val());
+                	tattoo.set("artistEmail", this.$("#editArtistEmail").val());
+                }
 				return tattoo.save();
 
 			}).then(function (tattoo) {
@@ -904,14 +912,7 @@ App.Router = new (Parse.Router.extend({
 
 	},
 	upload: function(){
-		if (Parse.User.current().attributes.role === 'user'){
-			var upload = new App.Views.ArtistUpload();
-		} else {
-			console.log('user upload role triggered....')
-			var upload = new App.Views.ArtistUpload();
-			/// var upload = new App.Views.UserUpload();
-		}
-		
+		var upload = new App.Views.Upload();
 		$('.app').html(upload.render().el);
 	},
 	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/

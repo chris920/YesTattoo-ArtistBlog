@@ -269,12 +269,27 @@
         </div>
     </script>
 
+    <!-- artist edit tattoo -->
+    <script type="text/html" id="artistEditTemplate">
+      <div class="container">
+        <div class="lightContainer">
+          <h3 class="text-center">Edit Tattoo</h3>
+          <img src="" class="tattooImg">
+          <div class="row"> <hr>
+            <button href="#" id="cancel" class="btn btn-link">Cancel</button>
+            <button href="#" id="delete" class="btn btn-link">Delete</button>
+          </div>
+        </div>
+      </div>
+    </script>
+
+
     <!-- User profile -->
     <script type="text/html" id="userTemplate">
       <div class="container">
         <div class="row userHead">
           <div class="col-xs-12 col-sm-4 col-sm-offset-1">
-            <h3><%= (name) ?  name : '' %><br><span> / <%= username %> </span></h3>
+            <h3><%= (name) ?  name+' / ' : '' %><br><%= username %> </h3>
             <h5 ><%= (locationName) ?  locationName : '' %></h5>
           </div>
           <div class="col-xs-12 col-sm-6">
@@ -328,6 +343,7 @@
             <div class="artistForm" style="display: none;">
               <input type="text" class="form-control" id="inputShop" placeholder="Shop Name">
               <select class="form-control" id="inputRole">
+                <option value="user" selected="selected">Select</option>
                 <option value="artist">Artist</option>
                 <option value="shop">Shop</option>
               </select>
@@ -555,8 +571,8 @@
       </div>
     </script>
 
-    <!-- artist post, upload tattoo -->
-    <script type="text/html" id="artistUploadTemplate">
+    <!-- post / upload tattoo -->
+    <script type="text/html" id="uploadTemplate">
       <div class="container">
         <div class="lightContainer">
           <h3 class="text-center">Upload Tattoo</h3>
@@ -567,6 +583,18 @@
                 <span class="btn-file"><span class="btn-submit fileinput-new">Choose image</span>
                 <input type="file" id="fileUpload" name="..."></span>
                 <form class="fileinput-exists" role="form"> <hr>
+
+                  <% if (Parse.User.current().attributes.role === 'user') { %>
+                    <div class="input-group">
+                      <span class="input-group-addon">Artist</span>
+                      <input type="text" class="form-control" id="editArtistName" placeholder="Name">
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon">Their Email</span>
+                      <input type="email" class="form-control" id="editArtistEmail" placeholder="Artist@mail.com">
+                    </div>
+                  <% } %>
+
                   <span href="#" class="fileinput-exists btn btn-link" data-dismiss="fileinput">X</span>
                   <button type="submit" class="btn-submit">Submit</button>
                 </form> 
@@ -575,21 +603,6 @@
         </div>
       </div>
     </script>
-
-    <!-- artist edit tattoo -->
-    <script type="text/html" id="artistEditTemplate">
-      <div class="container">
-        <div class="lightContainer">
-          <h3 class="text-center">Edit Tattoo</h3>
-          <img src="" class="tattooImg">
-          <div class="row"> <hr>
-            <button href="#" id="cancel" class="btn btn-link">Cancel</button>
-            <button href="#" id="delete" class="btn btn-link">Delete</button>
-          </div>
-        </div>
-      </div>
-    </script>
-    
 
     <!-- Scroll to top button-->
     <a id="back-to-top" href="#" class="btn btn-link back-to-top" role="button" title="Scroll to the top!!!" data-toggle="tooltip" data-placement="left"><span class="flaticon-up49"></span></a>
