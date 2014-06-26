@@ -85,13 +85,11 @@ App.Models.User = Parse.User.extend({
 });
 
 App.Models.Tattoo = Parse.Object.extend({
-	className: "Tattoo",
-	defaults: function() {
-      return {
-	    artist:"",
-	    by:""
-      };
-	}
+	className: "Tattoo"
+});
+
+App.Models.Add = Parse.Object.extend({
+	className: "Add"
 });
 
 App.Models.FeaturedArtist = Parse.User.extend({
@@ -184,7 +182,7 @@ App.Views.UserProfile = Parse.View.extend({
 	},
 	activateAffix: function(){
 		$('.profNavContainer').affix({
-		      offset: { top: $('.userHead').outerHeight(true) + 40 }
+		      offset: { top: $('#userProfile > div.container').outerHeight(true) + 40 }
 		});
 	},
 	render: function(){
@@ -210,12 +208,56 @@ App.Views.Tattoos = Parse.View.extend({
 		var tattoo = new App.Views.Tattoo({model: tattoo});
 		$('.tattoos').append(tattoo.render().el);
 		//renders an additional featured artist
+
+		///query added, show remove. 
 	}
 });
 
 App.Views.Tattoo = Parse.View.extend({
 	className: 'Tattoo',
 	template: _.template($("#tattooTemplate").html()),
+    events: {
+     	'click .add': 			'add',
+     	'click .remove': 		'remove'
+    },
+	add: function(){
+		if (Parse.User.current()) {
+			this.$('.add').addClass('added');
+			this.$('.add').attr('disabled', 'disabled');
+			this.$('.hover-content').unbind('mouseenter mouseleave'); //need to fix this shit	
+			var add = new App.Models.Add();
+			add.set("uploader", this.model.attributes.uploader);
+			add.set("user", Parse.User.current());
+			add.set("artist", this.model.attributes.artist);
+			add.set("tattoo", this.model);
+			add.save().then(function (added) {
+				var user = Parse.User.current();
+				var adds = user.relation("added");
+				adds.add(added);
+				return user.save();
+			}).then(function(user) {
+				this.$('.add').removeAttr("disabled");
+				this.$('.add').removeClass('added');
+			}, function(error) {
+				console.log(error);
+			});
+		} else {
+			Parse.history.navigate('/login', {trigger: true});
+			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
+		}
+
+	},
+	remove: function(){
+
+	},
+	showAdd: function(){
+		///hide remove, show add
+		console.log('show add triggered')
+	},
+	showRemove: function(){
+		/// hide add, show remove......
+		console.log('show remove triggered')
+	},
 	render: function(){
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
@@ -588,13 +630,12 @@ App.Views.ArtistUpload = Parse.View.extend({
 	template: _.template($("#artistUploadTemplate").html()),
     events: {
     	"click [data-dismiss='fileinput'],[data-trigger='fileinput']": 		"clear",
-     	"submit form": 														"save"
+     	"submit form": 														"upload"
     },
     clear: function(){
-    	console.log('clear called');
     	$("#upload .error").hide();
     },
-	save: function(e){
+	upload: function(e){
 		e.preventDefault();
 		$("#upload button").attr("disabled", "disabled");
 		var fileUpload = $("#fileUpload")[0];
@@ -605,7 +646,8 @@ App.Views.ArtistUpload = Parse.View.extend({
 			file.save().then(function(file) {
 				var tattoo = new App.Models.Tattoo();
 				tattoo.set("file", file);
-				tattoo.set("artist", Parse.User.current().getUsername());
+				tattoo.set("uploader", Parse.User.current());///need to choose artist for user upload
+				tattoo.set("artist", Parse.User.current());
 				return tattoo.save();
 
 			}).then(function (tattoo) {
@@ -758,8 +800,6 @@ App.Router = new (Parse.Router.extend({
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
-		/// temp demo data, populates collection of artists
-		App.Collections.artists = new App.Collections.Artists();
 
 		//google analtic tracking
 		this.bind('route', this._pageView);
@@ -769,12 +809,12 @@ App.Router = new (Parse.Router.extend({
 		var intro = new App.Views.Intro();
 		$('.app').html(intro.render().el);
 
-
 		// find all artists featured this month
-		App.Collections.artists.query = new Parse.Query(App.Models.User);
+		var query = new Parse.Query(App.Models.User);
 		/// temp set featured artist month manually
-		App.Collections.artists.query.equalTo("featuremonth", 6);  
-		App.Collections.artists.query.find({
+		query.equalTo("featuremonth", 6);
+		query.descending("createdAt");
+		query.find({
 		  success: function(artists) {
 		    App.Collections.featuredArtists = new App.Collections.FeaturedArtists(artists);
 			App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
@@ -790,7 +830,6 @@ App.Router = new (Parse.Router.extend({
 		// define the parse query to get the user from the router
 		var query = new Parse.Query(App.Models.User);
 		query.equalTo("username", uname);
-
 		// find the first object with the above query
 		query.first({
 		  success: function(user) {
@@ -804,6 +843,7 @@ App.Router = new (Parse.Router.extend({
 
 		  	var tattoos = user.relation('tattoos');
 		  	var query = tattoos.query();
+		  	query.descending("createdAt");
 		  	query.find({
 		  		success: function(tats) {
 		  			var tattoos = new App.Collections.Tattoos(tats);
@@ -853,6 +893,7 @@ App.Router = new (Parse.Router.extend({
 
 	  	var tattoos = user.relation('tattoos');
 	  	var query = tattoos.query();
+	  	query.descending("createdAt");
 	  	query.find({
 	  		success: function(tats) {
 	  			var tattoos = new App.Collections.Tattoos(tats);
@@ -863,7 +904,7 @@ App.Router = new (Parse.Router.extend({
 
 	},
 	upload: function(){
-		if (user.attributes.role === 'user'){
+		if (Parse.User.current().attributes.role === 'user'){
 			var upload = new App.Views.ArtistUpload();
 		} else {
 			console.log('user upload role triggered....')

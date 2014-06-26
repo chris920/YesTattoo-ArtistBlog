@@ -58,11 +58,11 @@
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
 
                  <li class="dropdown">
-                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><% print(Parse.User.current().getUsername()) %> <b class="caret"></b></a>
+                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                      <li><a href="/myprofile/user"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
+                      <li><a href="/myprofile"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
                       <li class="divider"></li>
-                     <li><a href="/tattoo/new/user"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
+                     <li><a href="/tattoo/new"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
                       <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
                       <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
                     </ul>
@@ -71,11 +71,11 @@
                 <% } else { %>
 
                   <li class="dropdown">
-                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><% print(Parse.User.current().getUsername()) %> <b class="caret"></b></a>
+                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                      <li><a href="/myprofile/artist"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
+                      <li><a href="/myprofile"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
                       <li class="divider"></li>
-                     <li><a href="/tattoo/new/artist"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
+                     <li><a href="/tattoo/new"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
                       <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
                       <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
                     </ul>
@@ -142,13 +142,12 @@
     <script type="text/html" id="artistTemplate">
       <div class="profHead">
         <div class="container">
-          <div class="row">    
-            <br>
+          <div class="row"><br>
             <div class="col-md-2 col-sm-3">
               <img alt="Profile Picture" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/tattooicon.png <% } %>" class="largeprofpic">
             </div>
             <div class="col-md-4 col-sm-4">
-              <h3><%= (name) ?  name : '' %><span><%= username %> </span></h3>
+              <h3><%= (name) ?  name : '' %> <span><%= username %></span></h3>
               <div class="row">
                 <div class="col-sm-12">
                   <h5><%= (shop) ?  shop : '' %></h5>
@@ -173,7 +172,6 @@
                 <% if (email) { %>
                   <a href="mailto:<%= email %>?Subject=YesTattoo%20Message" class="message" title="Message"></a>
                 <% } %>
-                
               </div>
             </div>
           </div>
@@ -192,7 +190,6 @@
                   <% if (shop) { %>
                     <li><a href="#shopTab" data-toggle="tab"><span class="flaticon-home73"></span>Map</a></li>
                   <% } %>
-
               </ul>
             </div>
           </div>
@@ -250,12 +247,20 @@
     </script>
 
     <script type="text/html" id="tattooTemplate">
-      <a class="tattooContainer"><img src="<%= fileThumb.url %>" class="tattooImg"></a>
+      <div class="tattooContainer">
+        <a>
+          <img src="<%= fileThumb.url %>" class="tattooImg">
+          <span class="hover-content" data-toggle="buttons"><span>
+            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Add</button>
+          </span></span>
+        </a>
+      </div>
     </script>
+     
 
     <script type="text/html" id="myTattooTemplate">
-        <div class=" tattooContainer">
-          <a >
+        <div class="tattooContainer">
+          <a>
             <img src="<%= fileThumb.url %>" class="tattooImg">
             <span class="hover-content" data-toggle="buttons"><span>
               <button type="button" class="btn-submit btn-block">Edit</button>
@@ -280,7 +285,6 @@
         </div>
       </div>
       
-
       <div class="container-fluid">
         <div class="profNavBG">
           <div class="profNavContainer col-xs-12 affix-top">
@@ -293,7 +297,6 @@
         </div>
       </div>
 
-
       <div class="tab-content">
         <!-- Collection Tab -->
         <div class="tab-pane fade in active" id="collectionTab">
@@ -305,7 +308,6 @@
             </div>
           </div>
         </div> 
-
     </script>
 
 
@@ -482,7 +484,7 @@
             <button type="submit" class="btn-submit">Submit</button>
           </form> 
 
-          <h3 id="locationSettings">Shop Location</h3>
+          <h3 id="locationSettings">Location</h3>
           <div class="error" style="display:none"></div>
           <div class="editLocation">
             <p>Search by name or location</p><input type="text" class="form-control" id="settingsMapAddress">
@@ -493,40 +495,43 @@
           <form class="profileForm" role="form">
             <div class="error" style="display:none"></div>
 
-           <div class="row"> 
-               <span class="btn-file"><img class="artistProf" src="img/tattooicon.png" alt="Artist Prof"><span class="btn-submit">Choose Profile Picture</span>
-               <input type="file" id="profUpload" name="..."></span>
-            </div>
-
-            <div class="input-group">
-              <span class="input-group-addon">Shop Name </span>
-              <input type="text" class="form-control" id="editShop" placeholder="Shop Name" value="<%= (shop) ?  shop : '' %>">
-            </div>
             <div class="input-group">
               <span class="input-group-addon">About </span>
               <textarea class="form-control" id="editAbout" rows="8" placeholder="About" ><%= (desc) ?  desc : '' %></textarea>
             </div>
-            <div class="input-group">
-              <span class="input-group-addon">Personal or Shop Link </span>
-              <input type="text" class="form-control" id="editWebsite" placeholder="Website" value="<%= (website) ?  website : '' %>">
-            </div>
-            <div class="input-group">
-              <span class="input-group-addon">Facebook Link</span>
-              <input type="text" class="form-control" id="editFB" placeholder="Facebook Link" value="<%= (fb) ?  fb : '' %>">
-            </div>
-            <div class="input-group">
-              <span class="input-group-addon">Instagram Name</span>
-              <input type="text" class="form-control" id="editInstagram" placeholder="Instagram Name" value="<%= (ig) ?  ig : '' %>">
-            </div>
-            <div class="input-group">
-              <span class="input-group-addon">Twitter Name</span>
-              <input type="text" class="form-control" id="editTwitter" placeholder="Twitter Name" value="<%= (twitter) ?  twitter : '' %>">
-            </div>
+
+            <% if (Parse.User.current().attributes.role === 'artist') { %>
+             <div class="row"> 
+                 <span class="btn-file"><img class="artistProf" src="img/tattooicon.png" alt="Artist Prof"><span class="btn-submit">Choose Profile Picture</span>
+                 <input type="file" id="profUpload" name="..."></span>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">Shop Name </span>
+                <input type="text" class="form-control" id="editShop" placeholder="Shop Name" value="<%= (shop) ?  shop : '' %>">
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">Personal or Shop Link </span>
+                <input type="text" class="form-control" id="editWebsite" placeholder="Website" value="<%= (website) ?  website : '' %>">
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">Facebook Link</span>
+                <input type="text" class="form-control" id="editFB" placeholder="Facebook Link" value="<%= (fb) ?  fb : '' %>">
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">Instagram Name</span>
+                <input type="text" class="form-control" id="editInstagram" placeholder="Instagram Name" value="<%= (ig) ?  ig : '' %>">
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">Twitter Name</span>
+                <input type="text" class="form-control" id="editTwitter" placeholder="Twitter Name" value="<%= (twitter) ?  twitter : '' %>">
+              </div>
+            <% } %>
 
             <a href="/tattoo/new" class="btn btn-link"><span class="flaticon-camera4"></span>Upload Tattoo</a>
             <button type="submit" class="btn-submit">Submit</button>
           </form>
      
+
           <h3 id="notificationSettings">Notifications</h3>
           <p>Featured Artists</p>          
           <div class="btn-group" data-toggle="buttons" id="toggleFeatured">

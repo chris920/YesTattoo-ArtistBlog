@@ -4177,7 +4177,7 @@ input, input.span, .input-group {
 
 .tattooImg {
   display: block;
-  max-width: 100%;
+  width: 100%;
   height: auto; }
 
 span.text-content {
@@ -4415,6 +4415,12 @@ span.hover-content {
     background-color: black;
     color: white; }
 
+.added {
+  background-color: transparent;
+  color: rgba(50, 50, 50, 0.6);
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease; }
+
 .tagFilters {
   max-width: 600px;
   min-width: 200px;
@@ -4426,6 +4432,7 @@ span.hover-content {
       padding: 10px 0 20px 0; } }
 
 .back-to-top {
+  z-index: 1050;
   cursor: pointer;
   position: fixed;
   top: 130px;
@@ -4871,7 +4878,7 @@ span.hover-content {
   color: #c42020;
   font-size: 1.2em;
   padding: 5px;
-  -webkit-animation: pulse 2s infinite alternate; }
+  -webkit-animation: pulse 5s infinite alternate; }
 
 #authorsPage .aboutContainer {
   color: white;

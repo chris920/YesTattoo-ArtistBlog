@@ -573,6 +573,12 @@ span.hover-content {
     }
 }
 
+.added {
+    background-color: rgba(0,0,0,0);
+    color: $gray-trans;
+    @include transition(all 0.3s ease);
+}
+
 .tagFilters {
     max-width: 600px;
     min-width: 200px; //for more arrow cover
@@ -585,6 +591,7 @@ span.hover-content {
 }
 
 .back-to-top {
+    z-index: 1050;
     cursor: pointer;
     position: fixed;
     top: 130px;
@@ -1080,7 +1087,7 @@ span.hover-content {
     color: $brand-primary;
     font-size: 1.2em;
     padding: 5px;
-    -webkit-animation: pulse 2s infinite alternate;
+    -webkit-animation: pulse 5s infinite alternate;
 }
 
 
