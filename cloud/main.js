@@ -1,8 +1,19 @@
 
 var Image = require("parse-image");
+
+Parse.Cloud.afterSave(Parse.User, function(request) {
+  //ensure ACL on all new users to protect PII
+  var user = request.user;
+  if (!user.existed()) {
+    var userACL = new Parse.ACL(user);
+    user.setACL(userACL);
+    userACL.setPublicReadAccess(true);
+    user.save();
+  }
+});
  
 //////// Create profile picture thumbnail
-Parse.Cloud.beforeSave("_User", function(request, response) {
+Parse.Cloud.beforeSave(Parse.User, function(request, response) {
   var user = request.object;
   if (!user.dirty("prof")) {
     // The profile photo isn't being modified.

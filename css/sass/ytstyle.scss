@@ -363,6 +363,7 @@ input, input.span,.input-group {
 .tattooContainer{
     @extend .col-sm-3;
     @extend .col-xs-6;
+    padding: 2.5px;
 }
 #artistsPage .tattooContainer, #homePage .tattooContainer{
     @extend .col-xs-3;
@@ -697,7 +698,7 @@ span.hover-content {
 }
 .portfolioContainer {
     background-color: $gray-lighter;
-    padding: 5px;
+    padding: 2.5px 5px;
     overflow: auto;
 }
 
