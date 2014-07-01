@@ -184,14 +184,24 @@ App.Views.Tattoos = Parse.View.extend({
 App.Views.Tattoo = Parse.View.extend({
 	className: 'tattoo',
 	template: _.template($("#tattooTemplate").html()),
+	initialize: function(){
+		//checks if user has added to show add or hide buttons.
+		if (_.contains(Parse.User.current().attributes.added, this.model.id)) {
+			this.showRemove();
+		} else {
+			this.showAdd();
+		}
+
+		_.bindAll(this, 'add', 'remove', 'showAdd', 'showRemove');
+	},
     events: {
-     	'click .add': 			'add'
+     	'click .add': 				'add',
+     	'click .remove': 			'remove'
     },
 	add: function(){
 		if (Parse.User.current()) {
 			this.$('.add').addClass('added');
 			this.$('.add').attr('disabled', 'disabled');
-			this.$('.add').addClass('hidden');
 			var add = new App.Models.Add();
 			add.set("uploader", this.model.attributes.uploader);
 			add.set("user", Parse.User.current());
@@ -199,12 +209,13 @@ App.Views.Tattoo = Parse.View.extend({
 			add.set("tattoo", this.model);
 			add.save().then(function (added) {
 				var user = Parse.User.current();
-				var adds = user.relation("added");
-				adds.add(added);
+				// Add the ids of the added tattoos
+				user.addUnique('added', added.attributes.tattoo.id);
+
 				return user.save();
 			}).then(function(user) {
-				this.$('.add').removeAttr("disabled");
-				this.$('.add').removeClass('added');
+				console.log(this);
+				this.showRemove();
 			}, function(error) {
 				console.log(error);
 			});
@@ -213,6 +224,43 @@ App.Views.Tattoo = Parse.View.extend({
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		}
 
+	},
+	remove: function(){
+		// this.$('.add').addClass('added');
+		// this.$('.add').attr('disabled', 'disabled');
+		var user = Parse.User.current();
+		var query = new Parse.Query(App.Models.Add)
+		query.include('tattoo');
+		query.equalTo('tattoo.id', this.model.id);
+
+
+		query.equalTo('user', user)
+		query.find().then(function(add){
+			add.destroy();
+			return add;
+		}).then(function (added) {
+			var user = Parse.User.current();
+			// remove the ids of the added tattoos
+			user.remove('added', added.attributes.tattoo.id);
+
+			return user.save();
+		}).then(function(user) {
+			this.showAdd();
+		}, function(error) {
+			console.log(error);
+		});
+	},
+	showAdd: function(){
+		this.$('button').removeClass('remove').removeAttr("disabled").addClass('add btn-block').html('Add');
+
+		///hide remove, show add
+		console.log('show add triggered')
+	},
+	showRemove: function(){
+		this.$('button').removeClass('add btn-block').removeAttr("disabled").addClass('remove').html('X');
+
+		/// hide add, show remove......
+		console.log('show remove triggered')
 	},
 	render: function(){
 		var attributes = this.model.toJSON();
@@ -293,8 +341,7 @@ App.Views.Add = Parse.View.extend({
 			add.set("user", Parse.User.current());
 			add.save().then(function (added) {
 				var user = Parse.User.current();
-				var adds = user.relation("added");
-				adds.add(added);
+				user.addUnique('added', added.attributes.tattoo.id);
 				return user.save();
 			}).then(function(user) {
 				this.$('.add').removeAttr("disabled");

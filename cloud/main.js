@@ -1,16 +1,5 @@
 
 var Image = require("parse-image");
-
-Parse.Cloud.afterSave(Parse.User, function(request) {
-  //ensure ACL on all new users to protect PII
-  var user = request.user;
-  if (!user.existed()) {
-    var userACL = new Parse.ACL(user);
-    user.setACL(userACL);
-    userACL.setPublicReadAccess(true);
-    user.save();
-  }
-});
  
 //////// Create profile picture thumbnail
 Parse.Cloud.beforeSave(Parse.User, function(request, response) {
@@ -61,6 +50,16 @@ Parse.Cloud.beforeSave(Parse.User, function(request, response) {
   });
 });
 
+Parse.Cloud.afterSave(Parse.User, function(request) {
+  //ensure ACL on all new users to protect PII
+  var user = request.user;
+  if (!user.existed()) {
+    var userACL = new Parse.ACL(user);
+    user.setACL(userACL);
+    userACL.setPublicReadAccess(true);
+    user.save();
+  }
+});
 
 //////// Create tattoo picture thumbnail
 Parse.Cloud.beforeSave("Tattoo", function(request, response) {
@@ -75,16 +74,17 @@ Parse.Cloud.beforeSave("Tattoo", function(request, response) {
     var image = new Image();
     return image.setData(response.buffer);
   }).then(function(image) {
-    var size = Math.min(image.width(), image.height());
+    var width = Math.min(image.height() * 0.75, image.width());   
+    var height = Math.min(image.width() * 1.33, image.height());   
     return image.crop({
-      left: (image.width() - size) / 2,
-      top: (image.height() - size) / 2,
-      width: size,
-      height: size
+      left: (image.width() - width) / 2,
+      top: (image.height() - height) / 2,
+      width: width,
+      height: height
     });
   }).then(function(image) {
     tattoo.image = image
-    return image.scale({ width: 369, height: 369 });
+    return image.scale({ width: 369, height: 493 }); 
   }).then(function(image) {
     return image.setFormat("JPEG");
   }).then(function(image) {
@@ -96,7 +96,7 @@ Parse.Cloud.beforeSave("Tattoo", function(request, response) {
   }).then(function(cropped) {
     tattoo.set("fileThumb", cropped);
   }).then(function() {
-    return tattoo.image.scale({ width: 124, height: 124 });
+    return tattoo.image.scale({ width: 124, height: 166 });
   }).then(function(image) {
     return image.setFormat("JPEG");
   }).then(function(image) {
@@ -112,4 +112,26 @@ Parse.Cloud.beforeSave("Tattoo", function(request, response) {
   }, function(error) {
     response.error(error);
   });
+});
+
+Parse.Cloud.afterSave("Tattoo", function(request) {
+  //ensure ACL on all new users to protect PII
+  var user = request.user;
+  if (!user.existed()) {
+    var userACL = new Parse.ACL(user);
+    user.setACL(userACL);
+    userACL.setPublicReadAccess(true);
+    user.save();
+  }
+});
+
+Parse.Cloud.afterSave("Add", function(request) {
+  //ensure ACL on all new users to protect PII
+  var user = request.user;
+  if (!user.existed()) {
+    var userACL = new Parse.ACL(user);
+    user.setACL(userACL);
+    userACL.setPublicReadAccess(true);
+    user.save();
+  }
 });
