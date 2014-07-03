@@ -19,6 +19,7 @@ var App = new (Parse.View.extend({
 
 		// render initial nav 
 		this.render();
+
 	},
 	events: {
 		//simplifies html to use routers where needed
@@ -48,23 +49,49 @@ var App = new (Parse.View.extend({
 		Parse.history.navigate('', {trigger: true});
 		$("html, body").animate({ scrollTop: 0 }, 200);
 	},
+	getProfile: function(){
+		var user = Parse.User.current();
+		if (user) {
+			//gets the user's profile
+			if (user.attributes.role === 'user'){
+				var query = new Parse.Query(App.Models.UserProfile);
+			} else {
+				var query = new Parse.Query(App.Models.ArtistProfile);
+			}
+			query.equalTo("username", user.getUsername());
+			query.first().then(function(result) {
+				App.profile = result;
+
+			}, function(error) {
+			    console.log("Error: " + error.code + " " + error.message);
+			});
+		}
+
+
+	},
 	render: function() {
 		//renders the nav, which has an if current user statement in template.
 		$('.navs').html(this.template());
 
 		var login = new App.Views.Login();
 
+		this.getProfile();
 	}
 }))({el: document.body});
 
 
 ///////// Models
 App.Models.User = Parse.User.extend({
-	className: "User",
+	className: "User"
+});
+
+App.Models.ArtistProfile = Parse.Object.extend({
+	className: "ArtistProfile",
 	defaults: function() {
       return {
 	    username:"",
 	    name:"",
+	    desc:"",
 	    shop:"",
 	    website:"",
 	    ig:"",
@@ -72,11 +99,21 @@ App.Models.User = Parse.User.extend({
 	    twitter:"",
 	    address:"",
 	    email:"",
-	    q1:"",
-	    q2:"",
-	    q3:"",
+		locationName:"",
+	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999})
+	    q1:"", q2:"", q3:"", q4:"", q5:"",
+	   	author:"",	   	
+      };
+	}
+});
+
+App.Models.UserProfile = Parse.Object.extend({
+	className: "UserProfile",
+	defaults: function() {
+      return {
+	    username:"",
+	    name:"",
 	    desc:"",
-	   	author:"",
 	   	locationName:"",
 	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999})
       };
@@ -92,7 +129,7 @@ App.Models.Add = Parse.Object.extend({
 });
 
 App.Models.FeaturedArtist = Parse.User.extend({
-	className: "User"
+	className: "User",
 });
 
 
@@ -500,12 +537,8 @@ App.Views.Settings = Parse.View.extend({
 	id: 'settings',
 	artistTemplate: _.template($("#artistSettingsTemplate").html()),
 	initialize: function(){
-
-		// assigns the users attributes
 		this.user = Parse.User.current();
-
-		// refresh the users attributes in case changes have been made, this may no longer be needed after updated parse...
-		this.user.fetch();
+		this.profile = App.profile;
 
 	},
     events: {
@@ -520,7 +553,6 @@ App.Views.Settings = Parse.View.extend({
     	e.preventDefault();
     	this.user.set("username", this.$("#editUsername").val());
     	this.user.set("email", this.$("#editEmail").val());
-    	this.user.set("name", this.$("#editName").val());
 		this.user.save(null,{
 			success: function(user) {
 				// flash the success class
@@ -536,13 +568,14 @@ App.Views.Settings = Parse.View.extend({
     },
     saveProfile: function(e){
     	e.preventDefault();
-    	this.user.set("shop", this.$("#editShop").val());
-    	this.user.set("desc", this.$("#editAbout").val());
-    	this.user.set("website", this.$("#editWebsite").val());
-    	this.user.set("fb", this.$("#editFB").val());
-    	this.user.set("ig", this.$("#editInstagram").val());
-    	this.user.set("twitter", this.$("#editTwitter").val());
-		this.user.save(null,{
+    	this.profile.set("name", this.$("#editName").val());
+    	this.profile.set("shop", this.$("#editShop").val());
+    	this.profile.set("desc", this.$("#editAbout").val());
+    	this.profile.set("website", this.$("#editWebsite").val());
+    	this.profile.set("fb", this.$("#editFB").val());
+    	this.profile.set("ig", this.$("#editInstagram").val());
+    	this.profile.set("twitter", this.$("#editTwitter").val());
+		this.profile.save(null,{
 			success: function(user) {
 				// flash the success class
 				$(".profileForm").each(function(){
@@ -558,21 +591,25 @@ App.Views.Settings = Parse.View.extend({
     updateProf: function(e) {
 		e.preventDefault();
 		$("#profUpload").attr("disabled", "disabled");
+		$( "span:contains('Choose Profile Picture')" ).addClass( "disabled" );
+		$("#profUpload").attr("disabled", "disabled");
 		var prof = $("#profUpload")[0];
 		if (prof.files.length > 0) {
 			var upload = prof.files[0];
 			var name = this.user.getUsername() + "prof.jpg";
 			var file = new Parse.File(name, upload);
-			this.user.set("prof", file);
-			this.user.save().then(function (user) {
+			this.profile.set("prof", file);
+			this.profile.save().then(function (profile) {
 				/// update the profile thubmnail.
-				var file = user.get("profThumb");
+				var file = profile.get("profThumb");
 				$(".artistProf")[0].src = file.url();
 				$("#profUpload").removeAttr("disabled");
+				$( "span:contains('Choose Profile Picture')" ).removeClass( "disabled" );
 			}, function(error) {
 				console.log(error);
-				$(".error")[2].html(error.message).show();
+				$(".error:eq( 4 )").html(error.message).show();
 				$("#profUpload").removeAttr("disabled");
+				$( "span:contains('Choose Profile Picture')" ).removeClass( "disabled" );
 			});
 		}
     },
@@ -605,20 +642,19 @@ App.Views.Settings = Parse.View.extend({
     },
 	render: function(){
 
-	  	// Pass the attributes onto the template function, returns an HTML string. Then use jQuerry to insert the html
-		this.$el.html(this.artistTemplate(this.user.attributes));
-
+		this.$el.html(this.artistTemplate(this.profile.attributes));
 		return this;
 
 	},
 	renderMap: function(e){
-		var user = this.user
+
+		var profile = this.profile;
 
 		///map style is defined twice...
 		var mapStyles = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}];
 	  
 		$('#settingsMap').locationpicker({
-			location: {latitude: user.attributes.location.latitude, longitude: user.attributes.location.longitude},
+			location: {latitude: profile.attributes.location.latitude, longitude: profile.attributes.location.longitude},
 			radius: 0,
 			zoom: 12,
 			enableAutocomplete: true,
@@ -628,11 +664,12 @@ App.Views.Settings = Parse.View.extend({
 				locationNameInput: $('#settingsMapAddress')
 			},
 			onchanged: function(currentLocation, currentLocationNameFormatted) {
+
 		    	var point = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
-		    	user.set("location", point);
-		    	user.set("address", $("#settingsMapAddress").val());
-		    	user.set("locationName", currentLocationNameFormatted);
-				user.save(null,{
+		    	profile.set("location", point);
+		    	profile.set("address", $("#settingsMapAddress").val());
+		    	profile.set("locationName", currentLocationNameFormatted);
+				profile.save(null,{
 					success: function(user) {
 						// flash the success class
 						$(".editLocation").addClass("has-success").fadeIn("slow");
@@ -651,8 +688,8 @@ App.Views.Settings = Parse.View.extend({
 		});
 	},
 	renderProf: function(){
-		if(this.user.get("prof")) {
-			var file = this.user.get("profThumb");
+		if(this.profile.get("prof")) {
+			var file = this.profile.get("profThumb");
 			$(".artistProf")[0].src = file.url();
 		}
 	}
@@ -685,13 +722,22 @@ App.Views.Join = Parse.View.extend({
 		var username = this.$("#inputUsername").val();
 		var email = this.$("#inputEmail").val();
 		var password = this.$("#inputPassword").val();
-		var shop = this.$("#inputShop").val();
 		var role = this.$("#inputRole").val();
-		Parse.User.signUp(username, password, { email: email, role: role, shop: shop }, {
+		var shop = this.$("#inputShop").val();
+
+		Parse.User.signUp(username, password, { email: email, role: role }, {
 			success: function(user) {
 				App.Router.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Thanks for joining!</h3>");
 				App.render();
+		    	if(user.attributes.role === 'user'){
+		    		var profile = new App.Models.UserProfile(); 
+		    	} else  {
+		    		var profile = new App.Models.ArtistProfile(); 
+		    	};
+		      	profile.set('user',user);
+		      	profile.set('shop',shop);
+		      	profile.save();
 				self.undelegateEvents();
 				delete self;
 			},
@@ -723,6 +769,11 @@ App.Views.Upload = Parse.View.extend({
     	$("#upload .error").hide();
     },
 	upload: function(e){
+
+
+		console.log(this)
+
+
 		e.preventDefault();
 		$("#upload button").attr("disabled", "disabled");
 		var fileUpload = $("#fileUpload")[0];
@@ -744,11 +795,10 @@ App.Views.Upload = Parse.View.extend({
 				return tattoo.save();
 
 			}).then(function (tattoo) {
-				// adds the tattoo to the user
-				var user = Parse.User.current();
-				var tattoos = user.relation("tattoos");
+				// adds the tattoo to the user's profile
+				var tattoos = App.profile.relation("tattoos");
 				tattoos.add(tattoo);
-				return user.save();
+				return App.profile.save();
 
 			}).then(function(user) {
   				Parse.history.navigate('myprofile', {trigger: true});
@@ -769,7 +819,7 @@ App.Views.ArtistEdit = Parse.View.extend({
 	id: 'edit',
 	template: _.template($("#artistEditTemplate").html()),
     initialize: function() {
-    	Parse.history.navigate("myprofile/edit", {trigger: false, replace: true}); //replace does not work in the current version of parse(Backbone .9)
+    	Parse.history.navigate("myprofile/edit", {trigger: false, replace: true});
     },
     events: {
       "click #cancel": 		"cancel",
@@ -894,6 +944,7 @@ App.Router = new (Parse.Router.extend({
 		"settings":        		"settings",
 		"myprofile":  	 		"myProfile",
 		"tattoo/new": 			"upload",
+		"user/:uname":   		"showUserProfile",
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
@@ -901,6 +952,8 @@ App.Router = new (Parse.Router.extend({
 		//google analtic tracking
 		this.bind('route', this._pageView);
 
+		this.user = Parse.User.current();
+		
 	},
 	home: function(){
 		var intro = new App.Views.Intro();
@@ -924,18 +977,47 @@ App.Router = new (Parse.Router.extend({
 	
 	},
 	showProfile: function(uname){
-		// define the parse query to get the user from the router
-		var query = new Parse.Query(App.Models.User);
+		// define the parse query to get the artist from the router
+		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.equalTo("username", uname);
 		// find the first object with the above query
-		query.first().then(function(user) {
-			if (typeof(user)==='undefined'){
+		query.first().then(function(artist) {
+			if (typeof(artist)==='undefined'){
 				// if the user couldn't be found, show error message
 				Parse.history.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Couldn't find what you were looking for...</h3>");
-			} else if (user.attributes.role === 'user') {
-				var profile = new App.Views.UserProfile({model: user});
+			} else  {
+				var profile = new App.Views.ArtistProfile({model: artist});
 				$('.app').html(profile.render().el);
+
+			  	var tattoos = artist.relation('tattoos');
+			  	var query = tattoos.query();
+			  	query.descending("createdAt");
+			  	query.find({
+			  		success: function(tats) {
+			  			var tattoos = new App.Collections.Tattoos(tats);
+			  			var collection = new App.Views.Tattoos({collection: tattoos});
+			  			collection.render();
+			  		}
+			  	});
+
+			}
+
+		}, function(error) {
+		    console.log("Error: " + error.code + " " + error.message);
+		});
+	},
+	showUserProfile: function(uname){
+		// define the parse query to get the user from the router
+		var query = new Parse.Query(App.Models.UserProfile);
+		query.equalTo("username", uname);
+		query.first().then(function(user) {
+			if (typeof(user)==='undefined'){
+				Parse.history.navigate('/', {trigger: true});
+				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
+			} else {
+				var user = new App.Views.UserProfile({model: user});
+				$('.app').html(user.render().el);
 
 			  	var tattoos = user.relation('tattoos');
 			  	var query = tattoos.query();
@@ -948,34 +1030,18 @@ App.Router = new (Parse.Router.extend({
 			  		}
 			  	});
 
-			  	var adds = user.relation('added');
-			  	var query = adds.query();
-			  	query.descending("createdAt");
-			  	query.include("tattoo");
-			  	query.find({
-			  		success: function(adds) {
-			  			var userTattoos = new App.Collections.Adds(adds);
-			  			var adds = new App.Views.Adds({collection: userTattoos});
-			  			adds.render();
-			  		}
-			  	});
-
-			} else {
-
-				var profile = new App.Views.ArtistProfile({model: user});
-				$('.app').html(profile.render().el);
-
-			  	var tattoos = user.relation('tattoos');
-			  	var query = tattoos.query();
-			  	query.descending("createdAt");
-			  	query.find({
-			  		success: function(tats) {
-			  			var tattoos = new App.Collections.Tattoos(tats);
-			  			var portfolio = new App.Views.Tattoos({collection: tattoos});
-			  			portfolio.render();
-			  		}
-			  	});
-			}
+			  	// var adds = user.relation('added');
+			  	// var query = adds.query();
+			  	// query.descending("createdAt");
+			  	// query.include("tattoo");
+			  	// query.find({
+			  	// 	success: function(adds) {
+			  	// 		var userTattoos = new App.Collections.Adds(adds);
+			  	// 		var adds = new App.Views.Adds({collection: userTattoos});
+			  	// 		adds.render();
+			  	// 	}
+			  	// });
+			} 
 
 		}, function(error) {
 		    console.log("Error: " + error.code + " " + error.message);
@@ -997,23 +1063,25 @@ App.Router = new (Parse.Router.extend({
 	settings: function(){
 
 		var settings = new App.Views.Settings();
-
+		
 		$('.app').html(settings.render().el);
 
 		settings.renderMap();
 		settings.renderProf();
+
+
 	},
 	myProfile: function(){
-		var user = Parse.User.current()
-		if (user.attributes.role === 'user'){
-			var myProfile = new App.Views.UserProfile({model: user});
+		if (this.user.attributes.role === 'user'){
+			var myProfile = new App.Views.UserProfile({model: App.profile});
+			//also try user.attributes.profile
 		} else {
-			var myProfile = new App.Views.ArtistProfile({model: user});
+			var myProfile = new App.Views.ArtistProfile({model: App.profile});
 		}
 		
 	  	$('.app').html(myProfile.render().el);
 
-	  	var tattoos = user.relation('tattoos');
+	  	var tattoos = App.profile.relation('tattoos');
 	  	var query = tattoos.query();
 	  	query.descending("createdAt");
 	  	query.find({

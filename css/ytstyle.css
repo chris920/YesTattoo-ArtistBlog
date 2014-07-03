@@ -5028,6 +5028,8 @@ span.hover-content {
   padding-bottom: 20px; }
 #settings .artistProf {
   margin: 10px; }
+#settings .editProfileContainer {
+  padding: 20px; }
 
 .nav-pills {
   padding: 20px 20px;

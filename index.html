@@ -250,9 +250,6 @@
       <div class="tattooContainer">
         <a>
           <img src="<%= fileThumb.url %>" class="tattooImg">
-          <span class="hover-content" data-toggle="buttons"><span>
-            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Add</button>
-          </span></span>
         </a>
       </div>
     </script>
@@ -355,7 +352,7 @@
               <select class="form-control" id="inputRole">
                 <option value="user" selected="selected">Select</option>
                 <option value="artist">Artist</option>
-                <option value="shop">Shop</option>
+                // <option value="shop">Shop</option>
               </select>
             </div>
             <a class="toggleArtist">Are you an artist or shop?</a></br>
@@ -486,7 +483,6 @@
             <li data-target="#infoSettings"><a><span class="flaticon-information"></span>Info</a></li>
             <li data-target="#locationSettings"><a><span class="flaticon-home73"></span>Location</a></li>
             <li data-target="#profileSettings"><a><span class="flaticon-user56"></span>Profile</a></li>
-            <li data-target="#notificationSettings"><a><span class="flaticon-send5"></span>Notifications</a></li>
           </ul>
         </div>
 
@@ -496,16 +492,12 @@
             <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Yes.Tattoo /#</span>
-              <input type="text" class="form-control" id="editUsername" placeholder="Username" value="<%= (username) ?  username : '' %>">
+              <input type="text" class="form-control" id="editUsername" placeholder="Username">
             </div>
             <a id="forgotPassword">Update password?</a></br></br>
             <div class="input-group">
               <span class="input-group-addon">Email </span>
-              <input type="email" class="form-control" id="editEmail" placeholder="Email" value="<%= (email) ?  email : '' %>">
-            </div>
-            <div class="input-group">
-              <span class="input-group-addon">Name </span>
-              <input type="text" class="form-control" id="editName" placeholder="Name" value="<%= (name) ?  name : '' %>">
+              <input type="email" class="form-control" id="editEmail" placeholder="Email">
             </div>
             <button type="submit" class="btn-submit">Submit</button>
           </form> 
@@ -520,7 +512,10 @@
           <h3 id="profileSettings">Profile</h3>
           <form class="profileForm" role="form">
             <div class="error" style="display:none"></div>
-
+            <div class="input-group">
+              <span class="input-group-addon">Name </span>
+              <input type="text" class="form-control" id="editName" placeholder="Name" value="<%= (name) ?  name : '' %>">
+            </div>
             <div class="input-group">
               <span class="input-group-addon">About </span>
               <textarea class="form-control" id="editAbout" rows="8" placeholder="About" ><%= (desc) ?  desc : '' %></textarea>
@@ -530,6 +525,7 @@
              <div class="row"> 
                  <span class="btn-file"><img class="artistProf" src="img/tattooicon.png" alt="Artist Prof"><span class="btn-submit">Choose Profile Picture</span>
                  <input type="file" id="profUpload" name="..."></span>
+                  <div class="error" style="display:none"><br></div>
               </div>
               <div class="input-group">
                 <span class="input-group-addon">Shop Name </span>
@@ -556,27 +552,7 @@
             <a href="/tattoo/new" class="btn btn-link"><span class="flaticon-camera4"></span>Upload Tattoo</a>
             <button type="submit" class="btn-submit">Submit</button>
           </form>
-     
 
-          <h3 id="notificationSettings">Notifications</h3>
-          <p>Featured Artists</p>          
-          <div class="btn-group" data-toggle="buttons" id="toggleFeatured">
-            <label class="btn-tag active">
-              <input type="radio" name="options" id="featuredOn"> On
-            </label>
-            <label class="btn-tag">
-              <input type="radio" name="options" id="featuredOff"> Off
-            </label>
-          </div>
-          <p>YesTattoo Updates</p>
-          <div class="btn-group" data-toggle="buttons" id="toggleUpdates">
-            <label class="btn-tag active">
-              <input type="radio" name="options" id="updateOn" checked> On
-            </label>
-            <label class="btn-tag">
-              <input type="radio" name="options" id="updateOff"> Off
-            </label>
-          </div>
         </div>
       </div>
     </script>
