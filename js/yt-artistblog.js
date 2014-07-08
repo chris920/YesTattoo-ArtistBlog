@@ -227,11 +227,11 @@ App.Views.Tattoo = Parse.View.extend({
 	template: _.template($("#tattooTemplate").html()),
 	initialize: function(){
 		//checks if user has added to show add or hide buttons.
-		if (_.contains(Parse.User.current().attributes.added, this.model.id)) {
-			this.showRemove();
-		} else {
-			this.showAdd();
-		}
+		// if (_.contains(Parse.User.current().attributes.added, this.model.id)) {
+		// 	this.showRemove();
+		// } else {
+		// 	this.showAdd();
+		// }
 
 		_.bindAll(this, 'add', 'remove', 'showAdd', 'showRemove');
 	},
@@ -772,7 +772,7 @@ App.Views.Join = Parse.View.extend({
 	toggleArtist: function() {
     	if($(".artistForm").is(':hidden')){
 			$('.artistForm').fadeIn();
-			$('.toggleArtist').text("Actually, not an artist or shop...");
+			$('.toggleArtist').text("Actually, not an artist...");
 			$('#inputRole').val('artist');
     	} else if ($(".artistForm").is(':visible')) {
 			$('.artistForm').fadeOut();
@@ -847,23 +847,18 @@ App.Views.Upload = Parse.View.extend({
 			var file = new Parse.File(name, upload);
 			file.save().then(function(file) {
 				var tattoo = new App.Models.Tattoo();
-				console.log('new tattoo created');
 				tattoo.set("file", file);
 				tattoo.set("uploader", Parse.User.current());
 				tattoo.set("artist", Parse.User.current());
 				tattoo.set("artistName", App.profile.attributes.name );
 				return tattoo.save();
 			}).then(function (tattoo) {
-				console.log('saved')
 				// adds the tattoo to the user's profile
 				var tattoos = App.profile.relation("tattoos");
 				tattoos.add(tattoo);
-				console.log('added relationship');
 				return App.profile.save();
 			}).then(function(user) {
-				console.log('profile saved')
   				Parse.history.navigate('myprofile', {trigger: true});
-  				console.log('profile triggered');
 			}, function(error) {
 				console.log(error);
 				$("#upload .error").html(error.message).show();
@@ -1027,7 +1022,7 @@ App.Router = new (Parse.Router.extend({
 		$('.app').html(intro.render().el);
 
 		var query = new Parse.Query(App.Models.ArtistProfile);
-		query.equalTo("featuremonth", '6');
+		query.containedIn("featuremonth", ["6", "7"]);
 		query.descending("createdAt");
 		query.find({
 		  success: function(artists) {

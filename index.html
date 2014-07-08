@@ -187,7 +187,7 @@
                   <% if (desc || q1 ) { %>
                     <li><a href="#aboutTab" data-toggle="tab"><span class="flaticon-information"></span>About</a></li>
                   <% } %>
-                  <% if (shop) { %>
+                  <% if (address) { %>
                     <li><a href="#shopTab" data-toggle="tab"><span class="flaticon-home73"></span>Map</a></li>
                   <% } %>
               </ul>
@@ -351,7 +351,7 @@
             <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Yes.Tattoo /# </span>
-              <input type="text" class="form-control" id="inputUsername" placeholder="Username">
+              <input type="text" class="form-control" id="inputUsername" placeholder="Username" maxlength="16">
             </div>
             <input type="email" class="form-control" id="inputEmail" placeholder="Email">
             <input type="password" class="form-control" id="inputPassword" placeholder="Password">
@@ -362,7 +362,7 @@
                 <option value="artist">Artist</option>
               </select>
             </div>
-            <a class="toggleArtist">Are you an artist or shop?</a></br>
+            <a class="toggleArtist">Are you an artist?</a></br>
             <button type="submit" class="btn-submit">Submit</button>
           </form> 
         </div>
@@ -499,7 +499,7 @@
             <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Yes.Tattoo /#</span>
-              <input type="text" class="form-control" id="editUsername" placeholder="Username" value="<%= (username) ?  username : '' %>">
+              <input type="text" class="form-control" id="editUsername" placeholder="Username" value="<%= (username) ?  username : '' %>" maxlength="16">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Password</span>
@@ -528,7 +528,7 @@
             </div>
             <div class="input-group">
               <span class="input-group-addon">About </span>
-              <textarea class="form-control" id="editAbout" rows="8" placeholder="About" ><%= (desc) ?  desc : '' %></textarea>
+              <textarea class="form-control" id="editAbout" rows="8" placeholder="About" maxlength="500"><%= (desc) ?  desc : '' %></textarea>
             </div>
 
             <% if (Parse.User.current().attributes.role === 'artist') { %>
