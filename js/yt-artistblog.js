@@ -617,7 +617,6 @@ App.Views.Settings = Parse.View.extend({
     },
     updateProf: function(e) {
 		e.preventDefault();
-		$("#profUpload").attr("disabled", "disabled");
 		$( "span:contains('Choose Profile Picture')" ).addClass( "disabled" );
 		$("#profUpload").attr("disabled", "disabled");
 		var prof = $("#profUpload")[0];
@@ -634,7 +633,7 @@ App.Views.Settings = Parse.View.extend({
 				$( "span:contains('Choose Profile Picture')" ).removeClass( "disabled" );
 			}, function(error) {
 				console.log(error);
-				$(".error:eq( 4 )").html(error.message).show();
+				$(".error:eq( 3 )").html(error.message).show();
 				$("#profUpload").removeAttr("disabled");
 				$( "span:contains('Choose Profile Picture')" ).removeClass( "disabled" );
 			});
@@ -1037,6 +1036,7 @@ App.Router = new (Parse.Router.extend({
 	
 	},
 	showProfile: function(uname){
+
 		// define the parse query to get the artist from the router
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.equalTo("username", uname);
@@ -1044,8 +1044,8 @@ App.Router = new (Parse.Router.extend({
 		query.first().then(function(artist) {
 			if (typeof(artist)==='undefined'){
 				// if the user couldn't be found, show error message
-				Parse.history.navigate('/', {trigger: true});
-				$('.intro').html("<h3>Couldn't find what you were looking for...</h3>");
+				Parse.history.navigate('user/'+uname, {trigger: true});
+				
 			} else  {
 				var profile = new App.Views.ArtistProfile({model: artist});
 				$('.app').html(profile.render().el);

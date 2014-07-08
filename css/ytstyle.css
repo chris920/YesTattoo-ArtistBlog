@@ -4584,9 +4584,8 @@ span.hover-content {
       float: none;
       text-align: center; } }
   .userHead h3 {
-    margin-top: 0; }
-  .userHead h5 {
-    margin-top: 0; }
+    margin-top: 0;
+    padding: 15px; }
   .userHead p {
     margin-top: auto;
     margin-bottom: auto;
