@@ -122,7 +122,7 @@
     <script type="text/html" id="featuredArtistTemplate">
         <div class="row artistTitleBG">
           <div class="col-sm-2">
-            <img class="artistProf" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
+            <img class="artistProf" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
           </div>
           <div class="col-sm-10 artistTitles">
             <h4 class="artistName"><%= name %><span> <%= username %></span></h4>
@@ -161,7 +161,7 @@
                   <a href= "<%= fb %>" class="facebook" title="Facebook"></a> 
                 <% } %>
                 <% if (ig) { %>
-                  <a href="http://instagram.com/<%= ig %>" class="instagram" title="Instagram"></a> 
+                  <a href="<%= ig %>" class="instagram" title="Instagram"></a> 
                 <% } %>
                 <% if (twitter) { %>
                   <a href= "<%= twitter %>" class="twitter" title="Twitter"></a>
@@ -184,7 +184,7 @@
             <div class="container">
               <ul class="nav nav-tabs" id="profMenu">
                   <li class="active"><a href="#portfolioTab" data-toggle="tab"><span class="flaticon-tattoo1"></span>Portfolio</a></li>
-                  <% if (desc) { %>
+                  <% if (desc || q1 ) { %>
                     <li><a href="#aboutTab" data-toggle="tab"><span class="flaticon-information"></span>About</a></li>
                   <% } %>
                   <% if (shop) { %>
@@ -213,8 +213,8 @@
         <div class="tab-pane fade" id="aboutTab">
           <div class="container">          
             <div class="md8container">
-              <h3>About <%= (name) ?  name : '' %> </h3>
                 <% if (desc) { %>
+                  <h3>About <%= (name) ?  name : '' %> </h3>
                   <p><%= desc %></p><hr><br>
                 <% } %>
                 <% if (q1) { %>
@@ -229,6 +229,14 @@
                 <% if (q3) { %>
                   <h5>Q3 ~ <%= q3 %> <h5>
                   <p class="answer"><%= a3 %></p>
+                <% } %>
+                <% if (q4) { %>
+                  <h5>Q4 ~ <%= q4 %> <h5>
+                  <p class="answer"><%= a4 %></p>
+                <% } %>
+                <% if (q5) { %>
+                  <h5>Q5 ~ <%= q5 %> <h5>
+                  <p class="answer"><%= a5 %></p>
                 <% } %>
                 <% if (q1) { %>
                   <i class="pull-right">Featured on <%= featuremonth %> / <%= featureyear %> by <%= author %></i>
@@ -296,7 +304,7 @@
       <div class="container">
         <div class="row userHead">
           <div class="col-xs-12 col-sm-4 col-sm-offset-1">
-            <h3><%= (name) ?  name+' / ' : '' %><br><%= username %> </h3>
+            <h3><%= (name) ?  name+' ' : '' %></h3><br><h5><%= username %> </h5>
             <h5 ><%= (locationName) ?  locationName : '' %></h5>
           </div>
           <div class="col-xs-12 col-sm-6">
@@ -352,7 +360,6 @@
               <select class="form-control" id="inputRole">
                 <option value="user" selected="selected">Select</option>
                 <option value="artist">Artist</option>
-                // <option value="shop">Shop</option>
               </select>
             </div>
             <a class="toggleArtist">Are you an artist or shop?</a></br>
@@ -413,7 +420,7 @@
           <form class="passwordForm" role="form">
             <div class="error" style="display:none"></div>
             <div class="input-group">
-              <span class="input-group-addon">Email or Username</span>
+              <span class="input-group-addon">Email</span>
               <input type="text" class="form-control" id="inputInfo" placeholder="Enter your info">
             </div>
             <button class="btn-submit">Submit</button>
@@ -492,9 +499,12 @@
             <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Yes.Tattoo /#</span>
-              <input type="text" class="form-control" id="editUsername" placeholder="Username">
+              <input type="text" class="form-control" id="editUsername" placeholder="Username" value="<%= (username) ?  username : '' %>">
             </div>
-            <a id="forgotPassword">Update password?</a></br></br>
+            <div class="input-group">
+              <span class="input-group-addon">Password</span>
+              <input type="password" class="form-control" id="editPassword" placeholder="Password">
+            </div>
             <div class="input-group">
               <span class="input-group-addon">Email </span>
               <input type="email" class="form-control" id="editEmail" placeholder="Email">
@@ -522,10 +532,10 @@
             </div>
 
             <% if (Parse.User.current().attributes.role === 'artist') { %>
-             <div class="row"> 
+             <div class="row editProfileContainer"> 
                  <span class="btn-file"><img class="artistProf" src="img/tattooicon.png" alt="Artist Prof"><span class="btn-submit">Choose Profile Picture</span>
                  <input type="file" id="profUpload" name="..."></span>
-                  <div class="error" style="display:none"><br></div>
+                  <div class="error" style="display:none"></div>
               </div>
               <div class="input-group">
                 <span class="input-group-addon">Shop Name </span>
@@ -533,19 +543,19 @@
               </div>
               <div class="input-group">
                 <span class="input-group-addon">Personal or Shop Link </span>
-                <input type="text" class="form-control" id="editWebsite" placeholder="Website" value="<%= (website) ?  website : '' %>">
+                <input type="text" class="form-control" id="editWebsite" placeholder="www." value="<%= (website) ?  website : '' %>">
               </div>
               <div class="input-group">
                 <span class="input-group-addon">Facebook Link</span>
-                <input type="text" class="form-control" id="editFB" placeholder="Facebook Link" value="<%= (fb) ?  fb : '' %>">
+                <input type="text" class="form-control" id="editFB" placeholder="facebook.com/" value="<%= (fb) ?  fb : '' %>">
               </div>
               <div class="input-group">
                 <span class="input-group-addon">Instagram Name</span>
-                <input type="text" class="form-control" id="editInstagram" placeholder="Instagram Name" value="<%= (ig) ?  ig : '' %>">
+                <input type="text" class="form-control" id="editInstagram" placeholder="instagram.com/" value="<%= (ig) ?  ig : '' %>">
               </div>
               <div class="input-group">
                 <span class="input-group-addon">Twitter Name</span>
-                <input type="text" class="form-control" id="editTwitter" placeholder="Twitter Name" value="<%= (twitter) ?  twitter : '' %>">
+                <input type="text" class="form-control" id="editTwitter" placeholder="twitter.com/" value="<%= (twitter) ?  twitter : '' %>">
               </div>
             <% } %>
 
@@ -555,6 +565,82 @@
 
         </div>
       </div>
+    </script>
+
+    <!-- edit artist interview -->
+    <script type="text/html" id="artistInterviewTemplate">
+      <div class="container">
+        <div class="lightContainer">
+          <h3 id=""><%= (name) ?  name : '' %> Interview</h3>
+
+          <form class="interviewForm" role="form">
+            <div class="error" style="display:none"></div>
+            <div class="input-group">
+              <span class="input-group-addon">Question 1 </span>
+              <input type="text" class="form-control" id="editQuestion1" placeholder="" value="<%= (q1) ?  q1 : '' %>">
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">Answer 1 </span>
+              <textarea class="form-control" id="editAnswer1" rows="6" placeholder="" ><%= (a1) ?  a1 : '' %></textarea>
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">Question 2 </span>
+              <input type="text" class="form-control" id="editQuestion2" placeholder="" value="<%= (q2) ?  q2 : '' %>">
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">Answer 2 </span>
+              <textarea class="form-control" id="editAnswer2" rows="6" placeholder="" ><%= (a2) ?  a2 : '' %></textarea>
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">Question 3 </span>
+              <input type="text" class="form-control" id="editQuestion3" placeholder="" value="<%= (q3) ?  q3 : '' %>">
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">Answer 3 </span>
+              <textarea class="form-control" id="editAnswer3" rows="6" placeholder="" ><%= (a3) ?  a3 : '' %></textarea>
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">Question 4 </span>
+              <input type="text" class="form-control" id="editQuestion4" placeholder="" value="<%= (q4) ?  q4 : '' %>">
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">Answer 4 </span>
+              <textarea class="form-control" id="editAnswer4" rows="6" placeholder="" ><%= (a4) ?  a4 : '' %></textarea>
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">Question 5 </span>
+              <input type="text" class="form-control" id="editQuestion5" placeholder="" value="<%= (q5) ?  q5 : '' %>">
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">Answer 5 </span>
+              <textarea class="form-control" id="editAnswer5" rows="6" placeholder="" ><%= (a5) ?  a5 : '' %></textarea>
+            </div>
+            <br>
+            <br>
+            
+            <div class="input-group">
+              <span class="input-group-addon">Feature Month </span>
+              <input type="number" class="form-control" id="editFeatureMonth" placeholder="Month Number" value="<%= (featuremonth) ?  featuremonth : '' %>">
+            </div>
+            <h5> Leave blank if the artist is not ready to be featured</h5>
+            <div class="input-group">
+              <span class="input-group-addon">Feature Year </span>
+              <input type="number" class="form-control" id="editFeatureYear" placeholder="Year" value="<%= (featureyear) ?  featureyear : '' %>">
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">Author </span>
+              <input type="text" class="form-control" id="editAuthor" placeholder="Your Name" value="<%= (author) ?  author : '' %>">
+            </div>
+            <button type="submit" class="btn-submit">Submit</button>
+          </form>
+
+        </div>
+      </div>
+
     </script>
 
     <!-- post / upload tattoo -->
@@ -581,8 +667,10 @@
                     </div>
                   <% } %>
 
-                  <span href="#" class="fileinput-exists btn btn-link" data-dismiss="fileinput">X</span>
-                  <button type="submit" class="btn-submit">Submit</button>
+                  <div class="uploadOptions">
+                    <span href="#" class="fileinput-exists btn btn-link" data-dismiss="fileinput">X</span>
+                    <button type="submit" class="btn-submit">Submit</button>
+                  </div>
                 </form> 
               </div>
             </div>

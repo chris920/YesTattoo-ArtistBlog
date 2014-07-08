@@ -76,6 +76,7 @@ var App = new (Parse.View.extend({
 		var login = new App.Views.Login();
 
 		this.getProfile();
+
 	}
 }))({el: document.body});
 
@@ -100,9 +101,11 @@ App.Models.ArtistProfile = Parse.Object.extend({
 	    address:"",
 	    email:"",
 		locationName:"",
-	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999})
+	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999}),
 	    q1:"", q2:"", q3:"", q4:"", q5:"",
-	   	author:"",	   	
+	    a1:"", a2:"", a3:"", a4:"", a5:"",
+	    featuremonth:"", featureyear:"2014",
+	   	author:""
       };
 	}
 });
@@ -129,7 +132,7 @@ App.Models.Add = Parse.Object.extend({
 });
 
 App.Models.FeaturedArtist = Parse.User.extend({
-	className: "User",
+	className: "User"
 });
 
 
@@ -138,8 +141,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 	model: App.Models.User,
 	id: 'artistProfile',
 	initialize: function() {
-		_.bindAll(this, 'activateAffix');
-		$(window).scroll(this.activateAffix);
+		
 	},
 	template: _.template($("#artistTemplate").html()),
 	events: {
@@ -196,6 +198,8 @@ App.Views.ArtistProfile = Parse.View.extend({
 
 	  	// Pass this object onto the template function, returns an HTML string. Then use jQuerry to insert the html
 		this.$el.html(this.template(attributes));
+
+		$(window).scroll(this.activateAffix);
 
 		return this;
 	}
@@ -403,8 +407,8 @@ App.Views.UserProfile = Parse.View.extend({
 	model: App.Models.User,
 	id: 'userProfile',
 	initialize: function() {
-		_.bindAll(this, 'activateAffix');
-		$(window).scroll(this.activateAffix);
+
+
 	},
 	template: _.template($("#userTemplate").html()),
 	events: {
@@ -422,6 +426,7 @@ App.Views.UserProfile = Parse.View.extend({
 	render: function(){
 		var attributes = this.model.attributes
 		this.$el.html(this.template(attributes));
+		$(window).scroll(this.activateAffix);
 		return this;
 	}
 });
@@ -465,11 +470,11 @@ App.Views.FeaturedArtists = Parse.View.extend({
     },
     events: {
      	'scroll': 			'scrollChecker',
-     	'click #loaders': 	'loadMore'
+     	'click #loaders': 	'load'
     },
-    loadMore: function() {
-    	/// Eventually will fetch the next month of artists and change loader counter
-    	console.log('load more triggered');
+    load: function() {
+
+
     },
     scrollChecker: function () {
     	console.log('scroll triggered');
@@ -542,17 +547,20 @@ App.Views.Settings = Parse.View.extend({
 
 	},
     events: {
-    	"submit form.infoForm": 		"saveInfo",
-    	"submit form.profileForm": 		"saveProfile",
-    	"change #profUpload": 			"updateProf",
-    	"click #forgotPassword": 		"resetPassword",
-    	"click li": 					"scrollTo",
-    	"click [href='/tattoo/new']": 	"upload"
+    	"submit form.infoForm": 			"saveInfo",
+    	"keyup #editUsername": 				"usernameVal",
+    	"submit form.profileForm": 			"saveProfile",
+    	"blur #editFB, #editInstagram, #editTwitter, #editWebsite":"linkVal",
+    	"change #profUpload": 				"updateProf",
+    	"dblclick #profileSettings": 		"interview",
+    	"click li": 						"scrollTo",
+    	"click [href='/tattoo/new']": 		"upload"
     },
     saveInfo: function(e){
     	e.preventDefault();
-    	this.user.set("username", this.$("#editUsername").val());
+    	this.user.set("username", this.$("#editUsername").val().replace(/\W/g, '').toLowerCase());
     	this.user.set("email", this.$("#editEmail").val());
+    	this.user.set("password", this.$("#editPassword").val());
 		this.user.save(null,{
 			success: function(user) {
 				// flash the success class
@@ -560,11 +568,19 @@ App.Views.Settings = Parse.View.extend({
 				    $(".input-group").addClass("has-success").fadeIn("slow");
 				    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
 				});
+				$("#editPassword").val("");
+
 			},
 			error: function(user, error) {
 				$(".infoForm .error").html(error.message).show();
 			}
 		});
+		this.profile.set("username", this.$("#editUsername").val());
+		this.profile.save();
+    },
+    usernameVal: function() {
+    	var validated = $("#editUsername").val().replace(/\W/g, '').toLowerCase();
+		$("#editUsername").val(validated);
     },
     saveProfile: function(e){
     	e.preventDefault();
@@ -587,6 +603,17 @@ App.Views.Settings = Parse.View.extend({
 				$(".profileForm .error").html(error.message).show();
 			}
 		});
+    },
+    linkVal: function(e) {
+    	var value = e.target.value
+    	if (e.target.value) {
+	    	if (!(/^http/).test(value)) {
+	    		var current = value.split("/").pop();
+	    		var updated = 'https://' + e.target.placeholder + current;
+	    		e.target.value = updated;
+	    	}
+    	}
+
     },
     updateProf: function(e) {
 		e.preventDefault();
@@ -613,21 +640,10 @@ App.Views.Settings = Parse.View.extend({
 			});
 		}
     },
-    resetPassword: function(e) {
-    	e.preventDefault();
-    	email = this.user.attributes.email
-		Parse.User.requestPasswordReset(email, {
-		  success: function() {
-		    // Password reset request was sent successfully
-		    $('#forgotPassword').html('Check your email for the password reset link!')
-		    self.undelegateEvents();
-		  },
-		  error: function(error) {
-		    // Show the error message somewhere
-		    $(".profileForm .error").html(error.message).show();
-		  }
-		});
-    },
+	interview: function(){
+		  Parse.history.navigate('interview', {trigger: true});
+		  $("html, body").animate({ scrollTop: 0 }, 200);
+	},
     scrollTo: function(e){
     	//get the section to scroll to from the data target attribute
     	var section = $(e.currentTarget).data('target');
@@ -695,12 +711,59 @@ App.Views.Settings = Parse.View.extend({
 	}
 });
 
+App.Views.Interview = Parse.View.extend({
+	id: 'settings',
+	artistTemplate: _.template($("#artistInterviewTemplate").html()),
+	initialize: function(){
+		this.user = Parse.User.current();
+		this.profile = App.profile;
+	},
+    events: {
+    	"submit form.interviewForm": 		"saveInterview"
+    },
+    saveInterview: function(e){
+    	e.preventDefault();
+    	this.profile.set("q1", this.$("#editQuestion1").val());
+    	this.profile.set("a1", this.$("#editAnswer1").val());
+    	this.profile.set("q2", this.$("#editQuestion2").val());
+    	this.profile.set("a2", this.$("#editAnswer2").val());
+    	this.profile.set("q3", this.$("#editQuestion3").val());
+    	this.profile.set("a3", this.$("#editAnswer3").val());
+    	this.profile.set("q4", this.$("#editQuestion4").val());
+    	this.profile.set("a4", this.$("#editAnswer4").val());
+    	this.profile.set("q5", this.$("#editQuestion5").val());
+    	this.profile.set("a5", this.$("#editAnswer5").val());
+    	this.profile.set("author", this.$("#editAuthor").val());
+    	this.profile.set("featureyear", this.$("#editFeatureYear").val());
+    	this.profile.set("featuremonth", this.$("#editFeatureMonth").val());
+		this.profile.save(null,{
+			success: function(profile) {
+				// flash the success class
+				$(".interviewForm").each(function(){
+				    $(".input-group").addClass("has-success").fadeIn("slow");
+				    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
+				});
+			},
+			error: function(user, error) {
+				$(".interviewForm .error").html(error.message).show();
+			}
+		});
+    },
+
+	render: function(){
+		this.$el.html(this.artistTemplate(this.profile.attributes));
+		return this;
+	}
+
+});
+
 App.Views.Join = Parse.View.extend({
 	id: 'join',
 	template: _.template($("#joinTemplate").html()),
 	events: {
-		'click .toggleArtist': 'toggleArtist',
-		"submit form.signupForm": "signUp"
+		'click .toggleArtist': 		'toggleArtist',
+		"submit form.signupForm": 	"signUp",
+		"keyup #inputUsername": 	"usernameVal"
 	},
     initialize: function() {
       _.bindAll(this, "signUp");
@@ -717,19 +780,23 @@ App.Views.Join = Parse.View.extend({
 			$('#inputRole').val('user');
     	};
     },
+    usernameVal: function() {
+    	var validated = $("#editUsername").val().replace(/\W/g, '').toLowerCase();
+		$("#editUsername").val(validated);
+    },
     signUp: function() {
 		var self = this;
-		var username = this.$("#inputUsername").val();
+		var username = this.$("#inputUsername").val().replace(/\W/g, '').toLowerCase();
 		var email = this.$("#inputEmail").val();
 		var password = this.$("#inputPassword").val();
 		var role = this.$("#inputRole").val();
 		var shop = this.$("#inputShop").val();
+		var userACL = new Parse.ACL(Parse.User.current());
 
-		Parse.User.signUp(username, password, { email: email, role: role }, {
+		Parse.User.signUp(username, password, { email: email, role: role, ACL: userACL }, {
 			success: function(user) {
 				App.Router.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Thanks for joining!</h3>");
-				App.render();
 		    	if(user.attributes.role === 'user'){
 		    		var profile = new App.Models.UserProfile(); 
 		    	} else  {
@@ -737,7 +804,9 @@ App.Views.Join = Parse.View.extend({
 		    	};
 		      	profile.set('user',user);
 		      	profile.set('shop',shop);
-		      	profile.save();
+		      	profile.save().then(function(){
+		      		App.render();
+		      	});
 				self.undelegateEvents();
 				delete self;
 			},
@@ -769,45 +838,42 @@ App.Views.Upload = Parse.View.extend({
     	$("#upload .error").hide();
     },
 	upload: function(e){
-
-
-		console.log(this)
-
-
 		e.preventDefault();
 		$("#upload button").attr("disabled", "disabled");
 		var fileUpload = $("#fileUpload")[0];
 		if (fileUpload.files.length > 0) {
 			var upload = fileUpload.files[0];
-			var name = Parse.User.current().getUsername() + "tattoo.jpg";
+			var name = "tattoo.jpg";
 			var file = new Parse.File(name, upload);
 			file.save().then(function(file) {
 				var tattoo = new App.Models.Tattoo();
+				console.log('new tattoo created');
 				tattoo.set("file", file);
 				tattoo.set("uploader", Parse.User.current());
-				if (Parse.User.current().attributes.role === 'artist') {
-					tattoo.set("artist", Parse.User.current());
-					tattoo.set("artistName", Parse.User.current().attributes.name );
-                } else {
-                	tattoo.set("artistName", this.$("#editArtistName").val());
-                	tattoo.set("artistEmail", this.$("#editArtistEmail").val());
-                }
+				tattoo.set("artist", Parse.User.current());
+				tattoo.set("artistName", App.profile.attributes.name );
 				return tattoo.save();
-
 			}).then(function (tattoo) {
+				console.log('saved')
 				// adds the tattoo to the user's profile
 				var tattoos = App.profile.relation("tattoos");
 				tattoos.add(tattoo);
+				console.log('added relationship');
 				return App.profile.save();
-
 			}).then(function(user) {
+				console.log('profile saved')
   				Parse.history.navigate('myprofile', {trigger: true});
+  				console.log('profile triggered');
 			}, function(error) {
 				console.log(error);
 				$("#upload .error").html(error.message).show();
 				$("#upload button").removeAttr("disabled");
 			});
 		}
+
+		//// for user uploads....
+        // tattoo.set("artistName", this.$("#editArtistName").val());
+        // tattoo.set("artistEmail", this.$("#editArtistEmail").val());
 	},
 	render: function(){
 		this.$el.html(this.template());
@@ -932,8 +998,6 @@ App.Collections.FeaturedArtists = Parse.Collection.extend({
 });
 
 
-
-
 ///////// Routers
 App.Router = new (Parse.Router.extend({
 	routes: {
@@ -942,6 +1006,7 @@ App.Router = new (Parse.Router.extend({
 		"join":        		    "join",
 		"login":        		"login",
 		"settings":        		"settings",
+		"interview":      		"interview",
 		"myprofile":  	 		"myProfile",
 		"tattoo/new": 			"upload",
 		"user/:uname":   		"showUserProfile",
@@ -954,15 +1019,15 @@ App.Router = new (Parse.Router.extend({
 
 		this.user = Parse.User.current();
 		
+		App.render();
+
 	},
 	home: function(){
 		var intro = new App.Views.Intro();
 		$('.app').html(intro.render().el);
 
-		// find all artists featured this month
-		var query = new Parse.Query(App.Models.User);
-		/// temp set featured artist month manually
-		query.equalTo("featuremonth", 6);
+		var query = new Parse.Query(App.Models.ArtistProfile);
+		query.equalTo("featuremonth", '6');
 		query.descending("createdAt");
 		query.find({
 		  success: function(artists) {
@@ -970,7 +1035,7 @@ App.Router = new (Parse.Router.extend({
 			App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
 			App.Views.featuredArtists.render();
 		  },
-		  error: function(artists, message){
+		  error: function(message){
 		  	console.log(message);
 		  }
 		});
@@ -1063,13 +1128,15 @@ App.Router = new (Parse.Router.extend({
 	settings: function(){
 
 		var settings = new App.Views.Settings();
-		
 		$('.app').html(settings.render().el);
 
 		settings.renderMap();
 		settings.renderProf();
 
-
+	},
+	interview: function(){
+		var interview = new App.Views.Interview();
+		$('.app').html(interview.render().el);
 	},
 	myProfile: function(){
 		if (this.user.attributes.role === 'user'){

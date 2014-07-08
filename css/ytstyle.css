@@ -4746,6 +4746,8 @@ span.hover-content {
 
 #upload .btn-link {
   margin-right: 20px; }
+#upload .uploadOptions {
+  margin-top: 80px; }
 
 .btn-file {
   overflow: hidden;
