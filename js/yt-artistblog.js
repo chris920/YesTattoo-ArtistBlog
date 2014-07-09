@@ -24,23 +24,11 @@ var App = new (Parse.View.extend({
 	events: {
 		//simplifies html to use routers where needed
 		"click [href^='/']": 			"links",
-		"click [href='/about']": 		"about",
-		"click [href='/tattoo/new']": 	"upload",
 		"click #logout": 				"logout"
 	},
 	links: function(e){
-			e.preventDefault();
-			Parse.history.navigate(e.target.pathname, {trigger: true});
-			$("html, body").animate({ scrollTop: 0 }, 200);
-	},
-	about: function(e){
 		e.preventDefault();
-		Parse.history.navigate('/about', {trigger: true});
-		$("html, body").animate({ scrollTop: 0 }, 200);
-	},
-	upload: function(e){
-		e.preventDefault();
-		Parse.history.navigate('/tattoo/new', {trigger: true});
+		Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
 	},
 	logout: function(e){
 		Parse.User.logOut();
@@ -226,13 +214,6 @@ App.Views.Tattoo = Parse.View.extend({
 	className: 'tattoo',
 	template: _.template($("#tattooTemplate").html()),
 	initialize: function(){
-		//checks if user has added to show add or hide buttons.
-		// if (_.contains(Parse.User.current().attributes.added, this.model.id)) {
-		// 	this.showRemove();
-		// } else {
-		// 	this.showAdd();
-		// }
-
 		_.bindAll(this, 'add', 'remove', 'showAdd', 'showRemove');
 	},
     events: {
@@ -448,8 +429,10 @@ App.Views.Intro = Parse.View.extend({
 
 App.Views.FeaturedArtists = Parse.View.extend({
 	el: '#featuredArtists',
+	loadTemplate: _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>See you tomorrow</h5><br><button type="button" id="more" class="btn-lg" href="/featured/p<%= page %>">More Artists</button></div>'),
     initialize: function () {
     	this.collection.on('reset', this.render, this);
+    	this.collection.bind('add', this.addOne);
 
     	/// *better place to put this?
     	$(window).scroll(function () {
@@ -464,41 +447,60 @@ App.Views.FeaturedArtists = Parse.View.extend({
 		});
 
     },
+    events: {
+    	'click #more': 'load'
+    },
     render: function () {
       this.addAll();
       return this;
     },
-    events: {
-     	'scroll': 			'scrollChecker',
-     	'click #loaders': 	'load'
+    load: function(e) {
+    	//hides load button after clicked
+	 	$(e.target.parentElement).fadeOut("normal", function() {
+	        $(this).remove();
+	    });
     },
-    load: function() {
+    renderLoad: function() {
+    	this.collection.page++
 
+    	///H ~ checks if there are no more artists. What is the better way to do this?
+	  	if (this.collection.models.pop().id === 'hQUgHBN38S') {
+	  		$('#more').remove();
+			this.loadTemplate = _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>See you tomorrow</h5></div>');
+	  	}
 
-    },
-    scrollChecker: function () {
-    	console.log('scroll triggered');
+		this.$el.append(this.loadTemplate({page: this.collection.page}));
 
 
     },
     addAll: function(){
     	this.$el.empty();
-    	// Renders all the featured artists in collection
-    	this.collection.forEach(this.addOne);
+    
+    	this.addMore();
 
-    	//// hide for featured artist fade in
-    	$('#homePage .featuredArtist:gt(2)').hide();
+		/// Show initial artist
+    	$('#homePage .featuredArtist:first').fadeIn();
+		
+	},
+    addMore: function(){
+
+		// Renders all the featured artists in collection
+    	this.collection.forEach(this.addOne);
 		
 	},
 	addOne: function(artist){
+
+		//renders an additional featured artist
 		var featuredArtist = new App.Views.FeaturedArtist({model: artist});
 		$('#featuredArtists').append(featuredArtist.render().el);
-		//renders an additional featured artist
 	}
 });
 
 App.Views.FeaturedArtist = Parse.View.extend({
 	className: 'featuredArtist',
+	attributes: {
+	    "style": "display: none;"
+	},
 	template: _.template($("#featuredArtistTemplate").html()),
     events: {
       'click button, .artistProf, h4, a': 'viewProfile'
@@ -753,7 +755,6 @@ App.Views.Interview = Parse.View.extend({
 		this.$el.html(this.artistTemplate(this.profile.attributes));
 		return this;
 	}
-
 });
 
 App.Views.Join = Parse.View.extend({
@@ -797,7 +798,7 @@ App.Views.Join = Parse.View.extend({
 				App.Router.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Thanks for joining!</h3>");
 		    	if(user.attributes.role === 'user'){
-		    		var profile = new App.Models.UserProfile(); 
+		    		var profile = new App.Models.UserProfile();
 		    	} else  {
 		    		var profile = new App.Models.ArtistProfile(); 
 		    	};
@@ -848,8 +849,15 @@ App.Views.Upload = Parse.View.extend({
 				var tattoo = new App.Models.Tattoo();
 				tattoo.set("file", file);
 				tattoo.set("uploader", Parse.User.current());
-				tattoo.set("artist", Parse.User.current());
-				tattoo.set("artistName", App.profile.attributes.name );
+
+				if (Parse.User.current().attributes.role === 'user') {
+			        tattoo.set("artistName", this.$("#editArtistName").val());
+			        tattoo.set("artistEmail", this.$("#editArtistEmail").val());
+				} else {
+					tattoo.set("artist", Parse.User.current());
+					tattoo.set("artistName", App.profile.attributes.name );
+				}
+
 				return tattoo.save();
 			}).then(function (tattoo) {
 				// adds the tattoo to the user's profile
@@ -865,9 +873,7 @@ App.Views.Upload = Parse.View.extend({
 			});
 		}
 
-		//// for user uploads....
-        // tattoo.set("artistName", this.$("#editArtistName").val());
-        // tattoo.set("artistEmail", this.$("#editArtistEmail").val());
+
 	},
 	render: function(){
 		this.$el.html(this.template());
@@ -988,7 +994,8 @@ App.Collections.Adds = Parse.Collection.extend({
 });
 
 App.Collections.FeaturedArtists = Parse.Collection.extend({
-	model: App.Models.User
+	model: App.Models.User,
+	page: 0
 });
 
 
@@ -996,6 +1003,7 @@ App.Collections.FeaturedArtists = Parse.Collection.extend({
 App.Router = new (Parse.Router.extend({
 	routes: {
 		"":						"home",
+		"featured/p:page":		"featured",
 		"about":   				"about",
 		"join":        		    "join",
 		"login":        		"login",
@@ -1020,20 +1028,40 @@ App.Router = new (Parse.Router.extend({
 		var intro = new App.Views.Intro();
 		$('.app').html(intro.render().el);
 
+		this.per = 7;
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.containedIn("featuremonth", ["6", "7"]);
+		query.limit(this.per);
 		query.descending("createdAt");
 		query.find({
 		  success: function(artists) {
 		    App.Collections.featuredArtists = new App.Collections.FeaturedArtists(artists);
 			App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
 			App.Views.featuredArtists.render();
+			App.Views.featuredArtists.renderLoad();
 		  },
 		  error: function(message){
 		  	console.log(message);
 		  }
 		});
 	
+	},
+	featured: function(page) {
+		var skip = page * this.per;
+		var query = new Parse.Query(App.Models.ArtistProfile);
+		query.containedIn("featuremonth", ["6", "7"]);
+		query.skip(skip);
+		query.limit(this.per);
+		query.descending("createdAt");
+		query.find({
+		  success: function(artists) {
+		  	App.Collections.featuredArtists.add(artists);
+		  	App.Views.featuredArtists.renderLoad();
+		  },
+		  error: function(message){
+		  	console.log(message);
+		  }
+		});
 	},
 	showProfile: function(uname){
 
@@ -1043,7 +1071,7 @@ App.Router = new (Parse.Router.extend({
 		// find the first object with the above query
 		query.first().then(function(artist) {
 			if (typeof(artist)==='undefined'){
-				// if the user couldn't be found, show error message
+				// if the artist couldn't be found, search for user profiles
 				Parse.history.navigate('user/'+uname, {trigger: true});
 				
 			} else  {
