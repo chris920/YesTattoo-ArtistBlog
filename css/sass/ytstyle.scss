@@ -23,6 +23,19 @@ input, input.span,.input-group {
     margin-bottom: 10px;
 }
 
+a {
+    color: inherit;
+    text-decoration: none; 
+    cursor: pointer;}
+  a:hover, a:focus {
+    color: $brand-primary;
+    text-decoration: none;
+    @include slowtofast(0.65,.2s); }
+  a:focus {
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px; }
+
 //Sticky footer wrap, placeholder and footer 
 #footer {
     background-color: black;
@@ -574,12 +587,6 @@ span.hover-content {
     }
 }
 
-.added {
-    background-color: rgba(0,0,0,0);
-    color: $gray-trans;
-    @include transition(all 0.3s ease);
-}
-
 .tagFilters {
     max-width: 600px;
     min-width: 200px; //for more arrow cover
@@ -595,7 +602,7 @@ span.hover-content {
     z-index: 1050;
     cursor: pointer;
     position: fixed;
-    top: 130px;
+    top: 120px;
     right: 30px;
     display:none;
 }

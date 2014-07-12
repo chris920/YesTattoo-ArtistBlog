@@ -117,14 +117,14 @@
             <img class="artistProf" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
           </div>
           <div class="col-sm-10 artistTitles">
-            <h4 class="artistName"><%= name %><span> <%= username %></span></h4>
+            <h4 class="artistName" href="/<%= username %>"><a><%= name %><span> <%= username %></span></a></h4>
             <p class="artistLoc"><%= (shop) ?  shop : '' %> / <%= (locationName)  ?  locationName : '' %></p>
           </div>
         </div>
         <div class="questionContainer">
           <p><%= q1 %></p>
           <h4 class="answer"><%= a1 %></h4>
-          <button type="button" class="btn btn-link pull-right">More...</button>
+          <button type="button" href="/<%= username %>" class="btn btn-link pull-right">More...</button>
         </div>
         <div class="portfolioContainer">
         </div>
@@ -239,7 +239,7 @@
         <!-- Shop Tab -->
         <div class="tab-pane fade" id="shopTab">
           <div class="container">
-            <h3 href=""><%= (shop) ?  shop : '' %></3>
+            <h3><%= (shop) ?  shop : '' %></h3>
             <div id="map"></div>
           </div>
         </div>
@@ -250,6 +250,9 @@
       <div class="tattooContainer">
         <a>
           <img src="<%= fileThumb.url %>" class="tattooImg">
+          <span class="hover-content" data-toggle="buttons"><span>
+            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Add</button>
+          </span></span>
         </a>
       </div>
     </script>
@@ -321,7 +324,8 @@
           <div class="profNavContainer col-xs-12 affix-top">
             <div class="container">
               <ul class="nav nav-tabs" id="profMenu">
-                  <li class="active"><a href="#portfolioTab" data-toggle="tab"><span class="flaticon-book104"></span>Collection</a></li>
+                  <li class="active"><a href="#addsTab" data-toggle="tab"><span class="flaticon-book104"></span>Collection</a></li>
+                  <li><a href="#tattoosTab" data-toggle="tab"><span class="flaticon-camera4"></span>Tattoos</a></li>
               </ul>
             </div>
           </div>
@@ -329,8 +333,18 @@
       </div>
 
       <div class="tab-content">
-        <!-- Collection Tab -->
-        <div class="tab-pane fade in active" id="collectionTab">
+        <!-- Collection / Adds Tab-->
+        <div class="tab-pane fade in active" id="addsTab">
+          <div class="tagFilters" data-toggle="buttons">
+          </div>  
+          <div class="container">          
+            <div class="row adds">
+
+            </div>
+          </div>
+        </div> 
+        <!-- My Tattoos Tab -->
+        <div class="tab-pane fade" id="tattoosTab">
           <div class="tagFilters" data-toggle="buttons">
           </div>  
           <div class="container">          
@@ -363,7 +377,7 @@
                 <option value="artist">Artist</option>
               </select>
             </div>
-            <a class="toggleArtist">Are you an artist?</a></br>
+            <a class="toggleArtist">Are you an artist? Click me</a></br>
             <button type="submit" class="btn-submit">Submit</button>
           </form> 
         </div>
@@ -703,6 +717,7 @@
       })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
       ga('create', 'UA-51701131-1', 'yes.tattoo');
+      ga('require', 'displayfeatures');
       ga('send', 'pageview');
 
     </script>
