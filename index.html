@@ -176,7 +176,7 @@
             <div class="container">
               <ul class="nav nav-tabs" id="profMenu">
                   <li class="active"><a href="#portfolioTab" data-toggle="tab"><span class="flaticon-tattoo1"></span>Portfolio</a></li>
-                  <% if (desc || q1 ) { %>
+                  <% if (desc || featuremonth ) { %>
                     <li><a href="#aboutTab" data-toggle="tab"><span class="flaticon-information"></span>About</a></li>
                   <% } %>
                   <% if (address) { %>
@@ -209,7 +209,7 @@
                   <h3>About <%= (name) ?  name : '' %> </h3>
                   <p><%= desc %></p><hr><br>
                 <% } %>
-                <% if (q1) { %>
+                <% if (featuremonth) { %>
                   <h3>Featured Interview</h3>
                   <h5>Q1 ~ <%= q1 %> </h5>
                   <p class="answer"><%= a1 %></p>
@@ -253,6 +253,15 @@
           <span class="hover-content" data-toggle="buttons"><span>
             <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Add</button>
           </span></span>
+          
+          <% if(artistProfile.name) { %>
+            <span class="hover-text-content"><span>
+              <img class="artistProf" src="<%= artistProfile.profThumb.url %>" alt="Artist Prof">
+              <h4 class="artistName" href="/<%= artistProfile.username %>"><%= (artistProfile.name) ?  artistProfile.name+' / ' : '' %> <%= artistProfile.username %></h4>
+              <h5 class="artistLoc"><%= artistProfile.locationName %></h5>
+            </span></span>
+          <% } %>
+
         </a>
       </div>
     </script>

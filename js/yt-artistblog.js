@@ -40,6 +40,7 @@ var App = new (Parse.View.extend({
 		$("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	getProfile: function(){
+		console.log('get profile')
 		var user = Parse.User.current();
 		if (user) {
 			//gets the user's profile
@@ -56,7 +57,7 @@ var App = new (Parse.View.extend({
 			    console.log("Error: " + error.code + " " + error.message);
 			});
 		}
-
+		return App.profile;
 
 	},
 	render: function() {
@@ -206,7 +207,6 @@ App.Views.Tattoos = Parse.View.extend({
 	renderTattoos: function(e){
     	this.$el.empty();
     	this.collection.forEach(this.renderTattoo);
-
 	},
 	renderTattoo: function(tattoo){
 		var tattoo = new App.Views.Tattoo({model: tattoo});
@@ -220,6 +220,7 @@ App.Views.Tattoo = Parse.View.extend({
 	template: _.template($("#tattooTemplate").html()),
 	initialize: function(){
 		_.bindAll(this, 'add', 'remove', 'showAdd', 'showRemove');
+
 	},
     events: {
      	'click .add': 				'add',
@@ -284,17 +285,13 @@ App.Views.Tattoo = Parse.View.extend({
 	},
 	showAdd: function(){
 		this.$('button').fadeOut().removeClass('remove').removeAttr("disabled").addClass('add btn-block').html('<span class="flaticon-book104"></span>Add').fadeIn();
-
-		///hide remove, show add
-		console.log('show add triggered')
 	},
 	showRemove: function(){
 		this.$('button').fadeOut().removeClass('add btn-block').removeAttr("disabled").addClass('remove pull-right').html('&nbsp;&nbsp;<span class="flaticon-book104"></span>X').fadeIn();
-
-		/// hide add, show remove......
-		console.log('show remove triggered')
 	},
 	render: function(){
+		//includes the artist profile attributes in toJSON
+		this.model.attributes.artistProfile = this.model.attributes.artistProfile.toJSON();
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
 		return this;
@@ -766,7 +763,8 @@ App.Views.Join = Parse.View.extend({
 		    	};
 		      	profile.set('user',user);
 		      	profile.set('shop',shop);
-		      	profile.save().then(function(){
+		      	profile.save().then(function(profile){
+		      		App.profile = profile;
 		      		App.render();
 		      	});
 				self.undelegateEvents();
@@ -818,6 +816,7 @@ App.Views.Upload = Parse.View.extend({
 				} else {
 					tattoo.set("artist", Parse.User.current());
 					tattoo.set("artistName", App.profile.attributes.name );
+					tattoo.set("artistProfile", App.profile );
 				}
 
 				return tattoo.save();
@@ -982,8 +981,6 @@ App.Router = new (Parse.Router.extend({
 		this.bind('route', this._pageView);
 
 		this.user = Parse.User.current();
-		
-		App.render();
 
 	},
 	home: function(){
@@ -1039,7 +1036,6 @@ App.Router = new (Parse.Router.extend({
 			} else  {
 				var profile = new App.Views.ArtistProfile({model: artist});
 				$('.app').html(profile.render().el);
-
 			  	var tattoos = artist.relation('tattoos');
 			  	var query = tattoos.query();
 			  	query.descending("createdAt");
@@ -1066,7 +1062,6 @@ App.Router = new (Parse.Router.extend({
 				Parse.history.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
 			} else {
-				console.log(profile)
 				var userProfile = new App.Views.UserProfile({model: profile});
 				$('.app').html(userProfile.render().el);
 
@@ -1074,6 +1069,7 @@ App.Router = new (Parse.Router.extend({
 			  	addsQuery.descending("createdAt");
 			  	addsQuery.equalTo('userId', profile.attributes.userId);
 			  	addsQuery.include('tattoo');
+			  	addsQuery.include('tattoo.artistProfile');
 			  	addsQuery.find({
 			  		success: function(adds) {
 			  			tattoos = _.map(adds, function(add){ return add.attributes.tattoo; });
@@ -1135,6 +1131,7 @@ App.Router = new (Parse.Router.extend({
 		  	addsQuery.descending("createdAt");
 		  	addsQuery.equalTo('user', this.user);
 		  	addsQuery.include('tattoo');
+		  	addsQuery.include('tattoo.artistProfile');
 		  	addsQuery.find({
 		  		success: function(adds) {
 		  			tattoos = _.map(adds, function(add){ return add.attributes.tattoo; });
@@ -1160,7 +1157,6 @@ App.Router = new (Parse.Router.extend({
 	  			portfolio.render();
 	  		}
 	  	});
-
 	},
 	upload: function(){
 		var upload = new App.Views.Upload();
