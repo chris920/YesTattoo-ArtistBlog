@@ -40,7 +40,6 @@ var App = new (Parse.View.extend({
 		$("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	getProfile: function(){
-		console.log('get profile')
 		var user = Parse.User.current();
 		if (user) {
 			//gets the user's profile
@@ -52,7 +51,6 @@ var App = new (Parse.View.extend({
 			query.equalTo("username", user.getUsername());
 			query.first().then(function(result) {
 				App.profile = result;
-
 			}, function(error) {
 			    console.log("Error: " + error.code + " " + error.message);
 			});
@@ -220,7 +218,6 @@ App.Views.Tattoo = Parse.View.extend({
 	template: _.template($("#tattooTemplate").html()),
 	initialize: function(){
 		_.bindAll(this, 'add', 'remove', 'showAdd', 'showRemove');
-
 	},
     events: {
      	'click .add': 				'add',
@@ -252,6 +249,7 @@ App.Views.Tattoo = Parse.View.extend({
 					that.showRemove();
 				}, function(error) {
 					console.log(error);
+					that.showAdd();
 				});
 			}
 		} else {
@@ -290,10 +288,18 @@ App.Views.Tattoo = Parse.View.extend({
 		this.$('button').fadeOut().removeClass('add btn-block').removeAttr("disabled").addClass('remove pull-right').html('&nbsp;&nbsp;<span class="flaticon-book104"></span>X').fadeIn();
 	},
 	render: function(){
-		//includes the artist profile attributes in toJSON
-		this.model.attributes.artistProfile = this.model.attributes.artistProfile.toJSON();
+		// checks if the artist profile was included, then toJSONs the attributes and inlcudes it when rendering.
+		// The if statement avoids issues with saving the add, where it tries to save the JSONed tattoo as well.
+		if (this.model.attributes.artistProfile.createdAt !== undefined) {
+			this.model.attributes.artistProfile = this.model.attributes.artistProfile.toJSON();
+		}
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
+
+		if ($.inArray(this.model.id, Parse.User.current().attributes.added) > -1) {
+			this.showRemove();
+		}
+
 		return this;
 	}
 });
@@ -1070,12 +1076,14 @@ App.Router = new (Parse.Router.extend({
 			  	addsQuery.equalTo('userId', profile.attributes.userId);
 			  	addsQuery.include('tattoo');
 			  	addsQuery.include('tattoo.artistProfile');
+			  	console.log(addsQuery)
 			  	addsQuery.find({
 			  		success: function(adds) {
 			  			tattoos = _.map(adds, function(add){ return add.attributes.tattoo; });
 			  			var userTattoos = new App.Collections.Tattoos(tattoos);
 			  			var userAdds = new App.Views.Tattoos({collection: userTattoos, el: '.adds'});
 			  			userAdds.render();
+
 			  		}
 			  	});
 
