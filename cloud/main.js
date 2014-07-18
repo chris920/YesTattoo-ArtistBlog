@@ -1,4 +1,17 @@
 
+Parse.Cloud.afterSave(Parse.User, function(request) {
+  var user = request.user;
+  if (!user.existed()) {
+    var userACL = new Parse.ACL(user);
+    user.setACL(userACL);
+    user.save().then(function() {
+        console.log('acl success')
+      }, function(error) {
+        console.log(error);
+      });
+  }
+});
+
 var Image = require("parse-image");
  
 
@@ -109,7 +122,8 @@ Parse.Cloud.afterSave('UserProfile', function(request) {
     profileACL.setPublicReadAccess(true);
     profileACL.setRoleWriteAccess("Admin",true);
     profile.set('username', user.attributes.username);
-    user.set('profile', profile);
+    profile.set('userId', user.id);
+    user.set('userprofile', profile);
     profile.save();
     user.save();
   }
@@ -194,6 +208,7 @@ Parse.Cloud.afterSave("Tattoo", function(request) {
     console.log('tattoo did not exist.');
     var userACL = new Parse.ACL(user);
     tattoo.setACL(userACL);
+    tattoo.setRoleWriteAccess("Admin",true);
     userACL.setPublicReadAccess(true);
     tattoo.save();
     console.log('tattoo saved');
@@ -203,9 +218,10 @@ Parse.Cloud.afterSave("Tattoo", function(request) {
 Parse.Cloud.afterSave("Add", function(request) {
   var user = request.user;
   var add = request.object;
-  if (!user.existed()) {
+  if (!add.existed()) {
     var userACL = new Parse.ACL(user);
     add.setACL(userACL);
+    add.setRoleWriteAccess("Admin",true);
     userACL.setPublicReadAccess(true);
     add.save();
   }

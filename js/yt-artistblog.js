@@ -39,7 +39,7 @@ var App = new (Parse.View.extend({
 		Parse.history.navigate('', {trigger: true});
 		$("html, body").animate({ scrollTop: 0 }, 200);
 	},
-	getProfile: function(){
+	getProfile: function(callBack){
 		var user = Parse.User.current();
 		if (user) {
 			//gets the user's profile
@@ -51,6 +51,10 @@ var App = new (Parse.View.extend({
 			query.equalTo("username", user.getUsername());
 			query.first().then(function(result) {
 				App.profile = result;
+
+				//optional callback if page needs App.profile
+				if (callBack) { callBack(); }
+
 			}, function(error) {
 			    console.log("Error: " + error.code + " " + error.message);
 			});
@@ -186,7 +190,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 	  	// Pass this object onto the template function, returns an HTML string. Then use jQuerry to insert the html
 		this.$el.html(this.template(attributes));
 
-		$(window).scroll(this.activateAffix);
+		$(window).delay( 500 ).scroll(this.activateAffix);
 
 		return this;
 	}
@@ -371,7 +375,7 @@ App.Views.UserProfile = Parse.View.extend({
 	render: function(){
 		var attributes = this.model.attributes
 		this.$el.html(this.template(attributes));
-		$(window).scroll(this.activateAffix);
+		$(window).delay( 500 ).scroll(this.activateAffix);
 		return this;
 	}
 });
@@ -517,7 +521,7 @@ App.Views.Settings = Parse.View.extend({
     	"submit form.infoForm": 			"saveInfo",
     	"keyup #editUsername": 				"usernameVal",
     	"submit form.profileForm": 			"saveProfile",
-    	"blur #editFB, #editInstagram, #editTwitter, #editWebsite":"linkVal",
+    	"keyup #editFB, #editInstagram, #editTwitter, #editWebsite":"linkVal",
     	"change #profUpload": 				"updateProf",
     	"dblclick #profileSettings": 		"interview",
     	"click li": 						"scrollTo",
@@ -756,9 +760,8 @@ App.Views.Join = Parse.View.extend({
 		var password = this.$("#inputPassword").val();
 		var role = this.$("#inputRole").val();
 		var shop = this.$("#inputShop").val();
-		var userACL = new Parse.ACL(Parse.User.current());
 
-		Parse.User.signUp(username, password, { email: email, role: role, ACL: userACL }, {
+		Parse.User.signUp(username, password, { email: email, role: role }, {
 			success: function(user) {
 				App.Router.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Thanks for joining!</h3>");
@@ -773,8 +776,10 @@ App.Views.Join = Parse.View.extend({
 		      		App.profile = profile;
 		      		App.render();
 		      	});
+		      	console.log(self)
 				self.undelegateEvents();
 				delete self;
+				console.log(self)
 			},
 	        error: function(user, error) {
 				$(".signupForm .error").html(error.message).show();
@@ -1119,11 +1124,15 @@ App.Router = new (Parse.Router.extend({
 	},
 	settings: function(){
 
-		var settings = new App.Views.Settings();
-		$('.app').html(settings.render().el);
+		App.getProfile(renderSettings);
 
-		settings.renderMap();
-		settings.renderProf();
+		function renderSettings(){
+			var settings = new App.Views.Settings();
+			$('.app').html(settings.render().el);
+
+			settings.renderMap();
+			settings.renderProf();
+		}
 
 	},
 	interview: function(){
@@ -1131,44 +1140,56 @@ App.Router = new (Parse.Router.extend({
 		$('.app').html(interview.render().el);
 	},
 	myProfile: function(){
-		if (this.user.attributes.role === 'user'){
-			var myProfile = new App.Views.UserProfile({model: App.profile});
-			$('.app').html(myProfile.render().el);
 
-		  	var addsQuery = new Parse.Query(App.Models.Add);
-		  	addsQuery.descending("createdAt");
-		  	addsQuery.equalTo('user', this.user);
-		  	addsQuery.include('tattoo');
-		  	addsQuery.include('tattoo.artistProfile');
-		  	addsQuery.find({
-		  		success: function(adds) {
-		  			tattoos = _.map(adds, function(add){ return add.attributes.tattoo; });
-		  			var userTattoos = new App.Collections.Tattoos(tattoos);
-		  			var userAdds = new App.Views.Tattoos({collection: userTattoos, el: '.adds'});
-		  			userAdds.render();
+		//render profile is a callback to get profile in order to wait for App.profile execute
+		App.getProfile(renderProfile);
+
+		function renderProfile(){
+
+			if (Parse.User.current().attributes.role === 'user'){
+				var myProfile = new App.Views.UserProfile({model: App.profile});
+				console.log(App.profile)
+				$('.app').html(myProfile.render().el);
+
+			  	var addsQuery = new Parse.Query(App.Models.Add);
+			  	addsQuery.descending("createdAt");
+			  	addsQuery.equalTo('user', Parse.User.current());
+			  	addsQuery.include('tattoo');
+			  	addsQuery.include('tattoo.artistProfile');
+			  	addsQuery.find({
+			  		success: function(adds) {
+			  			tattoos = _.map(adds, function(add){ return add.attributes.tattoo; });
+			  			var userTattoos = new App.Collections.Tattoos(tattoos);
+			  			var userAdds = new App.Views.Tattoos({collection: userTattoos, el: '.adds'});
+			  			userAdds.render();
+			  		}
+			  	});
+
+			} else {
+				var myProfile = new App.Views.ArtistProfile({model: App.profile});
+				$('.app').html(myProfile.render().el);
+
+			}
+
+		  	var tattoos = App.profile.relation('tattoos');
+		  	var query = tattoos.query();
+		  	query.descending("createdAt");
+		  	query.find({
+		  		success: function(tats) {
+		  			var tattoos = new App.Collections.Tattoos(tats);
+		  			var portfolio = new App.Views.MyTattoos({collection: tattoos});
+		  			portfolio.render();
 		  		}
 		  	});
-
-		} else {
-			var myProfile = new App.Views.ArtistProfile({model: App.profile});
-			$('.app').html(myProfile.render().el);
-
 		}
 
-	  	var tattoos = App.profile.relation('tattoos');
-	  	var query = tattoos.query();
-	  	query.descending("createdAt");
-	  	query.find({
-	  		success: function(tats) {
-	  			var tattoos = new App.Collections.Tattoos(tats);
-	  			var portfolio = new App.Views.MyTattoos({collection: tattoos});
-	  			portfolio.render();
-	  		}
-	  	});
 	},
 	upload: function(){
-		var upload = new App.Views.Upload();
-		$('.app').html(upload.render().el);
+		App.getProfile(renderUpload);
+		function renderUpload(){
+			var upload = new App.Views.Upload();
+			$('.app').html(upload.render().el);
+		}
 	},
 	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/
 	_pageView: function() {
