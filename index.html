@@ -10,13 +10,18 @@
     <link rel="shortcut icon" type="image/png" href="img/favicon.png"/>
   </head>
 
-
   <body>
 
     <div id="body">
-        <div class="navs"></div>
-        <div class="modal fade" tabindex="-1" id="login" role="dialog" aria-labelledby="loginModal" aria-hidden="true"></div>
-        <section class="app"></section>
+        
+      <div class="modal fade" tabindex="-1" id="login" role="dialog" aria-labelledby="loginModal" aria-hidden="true"></div>
+
+      <section class="landing">
+      </section>
+
+      <div class="navs"></div>
+      <section class="app"></section>
+      
       <div id="push"></div>
     </div> 
           
@@ -52,7 +57,7 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <% if (!Parse.User.current()) { %>
-                  <li><a href="/join" id="artistsbutton" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
+                  <li><a href="/join" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
                   <li><a href="/login" class="main-nav-item" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
@@ -91,20 +96,44 @@
     </script>
 
 
-    <!-- Landing Home Page / Featured Artists Page-->
+    <!-- Intro / Landing Page-->
     <script type="text/html" id="introTemplate">
-      <div class="intro">
-        <div class="l6container">        
-          <h4>Welcome to YesTattoo! <a href="/join">Join</a> for featured artists and other updates.</br></br> Support your artist and send us your tattoo using <a href="http://www.instagram.com/yestattoo">#YesTattoo.</a></h4></br>
-          <button type="button" class="btn-lg" href="/about">About</button>
+        <div class="artistslide">
+          <div class="introText">
+            <h2 class="welcome" href="" style="display:none">Welcome to</h2>
+            <div class="logo" style="display:none"><a class="main-logo" href="/"></a></div>
+            <h2 class="artistName" href="" style="display:none"></h2>
+            <h5 class="artistLoc" style="display:none">Let us find you an artist</h5>
+          </div>
+
+          <div class="introTattooContainer row" style="display:none">
+          </div>
+          <div class="introTattooContainer row" style="display:none">
+          </div>
+
+          <div class="introLinks" style="display:none">
+            <ul class="">
+              <li><a href=""><i class="flaticon-trophy4"></i>Featured</a></li>
+              <li><a href="/join"><i class="flaticon-send5"></i>Join</a></li>
+              <li><a href="/login" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
+              <li><a href="/about"><i class="flaticon-information"></i>About</a></li>
+            </ul>
+          </div>
+          <a><span class="flaticon-up49"></span></a>
         </div>
-      </div>
     </script>
 
+    <!-- Featured Artists Page-->
+
     <script type="text/html" id="featuredContainerTemplate">
+      <div class="intro">
+        <div class="l6container">        
+          <h4>Support your artist and send us your tattoo using <a href="http://www.instagram.com/yestattoo">#YesTattoo.</a></h4></br>
+        </div>
+      </div>
       <div class="container">
         <div class="md6container">
-          <h2 class="page-header">Featured Artists<i class="flaticon-trophy4"></i></h2>
+          <h2 class="page-header">Latest Featured Artists<i class="flaticon-trophy4"></i></h2>
           <div id="featuredArtists">
           </div>
         </div>

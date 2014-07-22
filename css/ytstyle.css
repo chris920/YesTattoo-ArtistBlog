@@ -758,13 +758,13 @@ pre {
   .row:after, .artistsSearch:after {
     clear: both; }
 
-.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #homePage .tattooContainer, .col-sm-3, .tattooContainer, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .tattooContainer, .col-sm-6, .col-md-6, .md6container, .col-lg-6, .lg6container, .artistThumb, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .md8container, .lightContainer, .lg6container, .artistThumb, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .lg6container, .artistThumb, .col-sm-12, .col-md-12, .col-lg-12 {
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-sm-3, .tattooContainer, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .tattooContainer, .col-sm-6, .col-md-6, .md6container, .col-lg-6, .lg6container, .artistThumb, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .md8container, .lightContainer, .lg6container, .artistThumb, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .lg6container, .artistThumb, .col-sm-12, .col-md-12, .col-lg-12 {
   position: relative;
   min-height: 1px;
   padding-left: 2.5px;
   padding-right: 2.5px; }
 
-.col-xs-1, .col-xs-2, .col-xs-3, #artistsPage .tattooContainer, #homePage .tattooContainer, .col-xs-4, .col-xs-5, .col-xs-6, .tattooContainer, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-xs-11, .col-xs-12, .lg8container, .lg6container, .artistThumb {
+.col-xs-1, .col-xs-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-xs-4, .col-xs-5, .col-xs-6, .tattooContainer, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-xs-11, .col-xs-12, .lg8container, .lg6container, .artistThumb {
   float: left; }
 
 .col-xs-1 {
@@ -773,7 +773,7 @@ pre {
 .col-xs-2 {
   width: 16.66667%; }
 
-.col-xs-3, #artistsPage .tattooContainer, #homePage .tattooContainer {
+.col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer {
   width: 25%; }
 
 .col-xs-4 {
@@ -3909,7 +3909,7 @@ a:focus {
 #footer {
   background-color: black; }
 
-#body {
+#app {
   padding-bottom: 100px;
   min-height: 100%;
   height: auto !important;
@@ -3917,7 +3917,7 @@ a:focus {
   /* Negative indent footer by it's height */
   margin: 100px auto -150px; }
   @media screen and (min-width: 768px) {
-    #body {
+    #app {
       margin: 100px auto -100px; } }
 
 #push, #footer {
@@ -3993,8 +3993,82 @@ a:focus {
     border-top: 4px solid #c42020;
     border-bottom: 0px solid transparent !important; }
 
+.landing {
+  text-align: center;
+  background: black;
+  height: 100%;
+  border-bottom: 100px solid black; }
+
+.artistslide {
+  overflow: hidden;
+  height: 100vh; }
+  .artistslide .artistName {
+    display: inline-block;
+    color: white;
+    margin: 0px; }
+  .artistslide .artistLoc {
+    display: block; }
+  .artistslide .flaticon-up49 {
+    color: white;
+    padding: 0 40px 20px 40px;
+    left: calc(50% - 45px);
+    position: absolute;
+    bottom: 0;
+    -webkit-transition: 1.3s ease;
+    transition: 1.3s ease;
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg); }
+    .artistslide .flaticon-up49:hover {
+      -webkit-transition: 1.3s ease;
+      transition: 1.3s ease;
+      padding: 10px 40px 20px 40px;
+      color: #c42020;
+      font-size: 36px; }
+
+.introText {
+  margin-top: 10vh;
+  width: 100%;
+  color: gray; }
+  .introText .welcome {
+    margin-top: 30vh; }
+  .introText .main-logo {
+    display: block;
+    position: relative;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto; }
+
+.introTattooContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 20px;
+  height: 45vh;
+  white-space: nowrap;
+  overflow: hidden; }
+  .introTattooContainer > img {
+    display: inline-block;
+    height: 100%;
+    width: auto; }
+
+.introLinks {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 120px;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+  background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.7) 40%, black);
+  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.7) 40%, black);
+  background-repeat: no-repeat;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#FF000000', GradientType=0); }
+  .introLinks > ul > li {
+    display: inline-block;
+    padding: 35px; }
+
 .main-logo {
-  float: left;
+  height: 96px;
   width: 180px;
   background: url("../img/yestattoologo.png") no-repeat left center;
   background-size: 100%; }
@@ -4486,9 +4560,6 @@ span.hover-content {
   color: inherit;
   background-color: #e6e6e6;
   text-align: center; }
-
-#homePage .page-header {
-  margin: 100px 0 22px; }
 
 .page-header i {
   color: gray;

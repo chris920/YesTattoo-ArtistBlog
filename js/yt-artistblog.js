@@ -143,15 +143,21 @@ App.Views.ArtistProfile = Parse.View.extend({
 	portfolioTab: function(e){
 	    e.preventDefault();
 	    $(this).tab('show');
+	    this.scroll();
 	},
 	aboutTab: function(e){
 	    e.preventDefault();
 	    $(this).tab('show');
+		this.scroll();
 	},
 	shopTab: function(e){
 	    e.preventDefault();
 	    $(this).tab('show');
 	    this.renderMap();
+	    this.scroll();
+	},
+	scroll: function(){
+		$("html, body").animate({ scrollTop: $('.profHead').outerHeight(true) + 41  }, 500);
 	},
 	activateAffix: function(){
 		/// *Is there a better place to activate the affix?
@@ -300,10 +306,11 @@ App.Views.Tattoo = Parse.View.extend({
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
 
-		if ($.inArray(this.model.id, Parse.User.current().attributes.added) > -1) {
-			this.showRemove();
+		if (Parse.User.current()) {
+			if ($.inArray(this.model.id, Parse.User.current().attributes.added) > -1) {
+				this.showRemove();
+			}			
 		}
-
 		return this;
 	}
 });
@@ -380,15 +387,135 @@ App.Views.UserProfile = Parse.View.extend({
 	}
 });
 
-
-
 App.Views.Intro = Parse.View.extend({
-	id: 'homePage',
+	id: 'intro',
 	introTemplate: _.template($("#introTemplate").html()),
-	featuredContainerTemplate: _.template($("#featuredContainerTemplate").html()),
+	initialize: function(){
+		var that = this;
+		$('.navs').hide();
+		this.loadArtist();
+
+		/// Workaround for getting a random artist. Will not scale over 1,000 due to query constraint....
+		this.totalArtists = 3;
+		var query = new Parse.Query(App.Models.ArtistProfile);
+		query.containedIn("featuremonth", ["6", "7"]);
+		query.count().then(function(count){
+			this.totalArtists = count;
+		});
+
+		_.bindAll(this, 'removeIntro');
+	    $(window).bind('scroll',this.removeIntro);
+
+	},
+    events: {
+    	"click a":	"continue"
+    },
+	welcome: function(){
+		var that = this;
+		this.$('.welcome').delay( 100 ).fadeIn( 600 ).delay( 2800 ).animate({
+			    marginTop: "5vh",
+			    opacity: 0
+			  }, 600, function() {
+			    // Animation complete.
+			  });
+		this.$('.logo').delay( 500 ).fadeIn( 1000 ).delay( 2000 )
+			.animate({
+			    marginBottom: "+5vh"
+			  }, 600, "swing", function() {
+			    that.$('.introLinks').fadeIn();
+			    that.showNextArtist();
+			  });
+		this.$('.artistLoc').delay( 1000 ).fadeIn().delay( 2200 ).fadeOut( 300 );
+	},
+	scrollTattoos: function(tattoos){
+		var that = this;
+		$(tattoos).scrollLeft( 0 ).animate({scrollLeft: 300}, {
+			duration: 6000, 
+			easing: "linear", 
+			start: function() {
+				setTimeout(function(){that.showNextArtist();}, 5200)
+			}
+		});
+	},
+	showNextArtist: function(){
+		var that = this;
+		//// animate down to give a sinking effect.
+		this.$('.introTattooContainer:hidden:first').delay( 600 ).fadeIn( { 
+			duration: 800,
+			start: function() {
+	    		that.scrollTattoos(this);
+	  		},
+			complete: function() {
+	    		that.loadArtist();
+	  		}
+  		});
+		this.$('.introTattooContainer:visible:first').fadeOut( 700 );
+		this.$('.artistName').fadeOut( 800, function() {
+			$(this).html(that.artistName).fadeIn( 1000 );
+		});
+		this.$('.artistLoc').fadeOut( 700, function() {
+			$(this).html(that.artistLocationName).fadeIn( 900 );
+		});
+		
+	},
+	loadArtist: function(){
+		var that = this;
+		var query = new Parse.Query(App.Models.ArtistProfile);
+		query.containedIn("featuremonth", ["6", "7"]);
+		query.limit(1);
+		query.select("name", "username", "locationName");
+		query.skip(Math.floor(Math.random() * this.totalArtists));
+		query.first().then( function(artist){
+			that.artistName = artist.attributes.name;
+		  	that.artistUsername = artist.attributes.username;
+		  	that.artistLocationName = artist.attributes.locationName;
+		  	return artist;
+		}).then(function(artist){
+			// console.log(artist)
+
+		  	var tattoos = artist.relation('tattoos');
+		  	var query = tattoos.query();
+		  	query.limit(8);
+		  	query.find().then(function(tats) {
+		  		that.$('.introTattooContainer:hidden:first').html('');
+	  			_.each(tats, function(tat) {
+	  				var thumb = tat.get('fileThumb').url();
+	  				that.$('.introTattooContainer:hidden:first').append(_.template('<img src='+thumb+' class="tattooImg">'));
+	  			}, that);
+		  	});
+		}).then(function() {
+
+		}, function(error) {
+			console.log(error.message);
+		});
+
+	},
+	continue:function(){
+		//scrolls downward. 
+		$("html, body").animate({ scrollTop: $(window).height() }, 600);
+	},
 	render: function(){
 		var html = this.introTemplate();
 		$(this.el).append(html);
+		return this;
+	},
+	removeIntro:function(){
+		var that = this;
+		if ($(window).height() - 150 <= $(window).scrollTop()) {
+			$('.navs').fadeIn();
+		}
+		if ($(window).height() <= $(window).scrollTop()) {
+			$(window).unbind('scroll',this.removeIntro);
+			that.remove();
+			$(window).scrollTop( 0 );
+		}
+	}
+});
+
+App.Views.FeaturedArtistPage = Parse.View.extend({
+	id: 'featured',
+	featuredContainerTemplate: _.template($("#featuredContainerTemplate").html()),
+	render: function(){
 		var html = this.featuredContainerTemplate();
 		$(this.el).append(html);
 		return this;
@@ -409,7 +536,7 @@ App.Views.FeaturedArtists = Parse.View.extend({
 			 	$('.featuredArtist:hidden:first').fadeIn("slow");
 				//show end when all featured artist's have been shown
 				if($('.featuredArtist:last').is(':visible')) {
-			 		$('#homePage .end').fadeIn();
+			 		$('#featuredArtists .end').fadeIn();
 				}
 			}
 		});
@@ -448,7 +575,7 @@ App.Views.FeaturedArtists = Parse.View.extend({
     	this.addMore();
 
 		/// Show initial artist
-    	$('#homePage .featuredArtist:first').fadeIn();
+    	$('.featuredArtist:first').fadeIn();
 		
 	},
     addMore: function(){
@@ -995,9 +1122,14 @@ App.Router = new (Parse.Router.extend({
 
 	},
 	home: function(){
-		var intro = new App.Views.Intro();
-		$('.app').html(intro.render().el);
-
+		if (!Parse.User.current()){
+			var intro = new App.Views.Intro();
+			$('.landing').html(intro.render().el);
+			intro.welcome();
+		}
+		var featured = new App.Views.FeaturedArtistPage();
+		$('.app').html(featured.render().el);
+		
 		this.per = 7;
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.containedIn("featuremonth", ["6", "7"]);
