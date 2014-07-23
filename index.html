@@ -69,7 +69,7 @@
                       <li class="divider"></li>
                      <li><a href="/tattoo/new"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
                       <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
-                      <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
+                      <li><a id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
                     </ul>
                   </li>
 
@@ -82,7 +82,7 @@
                       <li class="divider"></li>
                      <li><a href="/tattoo/new"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
                       <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
-                      <li><a href="/" id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
+                      <li><a id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
                     </ul>
                   </li>
 
@@ -102,8 +102,8 @@
           <div class="introText">
             <h2 class="welcome" href="" style="display:none">Welcome to</h2>
             <div class="logo" style="display:none"><a class="main-logo" href="/"></a></div>
-            <h2 class="artistName" href="" style="display:none"></h2>
-            <h5 class="artistLoc" style="display:none">Let us find you an artist</h5>
+            <a href=""><h2 class="artistName" href="" style="display:none"></h2></a>
+            <h5 class="artistLoc" style="display:none">Lets find you an artist</h5>
           </div>
 
           <div class="introTattooContainer row" style="display:none">
@@ -113,7 +113,7 @@
 
           <div class="introLinks" style="display:none">
             <ul class="">
-              <li><a href=""><i class="flaticon-trophy4"></i>Featured</a></li>
+              <li><a><i class="flaticon-trophy4"></i>Featured</a></li>
               <li><a href="/join"><i class="flaticon-send5"></i>Join</a></li>
               <li><a href="/login" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
               <li><a href="/about"><i class="flaticon-information"></i>About</a></li>
@@ -281,7 +281,7 @@
         <a>
           <img src="<%= fileThumb.url %>" class="tattooImg">
           <span class="hover-content" data-toggle="buttons"><span>
-            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Add</button>
+            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
           </span></span>
           
           <% if(artistProfile.name) { %>
@@ -301,7 +301,7 @@
         <a>
           <img src="<%= fileThumb.url %>" class="tattooImg">
           <span class="hover-content" data-toggle="buttons"><span>
-            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Add</button>
+            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
           </span></span>
         </a>
       </div>

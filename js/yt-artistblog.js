@@ -12,32 +12,22 @@ var App = new (Parse.View.extend({
 	Views: {},
 	Collections: {},
 
-	id: 'nav',
-	template: _.template($("#navTemplate").html()),
 	start: function(){
 		Parse.history.start({pushState: false, root: '/'});
 
 		this.getProfile();
 
 		// render initial nav 
-		this.render();
+		var nav = new App.Views.Nav();
 
 	},
 	events: {
 		//simplifies html to use routers where needed
-		"click [href^='/']": 			"links",
-		"click #logout": 				"logout"
+		"click [href^='/']": 			"links"
 	},
 	links: function(e){
 		e.preventDefault();
 		Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
-	},
-	logout: function(e){
-		Parse.User.logOut();
-		this.render();
-		$('.intro').html("<h3>You are logged out</h3>");
-		Parse.history.navigate('', {trigger: true});
-		$("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	getProfile: function(callBack){
 		var user = Parse.User.current();
@@ -60,14 +50,6 @@ var App = new (Parse.View.extend({
 			});
 		}
 		return App.profile;
-
-	},
-	render: function() {
-		//renders the nav, which has an if current user statement in template.
-		$('.navs').html(this.template());
-
-		var login = new App.Views.Login();
-
 	}
 }))({el: document.body});
 
@@ -128,6 +110,33 @@ App.Models.FeaturedArtist = Parse.User.extend({
 
 
 ///////// Views
+App.Views.Nav = Parse.View.extend({
+	el: '.navs',
+	initialize: function() {
+		this.render();
+	},
+	template: _.template($("#navTemplate").html()),
+	events: {
+		"click #logout": "logout"
+	},
+	logout: function(){
+		Parse.User.logOut();
+		this.render();
+		var current = Parse.history.getFragment();
+		console.log(current);
+		if ( current == 'settings' || current == 'upload' || current == 'myprofile' ) {
+			Parse.history.navigate('', {trigger: true});
+		}
+
+	},
+    render: function () {
+    	$('.navs').html(this.template());
+		var login = new App.Views.Login();
+    	return this;
+    }
+});
+
+
 App.Views.ArtistProfile = Parse.View.extend({
 	model: App.Models.User,
 	id: 'artistProfile',
@@ -263,7 +272,7 @@ App.Views.Tattoo = Parse.View.extend({
 				});
 			}
 		} else {
-			Parse.history.navigate('/login', {trigger: true});
+			Parse.history.navigate('/login', {trigger: true, replace: true});
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		}
 
@@ -300,6 +309,7 @@ App.Views.Tattoo = Parse.View.extend({
 	render: function(){
 		// checks if the artist profile was included, then toJSONs the attributes and inlcudes it when rendering.
 		// The if statement avoids issues with saving the add, where it tries to save the JSONed tattoo as well.
+
 		if (this.model.attributes.artistProfile.createdAt !== undefined) {
 			this.model.attributes.artistProfile = this.model.attributes.artistProfile.toJSON();
 		}
@@ -400,7 +410,7 @@ App.Views.Intro = Parse.View.extend({
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.containedIn("featuremonth", ["6", "7"]);
 		query.count().then(function(count){
-			this.totalArtists = count;
+			that.totalArtists = count;
 		});
 
 		_.bindAll(this, 'removeIntro');
@@ -452,6 +462,7 @@ App.Views.Intro = Parse.View.extend({
 		this.$('.introTattooContainer:visible:first').fadeOut( 700 );
 		this.$('.artistName').fadeOut( 800, function() {
 			$(this).html(that.artistName).fadeIn( 1000 );
+			$(this).attr('href','/'+that.artistUsername);
 		});
 		this.$('.artistLoc').fadeOut( 700, function() {
 			$(this).html(that.artistLocationName).fadeIn( 900 );
@@ -471,8 +482,6 @@ App.Views.Intro = Parse.View.extend({
 		  	that.artistLocationName = artist.attributes.locationName;
 		  	return artist;
 		}).then(function(artist){
-			// console.log(artist)
-
 		  	var tattoos = artist.relation('tattoos');
 		  	var query = tattoos.query();
 		  	query.limit(8);
@@ -555,8 +564,10 @@ App.Views.FeaturedArtists = Parse.View.extend({
 	 	$(e.target.parentElement).fadeOut("normal", function() {
 	        $(this).remove();
 	    });
+
+	    $("html, body").animate({ scrollTop: $('.end').offset().top }, 400);
     },
-    renderLoad: function() {
+    renderLoad: function(e) {
     	this.collection.page++
 
     	///H ~ checks if there are no more artists. What is the better way to do this?
@@ -564,7 +575,7 @@ App.Views.FeaturedArtists = Parse.View.extend({
 	  		$('#more').remove();
 			this.loadTemplate = _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>See you tomorrow</h5></div>');
 	  	}
-
+	  	
 		this.$el.append(this.loadTemplate({page: this.collection.page}));
 
 
@@ -890,6 +901,7 @@ App.Views.Join = Parse.View.extend({
 
 		Parse.User.signUp(username, password, { email: email, role: role }, {
 			success: function(user) {
+				var nav = new App.Views.Nav();
 				App.Router.navigate('/', {trigger: true});
 				$('.intro').html("<h3>Thanks for joining!</h3>");
 		    	if(user.attributes.role === 'user'){
@@ -901,12 +913,9 @@ App.Views.Join = Parse.View.extend({
 		      	profile.set('shop',shop);
 		      	profile.save().then(function(profile){
 		      		App.profile = profile;
-		      		App.render();
 		      	});
-		      	console.log(self)
 				self.undelegateEvents();
 				delete self;
-				console.log(self)
 			},
 	        error: function(user, error) {
 				$(".signupForm .error").html(error.message).show();
@@ -1025,10 +1034,7 @@ App.Views.Login = Parse.View.extend({
       Parse.User.logIn(username, password, {
         success: function(user) {
         	$('#login').modal('hide');
-			Parse.history.navigate('/', {trigger: true});
-			$('.intro').html("<h3>Welcome back "+Parse.User.current().getUsername()+"!</h3>");
-			App.render();
-			$("html, body").animate({ scrollTop: 0 }, 200);
+			var nav = new App.Views.Nav();
 			self.undelegateEvents();
 			delete self;
         },
@@ -1213,7 +1219,6 @@ App.Router = new (Parse.Router.extend({
 			  	addsQuery.equalTo('userId', profile.attributes.userId);
 			  	addsQuery.include('tattoo');
 			  	addsQuery.include('tattoo.artistProfile');
-			  	console.log(addsQuery)
 			  	addsQuery.find({
 			  		success: function(adds) {
 			  			tattoos = _.map(adds, function(add){ return add.attributes.tattoo; });
@@ -1280,7 +1285,6 @@ App.Router = new (Parse.Router.extend({
 
 			if (Parse.User.current().attributes.role === 'user'){
 				var myProfile = new App.Views.UserProfile({model: App.profile});
-				console.log(App.profile)
 				$('.app').html(myProfile.render().el);
 
 			  	var addsQuery = new Parse.Query(App.Models.Add);
