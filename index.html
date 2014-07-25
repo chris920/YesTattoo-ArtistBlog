@@ -16,16 +16,15 @@
         
       <div class="modal fade" tabindex="-1" id="login" role="dialog" aria-labelledby="loginModal" aria-hidden="true"></div>
 
-      <section class="landing">
-      </section>
-
+      <div class="modalayheehoo"></div>
       <div class="navs"></div>
+      <section class="landing"></section>
       <section class="app"></section>
       
       <div id="push"></div>
     </div> 
           
-    <div id="footer">
+    <div id="footer" style="display:none">
       <div class="container">
         <div class="row">
           <div class="col-sm-6 col-xs-12">
@@ -159,6 +158,43 @@
         </div>
     </script>
 
+<!--         <div class="row artistTitleBG">
+          <div class="col-sm-2">
+            <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
+          </div>
+          <div class="col-sm-10 artistTitles">
+            <h4 class="artistName" href="/<%= username %>"><a><%= name %><span> <%= username %></span></a></h4>
+            <p class="artistLoc"><%= (shop) ?  shop : '' %> / <%= (locationName)  ?  locationName : '' %></p>
+          </div>
+        </div> -->
+
+
+
+<!--           <button type="button" class="btn-submit btn-block"><span class="flaticon-book104"></span>Collect</button> -->
+
+<!-- need a way to always get the artist's information, when coming from artist's page, the aritst profile is not inlcuded..... -->
+
+
+    <script type="text/template" id="tattooProfileTemplate">
+      <a href="#" class="btn-text x">x</a>
+      <div class="container">
+    
+        <div class="imageBox">
+          <img src="<%= file.url %>" class="fullImage">
+        </div>
+
+        <div class="infoBox" style="display:none">
+          <div class="row artistInfo" href=""><a>
+              <img class="largeprofpic" src="img/tattooicon.png" alt="Artist Prof">
+              <h2 class="artistName"> </h2>
+              <h5 class="artistLoc"> </h5>
+          </a></div>
+
+        </div>
+      </div>
+    </script>
+
+
     <!-- Artist profile -->
     <script type="text/html" id="artistTemplate">
       <div class="profHead">
@@ -278,7 +314,7 @@
 
     <script type="text/html" id="tattooTemplate">
       <div class="tattooContainer">
-        <a>
+        <a class="open">
           <img src="<%= fileThumb.url %>" class="tattooImg">
           <span class="hover-content" data-toggle="buttons"><span>
             <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
@@ -309,7 +345,7 @@
      
     <script type="text/html" id="myTattooTemplate">
         <div class="tattooContainer">
-          <a>
+          <a class="open">
             <img src="<%= fileThumb.url %>" class="tattooImg">
             <span class="hover-content" data-toggle="buttons"><span>
               <button type="button" class="btn-submit btn-block">Edit</button>
@@ -740,11 +776,14 @@
     <script src="js/libs/jquery-1.11.1.js"></script>
     <script src="js/libs/bootstrap.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDND9JGq1-cU9bJy12cTy1-nTNq0a96sOY&sensor=false&libraries=places"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+    <script src="js/libs/underscore.js"></script>
+    <script src="js/libs/backbone-min.js"></script>
+    <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script> -->
     <script src="http://www.parsecdn.com/js/parse-1.2.18.js"></script>
     
     <script src="js/libs/typeahead.bundle.min.js"></script>
+    <script src="js/libs/backbone.modal.js"></script>    
     <script src="js/yt-artistblog.js"></script>
     <script src="js/yt-proto.js"></script>
     <script src="js/yt-shared.js"></script>

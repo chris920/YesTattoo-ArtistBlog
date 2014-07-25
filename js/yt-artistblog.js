@@ -19,7 +19,7 @@ var App = new (Parse.View.extend({
 
 		// render initial nav 
 		var nav = new App.Views.Nav();
-
+		$('#footer').fadeIn( 800 );
 	},
 	events: {
 		//simplifies html to use routers where needed
@@ -27,6 +27,7 @@ var App = new (Parse.View.extend({
 	},
 	links: function(e){
 		e.preventDefault();
+		console.log(e.target.pathname);
 		Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
 	},
 	getProfile: function(callBack){
@@ -117,17 +118,15 @@ App.Views.Nav = Parse.View.extend({
 	},
 	template: _.template($("#navTemplate").html()),
 	events: {
-		"click #logout": "logout"
+		"click #logout": 		"logout"
 	},
 	logout: function(){
 		Parse.User.logOut();
 		this.render();
 		var current = Parse.history.getFragment();
-		console.log(current);
 		if ( current == 'settings' || current == 'upload' || current == 'myprofile' ) {
 			Parse.history.navigate('', {trigger: true});
 		}
-
 	},
     render: function () {
     	$('.navs').html(this.template());
@@ -137,11 +136,59 @@ App.Views.Nav = Parse.View.extend({
 });
 
 
+App.Views.TattooProfile = Backbone.Modal.extend({
+	className: 'tattooProfile',
+	initialize: function(){
+		this.back = Parse.history.getFragment();
+		Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
+	},
+	template: _.template($("#tattooProfileTemplate").html()),
+	cancelEl: '.x',
+	events: {
+		"click .artistName": 	"esc"
+	},
+	onRender: function(){
+		$("body").css("overflow", "hidden");
+
+		var that = this;
+		if (this.model.attributes.artistProfile.username) {
+			var artist = this.model.attributes.artistProfile;
+			setArtist(artist);
+		} else {
+			that.model.attributes.artistProfile.fetch({
+			  success: function(profile) {
+			  	artist = profile.toJSON();
+			  	setArtist(artist);
+			  },
+			  error: function(obj, error) {
+			    console.log(error);
+			  }
+			});
+		}
+		function setArtist(artist) {
+			if(artist.profThumb !== undefined){that.$(".largeprofpic")[0].src = artist.profThumb.url};
+			that.$(".artistName").html('By ' + artist.name).attr('href',"/" + artist.username);
+			that.$(".artistLoc").html('<span>' + artist.username + '</span><br>' + artist.shop + ' / ' + artist.locationName);
+			that.$(".infoBox").delay( 500 ).fadeIn();
+		}
+	},
+	cancel: function(){
+		$("body").css("overflow", "auto");
+		console.log(this.back);
+		Parse.history.navigate(this.back, {trigger: false});
+	},
+	esc: function(){
+		Parse.history.navigate(this.model.attributes.artistProfile.username, {trigger: true});
+		this.triggerCancel();
+	    
+	}
+});
+
 App.Views.ArtistProfile = Parse.View.extend({
 	model: App.Models.User,
 	id: 'artistProfile',
 	initialize: function() {
-		
+		this.activateAffix();
 	},
 	template: _.template($("#artistTemplate").html()),
 	events: {
@@ -168,13 +215,11 @@ App.Views.ArtistProfile = Parse.View.extend({
 	scroll: function(){
 		$("html, body").animate({ scrollTop: $('.profHead').outerHeight(true) + 41  }, 500);
 	},
-	activateAffix: function(){
-		/// *Is there a better place to activate the affix?
+	activateAffix: _.debounce(function(){
 		$('.profNavContainer').affix({
 		      offset: { top: $('.profHead').outerHeight(true) + 40 }
 		});
-
-	},
+	}, 1000),
 
 	//render map, using underscore _.debounce to delay the trigger because of hidden tab / responsive issue
 	renderMap: _.debounce(function() {
@@ -190,7 +235,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 	        map: this.map,
 	        icon: ' img/mapmarker.png'
 	    });
-    }, 200),
+    }, 500),
 
 	centerMap: function() {
 		// for responsive, resizes maps to the center
@@ -205,7 +250,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 	  	// Pass this object onto the template function, returns an HTML string. Then use jQuerry to insert the html
 		this.$el.html(this.template(attributes));
 
-		$(window).delay( 500 ).scroll(this.activateAffix);
+		// $(window).delay( 800 ).scroll(this.activateAffix);
 
 		return this;
 	}
@@ -237,10 +282,19 @@ App.Views.Tattoo = Parse.View.extend({
 	template: _.template($("#tattooTemplate").html()),
 	initialize: function(){
 		_.bindAll(this, 'add', 'remove', 'showAdd', 'showRemove');
+
+		App.tattoo = this.model;
 	},
     events: {
+     	'click .open': 				'open',
      	'click .add': 				'add',
      	'click .remove': 			'remove'
+    },
+    open: function(e){
+    	e.preventDefault();
+    	///needs to pass the tattoo events to the tattoo
+    	var profile = new App.Views.TattooProfile({model: this.model});
+		$('.modalayheehoo').html(profile.render().el);
     },
 	add: function(){
 		var user = Parse.User.current();
@@ -301,7 +355,7 @@ App.Views.Tattoo = Parse.View.extend({
 		});
 	},
 	showAdd: function(){
-		this.$('button').fadeOut().removeClass('remove').removeAttr("disabled").addClass('add btn-block').html('<span class="flaticon-book104"></span>Add').fadeIn();
+		this.$('button').fadeOut().removeClass('remove').removeAttr("disabled").addClass('add btn-block').html('<span class="flaticon-book104"></span>Collect').fadeIn();
 	},
 	showRemove: function(){
 		this.$('button').fadeOut().removeClass('add btn-block').removeAttr("disabled").addClass('remove pull-right').html('&nbsp;&nbsp;<span class="flaticon-book104"></span>X').fadeIn();
@@ -345,11 +399,16 @@ App.Views.MyTattoos = Parse.View.extend({
 });
 
 App.Views.MyTattoo = Parse.View.extend({
-	className: 'Tattoo',
+	className: 'tattoo',
 	template: _.template($("#myTattooTemplate").html()),
 	events: {
-		'click button': 'edit'
+		'click button': 'edit',
+		'click .open': 	'open'
 	},
+    open: function(){
+    	var profile = new App.Views.TattooProfile({model: this.model});
+		$('.modalayheehoo').html(profile.render().el);
+    },
 	edit: function(){
 		var edit = new App.Views.ArtistEdit({model: this.model});
 		$('.app').html(edit.render().el);
@@ -369,7 +428,7 @@ App.Views.UserProfile = Parse.View.extend({
 	model: App.Models.User,
 	id: 'userProfile',
 	initialize: function() {
-
+		this.activateAffix();
 	},
 	template: _.template($("#userTemplate").html()),
 	events: {
@@ -384,15 +443,14 @@ App.Views.UserProfile = Parse.View.extend({
 	    e.preventDefault();
 	    $(this).tab('show');
 	},
-	activateAffix: function(){
+	activateAffix: _.debounce(function(){
 		$('.profNavContainer').affix({
 		      offset: { top: $('#userProfile > div.container').outerHeight(true) + 40 }
 		});
-	},
+	}, 1000),
 	render: function(){
 		var attributes = this.model.attributes
 		this.$el.html(this.template(attributes));
-		$(window).delay( 500 ).scroll(this.activateAffix);
 		return this;
 	}
 });
@@ -610,7 +668,7 @@ App.Views.FeaturedArtist = Parse.View.extend({
 	},
 	template: _.template($("#featuredArtistTemplate").html()),
     events: {
-      'click button, .artistProf, h4, a': 'viewProfile'
+      'click button, .artistProf, h4': 'viewProfile'
     },
 	viewProfile: function(){
 		//navigate to the specific model's username
@@ -629,7 +687,7 @@ App.Views.FeaturedArtist = Parse.View.extend({
 	  	query.find().then(function(tats) {
   			_.each(tats, function(tat) {
   				var thumb = tat.get('fileThumbSmall').url();
-  				this.$('.portfolioContainer').append(_.template('<a class="tattooContainer"><img src='+thumb+' class="tattooImg"></a>'));
+  				this.$('.portfolioContainer').append(_.template('<a class="tattooContainer"><img src='+thumb+' class="tattooImg" href="/tattoo/' + tat.id + '"></a>'));
   			}, that);
 	  	});
 
@@ -1013,7 +1071,7 @@ App.Views.ArtistEdit = Parse.View.extend({
 });
 
 App.Views.Login = Parse.View.extend({
-	el: $('#login'),
+	el:'#login',
 	template: _.template($("#loginTemplate").html()),
     initialize: function() {
      	_.bindAll(this, "logIn");
@@ -1116,6 +1174,7 @@ App.Router = new (Parse.Router.extend({
 		"interview":      		"interview",
 		"myprofile":  	 		"myProfile",
 		"tattoo/new": 			"upload",
+		"tattoo/:id": 			"tattooProfile",
 		"user/:uname":   		"showUserProfile",
 		":uname":   			"showProfile"
 	},
@@ -1326,6 +1385,21 @@ App.Router = new (Parse.Router.extend({
 			var upload = new App.Views.Upload();
 			$('.app').html(upload.render().el);
 		}
+	},
+	tattooProfile: function(id){
+		var query = new Parse.Query(App.Models.Tattoo);
+		query.get(id, {
+			success: function(tattoo) {
+				console.log(tattoo);
+			var profile = new App.Views.TattooProfile({model: tattoo});
+			$('.modalayheehoo').html(profile.render().el);
+
+			},
+			error: function(object, error) {
+				console.log(error);
+
+			}
+		});
 	},
 	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/
 	_pageView: function() {

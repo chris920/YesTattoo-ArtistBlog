@@ -240,6 +240,7 @@ a {
     width: 180px;
     background: url('../img/yestattoologo.png') no-repeat left center;
     background-size: 100%;
+    @include transition(3s ease);
     &:active,&.active,&:hover {
         @include transition(1.3s ease);
         background: url('../img/yestattoologo2.png') no-repeat left center;
@@ -1413,8 +1414,7 @@ span.hover-content {
     }
 }
 
-
-//////  login & register Modal
+//////  login & register Modal from twitter bootstrap
 // --------------------------------------------------
 
 // .modal-open      - body class for killing the scroll
@@ -1542,6 +1542,133 @@ span.hover-content {
 @media (min-width: $screen-md-min) {
   .modal-lg { width: $modal-lg; }
 }
+
+
+
+
+
+////// Backbone.modal.js 
+.x {
+    font-size: 36px;
+    position: absolute;
+    right: 5px;
+    padding: 5px;
+    color: $gray;
+}
+.imageBox {
+    width: 100%;
+    margin-top: 50px;
+    @media screen and (min-width: $screen-md) {
+        width: 59%;
+        margin-top: 0px;
+        display: inline-block;
+    }
+    .fullImage {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.infoBox {
+    text-align: center;
+    vertical-align: top;
+    color: white;
+    padding: 40px 20px;
+    background: $gray-darker;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+
+    border-width: 5px;
+    border-image: radial-gradient($gray-darker 80%, $gray-dark 100%, #fff) 1%;
+    // border-image: radial-gradient(black 80%, $gray-dark 100%, #fff) 1%;
+
+    span {
+        color: $gray;
+    }
+    margin-top: 0px;
+    @media screen and (min-width: $screen-md) {
+        margin-top: 50px;
+        width: 40%;
+        display: inline-block;
+    }
+}
+
+.bbm-wrapper {
+  box-sizing: border-box;
+    position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+    z-index: 3000;
+  overflow-x: auto;
+  overflow-y: scroll; }
+  .bbm-wrapper * {
+    box-sizing: border-box; }
+
+.bbm-modal {
+    display: block;
+    // margin: auto;
+    @media screen and (min-width: $screen-md) {
+        // display: flex;
+        // justify-content: center;
+    }
+    @extend .container;
+    // width: auto;
+    // box-shadow: 0 0px 6px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.9);
+    // max-width: 550px; 
+    // background: white;
+}
+
+.bbm-views {
+  width: 100%;
+  box-sizing: border-box; }
+
+.bbm-wrapper {
+  background: rgba(0, 0, 0, 0.87);
+  -webkit-transition: background-color 0.3s; }
+
+/* ANIMATIONS */
+/* Open modal */
+@-webkit-keyframes bbm-open {
+  0% {
+    -webkit-transform: matrix(0.99126, 0, 0, 0.99126, 0, -15);
+    opacity: 0.1259; }
+  100% {
+    -webkit-transform: matrix(1, 0, 0, 1, 0, 0);
+    opacity: 1; } }
+
+.bbm-modal--open {
+  -webkit-animation-duration: 0.3s;
+  -webkit-animation-name: bbm-open;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-fill-mode: both;
+  -webkit-transform-origin: 50% 50%;
+  -webkit-backface-visibility: hidden; }
+
+/* Close a modal */
+@-webkit-keyframes bbm-close {
+  0% {
+    -webkit-transform: matrix(0.99874, 0, 0, 0.99874, 0, 0);
+    opacity: 0.8741; }
+  100% {
+    -webkit-transform: matrix(0.99, 0, 0, 0.99, 0, -15);
+    opacity: 0; } }
+
+.bbm-modal--close {
+  -webkit-animation-duration: 0.43333s;
+  -webkit-animation-name: bbm-close;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-fill-mode: both;
+  -webkit-transform-origin: 50% 50%;
+  -webkit-backface-visibility: hidden; }
+
+
+
+
+
 
 
 //////// Typeahead.js
