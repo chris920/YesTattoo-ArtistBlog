@@ -3908,24 +3908,21 @@ a:focus {
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px; }
 
-#footer {
-  background-color: black; }
+#body {
+  min-height: 100%;
+  margin-bottom: -150px; }
+  @media screen and (min-width: 768px) {
+    #body {
+      margin-bottom: -100px; } }
 
 #app {
-  padding-bottom: 100px;
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  /* Negative indent footer by it's height */
-  margin: 100px auto -150px; }
-  @media screen and (min-width: 768px) {
-    #app {
-      margin: 100px auto -100px; } }
+  padding-bottom: 150px; }
 
-#push, #footer {
+#footer {
+  background-color: black;
   height: 150px; }
   @media screen and (min-width: 768px) {
-    #push, #footer {
+    #footer {
       height: 100px; } }
 
 .footerlinks > a, .footerlinks > p {
@@ -3995,7 +3992,7 @@ a:focus {
     border-top: 4px solid #c42020;
     border-bottom: 0px solid transparent !important; }
 
-.landing {
+#landing {
   text-align: center;
   background: black;
   height: 100%;
@@ -5261,7 +5258,13 @@ span.hover-content {
 @media (min-width: 992px) {
   .modal-lg {
     width: 900px; } }
+.open > img {
+  cursor: zoom-in;
+  cursor: -webkit-zoom-in; }
+
 .x {
+  cursor: zoom-out;
+  cursor: -webkit-zoom-out;
   font-size: 36px;
   position: absolute;
   right: 5px;

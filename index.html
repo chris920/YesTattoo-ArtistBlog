@@ -18,10 +18,9 @@
 
       <div class="modalayheehoo"></div>
       <div class="navs"></div>
-      <section class="landing"></section>
-      <section class="app"></section>
+      <section id="landing"></section>
+      <section id="app"></section>
       
-      <div id="push"></div>
     </div> 
           
     <div id="footer" style="display:none">
@@ -157,23 +156,6 @@
         <div class="portfolioContainer">
         </div>
     </script>
-
-<!--         <div class="row artistTitleBG">
-          <div class="col-sm-2">
-            <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
-          </div>
-          <div class="col-sm-10 artistTitles">
-            <h4 class="artistName" href="/<%= username %>"><a><%= name %><span> <%= username %></span></a></h4>
-            <p class="artistLoc"><%= (shop) ?  shop : '' %> / <%= (locationName)  ?  locationName : '' %></p>
-          </div>
-        </div> -->
-
-
-
-<!--           <button type="button" class="btn-submit btn-block"><span class="flaticon-book104"></span>Collect</button> -->
-
-<!-- need a way to always get the artist's information, when coming from artist's page, the aritst profile is not inlcuded..... -->
-
 
     <script type="text/template" id="tattooProfileTemplate">
       <a href="#" class="btn-text x">x</a>

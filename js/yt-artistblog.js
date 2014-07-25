@@ -3,8 +3,8 @@
 Parse.$ = jQuery;
 
 // Initialize Parse with DEMO Parse application javascript keys
-Parse.initialize("ROfcxRBpwDCFNI4DZluo4Q6okc6cFzUHgqOURSCf",
-               "NI5bHQ6J0aCD4rc95ORxuFAtAIZLpLNDLRLuCrwY");
+Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR",
+               "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK");
 
 
 var App = new (Parse.View.extend({
@@ -174,7 +174,6 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	},
 	cancel: function(){
 		$("body").css("overflow", "auto");
-		console.log(this.back);
 		Parse.history.navigate(this.back, {trigger: false});
 	},
 	esc: function(){
@@ -296,7 +295,8 @@ App.Views.Tattoo = Parse.View.extend({
     	var profile = new App.Views.TattooProfile({model: this.model});
 		$('.modalayheehoo').html(profile.render().el);
     },
-	add: function(){
+	add: function(e){
+		e.stopPropagation();
 		var user = Parse.User.current();
 		var that = this;
 
@@ -331,7 +331,8 @@ App.Views.Tattoo = Parse.View.extend({
 		}
 
 	},
-	remove: function(){
+	remove: function(e){
+		e.stopPropagation();
 		this.$('.remove').attr('disabled', 'disabled');
 
 		var user = Parse.User.current();
@@ -411,7 +412,7 @@ App.Views.MyTattoo = Parse.View.extend({
     },
 	edit: function(){
 		var edit = new App.Views.ArtistEdit({model: this.model});
-		$('.app').html(edit.render().el);
+		$('#app').html(edit.render().el);
 
 		// place the image into the edit preview
 		var file = this.model.get("file");
@@ -547,7 +548,7 @@ App.Views.Intro = Parse.View.extend({
 		  		that.$('.introTattooContainer:hidden:first').html('');
 	  			_.each(tats, function(tat) {
 	  				var thumb = tat.get('fileThumb').url();
-	  				that.$('.introTattooContainer:hidden:first').append(_.template('<img src='+thumb+' class="tattooImg">'));
+	  				that.$('.introTattooContainer:hidden:first').append(_.template('<img src='+thumb+' class="tattooImg open">'));
 	  			}, that);
 		  	});
 		}).then(function() {
@@ -687,7 +688,7 @@ App.Views.FeaturedArtist = Parse.View.extend({
 	  	query.find().then(function(tats) {
   			_.each(tats, function(tat) {
   				var thumb = tat.get('fileThumbSmall').url();
-  				this.$('.portfolioContainer').append(_.template('<a class="tattooContainer"><img src='+thumb+' class="tattooImg" href="/tattoo/' + tat.id + '"></a>'));
+  				this.$('.portfolioContainer').append(_.template('<a class="tattooContainer open"><img src='+thumb+' class="tattooImg" href="/tattoo/' + tat.id + '"></a>'));
   			}, that);
 	  	});
 
@@ -1107,7 +1108,7 @@ App.Views.Login = Parse.View.extend({
     },
     passwordForm: function(e){
 		var forgotPassword = new App.Views.ForgotPassword();
-		$('.app').html(forgotPassword.render().el);
+		$('#app').html(forgotPassword.render().el);
     },
 	render: function(){
 		this.$el.html(this.template());
@@ -1189,11 +1190,11 @@ App.Router = new (Parse.Router.extend({
 	home: function(){
 		if (!Parse.User.current()){
 			var intro = new App.Views.Intro();
-			$('.landing').html(intro.render().el);
+			$('#landing').html(intro.render().el);
 			intro.welcome();
 		}
 		var featured = new App.Views.FeaturedArtistPage();
-		$('.app').html(featured.render().el);
+		$('#app').html(featured.render().el);
 		
 		this.per = 7;
 		var query = new Parse.Query(App.Models.ArtistProfile);
@@ -1243,7 +1244,7 @@ App.Router = new (Parse.Router.extend({
 				
 			} else  {
 				var profile = new App.Views.ArtistProfile({model: artist});
-				$('.app').html(profile.render().el);
+				$('#app').html(profile.render().el);
 			  	var tattoos = artist.relation('tattoos');
 			  	var query = tattoos.query();
 			  	query.descending("createdAt");
@@ -1271,7 +1272,7 @@ App.Router = new (Parse.Router.extend({
 				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
 			} else {
 				var userProfile = new App.Views.UserProfile({model: profile});
-				$('.app').html(userProfile.render().el);
+				$('#app').html(userProfile.render().el);
 
 			  	var addsQuery = new Parse.Query(App.Models.Add);
 			  	addsQuery.descending("createdAt");
@@ -1307,13 +1308,13 @@ App.Router = new (Parse.Router.extend({
 	},
 	about: function(){
 		var about = new App.Views.About();
-		$('.app').html(about.render().el);
+		$('#app').html(about.render().el);
 		var join = new App.Views.Join();
-		$('.app').append(join.render().el);
+		$('#app').append(join.render().el);
 	},
 	join: function(){
 		var join = new App.Views.Join();
-		$('.app').html(join.render().el);
+		$('#app').html(join.render().el);
 	},
 	login: function(){
 		$('#login').modal('show');
@@ -1324,7 +1325,7 @@ App.Router = new (Parse.Router.extend({
 
 		function renderSettings(){
 			var settings = new App.Views.Settings();
-			$('.app').html(settings.render().el);
+			$('#app').html(settings.render().el);
 
 			settings.renderMap();
 			settings.renderProf();
@@ -1333,7 +1334,7 @@ App.Router = new (Parse.Router.extend({
 	},
 	interview: function(){
 		var interview = new App.Views.Interview();
-		$('.app').html(interview.render().el);
+		$('#app').html(interview.render().el);
 	},
 	myProfile: function(){
 
@@ -1344,7 +1345,7 @@ App.Router = new (Parse.Router.extend({
 
 			if (Parse.User.current().attributes.role === 'user'){
 				var myProfile = new App.Views.UserProfile({model: App.profile});
-				$('.app').html(myProfile.render().el);
+				$('#app').html(myProfile.render().el);
 
 			  	var addsQuery = new Parse.Query(App.Models.Add);
 			  	addsQuery.descending("createdAt");
@@ -1362,7 +1363,7 @@ App.Router = new (Parse.Router.extend({
 
 			} else {
 				var myProfile = new App.Views.ArtistProfile({model: App.profile});
-				$('.app').html(myProfile.render().el);
+				$('#app').html(myProfile.render().el);
 
 			}
 
@@ -1383,7 +1384,7 @@ App.Router = new (Parse.Router.extend({
 		App.getProfile(renderUpload);
 		function renderUpload(){
 			var upload = new App.Views.Upload();
-			$('.app').html(upload.render().el);
+			$('#app').html(upload.render().el);
 		}
 	},
 	tattooProfile: function(id){

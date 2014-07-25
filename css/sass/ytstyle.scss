@@ -22,7 +22,6 @@ h5 {   //used for location and other muted text
 input, input.span,.input-group {
     margin-bottom: 10px;
 }
-
 a {
     color: inherit;
     text-decoration: none; 
@@ -36,22 +35,19 @@ a {
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px; }
 
-//Sticky footer wrap, placeholder and footer 
-#footer {
-    background-color: black;
-}
-#app {
-    padding-bottom: 100px;
+//Sticky footer
+#body {
     min-height: 100%;
-    height: auto !important;
-    height: 100%;
-    /* Negative indent footer by it's height */
-    margin: 100px auto -150px;
+    margin-bottom: -150px;
     @media screen and (min-width: $screen-sm) {
-        margin: 100px auto -100px;
+        margin-bottom: -100px;
     }
 }
-#push, #footer {
+#app {
+    padding-bottom: 150px;
+}
+#footer {
+    background-color: black;
     height: 150px;
     @media screen and (min-width: $screen-sm) {
         height: 100px;
@@ -154,7 +150,7 @@ a {
 
 
 /////// landing page
-.landing {
+#landing {
     text-align:center;
     background: black;
     height:100%;
@@ -469,7 +465,6 @@ a {
 .tab-content .tattooContainer {
     background-color: $gray-light; //for more arrow
 }
-
 .tattooImg {
     display: block;
     width: 100%;
@@ -1548,7 +1543,13 @@ span.hover-content {
 
 
 ////// Backbone.modal.js 
+.open > img{
+    cursor: zoom-in;
+    cursor: -webkit-zoom-in;
+}
 .x {
+    cursor: zoom-out;
+    cursor: -webkit-zoom-out;
     font-size: 36px;
     position: absolute;
     right: 5px;
