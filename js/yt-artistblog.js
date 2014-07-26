@@ -27,6 +27,7 @@ var App = new (Parse.View.extend({
 	},
 	links: function(e){
 		e.preventDefault();
+		App.back = Parse.history.getFragment();
 		console.log(e.target.pathname);
 		Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
 	},
@@ -130,22 +131,65 @@ App.Views.Nav = Parse.View.extend({
 	},
     render: function () {
     	$('.navs').html(this.template());
-		var login = new App.Views.Login();
     	return this;
     }
 });
 
+App.Views.Login = Backbone.Modal.extend({
+	className: 'login',
+	initialize: function(){
+		Parse.history.navigate('login', {trigger: false});
+	},
+	template: _.template($("#loginTemplate").html()),
+	cancelEl: '.x',
+	events: {
+	      "submit form.loginForm": 		"logIn",
+	      "click .btn-link": 			"passwordForm"
+	},
+    logIn: function(){
+      var that = this;
+      var username = this.$("#loginUsername").val();
+      var password = this.$("#loginPassword").val();
+
+      Parse.User.logIn(username, password, {
+        success: function(user) {
+			var nav = new App.Views.Nav();
+			that.triggerCancel();
+			that.undelegateEvents();
+			delete that;
+        },
+        error: function(user, error) {
+        	console.log(error);
+        	$(".loginForm .error").html("Invalid username or password. Please try again.").show();
+        	$(".loginForm button").removeAttr("disabled");
+        }
+      });
+      this.$(".loginForm button").attr("disabled", "disabled");
+      return false;
+    },
+    passwordForm: function(){
+		var forgotPassword = new App.Views.ForgotPassword();
+		$('#app').html(forgotPassword.render().el);
+		this.triggerCancel();
+    },
+	onRender: function(){
+		$("body").css("overflow", "hidden");
+	},
+	cancel: function(){
+		$("body").css("overflow", "auto");
+		Parse.history.navigate(App.back, {trigger: false});
+	}
+});
 
 App.Views.TattooProfile = Backbone.Modal.extend({
 	className: 'tattooProfile',
 	initialize: function(){
-		this.back = Parse.history.getFragment();
 		Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
 	},
 	template: _.template($("#tattooProfileTemplate").html()),
 	cancelEl: '.x',
 	events: {
-		"click .artistName": 	"esc"
+		"click .artistName": 	"triggerCancel"
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
@@ -174,12 +218,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	},
 	cancel: function(){
 		$("body").css("overflow", "auto");
-		Parse.history.navigate(this.back, {trigger: false});
-	},
-	esc: function(){
-		Parse.history.navigate(this.model.attributes.artistProfile.username, {trigger: true});
-		this.triggerCancel();
-	    
+		Parse.history.navigate(App.back, {trigger: false});
 	}
 });
 
@@ -281,8 +320,6 @@ App.Views.Tattoo = Parse.View.extend({
 	template: _.template($("#tattooTemplate").html()),
 	initialize: function(){
 		_.bindAll(this, 'add', 'remove', 'showAdd', 'showRemove');
-
-		App.tattoo = this.model;
 	},
     events: {
      	'click .open': 				'open',
@@ -291,6 +328,7 @@ App.Views.Tattoo = Parse.View.extend({
     },
     open: function(e){
     	e.preventDefault();
+    	App.back = Parse.history.getFragment();
     	///needs to pass the tattoo events to the tattoo
     	var profile = new App.Views.TattooProfile({model: this.model});
 		$('.modalayheehoo').html(profile.render().el);
@@ -474,7 +512,6 @@ App.Views.Intro = Parse.View.extend({
 
 		_.bindAll(this, 'removeIntro');
 	    $(window).bind('scroll',this.removeIntro);
-
 	},
     events: {
     	"click a":	"continue"
@@ -495,6 +532,7 @@ App.Views.Intro = Parse.View.extend({
 			    that.showNextArtist();
 			  });
 		this.$('.artistLoc').delay( 1000 ).fadeIn().delay( 2200 ).fadeOut( 300 );
+
 	},
 	scrollTattoos: function(tattoos){
 		var that = this;
@@ -592,70 +630,88 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
 
 App.Views.FeaturedArtists = Parse.View.extend({
 	el: '#featuredArtists',
-	loadTemplate: _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>See you tomorrow</h5><br><button type="button" id="more" class="btn-lg" href="/featured/p<%= page %>">More Artists</button></div>'),
+	loadTemplate: _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>See you tomorrow</h5><br><button type="button" id="more" class="btn-lg">More Artists</button></div>'),
     initialize: function () {
+    	this.load();
     	this.collection.on('reset', this.render, this);
     	this.collection.bind('add', this.addOne);
-
+   	
     	/// *better place to put this?
-    	$(window).scroll(function () {
-	    	//checks the height and fades the artist in    	
+    	$(window).scroll(function () {	
 			if ($(document).height() - 1 <= $(window).scrollTop() + $(window).height()) {
 			 	$('.featuredArtist:hidden:first').fadeIn("slow");
-				//show end when all featured artist's have been shown
 				if($('.featuredArtist:last').is(':visible')) {
 			 		$('#featuredArtists .end').fadeIn();
 				}
 			}
 		});
-
     },
     events: {
-    	'click #more': 'load'
+    	'click #more': 'more'
     },
     render: function () {
       this.addAll();
       return this;
     },
-    load: function(e) {
-    	e.preventDefault();
+    more: function(e){
     	//hides load button after clicked
 	 	$(e.target.parentElement).fadeOut("normal", function() {
 	        $(this).remove();
 	    });
 
-	    $("html, body").animate({ scrollTop: $('.end').offset().top }, 400);
+    	this.load();
+    	$("html, body").animate({ scrollTop: $('.end').offset().top }, 400);
+    },
+    load: function() {
+    	var that = this;
+		var query = new Parse.Query(App.Models.ArtistProfile);
+		query.containedIn("featuremonth", ["6", "7", "8"]);
+		var per = 7;
+		var skip = this.collection.page * per;
+		query.skip(skip);
+		query.limit(per);
+		query.descending("createdAt");
+		query.find({
+		  success: function(artists) {
+		  	console.log(that);
+		  	console.log(artists);
+		  	that.collection.add(artists);
+		  	console.log(that.collection)
+		  	$('.featuredArtist:first').fadeIn();
+		  	that.renderLoad();
+
+		  },
+		  error: function(message){
+		  	console.log(message);
+		  }
+		});
+		var p = (this.collection.page) ? '/p' + this.collection.page : '';
+		Parse.history.navigate('featured'+p, {trigger: false});
     },
     renderLoad: function(e) {
     	this.collection.page++
 
-    	///H ~ checks if there are no more artists. What is the better way to do this?
+    	/// H ~ checks if there are no more artists. What is the better way to do this?
 	  	if (this.collection.models.pop().id === 'hQUgHBN38S') {
 	  		$('#more').remove();
 			this.loadTemplate = _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>See you tomorrow</h5></div>');
 	  	}
-	  	
+
 		this.$el.append(this.loadTemplate({page: this.collection.page}));
-
-
     },
     addAll: function(){
     	this.$el.empty();
-    
     	this.addMore();
-
 		/// Show initial artist
-    	$('.featuredArtist:first').fadeIn();
+    	
 		
 	},
     addMore: function(){
-
 		// Renders all the featured artists in collection
     	this.collection.forEach(this.addOne);
 		
 	},
 	addOne: function(artist){
-
 		//renders an additional featured artist
 		var featuredArtist = new App.Views.FeaturedArtist({model: artist});
 		$('#featuredArtists').append(featuredArtist.render().el);
@@ -1071,51 +1127,6 @@ App.Views.ArtistEdit = Parse.View.extend({
 	}
 });
 
-App.Views.Login = Parse.View.extend({
-	el:'#login',
-	template: _.template($("#loginTemplate").html()),
-    initialize: function() {
-     	_.bindAll(this, "logIn");
-
-    	//render the login modal
-    	this.render();
-
-    },
-    events: {
-      "submit form.loginForm": 		"logIn",
-      "click #forgotPassword": 		"passwordForm"
-    },
-    logIn: function(e){
-      var self = this;
-      var username = this.$("#loginUsername").val();
-      var password = this.$("#loginPassword").val();
-
-      Parse.User.logIn(username, password, {
-        success: function(user) {
-        	$('#login').modal('hide');
-			var nav = new App.Views.Nav();
-			self.undelegateEvents();
-			delete self;
-        },
-        error: function(user, error) {
-        	console.log(error);
-        	$(".loginForm .error").html("Invalid username or password. Please try again.").show();
-        	$(".loginForm button").removeAttr("disabled");
-        }
-      });
-      this.$(".loginForm button").attr("disabled", "disabled");
-      return false;
-    },
-    passwordForm: function(e){
-		var forgotPassword = new App.Views.ForgotPassword();
-		$('#app').html(forgotPassword.render().el);
-    },
-	render: function(){
-		this.$el.html(this.template());
-		return this;
-	}
-});
-
 App.Views.ForgotPassword = Parse.View.extend({
 	id: 'password',
 	template: _.template($("#passwordResetTemplate").html()),
@@ -1166,8 +1177,10 @@ App.Collections.FeaturedArtists = Parse.Collection.extend({
 ///////// Routers
 App.Router = new (Parse.Router.extend({
 	routes: {
-		"":						"home",
-		"featured/p:page":		"featured",
+		"":						"landing",
+		"home":					"home",
+		"featured":	    		"featured",
+		"featured/p:page":	    "featured",
 		"about":   				"about",
 		"join":        		    "join",
 		"login":        		"login",
@@ -1187,49 +1200,33 @@ App.Router = new (Parse.Router.extend({
 		this.user = Parse.User.current();
 
 	},
-	home: function(){
+	landing: function(){
+		var that = this;
 		if (!Parse.User.current()){
+
 			var intro = new App.Views.Intro();
 			$('#landing').html(intro.render().el);
 			intro.welcome();
+			setTimeout(function() { Parse.history.navigate('featured', {trigger: true}) }, 1000);
+		} else {
+			/// this will eventually go to the newsfeed / home page
+			this.featured();
 		}
+	},
+	home: function(){
+		
+	},
+	featured: function(p) {
 		var featured = new App.Views.FeaturedArtistPage();
 		$('#app').html(featured.render().el);
+
+	    App.Collections.featuredArtists = new App.Collections.FeaturedArtists();
+	    console.log(App.Collections.featuredArtists)
+	    App.Collections.featuredArtists.page = (p) ? p : 0;
+		App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
 		
-		this.per = 7;
-		var query = new Parse.Query(App.Models.ArtistProfile);
-		query.containedIn("featuremonth", ["6", "7"]);
-		query.limit(this.per);
-		query.descending("createdAt");
-		query.find({
-		  success: function(artists) {
-		    App.Collections.featuredArtists = new App.Collections.FeaturedArtists(artists);
-			App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
-			App.Views.featuredArtists.render();
-			App.Views.featuredArtists.renderLoad();
-		  },
-		  error: function(message){
-		  	console.log(message);
-		  }
-		});
-	
-	},
-	featured: function(page) {
-		var skip = page * this.per;
-		var query = new Parse.Query(App.Models.ArtistProfile);
-		query.containedIn("featuremonth", ["6", "7"]);
-		query.skip(skip);
-		query.limit(this.per);
-		query.descending("createdAt");
-		query.find({
-		  success: function(artists) {
-		  	App.Collections.featuredArtists.add(artists);
-		  	App.Views.featuredArtists.renderLoad();
-		  },
-		  error: function(message){
-		  	console.log(message);
-		  }
-		});
+		console.log(App.Collections.featuredArtists)
+		console.log(App.Views.featuredArtists)
 	},
 	showProfile: function(uname){
 
@@ -1241,7 +1238,6 @@ App.Router = new (Parse.Router.extend({
 			if (typeof(artist)==='undefined'){
 				// if the artist couldn't be found, search for user profiles
 				Parse.history.navigate('user/'+uname, {trigger: true});
-				
 			} else  {
 				var profile = new App.Views.ArtistProfile({model: artist});
 				$('#app').html(profile.render().el);
@@ -1285,7 +1281,6 @@ App.Router = new (Parse.Router.extend({
 			  			var userTattoos = new App.Collections.Tattoos(tattoos);
 			  			var userAdds = new App.Views.Tattoos({collection: userTattoos, el: '.adds'});
 			  			userAdds.render();
-
 			  		}
 			  	});
 
@@ -1317,10 +1312,10 @@ App.Router = new (Parse.Router.extend({
 		$('#app').html(join.render().el);
 	},
 	login: function(){
-		$('#login').modal('show');
+		var login = new App.Views.Login();
+		$('.modalayheehoo').html(login.render().el);
 	},
 	settings: function(){
-
 		App.getProfile(renderSettings);
 
 		function renderSettings(){
@@ -1391,14 +1386,11 @@ App.Router = new (Parse.Router.extend({
 		var query = new Parse.Query(App.Models.Tattoo);
 		query.get(id, {
 			success: function(tattoo) {
-				console.log(tattoo);
-			var profile = new App.Views.TattooProfile({model: tattoo});
-			$('.modalayheehoo').html(profile.render().el);
-
+				var profile = new App.Views.TattooProfile({model: tattoo});
+				$('.modalayheehoo').html(profile.render().el);
 			},
 			error: function(object, error) {
 				console.log(error);
-
 			}
 		});
 	},

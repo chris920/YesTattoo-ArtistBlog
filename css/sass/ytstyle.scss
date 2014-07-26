@@ -1409,140 +1409,23 @@ span.hover-content {
     }
 }
 
-//////  login & register Modal from twitter bootstrap
-// --------------------------------------------------
-
-// .modal-open      - body class for killing the scroll
-// .modal           - container to scroll within
-// .modal-dialog    - positioning shell for the actual modal
-// .modal-content   - actual modal w/ bg and corners and shit
-
-// Kill the scroll on the body
-.modal-open {
-  overflow: hidden;
-}
-
-// Container that the modal scrolls within
-.modal {
-  display: none;
-  overflow: auto;
-  overflow-y: scroll;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: $zindex-modal;
-  -webkit-overflow-scrolling: touch;
-  outline: 0;
-
-  // When fading in the modal, animate it to slide down
-  &.fade .modal-dialog {
-    @include translate(0, -25%);
-    @include transition-transform(0.5s ease-out);
-  }
-  &.in .modal-dialog { @include translate(0, 0)}
-}
-
-// Shell div to position the modal with bottom padding
-.modal-dialog {
-  position: relative;
-  width: auto;
-  margin: 20px;
-}
-
-// Actual modal
-.modal-content {
-    padding-top: 100px;
-  position: relative;
-  // background-color: $modal-content-bg;
-  background-clip: padding-box;
-  // Remove focus outline from opened modal
-  outline: none;
-}
-
-// Modal background
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: $zindex-modal-background;
-  background-color: $modal-backdrop-bg;
-  // Fade for backdrop
-  &.fade { @include opacity(0); }
-  &.in { @include opacity($modal-backdrop-opacity); }
-}
-
-// Modal header
-// Top section of the modal w/ title and dismiss
-.modal-header {
-  padding: $modal-title-padding;
-  min-height: ($modal-title-padding + $modal-title-line-height);
-}
-// Close icon
-.modal-header .close {
-  margin-top: -60px;
-  font-size: 60px;
-  color: $gray-light;
-  &:active {
-    color: $brand-primary;
-  }
-}
-
-// Title text within header
-.modal-title {
-    color: white;
-    text-align: center;
-    margin: 0;
-    line-height: $modal-title-line-height;
-}
-
-// Modal body
-// Where all modal content resides (sibling of .modal-header and .modal-footer)
-.modal-body {
-    color: $gray-light;
-    position: relative;
-    padding: $modal-inner-padding;
-}
-
-// Footer (for actions)
-.modal-footer {
-  margin-top: 15px;
-  padding: ($modal-inner-padding - 1) $modal-inner-padding $modal-inner-padding;
-  text-align: center;
-  &.btn-link {
-    float: right;
-    @media screen and (max-width: $screen-sm-min) {
-        float: none;
-    }
-  }
-  // border-top: 1px solid $black-trans;
-  @include clearfix(); // clear it in case folks use .pull-* classes on buttons
-}
-
-// Scale up the modal
-@media (min-width: $screen-sm-min) {
-  // Automatically set modal's width for larger viewports
-  .modal-dialog {
-    width: $modal-md;
-    margin: 30px auto;
-  }
-
-  // Modal sizes
-  .modal-sm { width: $modal-sm; }
-}
-
-@media (min-width: $screen-md-min) {
-  .modal-lg { width: $modal-lg; }
-}
-
-
-
 
 
 ////// Backbone.modal.js 
+.login {
+    .loginContainer {
+        color: white;
+        margin: 140px auto 140px auto;
+        h3 {
+            margin-bottom: 60px;
+            text-align: center;
+        }
+    }
+    .bbm-modal {
+        max-width: 540px;
+    }
+}
+
 .open > img{
     cursor: zoom-in;
     cursor: -webkit-zoom-in;
@@ -1570,7 +1453,6 @@ span.hover-content {
         margin-right: auto;
     }
 }
-
 .infoBox {
     text-align: center;
     vertical-align: top;
@@ -1580,10 +1462,9 @@ span.hover-content {
     width: 100%;
     height: 100%;
     margin: auto;
-
     border-width: 5px;
     border-image: radial-gradient($gray-darker 80%, $gray-dark 100%, #fff) 1%;
-    // border-image: radial-gradient(black 80%, $gray-dark 100%, #fff) 1%;
+    // border-image: radial-gradient(black 80%, $gray-dark 100%, #fff) 1%; //alt color
 
     span {
         color: $gray;
@@ -1597,32 +1478,22 @@ span.hover-content {
 }
 
 .bbm-wrapper {
-  box-sizing: border-box;
     position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     z-index: 3000;
-  overflow-x: auto;
-  overflow-y: scroll; }
-  .bbm-wrapper * {
-    box-sizing: border-box; }
-
+    overflow-x: auto;
+    overflow-y: scroll; 
+    -webkit-overflow-scrolling: touch;
+    * {
+        box-sizing: border-box; }
+}
 .bbm-modal {
     display: block;
-    // margin: auto;
-    @media screen and (min-width: $screen-md) {
-        // display: flex;
-        // justify-content: center;
-    }
     @extend .container;
-    // width: auto;
-    // box-shadow: 0 0px 6px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.9);
-    // max-width: 550px; 
-    // background: white;
 }
-
 .bbm-views {
   width: 100%;
   box-sizing: border-box; }

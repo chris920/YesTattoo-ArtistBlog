@@ -56,7 +56,7 @@
 
                 <% if (!Parse.User.current()) { %>
                   <li><a href="/join" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
-                  <li><a href="/login" class="main-nav-item" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
+                  <li><a href="/login" class="main-nav-item" id="#login"><i class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
 
@@ -113,7 +113,7 @@
             <ul class="">
               <li><a><i class="flaticon-trophy4"></i>Featured</a></li>
               <li><a href="/join"><i class="flaticon-send5"></i>Join</a></li>
-              <li><a href="/login" data-toggle="modal" data-target="#login"><i class="flaticon-user56"></i>Log In</a></li>
+              <li><a href="/login" id"#login"><i class="flaticon-user56"></i>Log In</a></li>
               <li><a href="/about"><i class="flaticon-information"></i>About</a></li>
             </ul>
           </div>
@@ -157,6 +157,51 @@
         </div>
     </script>
 
+    <!-- Login page / modal + forgot password -->
+    
+        
+    <script type="text/html" id="loginTemplate">
+      <div class="loginContainer">
+        <div class="row">
+          <a href="#" class="btn-text x">x</a>
+          <h3>Log In</h3>
+        </div>
+
+        <div class="row">
+          <form class="form-horizontal loginForm" role="form">
+            <div class="error text-center" style="display:none"></div>
+            <div class="form-group">
+              <label for="loginUsername" class="col-sm-2 control-label">Username</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="loginUsername" placeholder="Username">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="loginPassword" class="col-sm-2 control-label">Password</label>
+              <div class="col-sm-10">
+                <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+                 <a id="forgotPassword" class="btn btn-link pull-right">Forgot your password?</a>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <div class="checkbox">
+                  <label> <input type="checkbox"> Remember me </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn-submit">Submit</button>
+                <a type="button" class="btn btn-link pull-right" href="/join">Not yet a member? Join YesTattoo</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </script>
+
+    <!-- tattoo profile -->
     <script type="text/template" id="tattooProfileTemplate">
       <a href="#" class="btn-text x">x</a>
       <div class="container">
@@ -442,49 +487,7 @@
       </div>
     </script>
 
-    <!-- Login page / modal + forgot password -->
-    <script type="text/html" id="loginTemplate">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h3 class="modal-title" id="loginModal">Log In</h3>
-            </div>
-            <div class="modal-body">
-              <form class="form-horizontal loginForm" role="form">
-                <div class="error text-center" style="display:none"></div>
-                <div class="form-group">
-                  <label for="loginIsername" class="col-sm-2 control-label">Username</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" id="loginUsername" placeholder="Username">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="loginPassword" class="col-sm-2 control-label">Password</label>
-                  <div class="col-sm-10">
-                    <input type="password" class="form-control" id="loginPassword" placeholder="Password">
-                     <a id="forgotPassword" class="btn btn-link pull-right" data-dismiss="modal" aria-hidden="true">Forgot your password?</a>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-sm-offset-2 col-sm-10">
-                    <div class="checkbox">
-                      <label> <input type="checkbox"> Remember me </label>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn-submit">Submit</button>
-                    <a type="button" class="btn btn-link pull-right" data-dismiss="modal" aria-hidden="true" href="/join">Not yet a member? Join YesTattoo</a>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-    </script>
-
+    <!-- forgot password -->
     <script type="text/html" id="passwordResetTemplate">
       <div class="container">
         <div class="lightContainer">
