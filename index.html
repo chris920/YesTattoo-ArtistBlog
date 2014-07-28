@@ -93,22 +93,22 @@
     </script>
 
 
-    <!-- Intro / Landing Page-->
-    <script type="text/html" id="introTemplate">
+    <!-- Landing Page-->
+    <script type="text/html" id="landingTemplate">
         <div class="artistslide">
-          <div class="introText">
+          <div class="landingText">
             <h2 class="welcome" href="" style="display:none">Welcome to</h2>
             <div class="logo" style="display:none"><a class="main-logo" href="/"></a></div>
             <a href=""><h2 class="artistName" href="" style="display:none"></h2></a>
             <h5 class="artistLoc" style="display:none">Lets find you an artist</h5>
           </div>
 
-          <div class="introTattooContainer row" style="display:none">
+          <div class="landingTattooContainer row" style="display:none">
           </div>
-          <div class="introTattooContainer row" style="display:none">
+          <div class="landingTattooContainer row" style="display:none">
           </div>
 
-          <div class="introLinks" style="display:none">
+          <div class="landingLinks" style="display:none">
             <ul class="">
               <li><a><i class="flaticon-trophy4"></i>Featured</a></li>
               <li><a href="/join"><i class="flaticon-send5"></i>Join</a></li>
@@ -342,9 +342,6 @@
       <div class="tattooContainer">
         <a class="open">
           <img src="<%= fileThumb.url %>" class="tattooImg">
-          <span class="hover-content" data-toggle="buttons"><span>
-            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
-          </span></span>
           
           <% if(artistProfile.name) { %>
             <span class="hover-text-content"><span>
@@ -357,6 +354,10 @@
         </a>
       </div>
     </script>
+ <!--          <span class="hover-content" data-toggle="buttons"><span>
+            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
+          </span></span> -->
+    
 
     <script type="text/html" id="addTemplate">
       <div class="tattooContainer">
@@ -749,10 +750,10 @@
     <script src="js/libs/jquery-1.11.1.js"></script>
     <script src="js/libs/bootstrap.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDND9JGq1-cU9bJy12cTy1-nTNq0a96sOY&sensor=false&libraries=places"></script>
-    <script src="js/libs/underscore.js"></script>
-    <script src="js/libs/backbone-min.js"></script>
-    <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script> -->
+    <!--<script src="js/libs/underscore.js"></script>
+    <script src="js/libs/backbone-min.js"></script>-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
     <script src="http://www.parsecdn.com/js/parse-1.2.18.js"></script>
     
     <script src="js/libs/typeahead.bundle.min.js"></script>

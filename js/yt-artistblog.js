@@ -454,7 +454,7 @@ App.Views.MyTattoo = Parse.View.extend({
     },
 	edit: function(e){
 		e.stopPropagation();
-		
+
 		var edit = new App.Views.ArtistEdit({model: this.model});
 		$('#app').html(edit.render().el);
 
@@ -500,29 +500,28 @@ App.Views.UserProfile = Parse.View.extend({
 	}
 });
 
-App.Views.Intro = Parse.View.extend({
-	id: 'intro',
-	introTemplate: _.template($("#introTemplate").html()),
+App.Views.Landing = Parse.View.extend({
+	id: 'landing',
+	landingTemplate: _.template($("#landingTemplate").html()),
 	initialize: function(){
 		var that = this;
 		$('.navs').hide();
 		this.loadArtist();
 
 		/// Workaround for getting a random artist. Will not scale over 1,000 due to query constraint....
-		this.totalArtists = 3;
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.containedIn("featuremonth", ["6", "7"]);
 		query.count().then(function(count){
 			that.totalArtists = count;
 		});
 
-		_.bindAll(this, 'removeIntro');
-	    $(window).bind('scroll',this.removeIntro);
+		_.bindAll(this, 'removeLanding','loadArtist');
+	    $(window).bind('scroll',this.removeLanding);
 	},
     events: {
     	"click a":	"continue"
     },
-	welcome: function(){
+	land: function(){
 		var that = this;
 		this.$('.welcome').delay( 100 ).fadeIn( 600 ).delay( 2800 ).animate({
 			    marginTop: "5vh",
@@ -534,7 +533,7 @@ App.Views.Intro = Parse.View.extend({
 			.animate({
 			    marginBottom: "+5vh"
 			  }, 600, "swing", function() {
-			    that.$('.introLinks').fadeIn();
+			    that.$('.landingLinks').fadeIn();
 			    that.showNextArtist();
 			  });
 		this.$('.artistLoc').delay( 1000 ).fadeIn().delay( 2200 ).fadeOut( 300 );
@@ -553,7 +552,7 @@ App.Views.Intro = Parse.View.extend({
 	showNextArtist: function(){
 		var that = this;
 		//// animate down to give a sinking effect.
-		this.$('.introTattooContainer:hidden:first').delay( 600 ).fadeIn( { 
+		this.$('.landingTattooContainer:hidden:first').delay( 600 ).fadeIn( { 
 			duration: 800,
 			start: function() {
 	    		that.scrollTattoos(this);
@@ -562,7 +561,7 @@ App.Views.Intro = Parse.View.extend({
 	    		that.loadArtist();
 	  		}
   		});
-		this.$('.introTattooContainer:visible:first').fadeOut( 700 );
+		this.$('.landingTattooContainer:visible:first').fadeOut( 700 );
 		this.$('.artistName').fadeOut( 800, function() {
 			$(this).html(that.artistName).fadeIn( 1000 );
 			$(this).attr('href','/'+that.artistUsername);
@@ -573,6 +572,8 @@ App.Views.Intro = Parse.View.extend({
 		
 	},
 	loadArtist: function(){
+		// initial total value
+		this.totalArtists = 36;
 		var that = this;
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.containedIn("featuremonth", ["6", "7"]);
@@ -589,10 +590,10 @@ App.Views.Intro = Parse.View.extend({
 		  	var query = tattoos.query();
 		  	query.limit(8);
 		  	query.find().then(function(tats) {
-		  		that.$('.introTattooContainer:hidden:first').html('');
+		  		that.$('.landingTattooContainer:hidden:first').html('');
 	  			_.each(tats, function(tat) {
 	  				var thumb = tat.get('fileThumb').url();
-	  				that.$('.introTattooContainer:hidden:first').append(_.template('<img src='+thumb+' class="tattooImg open">'));
+	  				that.$('.landingTattooContainer:hidden:first').append(_.template('<img src='+thumb+' class="tattooImg open">'));
 	  			}, that);
 		  	});
 		}).then(function() {
@@ -604,20 +605,21 @@ App.Views.Intro = Parse.View.extend({
 	},
 	continue:function(){
 		//scrolls downward. 
-		$("html, body").animate({ scrollTop: $(window).height() }, 600);
+		$('#app').fadeOut( 300 ).fadeIn( 900 );
+		$("html, body").animate({ scrollTop: $(window).height()+100 }, 600);
+
 	},
 	render: function(){
-		var html = this.introTemplate();
-		$(this.el).append(html);
+		$(this.el).append(this.landingTemplate());
 		return this;
 	},
-	removeIntro:function(){
+	removeLanding:function(){
 		var that = this;
 		if ($(window).height() - 150 <= $(window).scrollTop()) {
 			$('.navs').fadeIn();
 		}
-		if ($(window).height() <= $(window).scrollTop()) {
-			$(window).unbind('scroll',this.removeIntro);
+		if ($(window).height()+100 <= $(window).scrollTop()) {
+			$(window).unbind('scroll',this.removeLanding);
 			that.remove();
 			$(window).scrollTop( 0 );
 		}
@@ -727,7 +729,7 @@ App.Views.FeaturedArtist = Parse.View.extend({
 	},
 	template: _.template($("#featuredArtistTemplate").html()),
     events: {
-      'click button, .artistProf, h4': 'viewProfile'
+      'click button, .prof, h4': 'viewProfile'
     },
 	viewProfile: function(){
 		//navigate to the specific model's username
@@ -854,7 +856,7 @@ App.Views.Settings = Parse.View.extend({
 			this.profile.save().then(function (profile) {
 				/// update the profile thubmnail.
 				var file = profile.get("profThumb");
-				$(".artistProf")[0].src = file.url();
+				$(".prof")[0].src = file.url();
 				$("#profUpload").removeAttr("disabled");
 				$( "span:contains('Choose Profile Picture')" ).removeClass( "disabled" );
 			}, function(error) {
@@ -931,7 +933,7 @@ App.Views.Settings = Parse.View.extend({
 	renderProf: function(){
 		if(this.profile.get("prof")) {
 			var file = this.profile.get("profThumb");
-			$(".artistProf")[0].src = file.url();
+			$(".prof")[0].src = file.url();
 		}
 	}
 });
@@ -1205,9 +1207,9 @@ App.Router = new (Parse.Router.extend({
 		var that = this;
 		if (!Parse.User.current()){
 
-			var intro = new App.Views.Intro();
-			$('#landing').html(intro.render().el);
-			intro.welcome();
+			var landing = new App.Views.Landing();
+			$('#landing').html(landing.render().el);
+			landing.land();
 			setTimeout(function() { Parse.history.navigate('featured', {trigger: true}) }, 1000);
 		} else {
 			/// this will eventually go to the newsfeed / home page
