@@ -122,6 +122,7 @@ Parse.Cloud.afterSave('UserProfile', function(request) {
     profileACL.setPublicReadAccess(true);
     profileACL.setRoleWriteAccess("Admin",true);
     profile.set('username', user.attributes.username);
+    profile.set('name', user.attributes.username);
     profile.set('userId', user.id);
     user.set('userprofile', profile);
     profile.save();
@@ -138,6 +139,7 @@ Parse.Cloud.afterSave('ArtistProfile', function(request) {
     profileACL.setPublicReadAccess(true);
     profileACL.setRoleWriteAccess("Admin",true);
     profile.set('username', user.attributes.username);
+    profile.set('name', user.attributes.username);
     user.set('profile', profile);
     profile.save();
     user.save();
@@ -205,15 +207,14 @@ Parse.Cloud.afterSave("Tattoo", function(request) {
   var user = request.user;
   var tattoo = request.object;
   if (!tattoo.existed()) {
-    console.log('tattoo did not exist.');
     var userACL = new Parse.ACL(user);
     tattoo.setACL(userACL);
-    tattoo.setRoleWriteAccess("Admin",true);
+    userACL.setRoleWriteAccess("Admin",true);
     userACL.setPublicReadAccess(true);
     tattoo.save();
-    console.log('tattoo saved');
   }
 });
+
 
 Parse.Cloud.afterSave("Add", function(request) {
   var user = request.user;
@@ -221,8 +222,78 @@ Parse.Cloud.afterSave("Add", function(request) {
   if (!add.existed()) {
     var userACL = new Parse.ACL(user);
     add.setACL(userACL);
-    add.setRoleWriteAccess("Admin",true);
+    userACL.setRoleWriteAccess("Admin",true);
     userACL.setPublicReadAccess(true);
     add.save();
   }
+});
+
+
+////// database update jobs
+
+//adds the emails to the artist profiles.
+Parse.Cloud.job("addEmail", function(request, status) {
+  Parse.Cloud.useMasterKey();
+  var counter = 0;
+  var query = new Parse.Query("ArtistProfile");
+  query.include('user');
+  query.each(function(profile) {
+      var tojson = profile.attributes.user.toJSON();
+      var email = tojson.email;
+
+      profile.set("email", email);
+      if (counter % 100 === 0) {
+        status.message(counter + " users processed.");
+      }
+      counter += 1;
+      return profile.save();
+  }).then(function() {
+    status.success("Emails added.");
+  }, function(error) {
+    status.error("Uh oh, something went wrong.");
+  });
+});
+
+//set tattoo ACL
+Parse.Cloud.job("tattooACL", function(request, status) {
+  Parse.Cloud.useMasterKey();
+  var counter = 0;
+  var query = new Parse.Query("Tattoo");
+  query.each(function(tattoo) {
+      var acl = tattoo.get("ACL");
+      acl.setRoleWriteAccess("Admin",true);
+      if (counter % 100 === 0) {
+        status.message(counter + " tattoos processed.");
+      }
+      counter += 1;
+      return tattoo.save();
+  }).then(function() {
+    status.success("tattoo ACL added.");
+  }, function(error) {
+    status.error("Uh oh, something went wrong.");
+  });
+});
+
+//get artist profile from user, all tattoos are uploaded by artist at this point
+Parse.Cloud.job("addArtistProfile", function(request, status) {
+  Parse.Cloud.useMasterKey();
+  var counter = 0;
+  var query = new Parse.Query("Tattoo");
+  query.include('artist');
+  query.each(function(tattoo) {
+
+      var artist = tattoo.attributes.artist;
+      var artistProfile = artist.get("profile");
+
+      tattoo.set("artistProfile", artistProfile);
+      if (counter % 100 === 0) {
+        status.message(counter + " tattoos processed.");
+      }
+      counter += 1;
+      return tattoo.save();
+  }).then(function() {
+    status.success("artist profile added.");
+  }, function(error) {
+    status.error("Uh oh, something went wrong.");
+  });
 });

@@ -2,10 +2,10 @@
 //back to top
 $(document).ready(function(){
      $(window).scroll(function () {
-            if ($(this).scrollTop() > 400) {
-                $('#back-to-top').fadeIn();
+            if ($(this).scrollTop() > 800) {
+                $('#back-to-top').fadeIn( 2200 );
             } else {
-                $('#back-to-top').fadeOut();
+                $('#back-to-top').fadeOut( 800 );
             }
         });
         // scroll body to 0px on click

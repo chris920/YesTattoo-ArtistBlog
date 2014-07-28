@@ -288,8 +288,6 @@ App.Views.ArtistProfile = Parse.View.extend({
 	  	// Pass this object onto the template function, returns an HTML string. Then use jQuerry to insert the html
 		this.$el.html(this.template(attributes));
 
-		// $(window).delay( 800 ).scroll(this.activateAffix);
-
 		return this;
 	}
 });
@@ -322,9 +320,10 @@ App.Views.Tattoo = Parse.View.extend({
 		_.bindAll(this, 'add', 'remove', 'showAdd', 'showRemove');
 	},
     events: {
-     	'click .open': 				'open',
-     	'click .add': 				'add',
-     	'click .remove': 			'remove'
+     	'click .open': 					'open',
+     	'click .hover-text-content': 	'profile',
+     	'click .add': 					'add',
+     	'click .remove': 				'remove'
     },
     open: function(e){
     	e.preventDefault();
@@ -332,6 +331,11 @@ App.Views.Tattoo = Parse.View.extend({
     	///needs to pass the tattoo events to the tattoo
     	var profile = new App.Views.TattooProfile({model: this.model});
 		$('.modalayheehoo').html(profile.render().el);
+    },
+    profile: function(e){
+    	e.stopPropagation();
+    	Parse.history.navigate(this.model.attributes.artistProfile.username, {trigger: true, replace: true});
+    	$("html, body").animate({ scrollTop: 0 }, 600);
     },
 	add: function(e){
 		e.stopPropagation();
@@ -400,7 +404,7 @@ App.Views.Tattoo = Parse.View.extend({
 		this.$('button').fadeOut().removeClass('add btn-block').removeAttr("disabled").addClass('remove pull-right').html('&nbsp;&nbsp;<span class="flaticon-book104"></span>X').fadeIn();
 	},
 	render: function(){
-		// checks if the artist profile was included, then toJSONs the attributes and inlcudes it when rendering.
+		// checks if the artist profile was included, then toJSONs the attributes and includes it when rendering.
 		// The if statement avoids issues with saving the add, where it tries to save the JSONed tattoo as well.
 
 		if (this.model.attributes.artistProfile.createdAt !== undefined) {
@@ -448,7 +452,9 @@ App.Views.MyTattoo = Parse.View.extend({
     	var profile = new App.Views.TattooProfile({model: this.model});
 		$('.modalayheehoo').html(profile.render().el);
     },
-	edit: function(){
+	edit: function(e){
+		e.stopPropagation();
+		
 		var edit = new App.Views.ArtistEdit({model: this.model});
 		$('#app').html(edit.render().el);
 
@@ -673,13 +679,9 @@ App.Views.FeaturedArtists = Parse.View.extend({
 		query.descending("createdAt");
 		query.find({
 		  success: function(artists) {
-		  	console.log(that);
-		  	console.log(artists);
 		  	that.collection.add(artists);
-		  	console.log(that.collection)
 		  	$('.featuredArtist:first').fadeIn();
 		  	that.renderLoad();
-
 		  },
 		  error: function(message){
 		  	console.log(message);
@@ -1077,7 +1079,6 @@ App.Views.Upload = Parse.View.extend({
 			        tattoo.set("artistEmail", this.$("#editArtistEmail").val());
 				} else {
 					tattoo.set("artist", Parse.User.current());
-					tattoo.set("artistName", App.profile.attributes.name );
 					tattoo.set("artistProfile", App.profile );
 				}
 
@@ -1221,12 +1222,9 @@ App.Router = new (Parse.Router.extend({
 		$('#app').html(featured.render().el);
 
 	    App.Collections.featuredArtists = new App.Collections.FeaturedArtists();
-	    console.log(App.Collections.featuredArtists)
 	    App.Collections.featuredArtists.page = (p) ? p : 0;
 		App.Views.featuredArtists = new App.Views.FeaturedArtists({collection:  App.Collections.featuredArtists});
-		
-		console.log(App.Collections.featuredArtists)
-		console.log(App.Views.featuredArtists)
+
 	},
 	showProfile: function(uname){
 
