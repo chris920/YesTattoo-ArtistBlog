@@ -15,11 +15,12 @@ var App = new (Parse.View.extend({
 	start: function(){
 		Parse.history.start({pushState: false, root: '/'});
 
-		this.getProfile();
-
-		// render initial nav 
+		// render initial nav
 		var nav = new App.Views.Nav();
 		$('#footer').fadeIn( 800 );
+
+		this.getProfile();
+		this.typeaheadInitialize();
 	},
 	events: {
 		//simplifies html to use routers where needed
@@ -52,6 +53,19 @@ var App = new (Parse.View.extend({
 			});
 		}
 		return App.profile;
+	},
+	typeaheadInitialize: function(){
+		var books = ['Realistic','OldSkool','Black&White','Abstract','Gray Wash',
+		'Celtic','Biomechanical','Color', 'Tribal','Surrealist','Cartoon','WhiteInk', 'Polynesian', 'Asian', 'Animal', 'Flower', 'Skull', 'Japanese', 'Sexy', 'Fantasy', 'Bold','Graphic','Refined','OldWest'
+		];  ///initial books local. needs to pull the user's books.
+
+		this.booktt = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('books'),
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			local:  $.map(books, function(book) { return { books: book }; })
+		});
+		this.booktt.initialize();
+
 	}
 }))({el: document.body});
 
@@ -185,40 +199,155 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	className: 'tattooProfile',
 	initialize: function(){
 		Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
+
 	},
 	template: _.template($("#tattooProfileTemplate").html()),
 	cancelEl: '.x',
 	events: {
-		"click .artistName": 	"triggerCancel"
+		"click .artistName": 	"triggerCancel",
+     	'click .add': 			'add',
+     	'click .remove': 		'removeTattoo'
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
 
+		//checks if the user has added the tattoo
+		if (Parse.User.current()) {
+			if ($.inArray(this.model.id, Parse.User.current().attributes.added) > -1) {
+				this.showAdded();
+			}
+		}
+
+		//checks if the artist was inlcuded and fetches the artist if not
 		var that = this;
 		if (this.model.attributes.artistProfile.username) {
 			var artist = this.model.attributes.artistProfile;
-			setArtist(artist);
+			this.setArtist(artist);
 		} else {
 			that.model.attributes.artistProfile.fetch({
 			  success: function(profile) {
 			  	artist = profile.toJSON();
-			  	setArtist(artist);
+			  	that.setArtist(artist);
 			  },
 			  error: function(obj, error) {
 			    console.log(error);
 			  }
 			});
 		}
-		function setArtist(artist) {
-			if(artist.profThumb !== undefined){that.$(".largeprofpic")[0].src = artist.profThumb.url};
-			that.$(".artistName").html('By ' + artist.name).attr('href',"/" + artist.username);
-			that.$(".artistLoc").html('<span>' + artist.username + '</span><br>' + artist.shop + ' / ' + artist.locationName);
-			that.$(".infoBox").delay( 500 ).fadeIn();
-		}
 	},
-	cancel: function(){
-		$("body").css("overflow", "auto");
+	setArtist: function(artist) {
+		if(artist.profThumb !== undefined){this.$(".prof")[0].src = artist.profThumb.url};
+		this.$(".artistName").html('By ' + artist.name).attr('href',"/" + artist.username);
+		this.$(".artistLoc").html('<span>' + artist.username + '</span><br>' + artist.shop + ' / ' + artist.locationName);
+		this.$(".infoBox").delay( 500 ).fadeIn();
+	},
+	add: function(){
+		console.log('add trggered')
+		var user = Parse.User.current();
+		var that = this;
+
+		if (Parse.User.current()) {
+			this.$('.add').attr('disabled', 'disabled');
+			if ($.inArray(this.model.id, user.attributes.added) > -1) {
+				this.$('button').html('<span class="flaticon-book104"></span>Already Added...');
+				setTimeout(function(){that.showAdded()},1000)
+			} else {
+				this.$('button').addClass('add').html('<span class="flaticon-book104"></span>Added!');
+				var add = new App.Models.Add();
+				add.set("artistProfile", this.model.attributes.artistProfile);
+				add.set("tattooId", this.model.id);
+				add.set("tattoo", this.model);
+				add.save().then(function (add) {
+					// Add the ids of the added tattoos
+					user.addUnique('added', add.attributes.tattoo.id);
+					return user.save();
+				}).then(function (add) {
+					var collectedArtists = App.profile.relation("collectedArtists");
+					collectedArtists.add(that.model.attributes.artistProfile);
+					return App.profile.save();	
+				}).then(function(profile) {
+					console.log(profile);
+					that.showAdded();
+				}, function(error) {
+					console.log(error);
+					that.showAdd();
+				});
+			}
+
+		} else {
+			Parse.history.navigate('/login', {trigger: true, replace: true});
+			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
+		}
+
+	},
+	removeTattoo: function(){
+		console.log('removeTattoo trggered')
+		this.$('.remove').attr('disabled', 'disabled');
+
+		var user = Parse.User.current();
+		var that = this;
+
+		var query = new Parse.Query(App.Models.Add);
+		query.equalTo('tattooId', this.model.id);
+		query.equalTo('user', user)
+		query.first().then(function(add){
+			add.destroy();
+			return add;
+		}).then(function (added) {
+			var user = Parse.User.current();
+			// remove the ids of the added tattoos
+
+/// this needs to check if the tattoo is the last added
+
+			user.remove('added', added.attributes.tattoo.id);
+			return user.save();
+		}).then(function(user) {
+			Parse.history.navigate(App.back, {trigger: true});
+			that.triggerCancel();
+		}, function(error) {
+			console.log(error);
+		});
+	},
+	showAdd: function(){
+		this.$('button').fadeOut(800,function(){
+			$(this).removeClass('remove pull-right btn-link').removeAttr("disabled").addClass('add btn-block btn-submit').html('<span class="flaticon-book104"></span>Collect').fadeIn();
+		});
+	},
+
+	showAdded: function(){
+		this.$('button').fadeOut(700,function(){
+			$(this).removeClass('add btn-block btn-submit').removeAttr("disabled").addClass('remove pull-right btn-link').html('remove tattoo').fadeIn( 400 );
+		});
+
+		this.$('.added').slideDown(800);
+
+		var input = this.$('.booksInput');
+		input.tagsinput({
+			tagClass: 'btn-tag',
+			trimValue: true,
+			maxChars: 20,
+			maxTags: 5
+		});
+
+		input.tagsinput('input').typeahead(null, {
+			name: 'books',
+			displayKey: 'books',
+			source: App.booktt.ttAdapter()
+		}).bind('typeahead:selected', $.proxy(function (obj, datum) {
+			this.tagsinput('add', datum.books);
+			this.tagsinput('input').typeahead('val', '');
+		}, input)).bind('focus', function (obj, datum) {
+			$('.bootstrap-tagsinput').addClass('focus');
+			// $('.btn-tag').addClass('tag');
+		}).bind('blur', function (obj, datum) {
+			$('.bootstrap-tagsinput').removeClass('focus');
+			// $('.btn-tag').removeClass('tag');
+		});
+
+	},
+	beforeCancel: function(){
 		Parse.history.navigate(App.back, {trigger: false});
+		$("body").css("overflow", "auto");
 	}
 });
 
@@ -317,20 +446,20 @@ App.Views.Tattoo = Parse.View.extend({
 	className: 'tattoo',
 	template: _.template($("#tattooTemplate").html()),
 	initialize: function(){
-		_.bindAll(this, 'add', 'remove', 'showAdd', 'showRemove');
+		_.bindAll(this, 'add', 'edit', 'showAdd', 'showEdit');
 	},
     events: {
      	'click .open': 					'open',
      	'click .hover-text-content': 	'profile',
      	'click .add': 					'add',
-     	'click .remove': 				'remove'
+     	'click .edit': 					'edit'
     },
-    open: function(e){
-    	e.preventDefault();
+    open: function(){
     	App.back = Parse.history.getFragment();
     	///needs to pass the tattoo events to the tattoo
     	var profile = new App.Views.TattooProfile({model: this.model});
 		$('.modalayheehoo').html(profile.render().el);
+		return profile;
     },
     profile: function(e){
     	e.stopPropagation();
@@ -338,6 +467,7 @@ App.Views.Tattoo = Parse.View.extend({
     	$("html, body").animate({ scrollTop: 0 }, 600);
     },
 	add: function(e){
+
 		e.stopPropagation();
 		var user = Parse.User.current();
 		var that = this;
@@ -346,62 +476,31 @@ App.Views.Tattoo = Parse.View.extend({
 			this.$('.add').attr('disabled', 'disabled');
 			if ($.inArray(this.model.id, user.attributes.added) > -1) {
 				this.$('button').html('<span class="flaticon-book104"></span>Already Added...');
-				setTimeout(function(){that.showRemove()},1000)
+				setTimeout(function(){this.showEdit()},1000)
 			} else {
 				this.$('button').addClass('add:active').html('<span class="flaticon-book104"></span>Added!');
-				var add = new App.Models.Add();
-				add.set("uploader", this.model.attributes.uploader);
-				add.set("user", Parse.User.current());
-				add.set("userId", Parse.User.current().id);
-				add.set("artist", this.model.attributes.artist);
-				add.set("tattooId", this.model.id);
-				add.set("tattoo", this.model);
-				add.save().then(function (add) {
-					// Add the ids of the added tattoos
-					user.addUnique('added', add.attributes.tattoo.id);
-					return user.save();
-				}).then(function(user) {
-					that.showRemove();
-				}, function(error) {
-					console.log(error);
-					that.showAdd();
-				});
+
+				//opens the tattoo profile, returns the profile then calls the add function on the profile.
+				this.open().add();
+
+				this.showEdit();
 			}
+
 		} else {
 			Parse.history.navigate('/login', {trigger: true, replace: true});
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		}
 
 	},
-	remove: function(e){
+	edit: function(e){
 		e.stopPropagation();
-		this.$('.remove').attr('disabled', 'disabled');
-
-		var user = Parse.User.current();
-		var that = this;
-
-		var query = new Parse.Query(App.Models.Add);
-		query.equalTo('tattooId', this.model.id);
-		query.equalTo('user', user)
-		query.first().then(function(add){
-			add.destroy();
-			return add;
-		}).then(function (added) {
-			var user = Parse.User.current();
-			// remove the ids of the added tattoos
-			user.remove('added', added.attributes.tattoo.id);
-			return user.save();
-		}).then(function(user) {
-			that.showAdd();
-		}, function(error) {
-			console.log(error);
-		});
+		this.open();
 	},
 	showAdd: function(){
-		this.$('button').fadeOut().removeClass('remove').removeAttr("disabled").addClass('add btn-block').html('<span class="flaticon-book104"></span>Collect').fadeIn();
+		this.$('button').fadeOut().removeClass('edit').removeAttr("disabled").addClass('add btn-block').html('<span class="flaticon-book104"></span>Collect').fadeIn();
 	},
-	showRemove: function(){
-		this.$('button').fadeOut().removeClass('add btn-block').removeAttr("disabled").addClass('remove pull-right').html('&nbsp;&nbsp;<span class="flaticon-book104"></span>X').fadeIn();
+	showEdit: function(){
+		this.$('button').fadeOut().removeClass('add btn-block').removeAttr("disabled").addClass('edit pull-right').html('Edit&nbsp;&nbsp;<span class="flaticon-book104"></span>').fadeIn();
 	},
 	render: function(){
 		// checks if the artist profile was included, then toJSONs the attributes and includes it when rendering.
@@ -413,10 +512,11 @@ App.Views.Tattoo = Parse.View.extend({
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
 
+		//checks if the user has added the tattoo
 		if (Parse.User.current()) {
 			if ($.inArray(this.model.id, Parse.User.current().attributes.added) > -1) {
-				this.showRemove();
-			}			
+				this.showEdit();
+			}
 		}
 		return this;
 	}
@@ -1028,7 +1128,6 @@ App.Views.Join = Parse.View.extend({
 		    	} else  {
 		    		var profile = new App.Models.ArtistProfile(); 
 		    	};
-		      	profile.set('user',user);
 		      	profile.set('shop',shop);
 		      	profile.save().then(function(profile){
 		      		App.profile = profile;
@@ -1272,7 +1371,7 @@ App.Router = new (Parse.Router.extend({
 
 			  	var addsQuery = new Parse.Query(App.Models.Add);
 			  	addsQuery.descending("createdAt");
-			  	addsQuery.equalTo('userId', profile.attributes.userId);
+			  	addsQuery.equalTo('user', profile.attributes.user);
 			  	addsQuery.include('tattoo');
 			  	addsQuery.include('tattoo.artistProfile');
 			  	addsQuery.find({

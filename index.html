@@ -13,14 +13,10 @@
   <body>
 
     <div id="body">
-        
-      <div class="modal fade" tabindex="-1" id="login" role="dialog" aria-labelledby="loginModal" aria-hidden="true"></div>
-
       <div class="modalayheehoo"></div>
       <div class="navs"></div>
       <section id="landing"></section>
-      <section id="app"></section>
-      
+    <section id="app"></section>
     </div> 
           
     <div id="footer" style="display:none">
@@ -208,13 +204,22 @@
         <div class="imageBox">
           <img src="<%= file.url %>" class="fullImage">
         </div>
-
         <div class="infoBox" style="display:none">
+          <div class="added" style="display:none">
+            <h2>Your Books</h2>
+            <input class="booksInput" type="text" data-role="tagsinput" value="" />
+          </div>
+          <div class="row">            
+            <button type="button" class="btn-submit btn-block add"><span class="flaticon-book104"></span>Collect</button>
+          </div>
+          <hr>
           <div class="row artistInfo" href=""><a>
-              <img class="largeprofpic" src="img/tattooicon.png" alt="Artist Prof">
+              <img class="prof" src="img/tattooicon.png" alt="Artist Prof">
               <h2 class="artistName"> </h2>
               <h5 class="artistLoc"> </h5>
           </a></div>
+          <div class="row">
+          </div>
 
         </div>
       </div>
@@ -342,7 +347,9 @@
       <div class="tattooContainer">
         <a class="open">
           <img src="<%= fileThumb.url %>" class="tattooImg">
-          
+          <span class="hover-content" data-toggle="buttons"><span>
+            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
+          </span></span>
           <% if(artistProfile.name) { %>
             <span class="hover-text-content"><span>
               <img class="prof" src="<%= artistProfile.profThumb.url %>" alt="Artist Prof">
@@ -354,10 +361,8 @@
         </a>
       </div>
     </script>
- <!--          <span class="hover-content" data-toggle="buttons"><span>
-            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
-          </span></span> -->
-    
+
+
 
     <script type="text/html" id="addTemplate">
       <div class="tattooContainer">
@@ -756,8 +761,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
     <script src="http://www.parsecdn.com/js/parse-1.2.18.js"></script>
     
-    <script src="js/libs/typeahead.bundle.min.js"></script>
+    <script src="js/libs/typeahead.bundle.js"></script>
+    <script src="js/libs/bootstrap-tagsinput.js"></script>
     <script src="js/libs/backbone.modal.js"></script>    
+    <!--<script src="js/libs/typeahead.bundle.min.js"></script>
+    <script src="js/libs/bootstrap-tagsinput.min.js"></script>
+    <script src="js/libs/backbone.modal-min.js"></script>   -->
     <script src="js/yt-artistblog.js"></script>
     <script src="js/yt-proto.js"></script>
     <script src="js/yt-shared.js"></script>
