@@ -1,3 +1,5 @@
+var Image = require("parse-image");
+var _ = require('underscore');
 
 Parse.Cloud.beforeSave(Parse.User, function(request, response) {
   var user = request.user;
@@ -9,11 +11,7 @@ Parse.Cloud.beforeSave(Parse.User, function(request, response) {
     response.success();
   }
 });
-
-var Image = require("parse-image");
  
-
-//////// Create profile picture thumbnail
 Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
 
   var profile = request.object;
@@ -33,7 +31,6 @@ Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
     response.success();
     return;
   }
-
 
   if (!profile.dirty("prof")) {
     // The profile photo isn't being modified.
@@ -81,7 +78,6 @@ Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
   });
 });
 
-//////// Create profile picture thumbnail
 Parse.Cloud.beforeSave('UserProfile', function(request, response) {
 
   var profile = request.object;
@@ -148,7 +144,6 @@ Parse.Cloud.beforeSave('UserProfile', function(request, response) {
   });
 });
 
-//////// Create tattoo picture thumbnail
 Parse.Cloud.beforeSave("Tattoo", function(request, response) {
   var user = request.user;
   var tattoo = request.object;
@@ -217,8 +212,6 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
   var user = request.user;
   var add = request.object;
 
-/// handle the changed books
-
   if (!add.existed() && user.attributes.role === 'user') {
     var userACL = new Parse.ACL(user);
     add.setACL(userACL);
@@ -245,15 +238,44 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
         collectors.add(user.attributes.userprofile)
         artistProfile.increment("collectorCount")
         return artistProfile.save();
+      } else {
+        console.log('artist already added');
+        return;
       }
-      console.log('artist already added');
-
     }).then(function(result) {
       response.success();
     }, function(error) {
       response.error(error);
     });
+  } else {
+      response.success();
   }
+});
+
+Parse.Cloud.define("add", function(request, response) {
+    Parse.Cloud.useMasterKey(); 
+    var query = new Parse.Query('Tattoo');
+    query.get(request.params.tattooId).then(function(tattoo){
+      _.each(request.params.added, function(book) {
+        tattoo.add('books', book);
+      });
+      return tattoo.save();
+    }).then(function(tattoo){      
+      var books = tattoo.attributes.books;
+      _.each(request.params.removed, function(book) {
+        var i = books.indexOf(book);
+        if(i != -1) {
+          books.splice(i, 1);
+        }
+      });
+      return tattoo.save();
+    }).then(function(result){
+      console.log(result);
+      response.success(result);
+    }, function(error){
+      console.log(error);
+      response.error(error);
+    });
 });
 
 

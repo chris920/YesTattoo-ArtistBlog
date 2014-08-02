@@ -4127,7 +4127,7 @@ a:focus {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-.flaticon-book104:before {
+.flaticon-book104:before, .bootstrap-tagsinput:before, .bootstrap-tagsinput.focused:before {
   content: "\e000"; }
 
 .flaticon-camera4:before {
@@ -4456,7 +4456,9 @@ span.hover-content {
   margin-bottom: 5px;
   color: gray;
   background-color: transparent;
-  border-color: #cccccc; }
+  border-color: #cccccc;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease; }
   .btn-tag:hover, .btn-tag.active {
     border: inherit #cccccc;
     background-color: black;
@@ -4754,6 +4756,13 @@ span.hover-content {
       margin-bottom: 20px;
       float: none;
       text-align: center; } }
+
+.collectorCount {
+  text-align: center; }
+  .collectorCount h1 {
+    display: inline-block;
+    margin: 20px;
+    text-align: center; }
 
 #artistProfile .container-fluid, #artistProfile .tagFilters, #artistProfile .tattooImg {
   background-color: #d9d9d9; }
@@ -5156,6 +5165,15 @@ span.hover-content {
       float: none;
       margin-left: 0px; } }
 
+.save {
+  float: right; }
+
+.remove {
+  float: left; }
+
+.clear {
+  float: left; }
+
 .login .loginContainer {
   color: white;
   margin: 140px auto 140px auto; }
@@ -5203,6 +5221,10 @@ span.hover-content {
   border-width: 5px;
   border-image: radial-gradient(#1a1a1a 80%, #4d4d4d 100%, white) 1%;
   margin-top: 0px; }
+  .infoBox > hr {
+    border-top: 1px solid #0d0d0d;
+    margin-top: 40px;
+    margin-bottom: 40px; }
   .infoBox span {
     color: gray; }
   @media screen and (min-width: 992px) {
@@ -5275,24 +5297,50 @@ span.hover-content {
   border: 1px solid #4d4d4d;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   display: inline-block;
-  padding: 4px 6px;
+  padding: 40px 20px;
   margin-bottom: 10px;
   color: #555;
   vertical-align: middle;
   border-radius: 4px;
   max-width: 100%;
-  min-height: 80px;
   line-height: 22px;
+  min-height: 80px;
+  cursor: cell;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease; }
+  .bootstrap-tagsinput:before {
+    font-family: Flaticon;
+    padding: 8px;
+    font-style: normal;
+    font-size: 30px;
+    top: 5px;
+    position: relative;
+    color: #d9d9d9; }
 
-.bootstrap-tagsinput.focus {
+.bootstrap-tagsinput.focused {
   background-color: rgba(0, 0, 0, 0.6);
-  border-color: rgba(196, 32, 32, 0.6);
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
+  cursor: text;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease; }
+  .bootstrap-tagsinput.focused:before {
+    font-family: Flaticon;
+    padding: 8px;
+    font-style: normal;
+    font-size: 30px;
+    top: 5px;
+    position: relative;
+    color: #d9d9d9; }
+
+input.tt-input::-webkit-input-placeholder {
+  content: "add books!"; }
+input.tt-input::-moz-placeholder {
+  content: "add books!"; }
+input.tt-input:-moz-placeholder {
+  content: "add books!"; }
+input.tt-input:-ms-input-placeholder {
+  content: "add books!"; }
 
 .bootstrap-tagsinput input {
   border: none;
@@ -5308,9 +5356,18 @@ span.hover-content {
   border: none;
   box-shadow: none; }
 
+.bootstrap-tagsinput .blured {
+  border: 1px solid #1a1a1a;
+  color: white;
+  background-color: #1a1a1a !important;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease; }
+
 .bootstrap-tagsinput .tag {
   margin-right: 2px;
-  color: white; }
+  color: white;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease; }
 
 .bootstrap-tagsinput .tag [data-role="remove"] {
   margin-left: 8px;
@@ -5343,13 +5400,14 @@ span.hover-content {
   display: none; }
 
 .tt-dropdown-menu {
+  text-align: left;
   position: absolute;
   top: 100%;
   left: 0;
   z-index: 1000;
   display: none;
   float: left;
-  min-width: 160px;
+  min-width: 100%;
   padding: 5px 0;
   margin: 2px 0 0;
   list-style: none;
@@ -5364,17 +5422,17 @@ span.hover-content {
 
 .tt-suggestion > p {
   display: block;
-  padding: 3px 20px;
+  padding: 3px 12px;
   clear: both;
   font-weight: normal;
   line-height: 1.428571429;
-  color: #333333;
+  color: gray;
   white-space: nowrap; }
 
 .tt-suggestion > p:hover,
 .tt-suggestion > p:focus,
 .tt-suggestion.tt-cursor p {
-  color: #ffffff;
+  color: black;
   text-decoration: none;
   outline: 0;
-  background-color: #428bca; }
+  background-color: whitesmoke; }

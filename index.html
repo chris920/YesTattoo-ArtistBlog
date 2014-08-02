@@ -28,7 +28,7 @@
             <a href="https://www.twitter.com/YesTattoo" target="_blank"><i class="social-icon twitter-icon"></i></a>
           </div>
           <div class="col-sm-6 col-xs-12 footerlinks">
-            <a href="/">YesTattoo, Inc.</a>
+            <a href="">YesTattoo, Inc.</a>
             <a href="http://yes.tattoo/terms.html">Terms</a>
             <a href="/about">About</a>
           </div>
@@ -41,7 +41,7 @@
        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
           <div class="navbar-header">
-            <a class="navbar-brand main-logo" href="/"></a>
+            <a class="navbar-brand main-logo" href=""></a>
             <button type="button" class="navbar-toggle btn btn-link" data-toggle="collapse" data-target=".navbar-collapse">
               <span class="sr-only">Toggle navigation</span>
               <span>Menu    </span>
@@ -94,7 +94,7 @@
         <div class="artistslide">
           <div class="landingText">
             <h2 class="welcome" href="" style="display:none">Welcome to</h2>
-            <div class="logo" style="display:none"><a class="main-logo" href="/"></a></div>
+            <div class="logo" style="display:none"><a class="main-logo" href=""></a></div>
             <a href=""><h2 class="artistName" href="" style="display:none"></h2></a>
             <h5 class="artistLoc" style="display:none">Lets find you an artist</h5>
           </div>
@@ -117,7 +117,6 @@
     </script>
 
     <!-- Featured Artists Page-->
-
     <script type="text/html" id="featuredContainerTemplate">
       <div class="intro">
         <div class="l6container">        
@@ -153,8 +152,6 @@
     </script>
 
     <!-- Login page / modal + forgot password -->
-    
-        
     <script type="text/html" id="loginTemplate">
       <div class="loginContainer">
         <div class="row">
@@ -196,7 +193,7 @@
       </div>
     </script>
 
-    <!-- tattoo profile -->
+    <!-- Tattoo Profile -->
     <script type="text/template" id="tattooProfileTemplate">
       <a href="#" class="btn-text x">x</a>
       <div class="container">
@@ -205,12 +202,13 @@
           <img src="<%= file.url %>" class="fullImage">
         </div>
         <div class="infoBox" style="display:none">
-          <div class="added" style="display:none">
+          <div class="yourBooks" style="display:none">
             <h2>Your Books</h2>
             <input class="booksInput" type="text" data-role="tagsinput" value="" />
           </div>
           <div class="row">            
             <button type="button" class="btn-submit btn-block add"><span class="flaticon-book104"></span>Collect</button>
+            <button type="button" class="save btn-link" style="display:none">Save </button>
           </div>
           <hr>
           <div class="row artistInfo" href=""><a>
@@ -225,8 +223,7 @@
       </div>
     </script>
 
-
-    <!-- Artist profile -->
+    <!-- Artist Profile -->
     <script type="text/html" id="artistTemplate">
       <div class="profHead">
         <div class="container">
@@ -244,7 +241,7 @@
               </div>
             </div>
             <div class="col-md-6 col-sm-5">
-              <div class="profButtons">
+              <div class="profButtons row">
                 <% if (fb) { %>
                   <a href= "<%= fb %>" class="facebook" title="Facebook"></a> 
                 <% } %>
@@ -260,7 +257,13 @@
                 <% if (email) { %>
                   <a href="mailto:<%= email %>?Subject=YesTattoo%20Message" class="message" title="Message"></a>
                 <% } %>
+              <% if (collectorCount) { %>
+                <div class="collectorCount">
+                    <h1><%= collectorCount %></h1>Collectors
+                </div>
+              <% } %>
               </div>
+
             </div>
           </div>
         </div>
@@ -284,7 +287,6 @@
           </div>
         </div>
       </div>
-
 
       <div class="tab-content">
         <!-- Portfolio Tab -->
@@ -310,25 +312,25 @@
                   <h3>Featured Interview</h3>
                   <h5>Q1 ~ <%= q1 %> </h5>
                   <p class="answer"><%= a1 %></p>
-                <% } %>
-                <% if (q2) { %>
-                  <h5>Q2 ~ <%= q2 %> </h5>
-                  <p class="answer"><%= a2 %></p>
-                <% } %>
-                <% if (q3) { %>
-                  <h5>Q3 ~ <%= q3 %> <h5>
-                  <p class="answer"><%= a3 %></p>
-                <% } %>
-                <% if (q4) { %>
-                  <h5>Q4 ~ <%= q4 %> <h5>
-                  <p class="answer"><%= a4 %></p>
-                <% } %>
-                <% if (q5) { %>
-                  <h5>Q5 ~ <%= q5 %> <h5>
-                  <p class="answer"><%= a5 %></p>
-                <% } %>
-                <% if (q1) { %>
-                  <i class="pull-right">Featured on <%= featuremonth %> / <%= featureyear %> by <%= author %></i>
+                  <% if (q2) { %>
+                    <h5>Q2 ~ <%= q2 %> </h5>
+                    <p class="answer"><%= a2 %></p>
+                  <% } %>
+                  <% if (q3) { %>
+                    <h5>Q3 ~ <%= q3 %> <h5>
+                    <p class="answer"><%= a3 %></p>
+                  <% } %>
+                  <% if (q4) { %>
+                    <h5>Q4 ~ <%= q4 %> <h5>
+                    <p class="answer"><%= a4 %></p>
+                  <% } %>
+                  <% if (q5) { %>
+                    <h5>Q5 ~ <%= q5 %> <h5>
+                    <p class="answer"><%= a5 %></p>
+                  <% } %>
+                  <% if (q1) { %>
+                    <i class="pull-right">Featured on <%= featuremonth %> / <%= featureyear %> by <%= author %></i>
+                  <% } %>
                 <% } %>
             </div>
           </div>
@@ -400,9 +402,7 @@
       </div>
     </script>
 
-
-
-    <!-- User profile -->
+    <!-- User Profile -->
     <script type="text/html" id="userTemplate">
       <div class="container">
         <div class="row userHead">
@@ -433,6 +433,7 @@
               <ul class="nav nav-tabs" id="profMenu">
                   <li><span class="subMenuThumb"><img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof"></span></li>
                   <li class="active"><a href="#addsTab" data-toggle="tab"><span class="flaticon-book104"></span>Collection</a></li>
+                  <li><a href="#addsTab" data-toggle="tab"><span class="flaticon-tattoo1"></span>Artists</a></li>
               </ul>
             </div>
           </div>
@@ -450,8 +451,17 @@
             </div>
           </div>
         </div> 
-    </script>
+        <!-- Artists Tab-->
+        <div class="tab-pane fade in active" id="artistsTab">
+          <div class="tagFilters" data-toggle="buttons">
+          </div>  
+          <div class="container">          
+            <div class="row adds">
 
+            </div>
+          </div>
+        </div> 
+    </script>
 
     <!-- Join page -->
     <script type="text/html" id="joinTemplate">
