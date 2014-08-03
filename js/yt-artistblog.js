@@ -389,7 +389,11 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 			} else {
 				$('.tt-input').attr('placeholder','Add + + +').val('');
 			}
+		    if($('.save').is(':visible')) {   
+		        $('.save').click();
+		    }
 		});
+
 		input.on('itemAdded', function(event) {
 		 	$('.save').fadeIn();
 			$('.remove').fadeOut(800,function(){
@@ -415,7 +419,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 
 		this.add.set('books', this.$('.booksInput').tagsinput('items').slice(0));
 		this.add.save().then(function(add){
-			Parse.Cloud.run('add', {added: added, removed: removed, tattooId: that.model.id}, {
+			Parse.Cloud.run('books', {added: added, removed: removed, tattooId: that.model.id}, {
 			  success: function(result) {
 			    console.log(result);
 			    return result;
@@ -441,15 +445,13 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		$('.tt-input').focus();
 		if ($('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
 		    $('.tt-input').blur().val(' ');
-		    if($('.save').is(':visible')) {   
-		        $('.save').click();
-		    }
 		}
 		return this;
 	},
 	beforeCancel: function(){
 		Parse.history.navigate(App.back, {trigger: false});
 		$("body").css("overflow", "auto");
+		$('booksInput').tagsinput('destroy');
 		$(document).unbind('keypress', this.focusIn);
 		this.unbind();
 	}
@@ -1214,30 +1216,33 @@ App.Views.Join = Parse.View.extend({
 		var email = this.$("#inputEmail").val();
 		var password = this.$("#inputPassword").val();
 		var role = this.$("#inputRole").val();
-		var shop = this.$("#inputShop").val();
+		var userACL = new Parse.ACL(Parse.User.current());
 
-		Parse.User.signUp(username, password, { email: email, role: role }, {
-			success: function(user) {
-				var nav = new App.Views.Nav();
-				App.Router.navigate('/', {trigger: true});
-				$('.intro').html("<h3>Thanks for joining!</h3>");
-		    	if(user.attributes.role === 'user'){
-		    		var profile = new App.Models.UserProfile();
-		    	} else  {
-		    		var profile = new App.Models.ArtistProfile(); 
-		    	};
-		      	profile.set('shop',shop);
-		      	profile.save().then(function(profile){
-		      		App.profile = profile;
-		      	});
-				self.undelegateEvents();
-				delete self;
-			},
-	        error: function(user, error) {
-				$(".signupForm .error").html(error.message).show();
-				$(".signupForm button").removeAttr("disabled");
-	        }
-	    });
+		Parse.User.signUp(username, password, { email: email, role: role, ACL: userACL 
+		}).then( function(user){
+			console.log(user);
+			return user;
+		}).then(function(user){
+	    	if(user.attributes.role === 'user'){
+	    		var profile = new App.Models.UserProfile();
+	    	} else  {
+	    		var profile = new App.Models.ArtistProfile(); 
+	    	};
+	      	App.profile = profile;
+	      	return profile.save();
+
+		}).then(function(profile) {
+			var nav = new App.Views.Nav();
+			App.Router.navigate('/', {trigger: true});
+			$('.intro').html("<h3>Thanks for joining!</h3>");
+
+			self.undelegateEvents();
+			delete self;
+		}, function(error) {
+			console.log(error);
+			$(".signupForm .error").html(error.message).show();
+			$(".signupForm button").removeAttr("disabled");
+		});
 
 		this.$(".signupForm button").attr("disabled", "disabled");
 

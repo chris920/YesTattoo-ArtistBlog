@@ -1,22 +1,91 @@
 var Image = require("parse-image");
 var _ = require('underscore');
-
-Parse.Cloud.beforeSave(Parse.User, function(request, response) {
-  var user = request.user;
-  if (user !== null) {
-    var userACL = new Parse.ACL(user);
-    user.setACL(userACL);
-    response.success();
-  } else {
-    response.success();
-  }
-});
  
-Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
+var editBooks = function(request, response) {
+    Parse.Cloud.useMasterKey(); 
+    var query = new Parse.Query('Tattoo');
+    console.log(request);
+    query.get(request.params.tattooId).then(function(tattoo){
+      _.each(request.params.added, function(book) {
+        tattoo.add('books', book);
+      });
+      return tattoo.save();
+    }).then(function(tattoo){      
+      var books = tattoo.attributes.books;
+      _.each(request.params.removed, function(book) {
+        var i = books.indexOf(book);
+        if(i != -1) {
+          books.splice(i, 1);
+        }
+      });
+      return tattoo.save();
+    }).then(function(result){
+      console.log(result);
+      response.success(result);
+    }, function(error){
+      console.log(error);
+      response.error(error);
+    });
+}
 
+Parse.Cloud.define("books", function(request, response) {
+  editBooks(request, response);
+});
+
+
+Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
+  var profile = request.object;
+
+  if (!profile.dirty("prof")) {
+    // The profile photo isn't being modified.
+    response.success();
+    return;
+  }
+  Parse.Cloud.httpRequest({
+    url: profile.get("prof").url()
+  }).then(function(response) {
+    var image = new Image();
+    return image.setData(response.buffer);
+  }).then(function(image) {
+    // Crop the image to the smaller of width or height.
+    var size = Math.min(image.width(), image.height());
+    return image.crop({
+      left: (image.width() - size) / 2,
+      top: (image.height() - size) / 2,
+      width: size,
+      height: size
+    });
+  }).then(function(image) {
+    // Resize the image to 64x64.
+    return image.scale({
+      width: 188,
+      height: 188
+    });
+  }).then(function(image) {
+    // Make sure it's a JPEG to save disk space and bandwidth.
+    return image.setFormat("JPEG");
+  }).then(function(image) {
+    // Get the image data in a Buffer.
+    return image.data();
+  }).then(function(buffer) {
+    // Save the image into a new file.
+    var base64 = buffer.toString("base64");
+    var cropped = new Parse.File("thumbnail.jpg", { base64: base64 });
+    return cropped.save();
+  }).then(function(cropped) {
+    // Attach the image file to the original object.
+    profile.set("profThumb", cropped);
+  }).then(function(result) {
+    response.success();
+  }, function(error) {
+    response.error(error);
+  });
+});
+
+
+Parse.Cloud.afterSave('ArtistProfile', function(request) {
   var profile = request.object;
   var user = request.user;
-
   if (!profile.existed()) {
     var profileACL = new Parse.ACL(user);
     profile.setACL(profileACL);
@@ -28,9 +97,12 @@ Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
     profile.set('user', user);
     user.set('profile', profile);
     user.save();
-    response.success();
     return;
   }
+});
+
+Parse.Cloud.beforeSave('UserProfile', function(request, response) {
+  var profile = request.object;
 
   if (!profile.dirty("prof")) {
     // The profile photo isn't being modified.
@@ -78,11 +150,9 @@ Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
   });
 });
 
-Parse.Cloud.beforeSave('UserProfile', function(request, response) {
-
+Parse.Cloud.afterSave('UserProfile', function(request) {
   var profile = request.object;
   var user = request.user;
-
   if (!profile.existed()) {
     var profileACL = new Parse.ACL(user);
     profile.setACL(profileACL);
@@ -93,55 +163,7 @@ Parse.Cloud.beforeSave('UserProfile', function(request, response) {
     profile.set('user', user);
     user.set('userprofile', profile);
     user.save();
-
-    response.success();
-    return;
   }
-
-  if (!profile.dirty("prof")) {
-    // The profile photo isn't being modified.
-    response.success();
-    return;
-  }
-  Parse.Cloud.httpRequest({
-    url: profile.get("prof").url()
-  }).then(function(response) {
-    var image = new Image();
-    return image.setData(response.buffer);
-  }).then(function(image) {
-    // Crop the image to the smaller of width or height.
-    var size = Math.min(image.width(), image.height());
-    return image.crop({
-      left: (image.width() - size) / 2,
-      top: (image.height() - size) / 2,
-      width: size,
-      height: size
-    });
-  }).then(function(image) {
-    // Resize the image to 64x64.
-    return image.scale({
-      width: 188,
-      height: 188
-    });
-  }).then(function(image) {
-    // Make sure it's a JPEG to save disk space and bandwidth.
-    return image.setFormat("JPEG");
-  }).then(function(image) {
-    // Get the image data in a Buffer.
-    return image.data();
-  }).then(function(buffer) {
-    // Save the image into a new file.
-    var base64 = buffer.toString("base64");
-    var cropped = new Parse.File("thumbnail.jpg", { base64: base64 });
-    return cropped.save();
-  }).then(function(cropped) {
-    // Attach the image file to the original object.
-    profile.set("profThumb", cropped);
-  }).then(function(result) {
-    response.success();
-  }, function(error) {
-    response.error(error);
-  });
 });
 
 Parse.Cloud.beforeSave("Tattoo", function(request, response) {
@@ -207,7 +229,6 @@ Parse.Cloud.beforeSave("Tattoo", function(request, response) {
   });
 });
 
-
 Parse.Cloud.beforeSave("Add", function(request, response) {
   var user = request.user;
   var add = request.object;
@@ -223,18 +244,14 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
 
     var artistProfile;
     var collectors;
-
     add.attributes.artistProfile.fetch().then(function(profile){
       artistProfile = profile;
       collectors = profile.relation('collectors');
-
       var query = collectors.query();
       query.equalTo('user', user);
-      return query.find();
-
-    }).then(function(prof){
-      console.log('prof from collectors')
-      if( prof.length < 1 ) {
+      return query.count();
+    }).then(function(count){
+      if( count < 1 ) {
         collectors.add(user.attributes.userprofile)
         artistProfile.increment("collectorCount")
         return artistProfile.save();
@@ -252,30 +269,30 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
   }
 });
 
-Parse.Cloud.define("add", function(request, response) {
-    Parse.Cloud.useMasterKey(); 
-    var query = new Parse.Query('Tattoo');
-    query.get(request.params.tattooId).then(function(tattoo){
-      _.each(request.params.added, function(book) {
-        tattoo.add('books', book);
+Parse.Cloud.beforeDelete("Add", function(request, response) {
+  var user = request.user;
+  var add = request.object;
+  Parse.Cloud.useMasterKey();
+  var query = new Parse.Query('Add');
+  query.equalTo('user', user);
+  query.equalTo('artistProfile', add.attributes.artistProfile);
+  query.count().then(function(count){
+    if (count > 1) {
+      return response.success();
+    } else {
+      add.attributes.artistProfile.fetch().then(function(profile){
+        profile.increment("collectorCount", -1);
+        var collectors = profile.relation('collectors');
+        collectors.remove(user.attributes.userprofile);
+        return profile.save();
+      }).then(function(result) {
+        console.log(result);
+        return response.success();
+      }, function(error) {
+        return response.error(error);
       });
-      return tattoo.save();
-    }).then(function(tattoo){      
-      var books = tattoo.attributes.books;
-      _.each(request.params.removed, function(book) {
-        var i = books.indexOf(book);
-        if(i != -1) {
-          books.splice(i, 1);
-        }
-      });
-      return tattoo.save();
-    }).then(function(result){
-      console.log(result);
-      response.success(result);
-    }, function(error){
-      console.log(error);
-      response.error(error);
-    });
+    }
+  })
 });
 
 
