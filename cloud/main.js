@@ -2,30 +2,30 @@ var Image = require("parse-image");
 var _ = require('underscore');
  
 var editBooks = function(request, response) {
-    Parse.Cloud.useMasterKey(); 
-    var query = new Parse.Query('Tattoo');
-    console.log(request);
-    query.get(request.params.tattooId).then(function(tattoo){
-      _.each(request.params.added, function(book) {
-        tattoo.add('books', book);
-      });
-      return tattoo.save();
-    }).then(function(tattoo){      
-      var books = tattoo.attributes.books;
-      _.each(request.params.removed, function(book) {
-        var i = books.indexOf(book);
-        if(i != -1) {
-          books.splice(i, 1);
-        }
-      });
-      return tattoo.save();
-    }).then(function(result){
-      console.log(result);
-      response.success(result);
-    }, function(error){
-      console.log(error);
-      response.error(error);
+  Parse.Cloud.useMasterKey(); 
+  var query = new Parse.Query('Tattoo');
+  console.log(request);
+  query.get(request.params.tattooId).then(function(tattoo){
+    _.each(request.params.added, function(book) {
+      tattoo.add('books', book);
     });
+    return tattoo.save();
+  }).then(function(tattoo){      
+    var books = tattoo.attributes.books;
+    _.each(request.params.removed, function(book) {
+      var i = books.indexOf(book);
+      if(i != -1) {
+        books.splice(i, 1);
+      }
+    });
+    return tattoo.save();
+  }).then(function(result){
+    console.log(result);
+    response.success(result);
+  }, function(error){
+    console.log(error);
+    response.error(error);
+  });
 }
 
 Parse.Cloud.define("books", function(request, response) {
@@ -229,6 +229,37 @@ Parse.Cloud.beforeSave("Tattoo", function(request, response) {
   });
 });
 
+Parse.Cloud.beforeDelete("Tattoo", function(request, response) {
+  var user = request.user;
+  var tattoo = request.object;
+
+  Parse.Cloud.useMasterKey();
+
+  editBooks({params: {added: [], removed: tattoo.attributes.books, tattooId: tattoo.id}}, {
+    success: function(result) {
+      console.log(result);
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+
+  var query = new Parse.Query('Add');
+  query.equalTo('tattoo', tattoo);
+  query.find().then(function(adds){
+    console.log(adds);
+
+    return Parse.Object.destroyAll(adds);
+  }).then(function(result) {
+    console.log(result);
+    return response.success();
+  }, function(error) {
+    return response.error(error);
+  });
+
+});
+
+
 Parse.Cloud.beforeSave("Add", function(request, response) {
   var user = request.user;
   var add = request.object;
@@ -252,8 +283,8 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
       return query.count();
     }).then(function(count){
       if( count < 1 ) {
-        collectors.add(user.attributes.userprofile)
-        artistProfile.increment("collectorCount")
+        collectors.add(user.attributes.userprofile);
+        artistProfile.increment("collectorCount");
         return artistProfile.save();
       } else {
         console.log('artist already added');
@@ -270,20 +301,27 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
 });
 
 Parse.Cloud.beforeDelete("Add", function(request, response) {
-  var user = request.user;
   var add = request.object;
   Parse.Cloud.useMasterKey();
-  var query = new Parse.Query('Add');
-  query.equalTo('user', user);
-  query.equalTo('artistProfile', add.attributes.artistProfile);
-  query.count().then(function(count){
-    if (count > 1) {
-      return response.success();
-    } else {
+
+  var userProfile;
+  add.attributes.user.fetch().then(function(user){
+    user.remove('added', add.attributes.tattooId);
+    return user.save();
+  }).then(function(user){
+    userProfile = user.attributes.userprofile;
+    return;
+  }).then(function(){
+    var query = new Parse.Query('Add');
+    query.equalTo('user', add.attributes.user);
+    query.equalTo('artistProfile', add.attributes.artistProfile);
+    return query.count();
+  }).then(function(count){
+    if (count <= 1) {
       add.attributes.artistProfile.fetch().then(function(profile){
         profile.increment("collectorCount", -1);
         var collectors = profile.relation('collectors');
-        collectors.remove(user.attributes.userprofile);
+        collectors.remove(userProfile);
         return profile.save();
       }).then(function(result) {
         console.log(result);
@@ -291,8 +329,14 @@ Parse.Cloud.beforeDelete("Add", function(request, response) {
       }, function(error) {
         return response.error(error);
       });
+    } else {
+      return response.success();
     }
-  })
+  }).then(function(result) {
+    console.log(result);
+  }, function(error) {
+    console.log(error);
+  });
 });
 
 

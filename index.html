@@ -55,7 +55,6 @@
                   <li><a href="/login" class="main-nav-item" id="#login"><i class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
-
                  <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -67,7 +66,6 @@
                   </li>
 
                 <% } else { %>
-
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -87,7 +85,6 @@
       </div>
       <div class="menu-bg"></div>
     </script>
-
 
     <!-- Landing Page-->
     <script type="text/html" id="landingTemplate">

@@ -21,16 +21,7 @@ var App = new (Parse.View.extend({
 
 		this.getProfile();
 		this.typeaheadInitialize();
-	},
-	events: {
-		//simplifies html to use routers where needed
-		"click [href^='/']": 			"links"
-	},
-	links: function(e){
-		e.preventDefault();
-		App.back = Parse.history.getFragment();
-		console.log(e.target.pathname);
-		Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
+
 	},
 	getProfile: function(callBack){
 		var user = Parse.User.current();
@@ -66,6 +57,16 @@ var App = new (Parse.View.extend({
 		});
 		this.booktt.initialize();
 
+	},
+	events: {
+		//simplifies html to use routers where needed
+		"click [href^='/']": 	"links"
+	},
+	links: function(e){
+		e.preventDefault();
+		App.back = Parse.history.getFragment();
+		console.log(e.target.pathname);
+		Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
 	}
 }))({el: document.body});
 
@@ -94,7 +95,8 @@ App.Models.ArtistProfile = Parse.Object.extend({
 	    q1:"", q2:"", q3:"", q4:"", q5:"",
 	    a1:"", a2:"", a3:"", a4:"", a5:"",
 	    featuremonth:"", featureyear:"2014",
-	   	author:""
+	   	author:"",
+	   	collectorCount:0
       };
 	}
 });
@@ -113,7 +115,12 @@ App.Models.UserProfile = Parse.Object.extend({
 });
 
 App.Models.Tattoo = Parse.Object.extend({
-	className: "Tattoo"
+	className: "Tattoo",
+	defaults: function() {
+      return {
+	    books:[]
+      };
+	}
 });
 
 App.Models.Add = Parse.Object.extend({
@@ -268,10 +275,6 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 					user.addUnique('added', add.attributes.tattoo.id);
 					that.add = add;
 					return user.save();
-				}).then(function (user) {
-					var collectedArtists = App.profile.relation("collectedArtists");
-					collectedArtists.add(that.model.attributes.artistProfile);
-					return App.profile.save();	
 				}).then(function(profile) {
 					console.log(profile);
 					that.showYourBooks();
@@ -404,7 +407,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		});
 
 		//focus in on the add window on keypress
-		$(document).bind('keypress', this.focusIn);
+		$(document.body).bind('keypress', this.focusIn);
 
 		this.getAdd();
 	},
@@ -441,6 +444,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		return this;
 	},
 	focusIn: function(){
+		console.log('focus in triggered')
 		var that = this;
 		$('.tt-input').focus();
 		if ($('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
@@ -452,7 +456,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		Parse.history.navigate(App.back, {trigger: false});
 		$("body").css("overflow", "auto");
 		$('booksInput').tagsinput('destroy');
-		$(document).unbind('keypress', this.focusIn);
+		$(document.body).unbind('keypress', this.focusIn);
 		this.unbind();
 	}
 });
@@ -820,6 +824,7 @@ App.Views.Landing = Parse.View.extend({
 		}
 		if ($(window).height()+100 <= $(window).scrollTop()) {
 			$(window).unbind('scroll',this.removeLanding);
+			that.unbind();
 			that.remove();
 			$(window).scrollTop( 0 );
 		}
@@ -1398,7 +1403,6 @@ App.Router = new (Parse.Router.extend({
 		":uname":   			"showProfile"
 	},
 	initialize: function(){
-
 		//google analtic tracking
 		this.bind('route', this._pageView);
 

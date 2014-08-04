@@ -625,7 +625,8 @@ span.hover-content {
 
 .btn-tag {
     @extend .btn;
-    @include button-size($padding-xs-vertical, $padding-xs-horizontal, $font-size-small, $line-height-small, $border-radius-small);
+    @include button-size(5px, 10px, inherit, $line-height-small, $border-radius-small);
+    
     border-radius: 4px / 6px;
     margin-bottom: 5px;
     color: $gray;
@@ -687,35 +688,44 @@ span.hover-content {
 
 
 ////////// Search forms
-
-.form-inline {
-    text-align: center;
+.search {
+    margin-top: 100px;
+    color: white;
+}
+.bigfatsearch {
+    // text-align: center;
+    input {
+        background-color: rgba(255,255,255,0);
+        width:100%;
+        border: none;
+        color: $brand-primary;
+        font-size: 86px;
+        line-height: 80px;
+        font-weight: 700;
+        margin-bottom: 40px;
+        margin-top: 40px;
+        &:focus {outline: none}
+    }
     span {
         width: 100%;
         text-align: left;
         @media screen and (min-width: $screen-sm) {
-            width: 600px;
+            font-size: 600px;
         }
     }
-    .search-input {
-        width: 100%;
-        @media screen and (min-width: $screen-sm) {
-            width: 600px;
-        }
-    }
-    .twitter-typeahead:before {
-        z-index: 1010;
-        font-family: Flaticon;
-        font-size: 20px;
-        position: absolute;
-        display: inline-block;
-        top: 8px;
-        right: 8px;
-        line-height: 1;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        content: "\e00b";
-    }
+    // .twitter-typeahead:before {
+    //     z-index: 1010;
+    //     font-family: Flaticon;
+    //     font-size: 20px;
+    //     position: absolute;
+    //     display: inline-block;
+    //     top: 8px;
+    //     right: 8px;
+    //     line-height: 1;
+    //     -webkit-font-smoothing: antialiased;
+    //     -moz-osx-font-smoothing: grayscale;
+    //     content: "\e00b";
+    // }
 }
 
 
@@ -784,11 +794,6 @@ span.hover-content {
 }
 
 ////// Artists page
-.artistsSearch {
-    @extend .row;
-    background-color: $gray-light;
-
-}
 .artistThumb { 
     @extend .lg6container;
     background-color: $gray-lighter;
@@ -1570,6 +1575,7 @@ span.hover-content {
 
 //////// bootstrap-tagsinput.js
 .bootstrap-tagsinput {
+    text-align: left; 
   background-color: $gray-dark;
   border: 1px solid $gray-dark;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -1577,7 +1583,6 @@ span.hover-content {
   padding: 40px 20px;
   margin-bottom: 10px;
   color: #555;
-  vertical-align: middle;
   border-radius: 4px;
   max-width: 100%;
   line-height: 22px;
@@ -1612,6 +1617,7 @@ span.hover-content {
         color: $gray-light; }
 }
 input.tt-input {
+    margin-left: 5px !important;
     &::-webkit-input-placeholder {
         content: "add books!";
     }

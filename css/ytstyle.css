@@ -749,13 +749,13 @@ pre {
   .container-fluid:after {
     clear: both; }
 
-.row, .artistsSearch {
+.row {
   margin-left: -2.5px;
   margin-right: -2.5px; }
-  .row:before, .artistsSearch:before, .row:after, .artistsSearch:after {
+  .row:before, .row:after {
     content: " ";
     display: table; }
-  .row:after, .artistsSearch:after {
+  .row:after {
     clear: both; }
 
 .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-sm-3, .tattooContainer, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .tattooContainer, .col-sm-6, .col-md-6, .md6container, .col-lg-6, .lg6container, .artistThumb, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .md8container, .lightContainer, .lg6container, .artistThumb, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .lg6container, .artistThumb, .col-sm-12, .col-md-12, .col-lg-12 {
@@ -4448,8 +4448,8 @@ span.hover-content {
     transition: all 0.2s ease; }
 
 .btn-tag {
-  padding: 1px 5px;
-  font-size: 14px;
+  padding: 5px 10px;
+  font-size: inherit;
   line-height: 1.5;
   border-radius: 2px;
   border-radius: 4px / 6px;
@@ -4532,31 +4532,28 @@ span.hover-content {
   right: 30px;
   display: none; }
 
-.form-inline, .navbar-form {
-  text-align: center; }
-  .form-inline span, .navbar-form span {
-    width: 100%;
-    text-align: left; }
-    @media screen and (min-width: 768px) {
-      .form-inline span, .navbar-form span {
-        width: 600px; } }
-  .form-inline .search-input, .navbar-form .search-input {
-    width: 100%; }
-    @media screen and (min-width: 768px) {
-      .form-inline .search-input, .navbar-form .search-input {
-        width: 600px; } }
-  .form-inline .twitter-typeahead:before, .navbar-form .twitter-typeahead:before {
-    z-index: 1010;
-    font-family: Flaticon;
-    font-size: 20px;
-    position: absolute;
-    display: inline-block;
-    top: 8px;
-    right: 8px;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    content: "\e00b"; }
+.search {
+  margin-top: 100px;
+  color: white; }
+
+.bigfatsearch input {
+  background-color: rgba(255, 255, 255, 0);
+  width: 100%;
+  border: none;
+  color: #c42020;
+  font-size: 86px;
+  line-height: 80px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  margin-top: 40px; }
+  .bigfatsearch input:focus {
+    outline: none; }
+.bigfatsearch span {
+  width: 100%;
+  text-align: left; }
+  @media screen and (min-width: 768px) {
+    .bigfatsearch span {
+      font-size: 600px; } }
 
 .intro {
   padding: 40px;
@@ -4617,9 +4614,6 @@ span.hover-content {
   background-color: #e6e6e6;
   padding: 2.5px 5px;
   overflow: auto; }
-
-.artistsSearch {
-  background-color: #d9d9d9; }
 
 .artistThumb {
   background-color: #e6e6e6;
@@ -5293,6 +5287,7 @@ span.hover-content {
   -webkit-backface-visibility: hidden; }
 
 .bootstrap-tagsinput {
+  text-align: left;
   background-color: #4d4d4d;
   border: 1px solid #4d4d4d;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -5300,7 +5295,6 @@ span.hover-content {
   padding: 40px 20px;
   margin-bottom: 10px;
   color: #555;
-  vertical-align: middle;
   border-radius: 4px;
   max-width: 100%;
   line-height: 22px;
@@ -5333,14 +5327,16 @@ span.hover-content {
     position: relative;
     color: #d9d9d9; }
 
-input.tt-input::-webkit-input-placeholder {
-  content: "add books!"; }
-input.tt-input::-moz-placeholder {
-  content: "add books!"; }
-input.tt-input:-moz-placeholder {
-  content: "add books!"; }
-input.tt-input:-ms-input-placeholder {
-  content: "add books!"; }
+input.tt-input {
+  margin-left: 5px !important; }
+  input.tt-input::-webkit-input-placeholder {
+    content: "add books!"; }
+  input.tt-input::-moz-placeholder {
+    content: "add books!"; }
+  input.tt-input:-moz-placeholder {
+    content: "add books!"; }
+  input.tt-input:-ms-input-placeholder {
+    content: "add books!"; }
 
 .bootstrap-tagsinput input {
   border: none;
