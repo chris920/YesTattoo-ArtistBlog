@@ -51,10 +51,14 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <% if (!Parse.User.current()) { %>
+                  <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                   <li><a href="/join" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
                   <li><a href="/login" class="main-nav-item" id="#login"><i class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
+                <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+                <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                  <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -66,6 +70,8 @@
                   </li>
 
                 <% } else { %>
+                  <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -86,6 +92,30 @@
       <div class="menu-bg"></div>
     </script>
 
+<!--       <ol class="nav nav-pills">
+        <li><span class="flaticon-book104"></span></li>
+        <li class="active"><a href="#">Book</a></li>
+        <li><a href="#">Black&Gray<span class="badge pull-right">42</span></a></li>
+        <li><a href="#">Realistic</a></li>
+      </ol> -->
+
+    <!-- Search Page-->
+    <script type="text/html" id="searchTemplate">
+      <a href="#" class="btn-text x">x</a>
+      <form class="bigfatsearch" role="search">
+        <input type="text" class="typeahead" placeholder="">
+        <p>Searching for tattoos. Switch to<a> artists.</a></p>
+      </form>
+
+      <div class"books">
+
+      </div>
+
+      <div class="row tattoos">
+      </div>
+    </script>
+
+
     <!-- Landing Page-->
     <script type="text/html" id="landingTemplate">
         <div class="artistslide">
@@ -104,9 +134,10 @@
           <div class="landingLinks" style="display:none">
             <ul class="">
               <li><a><i class="flaticon-trophy4"></i>Featured</a></li>
+              <li><a href="/search"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+              <li><a href="/artists"><i class="flaticon-tattoo1"></i>Artists</a></li>
               <li><a href="/join"><i class="flaticon-send5"></i>Join</a></li>
               <li><a href="/login" id"#login"><i class="flaticon-user56"></i>Log In</a></li>
-              <li><a href="/about"><i class="flaticon-information"></i>About</a></li>
             </ul>
           </div>
           <a><span class="flaticon-up49"></span></a>
@@ -147,6 +178,197 @@
         <div class="portfolioContainer">
         </div>
     </script>
+
+    <!-- Artists page -->
+    <script type="text/html" id="artistsTemplate">
+      <div id="artistsPage">
+        <div class="container">
+          <h2 class="page-header">Artists</h2>
+          <div class="row">
+            <div class="tagFilters" data-toggle="buttons">
+              <span class="flaticon-book104"></span>
+              <button type="button" class="btn-tag">Realistic</button>
+              <button type="button" class="btn-tag">Old Skool</button>
+              <button type="button" class="btn-tag">Nature</button>
+              <button type="button" class="btn-tag">Black & White</button>
+              <button type="button" class="btn-tag">Statue</button>
+              <button type="button" class="btn-tag">Realistic</button>
+              <button type="button" class="btn-tag">More<b class="caret"></b></button> 
+              <br>
+             
+              <div class="changeLocation">
+                <span class="flaticon-home73"></span><button type="button" rel="popover" class="btn-tag trigger"  data-toggle="popover">Anywhere in the world</button>
+                <div class="head hide">
+                  Filter by location
+                 </div>
+                <div class="content hide">
+                    <input type="text" class="form-control" id="changeAddressInput" placeholder="Name or address">
+                    <input type="text" class="form-control" id="radiusInput" placeholder="Miles Away">
+                </div>
+              </div>
+            </div>  
+          </div>
+
+          <div class="artistsSearch">
+
+            <div class="artistThumb">
+              <div class="artistTitleBG">
+                <div class="artistTitles">
+                  <div class="col-sm-1">
+                    <img class="prof" src="img/profs/davidbruehl.jpg" alt="Artist Prof">
+                  </div>
+                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
+                    <h4 class="artistName" href="#artistProfile">David Bruehl</h4>
+                    <h5 class="artistLoc" href="#shopProfile">RedLetter Tattoo</br> Tampa, Florida, USA</h5>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl5.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl6.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl7.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl8.jpg" class="tattooImg"></a>
+                </div>
+              </div>
+            </div>
+            <div class="artistThumb">
+              <div class="artistTitleBG">
+                <div class="artistTitles">
+                  <div class="col-sm-1">
+                    <img class="prof" src="img/profs/ironpaws.jpg" alt="Artist Prof">
+                  </div>
+                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
+                    <h4 class="artistName" href="#artistProfile">Ben Martinez</h4>
+                    <h5 class="artistLoc" href="#shopProfile">GoodTimes Tattoo </br> Salt Lake City, Utah, USA</h5>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/ironpaws5.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/ironpaws4.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/ironpaws3.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/ironpaws2.jpg" class="tattooImg"></a>
+                </div>
+              </div>
+            </div>
+            <div class="artistThumb">
+              <div class="artistTitleBG">
+                <div class="artistTitles">
+                  <div class="col-sm-1">
+                    <img class="prof" src="img/profs/cmarek.jpg" alt="Artist Prof">
+                  </div>
+                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
+                    <h4 class="artistName" href="#artistProfile">Christian  Marek</h4>
+                    <h5 class="artistLoc" href="#shopProfile">Sacred Art Tattoo </br> Tucson Arizona, USA</h5>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/cmarek1.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/cmarek2.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/cmarek3.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/cmarek4.jpg" class="tattooImg"></a>
+                </div>
+              </div>
+            </div>
+            <div class="artistThumb">
+              <div class="artistTitleBG">
+                <div class="artistTitles">
+                  <div class="col-sm-1">
+                    <img class="prof" src="img/profs/nickdevine.jpg" alt="Artist Prof">
+                  </div>
+                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
+                    <h4 class="artistName" href="#artistProfile">Nick Devine</h4>
+                    <h5 class="artistLoc" href="#shopProfile">Helter Skelter Tattoo Studio </br> St. Helens, State, USA</h5>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/nickdevine1.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/nickdevine2.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/nickdevine3.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/nickdevine4.jpg" class="tattooImg"></a>
+                </div>
+              </div>
+            </div>
+            <div class="artistThumb">
+              <div class="artistTitleBG">
+                <div class="artistTitles">
+                  <div class="col-sm-1">
+                    <img class="prof" src="img/profs/booganut.jpg" alt="Artist Prof">
+                  </div>
+                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
+                    <h4 class="artistName" href="#artistProfile">Bridget Tunstall</h4>
+                    <h5 class="artistLoc" href="#shopProfile">Leviathan Tattoo Gallery </br> Richmond, Victoria, Australia</h5>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/booganut1.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/booganut2.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/booganut3.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/booganut4.jpg" class="tattooImg"></a>
+                </div>
+              </div>
+            </div>
+            <div class="artistThumb">
+              <div class="artistTitleBG">
+                <div class="artistTitles">
+                  <div class="col-sm-1">
+                    <img class="prof" src="img/profs/algarcia.jpg" alt="Artist Prof">
+                  </div>
+                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
+                    <h4 class="artistName" href="#artistProfile">Al Garcia</h4>
+                    <h5 class="artistLoc" href="#shopProfile">Reserve Tattoo Co</br> Mentor, Ohio, USA</h5>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia1.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia2.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia3.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia4.jpg" class="tattooImg"></a>
+                </div>
+              </div>
+            </div>
+            <div class="artistThumb">
+              <div class="artistTitleBG">
+                <div class="artistTitles">
+                  <div class="col-sm-1">
+                    <img class="prof" src="img/profs/joseperezjrtattoos.jpg" alt="Artist Prof">
+                  </div>
+                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
+                    <h4 class="artistName" href="#artistProfile">Jose Perez Jr.</h4>
+                    <h5 class="artistLoc" href="#shopProfile">Dark Water Tattoos</br> Bridgeview, Illinois, USA</h5>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/joseperezjrtattoos1.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/joseperezjrtattoos2.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/joseperezjrtattoos3.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/joseperezjrtattoos4.jpg" class="tattooImg"></a>
+                </div>
+              </div>
+            </div>
+            <div class="artistThumb">
+              <div class="artistTitleBG">
+                <div class="artistTitles">
+                  <div class="col-sm-1">
+                    <img class="prof" src="img/profs/drewromero.jpg" alt="Artist Prof">
+                  </div>
+                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
+                    <h4 class="artistName" href="#artistProfile">Drew Romero</h4>
+                    <h5 class="artistLoc" href="#shopProfile">Ghost House </br> Derby, DE1 1RS, UK</h5>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/drewromero1.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/drewromero2.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/drewromero3.jpg" class="tattooImg"></a>
+                    <a href="#" class="tattooContainer"><img src="img/tattoos/drewromero4.jpg" class="tattooImg"></a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </script>
+
 
     <!-- Login page / modal + forgot password -->
     <script type="text/html" id="loginTemplate">
@@ -349,14 +571,13 @@
           <span class="hover-content" data-toggle="buttons"><span>
             <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
           </span></span>
-          <% if(artistProfile.name) { %>
+          <% if(artistProfile.username) { %>
             <span class="hover-text-content"><span>
-              <img class="prof" src="<%= artistProfile.profThumb.url %>" alt="Artist Prof">
+              <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { artistProfile.profThumb.url } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
               <h4 class="artistName" href="/<%= artistProfile.username %>"><%= (artistProfile.name) ?  artistProfile.name+' / ' : '' %> <%= artistProfile.username %></h4>
               <h5 class="artistLoc"><%= artistProfile.locationName %></h5>
             </span></span>
           <% } %>
-
         </a>
       </div>
     </script>
@@ -633,9 +854,13 @@
                 <span class="input-group-addon">Twitter Name</span>
                 <input type="text" class="form-control" id="editTwitter" placeholder="twitter.com/" value="<%= (twitter) ?  twitter : '' %>">
               </div>
+
+
+
+              <a href="/tattoo/new" class="btn btn-link"><span class="flaticon-camera4"></span>Upload Tattoo</a>
             <% } %>
 
-            <a href="/tattoo/new" class="btn btn-link"><span class="flaticon-camera4"></span>Upload Tattoo</a>
+            
             <button type="submit" class="btn-submit">Submit</button>
           </form>
 
