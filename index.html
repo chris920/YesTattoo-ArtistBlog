@@ -12,11 +12,12 @@
 
   <body>
 
+
     <div id="body">
       <div class="modalayheehoo"></div>
       <div class="navs"></div>
       <section id="landing"></section>
-    <section id="app"></section>
+      <section id="app"></section>
     </div> 
           
     <div id="footer" style="display:none">
@@ -571,11 +572,12 @@
           <span class="hover-content" data-toggle="buttons"><span>
             <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
           </span></span>
-          <% if(artistProfile.username) { %>
+          <% console.log(this) %>
+          <% if(this.model.attributes.artistProfile.attributes.username) { %>
             <span class="hover-text-content"><span>
-              <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { artistProfile.profThumb.url } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
-              <h4 class="artistName" href="/<%= artistProfile.username %>"><%= (artistProfile.name) ?  artistProfile.name+' / ' : '' %> <%= artistProfile.username %></h4>
-              <h5 class="artistLoc"><%= artistProfile.locationName %></h5>
+              <img class="prof" src="<% if (typeof(this.model.attributes.artistProfile.attributes.profThumb)!== 'undefined') { print(this.model.attributes.artistProfile.attributes.profThumb.url()) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
+              <h4 class="artistName" href="/<%= this.model.attributes.artistProfile.attributes.username %>"><%= (this.model.attributes.artistProfile.attributes.name) ?  this.model.attributes.artistProfile.attributes.name+' / ' : '' %> <%= this.model.attributes.artistProfile.attributes.username %></h4>
+              <h5 class="artistLoc"><%= this.model.attributes.artistProfile.attributes.locationName %></h5>
             </span></span>
           <% } %>
         </a>

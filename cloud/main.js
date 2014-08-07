@@ -1,16 +1,15 @@
 var Image = require("parse-image");
 var _ = require('underscore');
  
-var editBooks = function(request, response) {
+var editBooks = function(request, callback) {
   Parse.Cloud.useMasterKey(); 
   var query = new Parse.Query('Tattoo');
-  console.log(request);
   query.get(request.params.tattooId).then(function(tattoo){
     _.each(request.params.added, function(book) {
       tattoo.add('books', book);
     });
     return tattoo.save();
-  }).then(function(tattoo){      
+  }).then(function(tattoo){     
     var books = tattoo.attributes.books;
     _.each(request.params.removed, function(book) {
       var i = books.indexOf(book);
@@ -21,15 +20,22 @@ var editBooks = function(request, response) {
     return tattoo.save();
   }).then(function(result){
     console.log(result);
-    response.success(result);
+    callback.success(result);
   }, function(error){
     console.log(error);
-    response.error(error);
+    callback.error(error);
   });
 }
 
 Parse.Cloud.define("books", function(request, response) {
-  editBooks(request, response);
+  editBooks(request, {
+    success: function(result) {
+      response.success();
+    },
+    error: function(error) {
+      response.error(error);
+    }
+  });
 });
 
 
@@ -235,15 +241,6 @@ Parse.Cloud.beforeDelete("Tattoo", function(request, response) {
 
   Parse.Cloud.useMasterKey();
 
-  editBooks({params: {added: [], removed: tattoo.attributes.books, tattooId: tattoo.id}}, {
-    success: function(result) {
-      console.log(result);
-    },
-    error: function(error) {
-      console.log(error);
-    }
-  });
-
   var query = new Parse.Query('Add');
   query.equalTo('tattoo', tattoo);
   query.find().then(function(adds){
@@ -259,19 +256,17 @@ Parse.Cloud.beforeDelete("Tattoo", function(request, response) {
 
 });
 
-
 Parse.Cloud.beforeSave("Add", function(request, response) {
   var user = request.user;
   var add = request.object;
+  Parse.Cloud.useMasterKey();
 
-  if (!add.existed() && user.attributes.role === 'user') {
+  if (!add.existed()) {
     var userACL = new Parse.ACL(user);
     add.setACL(userACL);
     add.set('user', user);
     userACL.setRoleWriteAccess("Admin",true);
     userACL.setPublicReadAccess(true);
-
-    Parse.Cloud.useMasterKey();
 
     var artistProfile;
     var collectors;
@@ -285,7 +280,8 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
       if( count < 1 ) {
         collectors.add(user.attributes.userprofile);
         artistProfile.increment("collectorCount");
-        return artistProfile.save();
+        artistProfile.save();
+        return;
       } else {
         console.log('artist already added');
         return;
@@ -295,8 +291,25 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
     }, function(error) {
       response.error(error);
     });
+
+  } else if (add.dirty('books')) {
+    var oldBooks = add.get('oldBooks');
+    var newBooks = add.get('books');
+    var removed = _.difference(oldBooks, newBooks);
+    var added = _.difference(newBooks, oldBooks);
+
+    editBooks({params: {added: added, removed: removed, tattooId: add.get('tattooId')}}, {
+      success: function(result) {
+        add.set('oldBooks', newBooks);
+        response.success();
+      },
+      error: function(error) {
+        console.log(error);
+        response.error();
+      }
+    });
   } else {
-      response.success();
+    response.success();
   }
 });
 
@@ -304,14 +317,19 @@ Parse.Cloud.beforeDelete("Add", function(request, response) {
   var add = request.object;
   Parse.Cloud.useMasterKey();
 
+  editBooks({params: {added: [], removed: add.get('books'), tattooId: add.get('tattooId')}}, {
+    success: function(result) {
+      console.log(result);
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+
   var userProfile;
   add.attributes.user.fetch().then(function(user){
-    user.remove('added', add.attributes.tattooId);
-    return user.save();
-  }).then(function(user){
     userProfile = user.attributes.userprofile;
-    return;
-  }).then(function(){
+
     var query = new Parse.Query('Add');
     query.equalTo('user', add.attributes.user);
     query.equalTo('artistProfile', add.attributes.artistProfile);
