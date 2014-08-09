@@ -1,10 +1,29 @@
 
+//http://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
 String.prototype.toProperCase = function() {
  return this.replace(/\w\S*/g, function(txt) {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
  });
 };
 
+//http://stackoverflow.com/questions/3579486/sort-a-javascript-array-by-frequency-and-then-filter-repeats
+Array.prototype.byCount= function(){
+    var itm, a= [], L= this.length, o= {};
+    for(var i= 0; i<L; i++){
+        itm= this[i];
+        if(!itm) continue;
+        if(o[itm]== undefined) o[itm]= 1;
+        else ++o[itm];
+    }
+    for(var p in o) a[a.length]= p;
+    return a.sort(function(a, b){
+        return o[b]-o[a];
+    });
+}
+
+//http://stackoverflow.com/questions/3579486/sort-a-javascript-array-by-frequency-and-then-filter-repeats
+// _.reduce(a,function(counts,key){ counts[key]++; return counts },
+//                   _.object( _.map( _.uniq(a), function(key) { return [key, 0] })))
 
 //back to top
 $(document).ready(function(){

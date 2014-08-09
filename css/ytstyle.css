@@ -4264,6 +4264,7 @@ a:focus {
   font-weight: normal;
   font-style: normal; }
 .tattooContainer {
+  overflow: hidden;
   padding: 2.5px; }
 
 #portfolioTab .tattooContainer, #tattoosPage .tattooContainer, #shopProfile .tattooContainer {
@@ -4453,7 +4454,7 @@ span.hover-content {
   line-height: 1.5;
   border-radius: 2px;
   border-radius: 4px / 6px;
-  margin-bottom: 5px;
+  margin: 5px 2px;
   color: gray;
   background-color: transparent;
   border-color: #cccccc;
@@ -4532,9 +4533,12 @@ span.hover-content {
   right: 30px;
   display: none; }
 
-.search {
-  margin-top: 100px;
-  color: white; }
+#search {
+  color: white;
+  background-color: black;
+  min-height: 100vh;
+  margin-bottom: -49px;
+  padding-bottom: 100px; }
 
 .bigfatsearch input {
   background-color: rgba(255, 255, 255, 0);
@@ -4722,6 +4726,7 @@ span.hover-content {
   box-shadow: 2px 5px 3px rgba(0, 0, 0, 0.1); }
 
 .prof {
+  background-color: #e6e6e6;
   -webkit-border-radius: 99em;
   -moz-border-radius: 99em;
   border-radius: 99em;
@@ -5156,6 +5161,9 @@ span.hover-content {
       float: none;
       margin-left: 0px; } }
 
+.otherBooks span {
+  overflow: hidden; }
+
 .save {
   float: right; }
 
@@ -5214,8 +5222,8 @@ span.hover-content {
   margin-top: 0px; }
   .infoBox > hr {
     border-top: 1px solid #0d0d0d;
-    margin-top: 40px;
-    margin-bottom: 40px; }
+    margin-top: 20px;
+    margin-bottom: 20px; }
   .infoBox span {
     color: gray; }
   @media screen and (min-width: 992px) {
@@ -5351,7 +5359,6 @@ span.hover-content {
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease; }
 .tattooProfile .bootstrap-tagsinput .tag {
-  margin-right: 2px;
   color: white;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease; }
@@ -5363,8 +5370,6 @@ span.hover-content {
   padding: 0px 2px; }
 .tattooProfile .bootstrap-tagsinput .tag [data-role="remove"]:hover {
   color: #c42020; }
-.tattooProfile .bootstrap-tagsinput .tag [data-role="remove"]:hover:active {
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); }
 .tattooProfile .bootstrap-tagsinput {
   width: 100%; }
 .tattooProfile .accordion {

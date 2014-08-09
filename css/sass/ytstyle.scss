@@ -452,6 +452,7 @@ a {
 
 ////////// image content 
 .tattooContainer{
+    overflow: hidden;
     @extend .col-sm-3;
     @extend .col-xs-6;
     padding: 2.5px;
@@ -628,7 +629,7 @@ span.hover-content {
     @include button-size(5px, 10px, inherit, $line-height-small, $border-radius-small);
     
     border-radius: 4px / 6px;
-    margin-bottom: 5px;
+    margin: 5px 2px;
     color: $gray;
     background-color: transparent;
     border-color: $gray-lightish;
@@ -687,10 +688,14 @@ span.hover-content {
 }
 
 
+
 ////////// Search forms
-.search {
-    margin-top: 100px;
+#search {
     color: white;
+    background-color: black;
+    min-height: 100vh;
+    margin-bottom: -49px;
+    padding-bottom: 100px;
 }
 .bigfatsearch {
     // text-align: center;
@@ -920,7 +925,7 @@ span.hover-content {
 }
 
 .prof {
-    // background-color: $gray-lighter;
+    background-color: $gray-lighter;
     -webkit-border-radius: 99em;
     -moz-border-radius: 99em;
     border-radius: 99em;
@@ -1421,6 +1426,11 @@ span.hover-content {
 }
 
 ////// tattoo profile page
+.otherBooks {
+    span {
+        overflow: hidden;        
+    }
+}
 .add {
     
 }
@@ -1492,8 +1502,8 @@ span.hover-content {
     // border-image: radial-gradient(black 80%, $gray-dark 100%, #fff) 1%; //alt color
     > hr {
         border-top: 1px solid $gray-darkest;
-        margin-top: 40px;
-        margin-bottom: 40px;
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
     span {
         color: $gray;
@@ -1573,7 +1583,6 @@ span.hover-content {
 //////// bootstrap-tagsinput.js
 .tattooProfile {
 
-
     .bootstrap-tagsinput {
         text-align: left; 
       background-color: $gray-dark;
@@ -1650,13 +1659,13 @@ span.hover-content {
       box-shadow: none;
     }
     .bootstrap-tagsinput .blured {
+        //padding: 6px 20px;        
         border: 1px solid $gray-darker;
         color: white;
         background-color: $gray-darker !important;
         @include transition(all 0.5s ease);
     }
     .bootstrap-tagsinput .tag {
-      margin-right: 2px;
       color: white;
       @include transition(all 0.3s ease);
       // background-color: $gray-darker; 
@@ -1672,10 +1681,6 @@ span.hover-content {
     .bootstrap-tagsinput .tag [data-role="remove"]:hover {
         color: $brand-primary;
     }
-    .bootstrap-tagsinput .tag [data-role="remove"]:hover:active {
-      box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    }
-
 
     .bootstrap-tagsinput { width: 100%; }
 

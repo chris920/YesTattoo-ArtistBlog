@@ -53,12 +53,14 @@
 
                 <% if (!Parse.User.current()) { %>
                   <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
                   <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                   <li><a href="/join" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
                   <li><a href="/login" class="main-nav-item" id="#login"><i class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
                 <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+                <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
                 <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                  <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
@@ -72,13 +74,14 @@
 
                 <% } else { %>
                   <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
                   <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                       <li><a href="/myprofile"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
                       <li class="divider"></li>
-                     <li><a href="/tattoo/new"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
+                     <li><a href="/myprofile/upload"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
                       <li><a href="/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
                       <li><a id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
                     </ul>
@@ -93,29 +96,24 @@
       <div class="menu-bg"></div>
     </script>
 
-<!--       <ol class="nav nav-pills">
-        <li><span class="flaticon-book104"></span></li>
-        <li class="active"><a href="#">Book</a></li>
-        <li><a href="#">Black&Gray<span class="badge pull-right">42</span></a></li>
-        <li><a href="#">Realistic</a></li>
-      </ol> -->
-
+   <!--      <a class="btn-text x">x</a> -->
     <!-- Search Page-->
     <script type="text/html" id="searchTemplate">
-      <a href="#" class="btn-text x">x</a>
-      <form class="bigfatsearch" role="search">
-        <input type="text" class="typeahead" placeholder="">
-        <p>Searching for tattoos. Switch to<a> artists.</a></p>
-      </form>
+      <div class="container">
 
-      <div class"books">
+        <form class="bigfatsearch" role="search">
+          <input type="text" class="typeahead" placeholder="">
+          <p>Searching for tattoos. Switch to<a> artists.</a></p>
+        </form>
 
-      </div>
+        <div class"books">
 
-      <div class="row tattoos">
+        </div>
+
+        <div class="row tattoos">
+        </div>
       </div>
     </script>
-
 
     <!-- Landing Page-->
     <script type="text/html" id="landingTemplate">
@@ -134,8 +132,8 @@
 
           <div class="landingLinks" style="display:none">
             <ul class="">
-              <li><a><i class="flaticon-trophy4"></i>Featured</a></li>
               <li><a href="/search"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+              <li><a href="/featured"><i class="flaticon-trophy4"></i>Featured</a></li>
               <li><a href="/artists"><i class="flaticon-tattoo1"></i>Artists</a></li>
               <li><a href="/join"><i class="flaticon-send5"></i>Join</a></li>
               <li><a href="/login" id"#login"><i class="flaticon-user56"></i>Log In</a></li>
@@ -154,7 +152,7 @@
       </div>
       <div class="container">
         <div class="md6container">
-          <h2 class="page-header">Latest Featured Artists<i class="flaticon-trophy4"></i></h2>
+          <h2 class="page-header"> Featured Artists<i class="flaticon-trophy4"></i></h2>
           <div id="featuredArtists">
           </div>
         </div>
@@ -168,7 +166,7 @@
           </div>
           <div class="col-sm-10 artistTitles">
             <h4 class="artistName" href="/<%= username %>"><a><%= name %><span> <%= username %></span></a></h4>
-            <p class="artistLoc"><%= (shop) ?  shop : '' %> / <%= (locationName)  ?  locationName : '' %></p>
+            <p class="artistLoc"><%= (shop) ?  shop + " / " : '' %> <%= (locationName)  ?  locationName : '' %></p>
           </div>
         </div>
         <div class="questionContainer">
@@ -196,7 +194,7 @@
               <button type="button" class="btn-tag">Realistic</button>
               <button type="button" class="btn-tag">More<b class="caret"></b></button> 
               <br>
-             
+
               <div class="changeLocation">
                 <span class="flaticon-home73"></span><button type="button" rel="popover" class="btn-tag trigger"  data-toggle="popover">Anywhere in the world</button>
                 <div class="head hide">
@@ -210,161 +208,26 @@
             </div>  
           </div>
 
-          <div class="artistsSearch">
+          <div class="artistsSearch"></div>
+          <div class="artists"></div>
+        </div>
+      </div>
+    </script>
 
-            <div class="artistThumb">
-              <div class="artistTitleBG">
-                <div class="artistTitles">
-                  <div class="col-sm-1">
-                    <img class="prof" src="img/profs/davidbruehl.jpg" alt="Artist Prof">
-                  </div>
-                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-                    <h4 class="artistName" href="#artistProfile">David Bruehl</h4>
-                    <h5 class="artistLoc" href="#shopProfile">RedLetter Tattoo</br> Tampa, Florida, USA</h5>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-xs-12">
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl5.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl6.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl7.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/davidbruehl8.jpg" class="tattooImg"></a>
-                </div>
-              </div>
+    <!-- Artist Thumbnail -->
+    <script type="text/html" id="artistTemplate">
+      <div class="artistThumb" href="/<%= username %>">
+        <div class="artistTitleBG">
+          <div class="artistTitles">
+            <div class="col-sm-1">
+              <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
             </div>
-            <div class="artistThumb">
-              <div class="artistTitleBG">
-                <div class="artistTitles">
-                  <div class="col-sm-1">
-                    <img class="prof" src="img/profs/ironpaws.jpg" alt="Artist Prof">
-                  </div>
-                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-                    <h4 class="artistName" href="#artistProfile">Ben Martinez</h4>
-                    <h5 class="artistLoc" href="#shopProfile">GoodTimes Tattoo </br> Salt Lake City, Utah, USA</h5>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-xs-12">
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/ironpaws5.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/ironpaws4.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/ironpaws3.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/ironpaws2.jpg" class="tattooImg"></a>
-                </div>
-              </div>
+            <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
+              <h4 class="artistName"><%= (name) ?  name : '' %></h4>
+              <h5 class="artistLoc"><%= (shop) ?  shop : '' %></br> <%= (locationName) ?  locationName : '' %></h5>
             </div>
-            <div class="artistThumb">
-              <div class="artistTitleBG">
-                <div class="artistTitles">
-                  <div class="col-sm-1">
-                    <img class="prof" src="img/profs/cmarek.jpg" alt="Artist Prof">
-                  </div>
-                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-                    <h4 class="artistName" href="#artistProfile">Christian  Marek</h4>
-                    <h5 class="artistLoc" href="#shopProfile">Sacred Art Tattoo </br> Tucson Arizona, USA</h5>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-xs-12">
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/cmarek1.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/cmarek2.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/cmarek3.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/cmarek4.jpg" class="tattooImg"></a>
-                </div>
-              </div>
-            </div>
-            <div class="artistThumb">
-              <div class="artistTitleBG">
-                <div class="artistTitles">
-                  <div class="col-sm-1">
-                    <img class="prof" src="img/profs/nickdevine.jpg" alt="Artist Prof">
-                  </div>
-                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-                    <h4 class="artistName" href="#artistProfile">Nick Devine</h4>
-                    <h5 class="artistLoc" href="#shopProfile">Helter Skelter Tattoo Studio </br> St. Helens, State, USA</h5>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-xs-12">
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/nickdevine1.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/nickdevine2.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/nickdevine3.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/nickdevine4.jpg" class="tattooImg"></a>
-                </div>
-              </div>
-            </div>
-            <div class="artistThumb">
-              <div class="artistTitleBG">
-                <div class="artistTitles">
-                  <div class="col-sm-1">
-                    <img class="prof" src="img/profs/booganut.jpg" alt="Artist Prof">
-                  </div>
-                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-                    <h4 class="artistName" href="#artistProfile">Bridget Tunstall</h4>
-                    <h5 class="artistLoc" href="#shopProfile">Leviathan Tattoo Gallery </br> Richmond, Victoria, Australia</h5>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-xs-12">
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/booganut1.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/booganut2.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/booganut3.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/booganut4.jpg" class="tattooImg"></a>
-                </div>
-              </div>
-            </div>
-            <div class="artistThumb">
-              <div class="artistTitleBG">
-                <div class="artistTitles">
-                  <div class="col-sm-1">
-                    <img class="prof" src="img/profs/algarcia.jpg" alt="Artist Prof">
-                  </div>
-                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-                    <h4 class="artistName" href="#artistProfile">Al Garcia</h4>
-                    <h5 class="artistLoc" href="#shopProfile">Reserve Tattoo Co</br> Mentor, Ohio, USA</h5>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-xs-12">
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia1.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia2.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia3.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/algarcia4.jpg" class="tattooImg"></a>
-                </div>
-              </div>
-            </div>
-            <div class="artistThumb">
-              <div class="artistTitleBG">
-                <div class="artistTitles">
-                  <div class="col-sm-1">
-                    <img class="prof" src="img/profs/joseperezjrtattoos.jpg" alt="Artist Prof">
-                  </div>
-                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-                    <h4 class="artistName" href="#artistProfile">Jose Perez Jr.</h4>
-                    <h5 class="artistLoc" href="#shopProfile">Dark Water Tattoos</br> Bridgeview, Illinois, USA</h5>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-xs-12">
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/joseperezjrtattoos1.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/joseperezjrtattoos2.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/joseperezjrtattoos3.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/joseperezjrtattoos4.jpg" class="tattooImg"></a>
-                </div>
-              </div>
-            </div>
-            <div class="artistThumb">
-              <div class="artistTitleBG">
-                <div class="artistTitles">
-                  <div class="col-sm-1">
-                    <img class="prof" src="img/profs/drewromero.jpg" alt="Artist Prof">
-                  </div>
-                  <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-                    <h4 class="artistName" href="#artistProfile">Drew Romero</h4>
-                    <h5 class="artistLoc" href="#shopProfile">Ghost House </br> Derby, DE1 1RS, UK</h5>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-xs-12">
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/drewromero1.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/drewromero2.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/drewromero3.jpg" class="tattooImg"></a>
-                    <a href="#" class="tattooContainer"><img src="img/tattoos/drewromero4.jpg" class="tattooImg"></a>
-                </div>
-              </div>
-            </div>
-
+          </div>
+          <div class="tattoos col-sm-6 col-xs-12">
           </div>
         </div>
       </div>
@@ -422,19 +285,30 @@
           <img src="<%= file.url %>" class="fullImage">
         </div>
         <div class="infoBox" style="display:none">
-          <div class="yourBooks" style="display:none">
-            <h2>Your Books</h2>
-            <input class="booksInput" type="text" data-role="tagsinput" value="" />
-          </div>
-          <div class="row">            
-            <button type="button" class="btn-submit btn-block add"><span class="flaticon-book104"></span>Collect</button>
-            <button type="button" class="save btn-link" style="display:none">Save </button>
+
+          <% if(!Parse.User.current() || Parse.User.current().attributes.role !== 'artist') { %>
+            <div class="yourBooks" style="display:none">
+              <h2>Your Books</h2>
+              <input class="booksInput" type="text" data-role="tagsinput" value="" />
+            </div>
+            <div class="row">            
+              <button type="button" class="btn-submit btn-block add"><span class="flaticon-book104"></span>Collect</button>
+              <button type="button" class="save btn-link" style="display:none">Save </button>
+            </div>
+            <hr>
+          <% } %>
+
+          <div class="otherBooks" style="display:none">
+            <h2>Books</h2>
+            <span></span><br>
+            <button class="btn-link more">More</button>
+            
           </div>
           <hr>
           <div class="row artistInfo" href=""><a>
-              <img class="prof" src="img/tattooicon.png" alt="Artist Prof">
-              <h2 class="artistName"> </h2>
-              <h5 class="artistLoc"> </h5>
+            <img class="prof" src="img/tattooicon.png" alt="Artist Prof">
+            <h2 class="artistName"> </h2>
+            <h5 class="artistLoc"> </h5>
           </a></div>
           <div class="row">
           </div>
@@ -444,7 +318,7 @@
     </script>
 
     <!-- Artist Profile -->
-    <script type="text/html" id="artistTemplate">
+    <script type="text/html" id="artistProfileTemplate">
       <div class="profHead">
         <div class="container">
           <div class="row"><br>
@@ -565,38 +439,32 @@
       </div>
     </script>
 
+    <!-- Tattoo Thumbnail Template -->
     <script type="text/html" id="tattooTemplate">
       <div class="tattooContainer">
         <a class="open">
           <img src="<%= fileThumb.url %>" class="tattooImg">
-          <span class="hover-content" data-toggle="buttons"><span>
-            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
-          </span></span>
-          <% console.log(this) %>
+
+          <% if(!Parse.User.current() || Parse.User.current().attributes.role !== 'artist') { %>
+            <span class="hover-content" data-toggle="buttons"><span>
+              <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
+            </span></span>
+          <% } %>
+
           <% if(this.model.attributes.artistProfile.attributes.username) { %>
             <span class="hover-text-content"><span>
-              <img class="prof" src="<% if (typeof(this.model.attributes.artistProfile.attributes.profThumb)!== 'undefined') { print(this.model.attributes.artistProfile.attributes.profThumb.url()) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof">
-              <h4 class="artistName" href="/<%= this.model.attributes.artistProfile.attributes.username %>"><%= (this.model.attributes.artistProfile.attributes.name) ?  this.model.attributes.artistProfile.attributes.name+' / ' : '' %> <%= this.model.attributes.artistProfile.attributes.username %></h4>
+              <% if (typeof(this.model.attributes.artistProfile.attributes.profThumb)!== 'undefined') { %>
+                 <img class="prof" src="<% print(this.model.attributes.artistProfile.attributes.profThumb.url()) %>" alt="Artist Prof">
+              <% } %>
+              <h4 class="artistName" href="/<%= this.model.attributes.artistProfile.attributes.username %>"><%= (this.model.attributes.artistProfile.attributes.name && this.model.attributes.artistProfile.attributes.name !== this.model.attributes.artistProfile.attributes.username) ?  this.model.attributes.artistProfile.attributes.name+' / ' : '' %> <%= this.model.attributes.artistProfile.attributes.username %></h4>
               <h5 class="artistLoc"><%= this.model.attributes.artistProfile.attributes.locationName %></h5>
             </span></span>
           <% } %>
         </a>
       </div>
     </script>
-
-
-
-    <script type="text/html" id="addTemplate">
-      <div class="tattooContainer">
-        <a>
-          <img src="<%= fileThumb.url %>" class="tattooImg">
-          <span class="hover-content" data-toggle="buttons"><span>
-            <button type="button" class="btn-tag btn-block add"><span class="flaticon-book104"></span>Collect</button>
-          </span></span>
-        </a>
-      </div>
-    </script>
      
+    <!-- MyTattoo Template -->
     <script type="text/html" id="myTattooTemplate">
         <div class="tattooContainer">
           <a class="open">
@@ -608,15 +476,16 @@
         </div>
     </script>
 
-    <!-- artist edit tattoo -->
-    <script type="text/html" id="artistEditTemplate">
+    <!-- Edit Tattoo -->
+    <script type="text/html" id="editTattooTemplate">
+    <a href="#" class="btn-text x">x</a>
       <div class="container">
         <div class="lightContainer">
           <h3 class="text-center">Edit Tattoo</h3>
-          <img src="" class="tattooImg">
+          <img src="<%= file.url %>" class="tattooImg">
           <div class="row"> <hr>
-            <button href="#" id="cancel" class="btn btn-link">Cancel</button>
-            <button href="#" id="delete" class="btn btn-link">Delete</button>
+            <button href="#" class="btn btn-link cancel">Cancel</button>
+            <button href="#" class="btn btn-link delete">Delete</button>
           </div>
         </div>
       </div>
@@ -946,9 +815,10 @@
 
     </script>
 
-    <!-- post / upload tattoo -->
+    <!-- Upload Tattoo -->
     <script type="text/html" id="uploadTemplate">
       <div class="container">
+        <a href="#" class="btn-text x">x</a>
         <div class="lightContainer">
           <h3 class="text-center">Upload Tattoo</h3>
             <div class="error text-center" style="display:none"></div>
@@ -972,7 +842,7 @@
 
                   <div class="uploadOptions">
                     <span href="#" class="fileinput-exists btn btn-link" data-dismiss="fileinput">X</span>
-                    <button type="submit" class="btn-submit">Submit</button>
+                    <button type="submit" class="btn-submit upload">Submit</button>
                   </div>
                 </form> 
               </div>

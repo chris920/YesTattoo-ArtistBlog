@@ -281,13 +281,18 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
         collectors.add(user.attributes.userprofile);
         artistProfile.increment("collectorCount");
         artistProfile.save();
-        return;
+        return add;
       } else {
         console.log('artist already added');
-        return;
+        return add;
       }
     }).then(function(result) {
-      response.success();
+      response.success(result);
+
+
+
+
+      
     }, function(error) {
       response.error(error);
     });
@@ -418,6 +423,31 @@ Parse.Cloud.job("addArtistProfile", function(request, status) {
         var artist = tattoo.attributes.artist;
         var artistProfile = artist.get("profile");
         tattoo.set("artistProfile", artistProfile);
+      }
+
+      if (counter % 100 === 0) {
+        status.message(counter + " tattoos processed.");
+      }
+      counter += 1;
+      return tattoo.save();
+  }).then(function() {
+    status.success("artist profile added.");
+  }, function(error) {
+    status.error("Uh oh, something went wrong.");
+  });
+});
+
+
+Parse.Cloud.job("TattooEmptyBooks", function(request, status) {
+  Parse.Cloud.useMasterKey();
+  var counter = 0;
+  var query = new Parse.Query("Tattoo");
+  query.include('artist');
+  query.each(function(tattoo) {
+
+      if(tattoo.attributes.books === undefined){
+        var emptyArray = [];
+        tattoo.set("books", emptyArray);
       }
 
       if (counter % 100 === 0) {
