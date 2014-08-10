@@ -245,7 +245,7 @@ App.Views.Search = Parse.View.extend({
 		/// demo populate tattoos
 	  	var query = new Parse.Query('Tattoo');
 		query.include('artistProfile');
-		query.limit(40);
+		query.limit(1000);
 	  	query.descending('updatedAt');
 	  	query.find({
 	  		success: function(tats) {
@@ -415,10 +415,21 @@ App.Views.Login = Backbone.Modal.extend({
 });
 
 App.Views.ArtistProfile = Parse.View.extend({
-	model: App.Models.User,
 	id: 'artistProfile',
 	initialize: function() {
 		this.activateAffix();
+		var that = this;
+
+	  	var tattoos = this.model.relation('tattoos');
+	  	var query = tattoos.query();
+	  	query.descending("createdAt");
+	  	query.find({
+	  		success: function(tats) {
+	  			that.tattoos = new App.Collections.Tattoos(tats);
+	  			var tattoosView = new App.Views.Tattoos({collection: that.tattoos});
+	  			tattoosView.render();
+	  		}
+	  	});
 	},
 	template: _.template($("#artistProfileTemplate").html()),
 	events: {
@@ -704,10 +715,13 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 App.Views.Tattoos = Parse.View.extend({
 	el: '.tattoos',
 	initialize: function(){
-		_.bindAll(this, 'render', 'renderTattoos', 'renderTattoo');
+		_.bindAll(this, 'render', 'renderTattoos', 'renderTattoo', 'renderMoreBooks','resetFilters');
 
 		this.collection.on('add', this.renderTattoo, this);
 		this.collection.on('reset', this.render, this);
+
+		this.bookFilters = [];
+
 	},
 	bindAdds: function(){
 		App.Collections.adds.on('remove', function(add) {
@@ -721,8 +735,55 @@ App.Views.Tattoos = Parse.View.extend({
 			this.renderTattoos();
 		}, this);
 	},
+	events: {
+		'click .bookFilter': 	'addBookFilter'
+	},
+	addBookFilter: function(book){
+		this.bookFilters.push(book);
+		this.renderTattoosByBooks(this.bookFilters);
+	},
+	removeBookFilter: function(book){
+		this.bookFilters = _.without(this.bookFilters, book)
+		this.renderTattoosByBooks(this.bookFilters);
+	},
+	resetFilters: function(){
+		this.bookFilters = [];
+		$('.bookFilter').removeClass('active');
+		this.renderTattoos();
+	},
+	renderBooks: function(count){
+		$(this.el).before('<div class="tagFilters" data-toggle="buttons"><span class="flaticon-book104"></span></div>');
+
+		_.each(this.collection.byCount(count || 5), function(book) {
+			$('.tagFilters').append(_.template('<button type="button" class="btn-tag bookFilter">'+ book +'</button>'));
+		}, this);
+
+		var that = this;
+		$('.bookFilter').on('click', function(e){ 
+			if($(e.target).hasClass('active')){
+				that.removeBookFilter(e.target.textContent);
+				$(e.target).removeClass('active');
+			} else {
+				that.addBookFilter(e.target.textContent);
+				$(e.target).addClass('active');
+			}
+		});
+
+		if(!count){
+			$('.tagFilters').append(_.template('<h5 class="more"><a>More</a></h5>'));			
+			$('.more').on('click', this.renderMoreBooks);
+			this.resetFilters();
+		}
+		return this;
+	},
+	renderMoreBooks: function(){
+		$('.tagFilters').remove();
+		$('.more').hide();
+		this.renderBooks(10).renderTattoos();
+	},
     render: function () {
       this.renderTattoos();
+      this.renderBooks();
       return this;
     },
 	renderTattoos: function(e){
@@ -734,13 +795,23 @@ App.Views.Tattoos = Parse.View.extend({
 		$(this.el).append(tattoo.render().el);
 		return this;
 	},
+    renderTattoosByBooks: function(books) {
+    	this.$el.empty();
+    	_.each(this.collection.byBook(books), function(tat){ this.renderTattoo(tat)}, this);
+
+    	if (this.collection.byBook(books).length < 1){
+    		//// need to make the retro badge with the empty sign and link to reset all filters
+    		$('.tattoos').html('<h5 class="text-center">No tattoos with those books. <a class="reset">Reset books?</a></h5>');
+    		$('.reset').on('click', this.resetFilters);
+    	}
+    }
 });
 
 App.Views.Tattoo = Parse.View.extend({
 	className: 'tattoo',
 	template: _.template($("#tattooTemplate").html()),
 	initialize: function(){
-		_.bindAll(this, 'createAdd', 'edit');
+		_.bindAll(this, 'createAdd', 'edit', 'profile');
 		this.model.on('add:created', this.showEdit, this);
 		this.model.on('add:removed', this.showAddButton, this);
 	},
@@ -758,7 +829,7 @@ App.Views.Tattoo = Parse.View.extend({
     },
     profile: function(e){
     	e.stopPropagation();
-    	Parse.history.navigate(this.model.attributes.artistProfile.username, {trigger: true, replace: true});
+    	Parse.history.navigate(this.model.attributes.artistProfile.attributes.username, {trigger: true, replace: true});
     	$("html, body").animate({ scrollTop: 0 }, 600);
     },
 	createAdd: function(e){
@@ -1543,11 +1614,12 @@ App.Collections.Artists = Parse.Collection.extend({
 App.Collections.Tattoos = Parse.Collection.extend({
 	model: App.Models.Tattoo,
 	byCount: function(count){
-		this.popularBooks = this.pluck('books').byCount().slice(0, count || 10);
+		this.popularBooks = _.flatten(this.pluck('books')).byCount().slice(0, count || 10);
 		return this.popularBooks;
 	},
 	byBook: function(books){
-		// return this.filter(function(tat){ return tat.get('books') === tattooId; });
+		//Takes an array of books, returns the tattoos where the books are inlcuded.
+		return this.filter(function(tat){ return _.intersection(tat.get('books'), books).length >= books.length; });
 	}
 });
 
@@ -1577,10 +1649,10 @@ App.Router = Parse.Router.extend({
 		"search": 						"search",
 		"home":							"home",
 		"featured":	    				"featured",
-		"featured/p:page":	 		   "featured",
+		"featured/p:page":	 		    "featured",
 		"artists": 						"artists",
 		"about":   						"about",
-		"join":        				   "join",
+		"join":        				    "join",
 		"login":        				"login",
 		"settings":        				"settings",
 		"interview":      				"interview",
@@ -1649,16 +1721,6 @@ App.Router = Parse.Router.extend({
 			} else  {
 				var profile = new App.Views.ArtistProfile({model: artist});
 				$('#app').html(profile.render().el);
-			  	var tattoos = artist.relation('tattoos');
-			  	var query = tattoos.query();
-			  	query.descending("createdAt");
-			  	query.find({
-			  		success: function(tats) {
-			  			var tattoos = new App.Collections.Tattoos(tats);
-			  			var collection = new App.Views.Tattoos({collection: tattoos});
-			  			collection.render();
-			  		}
-			  	});
 			}
 
 		}, function(error) {
@@ -1666,6 +1728,7 @@ App.Router = Parse.Router.extend({
 		});
 	},
 	showUserProfile: function(uname){
+
 
 		// define the parse query to get the user from the router
 		var query = new Parse.Query(App.Models.UserProfile);

@@ -385,8 +385,6 @@
       <div class="tab-content">
         <!-- Portfolio Tab -->
         <div class="tab-pane fade in active" id="portfolioTab">
-          <div class="tagFilters" data-toggle="buttons">
-          </div>  
           <div class="container">          
             <div class="row tattoos">
 
@@ -456,7 +454,7 @@
               <% if (typeof(this.model.attributes.artistProfile.attributes.profThumb)!== 'undefined') { %>
                  <img class="prof" src="<% print(this.model.attributes.artistProfile.attributes.profThumb.url()) %>" alt="Artist Prof">
               <% } %>
-              <h4 class="artistName" href="/<%= this.model.attributes.artistProfile.attributes.username %>"><%= (this.model.attributes.artistProfile.attributes.name && this.model.attributes.artistProfile.attributes.name !== this.model.attributes.artistProfile.attributes.username) ?  this.model.attributes.artistProfile.attributes.name+' / ' : '' %> <%= this.model.attributes.artistProfile.attributes.username %></h4>
+              <h4 class="artistName"><%= (this.model.attributes.artistProfile.attributes.name && this.model.attributes.artistProfile.attributes.name !== this.model.attributes.artistProfile.attributes.username) ?  this.model.attributes.artistProfile.attributes.name+' / ' : '' %> <%= this.model.attributes.artistProfile.attributes.username %></h4>
               <h5 class="artistLoc"><%= this.model.attributes.artistProfile.attributes.locationName %></h5>
             </span></span>
           <% } %>
@@ -532,8 +530,6 @@
       <div class="tab-content">
         <!-- Collection / Adds Tab-->
         <div class="tab-pane fade in active" id="addsTab">
-          <div class="tagFilters" data-toggle="buttons">
-          </div>  
           <div class="container">          
             <div class="row adds">
 
@@ -542,8 +538,6 @@
         </div> 
         <!-- Artists Tab-->
         <div class="tab-pane fade in active" id="artistsTab">
-          <div class="tagFilters" data-toggle="buttons">
-          </div>  
           <div class="container">          
             <div class="row adds">
 
