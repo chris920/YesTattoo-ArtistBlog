@@ -718,24 +718,24 @@ pre {
   max-height: 340px;
   overflow-y: scroll; }
 
-.container, .bbm-modal {
+.container, .bbm-modal, #search .tt-dropdown-menu, #search .globalBooks {
   margin-right: auto;
   margin-left: auto;
   padding-left: 2.5px;
   padding-right: 2.5px; }
-  .container:before, .bbm-modal:before, .container:after, .bbm-modal:after {
+  .container:before, .bbm-modal:before, #search .tt-dropdown-menu:before, #search .globalBooks:before, .container:after, .bbm-modal:after, #search .tt-dropdown-menu:after, #search .globalBooks:after {
     content: " ";
     display: table; }
-  .container:after, .bbm-modal:after {
+  .container:after, .bbm-modal:after, #search .tt-dropdown-menu:after, #search .globalBooks:after {
     clear: both; }
   @media (min-width: 768px) {
-    .container, .bbm-modal {
+    .container, .bbm-modal, #search .tt-dropdown-menu, #search .globalBooks {
       width: 725px; } }
   @media (min-width: 992px) {
-    .container, .bbm-modal {
+    .container, .bbm-modal, #search .tt-dropdown-menu, #search .globalBooks {
       width: 945px; } }
   @media (min-width: 1200px) {
-    .container, .bbm-modal {
+    .container, .bbm-modal, #search .tt-dropdown-menu, #search .globalBooks {
       width: 1145px; } }
 
 .container-fluid {
@@ -2824,17 +2824,21 @@ input[type="button"].btn-block {
         padding-left: 0;
         padding-right: 0; } }
 
-.container > .navbar-header, .bbm-modal > .navbar-header,
+.container > .navbar-header, .bbm-modal > .navbar-header, #search .tt-dropdown-menu > .navbar-header, #search .globalBooks > .navbar-header,
 .container > .navbar-collapse,
 .bbm-modal > .navbar-collapse,
+#search .tt-dropdown-menu > .navbar-collapse,
+#search .globalBooks > .navbar-collapse,
 .container-fluid > .navbar-header,
 .container-fluid > .navbar-collapse {
   margin-right: -5px;
   margin-left: -5px; }
   @media (min-width: 992px) {
-    .container > .navbar-header, .bbm-modal > .navbar-header,
+    .container > .navbar-header, .bbm-modal > .navbar-header, #search .tt-dropdown-menu > .navbar-header, #search .globalBooks > .navbar-header,
     .container > .navbar-collapse,
     .bbm-modal > .navbar-collapse,
+    #search .tt-dropdown-menu > .navbar-collapse,
+    #search .globalBooks > .navbar-collapse,
     .container-fluid > .navbar-header,
     .container-fluid > .navbar-collapse {
       margin-right: 0;
@@ -2876,7 +2880,7 @@ input[type="button"].btn-block {
   .navbar-brand:hover, .navbar-brand:focus {
     text-decoration: none; }
   @media (min-width: 992px) {
-    .navbar > .container .navbar-brand, .navbar > .bbm-modal .navbar-brand, .navbar > .container-fluid .navbar-brand {
+    .navbar > .container .navbar-brand, .navbar > .bbm-modal .navbar-brand, #search .navbar > .tt-dropdown-menu .navbar-brand, #search .navbar > .globalBooks .navbar-brand, .navbar > .container-fluid .navbar-brand {
       margin-left: -5px; } }
 
 .navbar-toggle {
@@ -4127,7 +4131,7 @@ a:focus {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-.flaticon-book104:before, .tattooProfile .bootstrap-tagsinput:before, .tattooProfile .bootstrap-tagsinput.focused:before {
+.flaticon-book104:before, .bootstrap-tagsinput:before {
   content: "\e000"; }
 
 .flaticon-camera4:before {
@@ -4322,6 +4326,7 @@ span.hover-text-content {
     margin: 5px 0 0 0;
     color: #d9d9d9; }
   span.hover-text-content .prof {
+    margin-left: 5px;
     right: 10px;
     bottom: 10px;
     display: table;
@@ -4516,7 +4521,6 @@ span.hover-content {
     color: white; }
 
 .tagFilters {
-  max-width: 600px;
   min-width: 200px;
   margin: 0 auto;
   padding: 30px 0;
@@ -4524,6 +4528,11 @@ span.hover-content {
   @media screen and (max-width: 768px) {
     .tagFilters {
       padding: 10px 0 20px 0; } }
+  .tagFilters .more {
+    color: gray;
+    padding: 5px; }
+    .tagFilters .more:hover {
+      color: #c42020; }
 
 .back-to-top {
   z-index: 1050;
@@ -4532,29 +4541,6 @@ span.hover-content {
   top: 120px;
   right: 30px;
   display: none; }
-
-#search {
-  color: white;
-  background-color: black;
-  min-height: 100vh;
-  margin-bottom: -49px;
-  padding-bottom: 100px; }
-
-.bigfatsearch input {
-  background-color: rgba(255, 255, 255, 0);
-  width: 100%;
-  border: none;
-  color: #c42020;
-  font-size: 86px;
-  line-height: 80px;
-  font-weight: 700;
-  margin-bottom: 40px;
-  margin-top: 40px; }
-  .bigfatsearch input:focus {
-    outline: none; }
-.bigfatsearch span {
-  width: 100%;
-  text-align: left; }
 
 .intro {
   padding: 40px;
@@ -5291,97 +5277,86 @@ span.hover-content {
   -webkit-transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden; }
 
-.tattooProfile .bootstrap-tagsinput {
-  text-align: left;
-  background-color: #4d4d4d;
-  border: 1px solid #4d4d4d;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+#search {
+  color: white;
+  background-color: black;
+  min-height: 100vh;
+  margin-bottom: -49px;
+  padding-bottom: 100px; }
+
+.bigfatsearch input {
+  background-color: rgba(255, 255, 255, 0);
+  width: 100%;
+  border: none;
+  color: #c42020;
+  font-size: 65px;
+  line-height: 80px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  margin-top: 40px; }
+  .bigfatsearch input:focus {
+    outline: none; }
+
+.bootstrap-tagsinput {
   display: inline-block;
-  padding: 40px 20px;
-  margin-bottom: 10px;
   color: #555;
   border-radius: 4px;
   max-width: 100%;
   line-height: 22px;
-  min-height: 80px;
-  cursor: cell;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease; }
-  .tattooProfile .bootstrap-tagsinput:before {
+  .bootstrap-tagsinput:before {
     font-family: Flaticon;
-    padding: 8px;
-    font-style: normal;
-    font-size: 30px;
-    top: 5px;
-    position: relative;
     color: #d9d9d9; }
-.tattooProfile .bootstrap-tagsinput.focused {
-  background-color: rgba(0, 0, 0, 0.6);
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
-  cursor: text;
-  -webkit-transition: all 0.3s ease;
-  transition: all 0.3s ease; }
-  .tattooProfile .bootstrap-tagsinput.focused:before {
-    font-family: Flaticon;
-    padding: 8px;
-    font-style: normal;
-    font-size: 30px;
-    top: 5px;
-    position: relative;
-    color: #d9d9d9; }
-.tattooProfile input.tt-input {
-  margin-left: 5px !important; }
-  .tattooProfile input.tt-input::-webkit-input-placeholder {
-    content: "add books!"; }
-  .tattooProfile input.tt-input::-moz-placeholder {
-    content: "add books!"; }
-  .tattooProfile input.tt-input:-moz-placeholder {
-    content: "add books!"; }
-  .tattooProfile input.tt-input:-ms-input-placeholder {
-    content: "add books!"; }
-.tattooProfile .bootstrap-tagsinput input {
-  border: none;
-  box-shadow: none;
-  outline: none;
-  background-color: transparent;
-  padding: 0;
-  margin: 0;
-  width: auto !important;
-  max-width: inherit; }
-.tattooProfile .bootstrap-tagsinput input:focus {
-  border: none;
-  box-shadow: none; }
-.tattooProfile .bootstrap-tagsinput .blured {
-  border: 1px solid #1a1a1a;
-  color: white;
-  background-color: #1a1a1a !important;
-  -webkit-transition: all 0.5s ease;
-  transition: all 0.5s ease; }
-.tattooProfile .bootstrap-tagsinput .tag {
-  color: white;
-  -webkit-transition: all 0.3s ease;
-  transition: all 0.3s ease; }
-.tattooProfile .bootstrap-tagsinput .tag [data-role="remove"] {
-  margin-left: 8px;
-  cursor: pointer; }
-.tattooProfile .bootstrap-tagsinput .tag [data-role="remove"]:after {
-  content: "x";
-  padding: 0px 2px; }
-.tattooProfile .bootstrap-tagsinput .tag [data-role="remove"]:hover {
-  color: #c42020; }
+
 .tattooProfile .bootstrap-tagsinput {
-  width: 100%; }
-.tattooProfile .accordion {
-  margin-bottom: -3px; }
-.tattooProfile .accordion-group {
-  border: none; }
-.tattooProfile .twitter-typeahead .tt-query,
-.tattooProfile .twitter-typeahead .tt-hint {
-  margin-bottom: 0; }
-.tattooProfile .twitter-typeahead .tt-hint {
-  display: none; }
-.tattooProfile .tt-dropdown-menu {
+  min-height: 80px;
+  padding: 40px 20px;
+  margin-bottom: 10px;
+  text-align: left;
+  background-color: #4d4d4d;
+  border: 1px solid #4d4d4d;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  cursor: cell; }
+  .tattooProfile .bootstrap-tagsinput:before {
+    padding: 8px;
+    font-size: 30px;
+    top: 5px;
+    position: relative;
+    color: #d9d9d9; }
+
+#search input.tt-input {
+  position: absolute !important;
+  left: 0px; }
+#search ::-webkit-input-placeholder {
+  color: #4d4d4d; }
+#search :-moz-placeholder {
+  /* Firefox 18- */
+  color: #4d4d4d; }
+#search ::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #4d4d4d; }
+#search :-ms-input-placeholder {
+  color: #4d4d4d; }
+#search .bootstrap-tagsinput {
+  min-height: 140px; }
+  #search .bootstrap-tagsinput:before {
+    font-size: 50px;
+    padding: 15px;
+    top: 60px;
+    position: relative;
+    display: inline-block;
+    color: white; }
+    @media screen and (max-width: 768px) {
+      #search .bootstrap-tagsinput:before {
+        display: none; } }
+  #search .bootstrap-tagsinput .tag {
+    position: relative;
+    top: 40px; }
+#search .message {
+  text-align: right; }
+
+.tattooProfile .tt-dropdown-menu, .tattooProfile #search .globalBooks, #search .tattooProfile .globalBooks {
   text-align: left;
   position: absolute;
   top: 100%;
@@ -5401,7 +5376,92 @@ span.hover-content {
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box; }
-.tattooProfile .tt-suggestion > p {
+.tattooProfile .twitter-typeahead .tt-hint {
+  display: none; }
+.tattooProfile .bootstrap-tagsinput.focused {
+  background-color: rgba(0, 0, 0, 0.6);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
+  cursor: text;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease; }
+.tattooProfile input.tt-input {
+  margin-left: 5px !important; }
+
+#search .tt-dropdown-menu, #search .globalBooks {
+  width: 100%;
+  float: center;
+  text-align: center;
+  position: fixed !important;
+  top: 120px !important;
+  vertical-align: top; }
+#search .twitter-typeahead .tt-hint {
+  color: #1a1a1a; }
+#search .tt-suggestion {
+  padding: 10px;
+  background-color: black; }
+#search .globalBooks {
+  width: inherit !important;
+  z-index: 0 !important;
+  color: #4d4d4d; }
+
+.tt-suggestion {
+  display: inline !important;
+  cursor: cell; }
+  .tt-suggestion:hover {
+    color: #c42020; }
+
+.bootstrap-tagsinput input {
+  border: none;
+  box-shadow: none;
+  outline: none;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  width: auto !important;
+  max-width: inherit; }
+
+.bootstrap-tagsinput input:focus {
+  border: none;
+  box-shadow: none; }
+
+.bootstrap-tagsinput .blured {
+  border: 1px solid #1a1a1a;
+  color: white;
+  background-color: #1a1a1a !important;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease; }
+
+.bootstrap-tagsinput .tag {
+  color: white;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease; }
+
+.bootstrap-tagsinput .tag [data-role="remove"] {
+  margin-left: 8px;
+  cursor: pointer; }
+
+.bootstrap-tagsinput .tag [data-role="remove"]:after {
+  content: "x";
+  padding: 0px 2px; }
+
+.bootstrap-tagsinput .tag [data-role="remove"]:hover {
+  color: #c42020; }
+
+.bootstrap-tagsinput {
+  width: 100%; }
+
+.accordion {
+  margin-bottom: -3px; }
+
+.accordion-group {
+  border: none; }
+
+.twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+  margin-bottom: 0; }
+
+.tt-suggestion > p {
   display: block;
   padding: 3px 12px;
   clear: both;
@@ -5409,9 +5469,10 @@ span.hover-content {
   line-height: 1.428571429;
   color: gray;
   white-space: nowrap; }
-.tattooProfile .tt-suggestion > p:hover,
-.tattooProfile .tt-suggestion > p:focus,
-.tattooProfile .tt-suggestion.tt-cursor p {
+
+.tt-suggestion > p:hover,
+.tt-suggestion > p:focus,
+.tt-suggestion.tt-cursor p {
   color: black;
   text-decoration: none;
   outline: 0;

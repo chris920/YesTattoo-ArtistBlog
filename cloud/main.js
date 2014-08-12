@@ -288,11 +288,6 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
       }
     }).then(function(result) {
       response.success(result);
-
-
-
-
-      
     }, function(error) {
       response.error(error);
     });

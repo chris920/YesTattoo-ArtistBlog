@@ -516,6 +516,7 @@ span.hover-text-content {
         margin: 5px 0 0 0; 
         color: $gray-light; }
     .prof {
+        margin-left: 5px;
         right: 10px;
         bottom: 10px;
         display: table;
@@ -668,13 +669,20 @@ span.hover-content {
 }
 
 .tagFilters {
-    max-width: 600px;
+    // max-width: 600px;
     min-width: 200px; //for more arrow cover
     margin: 0 auto;
     padding: 30px 0;
     text-align: center;
     @media screen and (max-width: $screen-sm) {
         padding: 10px 0 20px 0;
+    }
+    .more {
+        color: $gray;
+        padding: 5px;
+        &:hover {
+            color: $brand-primary;
+        }
     }
 }
 
@@ -685,49 +693,6 @@ span.hover-content {
     top: 120px;
     right: 30px;
     display:none;
-}
-
-
-
-////////// Search forms
-#search {
-    color: white;
-    background-color: black;
-    min-height: 100vh;
-    margin-bottom: -49px;
-    padding-bottom: 100px;
-}
-.bigfatsearch {
-    // text-align: center;
-    input {
-        background-color: rgba(255,255,255,0);
-        width:100%;
-        border: none;
-        color: $brand-primary;
-        font-size: 86px;
-        line-height: 80px;
-        font-weight: 700;
-        margin-bottom: 40px;
-        margin-top: 40px;
-        &:focus {outline: none}
-    }
-    span {
-        width: 100%;
-        text-align: left;
-    }
-    // .twitter-typeahead:before {
-    //     z-index: 1010;
-    //     font-family: Flaticon;
-    //     font-size: 20px;
-    //     position: absolute;
-    //     display: inline-block;
-    //     top: 8px;
-    //     right: 8px;
-    //     line-height: 1;
-    //     -webkit-font-smoothing: antialiased;
-    //     -moz-osx-font-smoothing: grayscale;
-    //     content: "\e00b";
-    // }
 }
 
 
@@ -1579,84 +1544,207 @@ span.hover-content {
 
 
 
+////////// Search forms
+#search {
+    color: white;
+    background-color: black;
+    min-height: 100vh;
+    margin-bottom: -49px;
+    padding-bottom: 100px;
+}
+.bigfatsearch {
+    // text-align: center;
+    input {
+        background-color: rgba(255,255,255,0);
+        width:100%;
+        border: none;
+        color: $brand-primary;
+        font-size: 65px;
+        line-height: 80px;
+        font-weight: 700;
+        margin-bottom: 40px;
+        margin-top: 40px;
+        &:focus {outline: none}
+    }
+
+    // .twitter-typeahead:before {
+    //     z-index: 1010;
+    //     font-family: Flaticon;
+    //     font-size: 20px;
+    //     position: absolute;
+    //     display: inline-block;
+    //     top: 8px;
+    //     right: 8px;
+    //     line-height: 1;
+    //     -webkit-font-smoothing: antialiased;
+    //     -moz-osx-font-smoothing: grayscale;
+    //     content: "\e00b";
+    // }
+}
+
 
 //////// bootstrap-tagsinput.js
-.tattooProfile {
 
+.bootstrap-tagsinput {
+    display: inline-block;
+    color: #555;
+    border-radius: 4px;
+    max-width: 100%;
+    line-height: 22px;
+    @include transition(all 0.3s ease);
+    &:before {
+        font-family: Flaticon;
+        @extend .flaticon-book104:before;
+        color: $gray-light; }
+}
+
+.tattooProfile { 
     .bootstrap-tagsinput {
-        text-align: left; 
-      background-color: $gray-dark;
-      border: 1px solid $gray-dark;
-      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-      display: inline-block;
-      padding: 40px 20px;
-      margin-bottom: 10px;
-      color: #555;
-      border-radius: 4px;
-      max-width: 100%;
-      line-height: 22px;
         min-height: 80px;
+        padding: 40px 20px;
+        margin-bottom: 10px;
+        text-align: left; 
+        background-color: $gray-dark;
+        border: 1px solid $gray-dark;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
         cursor: cell;
-      @include transition(all 0.3s ease);
         &:before {
-            font-family: Flaticon;
             padding: 8px;
-            font-style: normal;
             font-size: 30px;
             top: 5px;
             position: relative;
-            @extend .flaticon-book104:before;
-            color: $gray-light; }
+            color: $gray-light; 
+        }
+    }
+}
+
+
+#search {
+    input.tt-input {
+        position: absolute !important;
+        left: 0px;
+    }
+    ::-webkit-input-placeholder {
+       color: $gray-dark;}
+    :-moz-placeholder { /* Firefox 18- */
+       color: $gray-dark; }
+    ::-moz-placeholder {  /* Firefox 19+ */
+       color: $gray-dark; }
+    :-ms-input-placeholder {  
+       color: $gray-dark; }
+    .bootstrap-tagsinput {
+        min-height: 140px;
+
+        &:before {
+            font-size: 50px;
+            padding: 15px;
+            top: 60px;
+            position: relative;
+            display: inline-block;
+            color: white; 
+            @media screen and (max-width: $screen-sm) {
+                display: none;
+            }
+        }
+        .tag {
+            position: relative;
+            top: 40px;
+        }
+    }
+    .message {
+        text-align: right;
+    }
+}
+
+
+.tattooProfile { 
+    .tt-dropdown-menu {
+        text-align: left;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        display: none;
+        float: left;
+        // min-width: 160px;
+        min-width: 100%;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        list-style: none;
+        font-size: 14px;
+        background-color: #ffffff;
+        border: 1px solid #cccccc;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
+        -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        background-clip: padding-box;
+    }
+    .twitter-typeahead .tt-hint {
+        display: none;
     }
     .bootstrap-tagsinput.focused {
         background-color: $black-trans;
-        // border-color: rgba(196, 32, 32, 0.6);
         -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
         cursor: text;
         @include transition(all 0.3s ease);
-        &:before {
-            font-family: Flaticon;
-            padding: 8px;
-            font-style: normal;
-            font-size: 30px;
-            top: 5px;
-            position: relative;
-            @extend .flaticon-book104:before;
-            color: $gray-light; }
+
     }
     input.tt-input {
         margin-left: 5px !important;
-        &::-webkit-input-placeholder {
-            content: "add books!";
-        }
-        &::-moz-placeholder {
-            content: "add books!";
-        }
-        &:-moz-placeholder { 
-            content: "add books!";
-        }
-        &:-ms-input-placeholder { 
-            content: "add books!";
-        }
     }
-    .bootstrap-tagsinput-max:after {
-    // max 5
+}
+#search {
+    .tt-dropdown-menu {
+        width: 100%;
+        // float: left;
+        // text-align: left;
+        float: center;
+        text-align: center;
+        // position: relative !important;
+        // top: 80px !important;
+        position: fixed !important;
+        top: 120px !important;
+        @extend .container;
+        vertical-align: top;
+    }
+    .twitter-typeahead .tt-hint {
+        color: $gray-darker;
+    }
+    .tt-suggestion {
+        padding: 10px;
+        background-color: black;
+    }
+    .globalBooks{
+        @extend .tt-dropdown-menu;
+        width: inherit !important;
+        z-index: 0 !important;
+        color: $gray-dark;
+    }
+
+}
+    .tt-suggestion {
+        display: inline !important;
+        cursor: cell;
+        &:hover {
+            color: $brand-primary;
+        }
     }
 
     .bootstrap-tagsinput input {
-      border: none;
-      box-shadow: none;
-      outline: none;
-      background-color: transparent;
-      padding: 0;
-      margin: 0;
-      width: auto !important;
-      max-width: inherit;
+        border: none;
+        box-shadow: none;
+        outline: none;
+        background-color: transparent;
+        padding: 0;
+        margin: 0;
+        width: auto !important;
+        max-width: inherit;
     }
     .bootstrap-tagsinput input:focus {
-      border: none;
-      box-shadow: none;
+        border: none;
+        box-shadow: none;
     }
     .bootstrap-tagsinput .blured {
         //padding: 6px 20px;        
@@ -1666,9 +1754,9 @@ span.hover-content {
         @include transition(all 0.5s ease);
     }
     .bootstrap-tagsinput .tag {
-      color: white;
-      @include transition(all 0.3s ease);
-      // background-color: $gray-darker; 
+        color: white;
+        @include transition(all 0.3s ease);
+        // background-color: $gray-darker; 
     }
     .bootstrap-tagsinput .tag [data-role="remove"] {
       margin-left: 8px;
@@ -1696,34 +1784,6 @@ span.hover-content {
     .twitter-typeahead .tt-hint {
       margin-bottom: 0;
     }
-
-    .twitter-typeahead .tt-hint
-    {
-        display: none;
-    }
-
-    .tt-dropdown-menu {
-        text-align: left;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 1000;
-      display: none;
-      float: left;
-        // min-width: 160px;
-        min-width: 100%;
-      padding: 5px 0;
-      margin: 2px 0 0;
-      list-style: none;
-      font-size: 14px;
-      background-color: #ffffff;
-      border: 1px solid #cccccc;
-      border: 1px solid rgba(0, 0, 0, 0.15);
-      border-radius: 4px;
-      -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-      background-clip: padding-box;
-    }
     .tt-suggestion > p {
       display: block;
       padding: 3px 12px;
@@ -1741,7 +1801,7 @@ span.hover-content {
       outline: 0;
       background-color: $dropdown-link-hover-bg;
     }
-}
+
 
 // .tt-hint {
 //     color: $gray-light;

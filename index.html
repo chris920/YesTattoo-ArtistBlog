@@ -96,18 +96,28 @@
       <div class="menu-bg"></div>
     </script>
 
-   <!--      <a class="btn-text x">x</a> -->
+
     <!-- Search Page-->
     <script type="text/html" id="searchTemplate">
       <div class="container">
 
         <form class="bigfatsearch" role="search">
           <input type="text" class="typeahead" placeholder="">
-          <p>Searching for tattoos. Switch to<a> artists.</a></p>
+
+          <div class="message" style="display:none">Searching for tattoos.</div>
         </form>
 
-        <div class"books">
-
+        <div class="globalBooks">
+          <div class="tt-suggestions">
+            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">All</span></div>
+            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Animal</span></div>
+            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Black And Gray</span></div>
+            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Color</span></div>
+            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Japanese</span></div>
+            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Portrait</span></div>
+            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Realistic</span></div>
+            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Traditional</span></div>
+          </div>
         </div>
 
         <div class="row tattoos">
@@ -566,8 +576,8 @@
                 <option value="artist">Artist</option>
               </select>
             </div>
-            <a class="toggleArtist">Are you an artist? Click me</a></br>
-            <button type="submit" class="btn-submit">Submit</button>
+            <a class="toggleArtist btn-tag">Are you an artist?</a>
+            </br><button type="submit" class="btn-submit">Submit</button>
           </form> 
         </div>
       </div>

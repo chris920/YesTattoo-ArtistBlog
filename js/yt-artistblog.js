@@ -6,7 +6,6 @@ Parse.$ = jQuery;
 Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK");
 
 
-
 var App = new (Parse.View.extend({
 	Models: {},
 	Views: {},
@@ -65,22 +64,7 @@ var App = new (Parse.View.extend({
 		return App.profile;
 	},
 	typeaheadInitialize: function(){
-		var books =  ["Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology",
-		"Aztec","Baby","Back","Barcode","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold",
-		"Bright","Bubble","Buddha","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry",
-		"Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death",
-		"Demon","Detail","Devil","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Face","Fairy","Fantasy",
-		"Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti",
-		"Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian",
-		"Infinity","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard",
-		"Looney Toon","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Moari","Money","Monkey","Monsters",
-		"Moon","Mummy","Music","Name","Native American","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint",
-		"Panther","Passage","Patriotic","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian",
-		"Portrait","Purple","Quote","Rabbit","Rat","Realistic","Red","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius",
-		"Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Skull","Sleeve","Snake","Snakes","Sparrow","Spider",
-		"Spirals","Sports","Star","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Tattoo Events","Taurus","Tiger","Traditional","Transformers",
-		"Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink",
-		"Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
+		var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Rat","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Tattoo Events","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
 		///initial books local. needs to pull the user's books.
 		this.booktt = new Bloodhound({
 			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('books'),
@@ -95,6 +79,7 @@ var App = new (Parse.View.extend({
 	},
 	links: function(e){
 		e.preventDefault();
+		$(window).unbind();
 		if(typeof(e.target.attributes.href.value) !== undefined){
 			App.back = Parse.history.getFragment();
 			Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
@@ -240,51 +225,151 @@ App.Views.Nav = Parse.View.extend({
 App.Views.Search = Parse.View.extend({
 	id: 'search',
 	initialize: function(){
-		var that = this;
+		_.bindAll(this, 'focusIn', 'scrollToTop', 'scrollChecker', 'getTattoos', 'typeaheadInitialize', 'queryReset');
 
-		/// demo populate tattoos
-	  	var query = new Parse.Query('Tattoo');
-		query.include('artistProfile');
-		query.limit(1000);
-	  	query.descending('updatedAt');
-	  	query.find({
-	  		success: function(tats) {
-	  			that.tattoos = new App.Collections.Tattoos(tats);
-	  			var collection = new App.Views.Tattoos({collection: that.tattoos});
-	  			collection.render();
-	  		}
-	  	});
+		$(window).bind('scroll',this.scrollChecker);
 	},
 	template: _.template($("#searchTemplate").html()),
 	events: {
 
 	},
+	focusIn: function(){
+		var that = this;
+		this.$('.tt-input').focus();
+		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+		    this.$('.tt-input').blur().val(' ');
+		}
+		this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
+		this.scrollToTop();
+		return this;
+	},
+	scrollToTop: function(){
+		if (1 <= $(window).scrollTop()) {
+			$("html, body").animate({ scrollTop: 0 }, 200);
+		}
+	},
+	scrollChecker: function(){
+		var that = this;
+		if (20 <= $(window).scrollTop()) {
+			$('.tt-dropdown-menu').fadeOut( 450 );
+		} else {
+			$('.tt-dropdown-menu').fadeIn( 800 );
+		}
+		if (this.loadMore && $('#search').height()-280 <= $(window).scrollTop()) {
+			this.loadMore = false;
+			this.page++
+			this.getTattoos();
+		}
+	},
+	queryReset: function(){
+		this.tattoosCollection.reset();
+		this.booksQuery = [];
+		this.page = 0;
+		this.loadMore = true;
+		return this;
+	},
+	getTattoos: function(books){
+		var that = this;
+	  	var query = new Parse.Query('Tattoo');
+	  	if(this.booksQuery.length > 0) {
+	  		query.containsAll("books", this.booksQuery);
+	  	}
+		var skip = this.page * 40;
+		query.skip(skip);
+		query.limit(40);
+		query.include('artistProfile');
+	  	query.descending('updatedAt');
+	  	query.find({
+	  		success: function(tats) {
+	  			that.tattoosCollection.add(tats);
+	  			if (tats.length < 40 ) {
+	  				that.loadMore = false;
+	  			} else {
+					that.loadMore = true;
+/// show end.
+	  			}
+	  		},
+	  		error: function(error) {
+	  			console.log(error);
+	  			that.loadMore = true;
+	  		}
+	  	});
+	},
+
 	typeaheadInitialize: function(){
+		var that = this;
 		var input = this.$('input');
 		input.tagsinput({
 			tagClass: 'btn-tag',
 			trimValue: true,
 			maxChars: 20,
 			maxTags: 5,
+			confirmKeys: [13, 9, 39, 40, 188],
 			onTagExists: function(item, $tag) {
 				$tag.addClass('blured');
 				window.setTimeout(function(){$tag.removeClass('blured');}, 1000);
 			}
 		});
 		input.tagsinput('input').typeahead(null, {
+			hint: true,
 			name: 'books',
 			displayKey: 'books',
-			source: App.booktt.ttAdapter()
-		}).attr('placeholder','...').on('typeahead:selected', $.proxy(function (obj, datum) {
-			this.tagsinput('add', datum.books);
-			this.tagsinput('input').typeahead('val', '');
-		}), input);
+			source: App.booktt.ttAdapter(),
+			templates: {
+				empty: '<span>No tattoos with that book.</span>',
+				suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
+			}
+		}).attr('placeholder','Search').on('typeahead:selected', function (obj,datum) {
+			input.tagsinput('add', datum.books);
+			input.tagsinput('input').typeahead('val', '');
+		}).on('typeahead:opened', function(){
+			$('.globalBooks').hide();
+		}).on('typeahead:closed', function(){
+			if($('.tt-dropdown-menu').is(":hidden")){
+				$('.globalBooks').show();
+			}
+		}).on('focus', function () {
+			that.$('.tt-input').attr('placeholder','');
+		}).on('blur', function () {
+			if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+			    that.$('.tt-input').attr('placeholder','').val('');
+			} else {
+				that.$('.tt-input').attr('placeholder','Search').val('');
+			}
+		});
+
+		input.on('itemAdded', function(event) {
+			that.booksQuery = input.tagsinput('items');
+			that.queryReset().getTattoos();
+		}).on('itemRemoved', function(event){
+			that.booksQuery = input.tagsinput('items');
+			that.queryReset().getTattoos();
+		});
+
+		window.setTimeout(function(){
+			$('.bookSuggestion').on('click', function(e){
+				input.tagsinput('add', e.target.textContent);
+			});
+		}, 400);
+
+		//focus in on the add input on keypress
+		$(window).bind('keypress', this.focusIn);
+
+		this.focusIn();
 	},
 	render: function(){
 		var html = this.template();
 		$(this.el).html(html);
-		this.$('input').focus();
+
+		this.tattoosCollection = new App.Collections.Tattoos();
+		this.tattoosView = new App.Views.Tattoos({collection: this.tattoosCollection, el: this.$('.tattoos')});
+		this.tattoosView.render();
+
 		this.typeaheadInitialize();
+
+		this.queryReset();
+		this.getTattoos();
+
 		return this;
 	}
 });
@@ -427,7 +512,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 	  		success: function(tats) {
 	  			that.tattoos = new App.Collections.Tattoos(tats);
 	  			var tattoosView = new App.Views.Tattoos({collection: that.tattoos});
-	  			tattoosView.render();
+	  			tattoosView.render().renderBooks();
 	  		}
 	  	});
 	},
@@ -435,7 +520,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 	events: {
 		'click [href="#portfolioTab"]': 'portfolioTab',
 		'click [href="#aboutTab"]': 	'aboutTab',
-		'click [href="#shopTab"]': 		'shopTab',
+		'click [href="#shopTab"]': 		'shopTab'
 	},
 	portfolioTab: function(e){
 	    e.preventDefault();
@@ -461,8 +546,6 @@ App.Views.ArtistProfile = Parse.View.extend({
 		      offset: { top: $('.profHead').outerHeight(true) + 40 }
 		});
 	}, 1000),
-
-	//render map, using underscore _.debounce to delay the trigger because of hidden tab / responsive issue
 	renderMap: _.debounce(function() {
 	    var mapLocation = new google.maps.LatLng( this.model.attributes.location.latitude , this.model.attributes.location.longitude );
 	    var mapOptions = { zoom: 12, center: mapLocation, styles: App.mapStyles, scrollwheel: false, panControl: false, mapTypeControl: false };
@@ -477,18 +560,13 @@ App.Views.ArtistProfile = Parse.View.extend({
     }, 500),
 
 	centerMap: function() {
-		// for responsive, resizes maps to the center
 		var center = this.map.getCenter();
 		google.maps.event.trigger(this.map, "resize");
 		this.map.setCenter(center); 
 	},
 	render: function(){
-		// This is a artists object of the attributes of the models.
 		var attributes = this.model.attributes
-
-	  	// Pass this object onto the template function, returns an HTML string. Then use jQuerry to insert the html
 		this.$el.html(this.template(attributes));
-
 		return this;
 	}
 });
@@ -513,6 +591,15 @@ App.Views.TattooProfile = Backbone.Modal.extend({
      	'click .save': 			'saveBooks',
      	'click .clear': 		'clearBooks',
      	'click .remove': 		'removeAdd'
+	},
+	focusIn: function(){
+		var that = this;
+		that.$('.tt-input').focus();
+		if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+		    that.$('.tt-input').blur().val(' ');
+		}
+		that.$('.tt-input').val(that.$('input.tt-input:last').val().toProperCase());
+		return this;
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
@@ -554,7 +641,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 			this.$('.otherBooks').fadeIn( 1000 );
 			var that = this;
 			_.defer(function(){ 
-				if($('.otherBooks span').children().length >= Math.min(that.booksByCount.length,15)){
+				if($('.otherBooks span').children().length >= Math.min(that.booksByCount.length,10)){
 					that.$('.more').attr('disabled', 'disabled').fadeOut(300);
 				}
 			});
@@ -673,7 +760,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 			}
 		}, 400);
 		//focus in on the add input on keypress
-		$(document.body).bind('keypress', this.focusIn);
+		$(window).bind('keypress', this.focusIn);
 	},
 	saveBooks: function() {
 		$('.save').attr('disabled', 'disabled');
@@ -694,20 +781,11 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		});
 		return this;
 	},
-	focusIn: function(){
-		var that = this;
-		that.$('.tt-input').focus();
-		if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
-		    that.$('.tt-input').blur().val(' ');
-		}
-		that.$('.tt-input').val(that.$('input.tt-input:last').val().toProperCase());
-		return this;
-	},
 	beforeCancel: function(){
 		Parse.history.navigate(App.back, {trigger: false});
 		$("body").css("overflow", "auto");
 		this.$('booksInput').tagsinput('destroy');
-		$(document.body).unbind('keypress', this.focusIn);
+		$(window).unbind('keypress', this.focusIn);
 		this.unbind();
 	}
 });
@@ -723,7 +801,7 @@ App.Views.Tattoos = Parse.View.extend({
 		this.bookFilters = [];
 
 	},
-	bindAdds: function(){
+	bindAddsToProfile: function(){
 		App.Collections.adds.on('remove', function(add) {
 			var removedId = add.get('tattooId');
 			this.collection.remove(removedId);
@@ -751,28 +829,33 @@ App.Views.Tattoos = Parse.View.extend({
 		$('.bookFilter').removeClass('active');
 		this.renderTattoos();
 	},
-	renderBooks: function(count){
-		$(this.el).before('<div class="tagFilters" data-toggle="buttons"><span class="flaticon-book104"></span></div>');
+	renderBooks: function(count){	
+		var booksByCount = this.collection.byCount(count || 5);
+		if (booksByCount.length > 0){
+			console.log(booksByCount.length);
+			$(this.el).before('<div class="tagFilters" data-toggle="buttons"><span class="flaticon-book104"></span></div>');
 
-		_.each(this.collection.byCount(count || 5), function(book) {
-			$('.tagFilters').append(_.template('<button type="button" class="btn-tag bookFilter">'+ book +'</button>'));
-		}, this);
+			_.each(booksByCount, function(book) {
+				$('.tagFilters').append(_.template('<button type="button" class="btn-tag bookFilter">'+ book +'</button>'));
+			}, this);
 
-		var that = this;
-		$('.bookFilter').on('click', function(e){ 
-			if($(e.target).hasClass('active')){
-				that.removeBookFilter(e.target.textContent);
-				$(e.target).removeClass('active');
+			var that = this;
+			$('.bookFilter').on('click', function(e){ 
+				if($(e.target).hasClass('active')){
+					that.removeBookFilter(e.target.textContent);
+					$(e.target).removeClass('active');
+				} else {
+					that.addBookFilter(e.target.textContent);
+					$(e.target).addClass('active');
+				}
+			});
+
+			if(!count){
+				$('.tagFilters').append(_.template('<a class="more">More</a>'));			
+				$('.more').on('click', this.renderMoreBooks);
 			} else {
-				that.addBookFilter(e.target.textContent);
-				$(e.target).addClass('active');
+				this.resetFilters();
 			}
-		});
-
-		if(!count){
-			$('.tagFilters').append(_.template('<h5 class="more"><a>More</a></h5>'));			
-			$('.more').on('click', this.renderMoreBooks);
-			this.resetFilters();
 		}
 		return this;
 	},
@@ -783,10 +866,9 @@ App.Views.Tattoos = Parse.View.extend({
 	},
     render: function () {
       this.renderTattoos();
-      this.renderBooks();
       return this;
     },
-	renderTattoos: function(e){
+	renderTattoos: function(e){	
     	this.$el.empty();
     	this.collection.forEach(this.renderTattoo, this);
 	},
@@ -925,7 +1007,6 @@ App.Views.MyTattoo = Parse.View.extend({
 
 App.Views.EditTattoo = Backbone.Modal.extend({
 	id: 'edit',
-	// className: 'edit',
 	template: _.template($("#editTattooTemplate").html()),
 	cancelEl: '.x, .cancel',
     initialize: function() {
@@ -1460,11 +1541,11 @@ App.Views.Join = Parse.View.extend({
 	toggleArtist: function() {
     	if($(".artistForm").is(':hidden')){
 			$('.artistForm').fadeIn();
-			$('.toggleArtist').text("Actually, not an artist...");
+			$('.toggleArtist').text("Actually, not an artist...").removeClass('btn-tag');
 			$('#inputRole').val('artist');
     	} else if ($(".artistForm").is(':visible')) {
 			$('.artistForm').fadeOut();
-			$('.toggleArtist').text("Artist or shop?");
+			$('.toggleArtist').text("Artist?").addClass('btn-tag');
 			$('#inputRole').val('user');
     	};
     },
@@ -1629,7 +1710,7 @@ App.Collections.Adds = Parse.Collection.extend({
 
 	},
 	byCount: function(count){
-		this.popularBooks = this.pluck('books').byCount().slice(0, count || 10);
+		this.popularBooks = _.flatten(this.pluck('books')).byCount().slice(0, count || 10);
 		return this.popularBooks;
 	},
 	getTattoo: function(tattooId){
@@ -1729,7 +1810,6 @@ App.Router = Parse.Router.extend({
 	},
 	showUserProfile: function(uname){
 
-
 		// define the parse query to get the user from the router
 		var query = new Parse.Query(App.Models.UserProfile);
 		query.equalTo("username", uname);
@@ -1752,7 +1832,7 @@ App.Router = Parse.Router.extend({
 			  			tattoos = _.map(adds, function(add){ return add.attributes.tattoo; });
 			  			var userTattoos = new App.Collections.Tattoos(tattoos);
 			  			var userAdds = new App.Views.Tattoos({collection: userTattoos, el: '.adds'});
-			  			userAdds.render();
+			  			userAdds.render().renderBooks();
 			  		}
 			  	});
 
@@ -1763,10 +1843,9 @@ App.Router = Parse.Router.extend({
 			  		success: function(tats) {
 			  			var tattoos = new App.Collections.Tattoos(tats);
 			  			var collection = new App.Views.Tattoos({collection: tattoos});
-			  			collection.render();
+			  			collection.render().renderBooks();
 			  		}
 			  	});
-
 			} 
 
 		}, function(error) {
@@ -1810,7 +1889,7 @@ App.Router = Parse.Router.extend({
 			});
   			var userAddedTattoos = new App.Collections.Tattoos(tattoos);
   			var userAdds = new App.Views.Tattoos({collection: userAddedTattoos, el: '.adds'});
-  			userAdds.render().bindAdds();
+  			userAdds.render().bindAddsToProfile();
 		} else {
 			var myProfile = new App.Views.ArtistProfile({model: App.profile});
 			$('#app').html(myProfile.render().el);
