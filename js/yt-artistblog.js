@@ -6,6 +6,7 @@ Parse.$ = jQuery;
 Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK");
 
 
+
 var App = new (Parse.View.extend({
 	Models: {},
 	Views: {},
@@ -227,11 +228,19 @@ App.Views.Search = Parse.View.extend({
 	initialize: function(){
 		_.bindAll(this, 'focusIn', 'scrollToTop', 'scrollChecker', 'getTattoos', 'typeaheadInitialize', 'queryReset');
 
-		$(window).bind('scroll',this.scrollChecker);
+		this.bindSearch();
 	},
 	template: _.template($("#searchTemplate").html()),
 	events: {
 
+	},
+	bindSearch: function(){
+		$(window).bind('scroll',this.scrollChecker);
+		$(window).bind('keypress', this.focusIn);
+	},
+	unbindSearch: function(){
+		$(window).unbind('scroll',this.scrollChecker);
+		$(window).unbind('keypress', this.focusIn);
 	},
 	focusIn: function(){
 		var that = this;
@@ -239,6 +248,7 @@ App.Views.Search = Parse.View.extend({
 		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
 		    this.$('.tt-input').blur().val(' ');
 		}
+
 		this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
 		this.scrollToTop();
 		return this;
@@ -251,9 +261,9 @@ App.Views.Search = Parse.View.extend({
 	scrollChecker: function(){
 		var that = this;
 		if (20 <= $(window).scrollTop()) {
-			$('.tt-dropdown-menu').fadeOut( 450 );
+			$('.tt-dropdown-menu, .globalBooks').fadeOut( 450 );
 		} else {
-			$('.tt-dropdown-menu').fadeIn( 800 );
+			$('.tt-dropdown-menu, .globalBooks').fadeIn( 800 );
 		}
 		if (this.loadMore && $('#search').height()-280 <= $(window).scrollTop()) {
 			this.loadMore = false;
@@ -311,7 +321,6 @@ App.Views.Search = Parse.View.extend({
 			}
 		});
 		input.tagsinput('input').typeahead(null, {
-			hint: true,
 			name: 'books',
 			displayKey: 'books',
 			source: App.booktt.ttAdapter(),
@@ -339,11 +348,13 @@ App.Views.Search = Parse.View.extend({
 		});
 
 		input.on('itemAdded', function(event) {
+			that.queryReset()
 			that.booksQuery = input.tagsinput('items');
-			that.queryReset().getTattoos();
+			that.getTattoos();
 		}).on('itemRemoved', function(event){
+			that.queryReset()
 			that.booksQuery = input.tagsinput('items');
-			that.queryReset().getTattoos();
+			that.getTattoos();
 		});
 
 		window.setTimeout(function(){
@@ -351,9 +362,6 @@ App.Views.Search = Parse.View.extend({
 				input.tagsinput('add', e.target.textContent);
 			});
 		}, 400);
-
-		//focus in on the add input on keypress
-		$(window).bind('keypress', this.focusIn);
 
 		this.focusIn();
 	},
@@ -456,6 +464,7 @@ App.Views.Login = Backbone.Modal.extend({
 	className: 'login',
 	initialize: function(){
 		Parse.history.navigate('login', {trigger: false});
+		if(App.search){App.search.unbindSearch()};
 	},
 	template: _.template($("#loginTemplate").html()),
 	cancelEl: '.x',
@@ -496,6 +505,7 @@ App.Views.Login = Backbone.Modal.extend({
 	cancel: function(){
 		$("body").css("overflow", "auto");
 		Parse.history.navigate(App.back, {trigger: false});
+		if(App.search){App.search.bindSearch()};
 	}
 });
 
@@ -574,12 +584,13 @@ App.Views.ArtistProfile = Parse.View.extend({
 App.Views.TattooProfile = Backbone.Modal.extend({
 	className: 'tattooProfile',
 	initialize: function(){
-		App.tatprof = this;
 		Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
 		_.bindAll(this, 'focusIn');
 
 		this.model.on('add:created', this.showYourBooks, this);
 		this.model.on('add:removed', this.showAddButton, this);
+
+		if(App.search){App.search.unbindSearch()};
 	},
 	template: _.template($("#tattooProfileTemplate").html()),
 	cancelEl: '.x',
@@ -593,12 +604,11 @@ App.Views.TattooProfile = Backbone.Modal.extend({
      	'click .remove': 		'removeAdd'
 	},
 	focusIn: function(){
-		var that = this;
-		that.$('.tt-input').focus();
-		if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
-		    that.$('.tt-input').blur().val(' ');
+		this.$('.tt-input').focus();
+		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+		    this.$('.tt-input').blur().val(' ');
 		}
-		that.$('.tt-input').val(that.$('input.tt-input:last').val().toProperCase());
+		this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
 		return this;
 	},
 	onRender: function(){
@@ -772,7 +782,6 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 				$('.save').html('Saved!!!').fadeOut( 1200, function(){
 					$('.save').removeAttr("disabled").html('Save');
 				});
-				that.newBooks = [];
 			},
 			error: function(error) {
 				$('.save').removeAttr("disabled");
@@ -783,6 +792,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	},
 	beforeCancel: function(){
 		Parse.history.navigate(App.back, {trigger: false});
+		if(App.search){App.search.bindSearch()};
 		$("body").css("overflow", "auto");
 		this.$('booksInput').tagsinput('destroy');
 		$(window).unbind('keypress', this.focusIn);
@@ -832,7 +842,6 @@ App.Views.Tattoos = Parse.View.extend({
 	renderBooks: function(count){	
 		var booksByCount = this.collection.byCount(count || 5);
 		if (booksByCount.length > 0){
-			console.log(booksByCount.length);
 			$(this.el).before('<div class="tagFilters" data-toggle="buttons"><span class="flaticon-book104"></span></div>');
 
 			_.each(booksByCount, function(book) {
@@ -882,7 +891,6 @@ App.Views.Tattoos = Parse.View.extend({
     	_.each(this.collection.byBook(books), function(tat){ this.renderTattoo(tat)}, this);
 
     	if (this.collection.byBook(books).length < 1){
-    		//// need to make the retro badge with the empty sign and link to reset all filters
     		$('.tattoos').html('<h5 class="text-center">No tattoos with those books. <a class="reset">Reset books?</a></h5>');
     		$('.reset').on('click', this.resetFilters);
     	}
@@ -924,7 +932,6 @@ App.Views.Tattoo = Parse.View.extend({
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		} else {
 			this.$('button').addClass('add:active').html('<span class="flaticon-book104"></span>Collected!!!');
-			//opens the tattoo profile, returns the profile then calls the add function on the profile.
 			this.open().createAdd();
 			this.showEdit();
 		}
@@ -943,7 +950,6 @@ App.Views.Tattoo = Parse.View.extend({
 	render: function(){
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
-		//checks if the user has added the tattoo
 		if (Parse.User.current() && $.inArray(this.model.id, App.Collections.adds.pluck('tattooId')) > -1) {
 			this.showEdit();
 		}
@@ -1074,7 +1080,7 @@ App.Views.Landing = Parse.View.extend({
 			that.totalArtists = count;
 		});
 
-		_.bindAll(this, 'removeLanding','loadArtist');
+		_.bindAll(this, 'removeLanding','loadArtist', 'continue');
 	    $(window).bind('scroll',this.removeLanding);
 	},
     events: {
@@ -1110,7 +1116,6 @@ App.Views.Landing = Parse.View.extend({
 	},
 	showNextArtist: function(){
 		var that = this;
-		//// animate down to give a sinking effect.
 		this.$('.landingTattooContainer:hidden:first').delay( 600 ).fadeIn( { 
 			duration: 800,
 			start: function() {
@@ -1131,7 +1136,6 @@ App.Views.Landing = Parse.View.extend({
 		
 	},
 	loadArtist: function(){
-		// initial total value
 		this.totalArtists = 50;
 		var that = this;
 		var query = new Parse.Query(App.Models.ArtistProfile);
@@ -1164,7 +1168,10 @@ App.Views.Landing = Parse.View.extend({
 	continue:function(){
 		//scrolls downward. 
 		$('#app').fadeOut( 300 ).fadeIn( 900 );
-		$("html, body").animate({ scrollTop: $(window).height()+101 }, 600);
+		var that = this;
+		$("html, body").animate({ scrollTop: $(window).height()+101 }, 600, function() {
+			that.removeLanding();
+		});
 	},
 	render: function(){
 		$(this.el).append(this.landingTemplate());
@@ -1240,6 +1247,10 @@ App.Views.FeaturedArtists = Parse.View.extend({
 		  success: function(artists) {
 		  	that.collection.add(artists);
 		  	$('.featuredArtist:lt(3)').fadeIn();
+
+		  	if (artists.length < 7) {
+				that.loadTemplate = _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>That is all the aritsts for now.</h5></div>');
+		  	}
 		  	that.renderLoad();
 		  },
 		  error: function(message){
@@ -1249,15 +1260,8 @@ App.Views.FeaturedArtists = Parse.View.extend({
 		var p = (this.collection.page) ? '/p' + this.collection.page : '';
 		Parse.history.navigate('featured'+p, {trigger: false});
     },
-    renderLoad: function(e) {
+    renderLoad: function() {
     	this.collection.page++
-
-    	/// H ~ checks if there are no more artists. What is the better way to do this?
-	  // 	if (this.collection.models.pop().id === 'hQUgHBN38S') {
-	  // 		$('#more').remove();
-			// this.loadTemplate = _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>See you tomorrow</h5></div>');
-	  // 	}
-
 		this.$el.append(this.loadTemplate({page: this.collection.page}));
     },
     addAll: function(){
@@ -1265,11 +1269,9 @@ App.Views.FeaturedArtists = Parse.View.extend({
     	this.addMore();
 	},
     addMore: function(){
-		// Renders all the featured artists in collection
     	this.collection.forEach(this.addOne);
 	},
 	addOne: function(artist){
-		//renders an additional featured artist
 		var featuredArtist = new App.Views.FeaturedArtist({model: artist});
 		$('#featuredArtists').append(featuredArtist.render().el);
 	}
@@ -1372,7 +1374,6 @@ App.Views.Settings = Parse.View.extend({
     	this.profile.set("twitter", this.$("#editTwitter").val());
 		this.profile.save(null,{
 			success: function(user) {
-				// flash the success class
 				$(".profileForm").each(function(){
 				    $(".input-group").addClass("has-success").fadeIn("slow");
 				    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
@@ -1404,7 +1405,6 @@ App.Views.Settings = Parse.View.extend({
 			var file = new Parse.File(name, upload);
 			this.profile.set("prof", file);
 			this.profile.save().then(function (profile) {
-				/// update the profile thubmnail.
 				var file = profile.get("profThumb");
 				$(".prof")[0].src = file.url();
 				$("#profUpload").removeAttr("disabled");
@@ -1637,7 +1637,6 @@ App.Views.Upload = Backbone.Modal.extend({
 				return tattoo.save();
 			}).then(function (tattoo) {
 				App.myTattoos.add(tattoo);
-				// adds the tattoo to the user's profile
 				var tattoos = App.profile.relation("tattoos");
 				tattoos.add(tattoo);
 				return App.profile.save();
@@ -1753,8 +1752,8 @@ App.Router = Parse.Router.extend({
 	},
 	search: function(){
 		// query = decodeURIComponent(query)
-		var search = new App.Views.Search();
-		$('#app').html(search.render().el);
+		App.search = new App.Views.Search();
+		$('#app').html(App.search.render().el);
 
 	},
 	landing: function(){
