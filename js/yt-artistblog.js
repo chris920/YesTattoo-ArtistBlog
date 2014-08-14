@@ -234,78 +234,6 @@ App.Views.Search = Parse.View.extend({
 	events: {
 
 	},
-	bindSearch: function(){
-		$(window).bind('scroll',this.scrollChecker);
-		$(window).bind('keypress', this.focusIn);
-	},
-	unbindSearch: function(){
-		$(window).unbind('scroll',this.scrollChecker);
-		$(window).unbind('keypress', this.focusIn);
-	},
-	focusIn: function(){
-		var that = this;
-		this.$('.tt-input').focus();
-		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
-		    this.$('.tt-input').blur().val(' ');
-		}
-
-		this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
-		this.scrollToTop();
-		return this;
-	},
-	scrollToTop: function(){
-		if (1 <= $(window).scrollTop()) {
-			$("html, body").animate({ scrollTop: 0 }, 200);
-		}
-	},
-	scrollChecker: function(){
-		var that = this;
-		if (20 <= $(window).scrollTop()) {
-			$('.tt-dropdown-menu, .globalBooks').fadeOut( 450 );
-		} else {
-			$('.tt-dropdown-menu, .globalBooks').fadeIn( 800 );
-		}
-		if (this.loadMore && $('#search').height()-280 <= $(window).scrollTop()) {
-			this.loadMore = false;
-			this.page++
-			this.getTattoos();
-		}
-	},
-	queryReset: function(){
-		this.tattoosCollection.reset();
-		this.booksQuery = [];
-		this.page = 0;
-		this.loadMore = true;
-		return this;
-	},
-	getTattoos: function(books){
-		var that = this;
-	  	var query = new Parse.Query('Tattoo');
-	  	if(this.booksQuery.length > 0) {
-	  		query.containsAll("books", this.booksQuery);
-	  	}
-		var skip = this.page * 40;
-		query.skip(skip);
-		query.limit(40);
-		query.include('artistProfile');
-	  	query.descending('updatedAt');
-	  	query.find({
-	  		success: function(tats) {
-	  			that.tattoosCollection.add(tats);
-	  			if (tats.length < 40 ) {
-	  				that.loadMore = false;
-	  			} else {
-					that.loadMore = true;
-/// show end.
-	  			}
-	  		},
-	  		error: function(error) {
-	  			console.log(error);
-	  			that.loadMore = true;
-	  		}
-	  	});
-	},
-
 	typeaheadInitialize: function(){
 		var that = this;
 		var input = this.$('input');
@@ -325,7 +253,7 @@ App.Views.Search = Parse.View.extend({
 			displayKey: 'books',
 			source: App.booktt.ttAdapter(),
 			templates: {
-				empty: '<span>No tattoos with that book.</span>',
+				// empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
 				suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
 			}
 		}).attr('placeholder','Search').on('typeahead:selected', function (obj,datum) {
@@ -365,6 +293,76 @@ App.Views.Search = Parse.View.extend({
 
 		this.focusIn();
 	},
+	bindSearch: function(){
+		$(document).bind('scroll',this.scrollChecker);
+		$(document).bind('keypress', this.focusIn);
+	},
+	unbindSearch: function(){
+		$(document).unbind('scroll',this.scrollChecker);
+		$(document).unbind('keypress', this.focusIn);
+	},
+	focusIn: function(){
+		var that = this;
+		this.$('.tt-input').focus();
+		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+		    this.$('.tt-input').blur().val(' ');
+		}
+
+		this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
+		this.scrollToTop();
+		return this;
+	},
+	scrollToTop: function(){
+		if (1 <= $(window).scrollTop()) {
+			$("html, body").animate({ scrollTop: 0 }, 200);
+		}
+	},
+	scrollChecker: function(){
+		if (20 <= $(window).scrollTop()) {
+			$('.tt-dropdown-menu, .globalBooks').fadeOut( 450 );
+		} else {
+			$('.tt-dropdown-menu, .globalBooks').fadeIn( 800 );
+		}
+		if (this.loadMore && $('#search').height()-$(window).height() <= $(window).scrollTop()) {
+			this.loadMore = false;
+			this.page++
+			this.getTattoos();
+		}
+	},
+	queryReset: function(){
+		this.tattoosCollection.reset();
+		this.booksQuery = [];
+		this.page = 0;
+		this.loadMore = true;
+		return this;
+	},
+	getTattoos: function(){
+		var that = this;
+	  	var query = new Parse.Query('Tattoo');
+	  	if(this.booksQuery.length > 0) {
+	  		query.containsAll("books", this.booksQuery);
+	  	}
+		var skip = this.page * 40;
+		query.skip(skip);
+		query.limit(40);
+		query.include('artistProfile');
+	  	query.descending('updatedAt');
+	  	query.find({
+	  		success: function(tats) {
+	  			that.tattoosCollection.add(tats);
+	  			if (tats.length < 40 ) {
+	  				that.loadMore = false;
+	  			} else {
+					that.loadMore = true;
+/// show end.
+	  			}
+	  		},
+	  		error: function(error) {
+	  			console.log(error);
+	  			that.loadMore = true;
+	  		}
+	  	});
+	},
 	render: function(){
 		var html = this.template();
 		$(this.el).html(html);
@@ -386,11 +384,154 @@ App.Views.ArtistsPage = Parse.View.extend({
 	id: 'artistsPage',
 	template: _.template($("#artistsTemplate").html()),
 	initialize: function(){
+		_.bindAll(this, 'scrollChecker', 'initializeLocationPicker', 'queryReset');
 
+		this.bindArtists();
+
+	},
+	events: {
+	    'click .changeLocationButton': 	'showChangeLocation',
+	    'click .byYou': 				'byYou',
+	    'click .worldwide': 			'resetLocationPicker',
+	    'click .cancel': 				'hideChangeLocation',
+	    'focus #changeAddressInput': 	'initializeLocationPicker'
+	},
+
+	bindArtists: function(){
+		$(document).bind('scroll',this.scrollChecker);
+		// $(document).bind('keypress', this.focusIn);
+	},
+	unbindArtists: function(){
+		$(document).unbind('scroll',this.scrollChecker);
+		// $(document).unbind('keypress', this.focusIn);
+	},
+	scrollChecker: function(){
+		if (this.loadMore && $('#artistsPage').height()-$(window).height() <= $(window).scrollTop()) {
+			this.loadMore = false;
+			this.artistsCollection.page++
+			this.getArtists();
+		}
+	},
+	initializeLocationPicker: function(){
+		var that = this;
+		if (!this.locationPickerCreated) {
+			if(Parse.User.current()) {
+				var initialLocation = {latitude: App.profile.attributes.location.latitude, longitude: App.profile.attributes.location.longitude};
+			} else {
+				var initialLocation = {latitude: 34.0500, longitude: -118.2500};
+			}
+
+			$('#changeAddressMap').locationpicker({
+				location: initialLocation,
+				radius: 0,
+				zoom: 8,
+				// controls: false,
+				styles: App.mapStyles,
+				enableAutocomplete: true,
+				enableReverseGeocode: true,
+				inputBinding: {
+					locationNameInput: $('#changeAddressInput')
+				},
+				onchanged: function(currentLocation, currentLocationNameFormatted) {
+					that.queryReset();
+			    	that.locationQuery = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
+			    	that.getArtists();
+			    	
+			    	that.$('.changeLocationButton').html(currentLocationNameFormatted);
+			    	that.hideChangeLocation( 1200 );
+
+				},
+				onlocationnotfound: function(locationName) {
+					$("#changeAddressInput ~ .error").html("Couldn't find "+locationName+", Try another address?").show();				
+				},
+				oninitialized: function(component){
+					that.$('#changeAddressInput').val('');
+				}
+			});
+			this.locationPickerCreated = true;
+		}
+	},
+	showChangeLocation: function(){
+		this.$('#changeAddressMap').height($( window ).height()-100);
+		this.$('.changeLocation').slideDown();
+		this.$('.changeLocationButton').addClass('active');
+		if(Parse.User.current()){
+			this.$('.byYou').html(App.profile.attributes.locationName.split(",").splice(0,1).join("")).fadeIn();
+		}
+	    $('html, body').animate({
+	        scrollTop: this.$('#changeAddressMap').offset().top-100
+	    }, 1000);
+		// this.initializeLocationPicker();
+	},
+	byYou: function(){
+		this.$('.byYou').attr('disabled', 'disabled');
+		this.queryReset().hideChangeLocation( 1200 );
+		this.locationQuery = App.profile.get('location');
+		this.getArtists();
+	},
+	resetLocationPicker: function(){
+		this.$('.worldwide').attr('disabled', 'disabled');
+		$('#changeAddressMap').html('');
+		this.locationPickerCreated = false;
+		this.queryReset().getArtists();
+		this.hideChangeLocation( 1200 );
+	},
+	hideChangeLocation: function( delay ){
+		var that = this;
+		window.setTimeout(function(){
+			that.$('.changeLocation').animate({ height: 'toggle', opacity: 'toggle' }, 'slow', function(){
+				that.$('.input-group-btn > button').removeAttr('disabled');
+			});
+			that.$('.changeLocationButton').removeClass('active');
+		}, delay || 0);
+
+		return this;
+	},
+	queryReset: function(){
+		this.artistsCollection.reset();
+		this.artistsCollection.page = 0;
+		this.locationQuery = undefined;
+		this.loadMore = true;
+///destroy location picker
+		return this;
+	},
+	getArtists: function(){
+		var that = this;
+		var query = new Parse.Query('ArtistProfile');
+	  	if(this.locationQuery) {
+	  		query.near("location", this.locationQuery);
+	  	} else {
+	  		query.descending('createdAt');
+	  	}
+
+		var skip = 	this.artistsCollection.page * 25;
+		query.skip(skip);
+		query.limit(25);
+	  	query.find({
+	  		success: function(artists) {
+	  			that.artistsCollection.add(artists);
+	  			if (artists.length < 25 ) {
+	  				that.loadMore = false;
+	  			} else {
+					that.loadMore = true;
+	  			}
+	  		},
+	  		error: function(error) {
+	  			console.log(error);
+	  			that.loadMore = true;
+	  		}
+	  	});
 	},
 	render: function(){
 		var html = this.template();
 		$(this.el).html(html);
+
+		this.artistsCollection = new App.Collections.Artists();
+		this.artistsView = new App.Views.Artists({collection: this.artistsCollection, el: this.$('.artists')});
+		this.artistsView.render();
+
+		this.queryReset().getArtists();
+
 		return this;
 	}
 });
@@ -403,16 +544,6 @@ App.Views.Artists = Parse.View.extend({
 		this.collection.on('add', this.renderArtist, this);
 		this.collection.on('reset', this.render, this);
 
-		this.load();
-
-	},
-	load: function(){
-		var that = this;
-		var query = new Parse.Query('ArtistProfile');
-		query.descending('createdAt');
-		query.find().then(function(artists){
-			that.collection.add(artists);
-		});
 	},
     render: function () {
 		this.renderArtists();
@@ -912,7 +1043,8 @@ App.Views.Tattoo = Parse.View.extend({
      	'click .edit': 					'edit'
     },
     open: function(){
-    	App.back = Parse.history.getFragment();
+    	// e.stopPropagation();
+    	App.back = Parse.history.getFragment() || '';
     	var profile = new App.Views.TattooProfile({model: this.model});
 		$('.modalayheehoo').html(profile.render().el);
 		return profile;
@@ -1039,11 +1171,13 @@ App.Views.UserProfile = Parse.View.extend({
 	id: 'userProfile',
 	initialize: function() {
 		this.activateAffix();
+
 	},
-	template: _.template($("#userTemplate").html()),
+	template: _.template($("#userProfileTemplate").html()),
 	events: {
 		'click [href="#addsTab"]': 'addsTab',
-		'click [href="#tattoosTab"]': 'tattoosTab'
+		'click [href="#tattoosTab"]': 'tattoosTab',
+		'click [href="#artistsTab"]': 'artistsTab'
 	},
 	addsTab: function(e){
 	    e.preventDefault();
@@ -1053,14 +1187,54 @@ App.Views.UserProfile = Parse.View.extend({
 	    e.preventDefault();
 	    $(this).tab('show');
 	},
+	artistsTab: function(e){
+		e.preventDefault();
+
+	},
 	activateAffix: _.debounce(function(){
 		$('.profNavContainer').affix({
 		      offset: { top: $('#userProfile > div.container').outerHeight(true) + 40 }
 		});
 	}, 1000),
+	getAdds: function() {
+		var that = this;
+	  	var addsQuery = new Parse.Query(App.Models.Add);
+	  	addsQuery.descending("createdAt");
+	  	addsQuery.equalTo('user', this.model.attributes.user);
+	  	addsQuery.include('tattoo');
+	  	addsQuery.include('artistProfile');
+	  	addsQuery.find({
+	  		success: function(adds) {
+	  			that.addsCollection = new App.Collections.Adds(adds);
+	  			that.tattoosCollection = new App.Collections.Tattoos(that.addsCollection.getTattoos());
+	  			var userAdds = new App.Views.Tattoos({collection: that.tattoosCollection, el: '.adds'});
+	  			userAdds.render().renderBooks();
+
+				that.artistsCollection = new App.Collections.Artists(that.addsCollection.getArtists());
+				that.artistsView = new App.Views.Artists({collection: that.artistsCollection, el: this.$('.artists')});
+				that.artistsView.render();
+	  		}
+	  	});
+
+	},
+	getTattoos: function() {
+	  	var tattoos = this.model.relation('tattoos');
+	  	var uploadsQuery = tattoos.query();
+	  	uploadsQuery.descending("createdAt");
+	  	uploadsQuery.find({
+	  		success: function(tats) {
+	  			var tattoos = new App.Collections.Tattoos(tats);
+	  			var collection = new App.Views.Tattoos({collection: tattoos});
+	  			collection.render().renderBooks();
+	  		}
+	  	});
+	},
 	render: function(){
 		var attributes = this.model.attributes
 		this.$el.html(this.template(attributes));
+
+		this.getAdds();
+
 		return this;
 	}
 });
@@ -1203,7 +1377,7 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
 
 App.Views.FeaturedArtists = Parse.View.extend({
 	el: '#featuredArtists',
-	loadTemplate: _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>See you tomorrow</h5><br><button type="button" id="more" class="btn-lg">More Artists</button></div>'),
+	loadTemplate: _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><br><br><button type="button" id="more" class="btn-lg">More Artists</button></div>'),
     initialize: function () {
     	this.load();
     	this.collection.on('reset', this.render, this);
@@ -1247,9 +1421,8 @@ App.Views.FeaturedArtists = Parse.View.extend({
 		  success: function(artists) {
 		  	that.collection.add(artists);
 		  	$('.featuredArtist:lt(3)').fadeIn();
-
 		  	if (artists.length < 7) {
-				that.loadTemplate = _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>That is all the aritsts for now.</h5></div>');
+				that.loadTemplate = _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><h5>That is all the aritsts for now. See you tomorrow!</h5></div>');
 		  	}
 		  	that.renderLoad();
 		  },
@@ -1335,7 +1508,7 @@ App.Views.Settings = Parse.View.extend({
     	"change #profUpload": 				"updateProf",
     	"dblclick #profileSettings": 		"interview",
     	"click li": 						"scrollTo",
-    	"click [href='/tattoo/new']": 		"upload"
+    	"click [href='/myprofile/upload']":	"upload"
     },
     saveInfo: function(e){
     	e.preventDefault();
@@ -1431,7 +1604,7 @@ App.Views.Settings = Parse.View.extend({
     },
     upload: function(e){
     	e.preventDefault();
-    	Parse.history.navigate('/tattoo/new', {trigger: true});
+    	Parse.history.navigate('/myprofile/upload', {trigger: true});
     },
 	render: function(){
 		this.$el.html(this.template(this.profile.attributes));
@@ -1625,7 +1798,6 @@ App.Views.Upload = Backbone.Modal.extend({
 				var tattoo = new App.Models.Tattoo();
 				tattoo.set("file", file);
 				tattoo.set("uploader", Parse.User.current());
-
 				if (Parse.User.current().attributes.role === 'user') {
 			        tattoo.set("artistName", this.$("#editArtistName").val());
 			        tattoo.set("artistEmail", this.$("#editArtistEmail").val());
@@ -1643,7 +1815,10 @@ App.Views.Upload = Backbone.Modal.extend({
 			}).then(function() {
 				that.triggerCancel();
 			}, function(error) {
+				alert(error);
+				alert(error.message);
 				console.log(error);
+
 				$("#upload .error").html(error.message).show();
 				$("#upload button").removeAttr("disabled");
 			});
@@ -1714,6 +1889,14 @@ App.Collections.Adds = Parse.Collection.extend({
 	},
 	getTattoo: function(tattooId){
 		return this.filter(function(add){ return add.get('tattooId') === tattooId; });
+	},
+	getTattoos: function(){
+		this.tattoos = _.map(this.models, function(add){ return add.attributes.tattoo; });
+		return this.tattoos;
+	},
+	getArtists: function(){
+		this.artists = _.uniq( _.map( this.models, function(add){ return add.attributes.artistProfile; }), function(artist){return JSON.stringify(artist)});
+		return this.artists;
 	}
 });
 
@@ -1819,32 +2002,6 @@ App.Router = Parse.Router.extend({
 			} else {
 				var userProfile = new App.Views.UserProfile({model: profile});
 				$('#app').html(userProfile.render().el);
-
-			  	var addsQuery = new Parse.Query(App.Models.Add);
-			  	addsQuery.descending("createdAt");
-			  	addsQuery.equalTo('user', profile.attributes.user);
-			  	addsQuery.select("tattoo");
-			  	addsQuery.include('tattoo');
-			  	addsQuery.include('tattoo.artistProfile');
-			  	addsQuery.find({
-			  		success: function(adds) {
-			  			tattoos = _.map(adds, function(add){ return add.attributes.tattoo; });
-			  			var userTattoos = new App.Collections.Tattoos(tattoos);
-			  			var userAdds = new App.Views.Tattoos({collection: userTattoos, el: '.adds'});
-			  			userAdds.render().renderBooks();
-			  		}
-			  	});
-
-			  	var tattoos = profile.relation('tattoos');
-			  	var uploadsQuery = tattoos.query();
-			  	uploadsQuery.descending("createdAt");
-			  	uploadsQuery.find({
-			  		success: function(tats) {
-			  			var tattoos = new App.Collections.Tattoos(tats);
-			  			var collection = new App.Views.Tattoos({collection: tattoos});
-			  			collection.render().renderBooks();
-			  		}
-			  	});
 			} 
 
 		}, function(error) {

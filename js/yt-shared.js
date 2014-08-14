@@ -21,9 +21,12 @@ Array.prototype.byCount= function(){
     });
 }
 
-//http://stackoverflow.com/questions/3579486/sort-a-javascript-array-by-frequency-and-then-filter-repeats
-// _.reduce(a,function(counts,key){ counts[key]++; return counts },
-//                   _.object( _.map( _.uniq(a), function(key) { return [key, 0] })))
+//http://stackoverflow.com/questions/5667888/counting-occurences-of-javascript-array-elements
+Array.prototype.byCountWithCount= function(){
+  return _.reduce(this,function(counts,key){ counts[key]++; return counts },
+                _.object( _.map( _.uniq(this), function(key) { return [key, 0] })));
+}
+
 
 //back to top
 $(document).ready(function(){
@@ -503,6 +506,13 @@ $(document).ready(function(){
                 center: new google.maps.LatLng(settings.location.latitude, settings.location.longitude),
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 mapTypeControl: false,
+                panControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_BOTTOM
+                },
+                zoomControlOptions: {
+                    style: google.maps.ZoomControlStyle.LARGE,
+                    position: google.maps.ControlPosition.LEFT_BOTTOM
+                },
                 disableDoubleClickZoom: false,
                 scrollwheel: settings.scrollwheel,
                 streetViewControl: false,

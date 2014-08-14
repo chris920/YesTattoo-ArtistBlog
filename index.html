@@ -190,37 +190,48 @@
     <!-- Artists page -->
     <script type="text/html" id="artistsTemplate">
       <div id="artistsPage">
-        <div class="container">
-          <h2 class="page-header">Artists</h2>
-          <div class="row">
-            <div class="tagFilters" data-toggle="buttons">
-              <span class="flaticon-book104"></span>
-              <button type="button" class="btn-tag">Realistic</button>
-              <button type="button" class="btn-tag">Old Skool</button>
-              <button type="button" class="btn-tag">Nature</button>
-              <button type="button" class="btn-tag">Black & White</button>
-              <button type="button" class="btn-tag">Statue</button>
-              <button type="button" class="btn-tag">Realistic</button>
-              <button type="button" class="btn-tag">More<b class="caret"></b></button> 
-              <br>
+        <div class="container">        
+          <div class="lg8container">
+            <h2 class="page-header">Artists</h2>
 
-              <div class="changeLocation">
-                <span class="flaticon-home73"></span><button type="button" rel="popover" class="btn-tag trigger"  data-toggle="popover">Anywhere in the world</button>
-                <div class="head hide">
-                  Filter by location
-                 </div>
-                <div class="content hide">
-                    <input type="text" class="form-control" id="changeAddressInput" placeholder="Name or address">
-                    <input type="text" class="form-control" id="radiusInput" placeholder="Miles Away">
+              <div class="tagFilters" data-toggle="buttons">
+
+                <div class="row">
+                  <span class="flaticon-home73"></span><button type="button" class="btn-tag changeLocationButton">Worldwide</button>
                 </div>
-              </div>
-            </div>  
-          </div>
 
+              </div>  
+          </div>
+        </div>
+
+
+        <div class="changeLocation" style="display: none">
+            <div class="changeLocationOptions">            
+              <div class="error text-center" style="display:none"></div>
+
+              <div class="input-group">
+                <span class="input-group-addon">Find Artists Near </span>
+                <input type="text" class="form-control" id="changeAddressInput" placeholder="Location">
+                <span class="input-group-btn">
+                  <button class="btn-submit byYou" type="button" style="display:none"></button>
+                  <button class="btn-submit worldwide" type="button">Worldwide</button>
+                  <button class="btn-submit cancel" type="button">X</button>
+                </span>
+              </div>
+              
+            </div>
+            <div id="changeAddressMap" style="width: 100%; height: 540px;"></div>
+        </div>
+
+
+
+        <div class="container">
           <div class="artistsSearch"></div>
           <div class="artists"></div>
         </div>
+
       </div>
+
     </script>
 
     <!-- Artist Thumbnail -->
@@ -233,7 +244,7 @@
             </div>
             <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
               <h4 class="artistName"><%= (name) ?  name : '' %></h4>
-              <h5 class="artistLoc"><%= (shop) ?  shop : '' %></br> <%= (locationName) ?  locationName : '' %></h5>
+              <h5 class="artistLoc"><%= (shop) ?  shop : '' %><%= (locationName) ? '<br>'+locationName : '' %></h5>
             </div>
           </div>
           <div class="tattoos col-sm-6 col-xs-12">
@@ -499,7 +510,7 @@
     </script>
 
     <!-- User Profile -->
-    <script type="text/html" id="userTemplate">
+    <script type="text/html" id="userProfileTemplate">
       <div class="container">
         <div class="row userHead">
           <div class="col-xs-12 col-sm-4 col-sm-offset-1">
@@ -529,7 +540,7 @@
               <ul class="nav nav-tabs" id="profMenu">
                   <li><span class="subMenuThumb"><img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/tattooicon.png <% } %>" alt="Artist Prof"></span></li>
                   <li class="active"><a href="#addsTab" data-toggle="tab"><span class="flaticon-book104"></span>Collection</a></li>
-                  <li><a href="#addsTab" data-toggle="tab"><span class="flaticon-tattoo1"></span>Artists</a></li>
+                  <li><a href="#artistsTab" data-toggle="tab"><span class="flaticon-tattoo1"></span>Artists</a></li>
               </ul>
             </div>
           </div>
@@ -548,7 +559,7 @@
         <!-- Artists Tab-->
         <div class="tab-pane fade in active" id="artistsTab">
           <div class="container">          
-            <div class="row adds">
+            <div class="row artists">
 
             </div>
           </div>
@@ -729,9 +740,7 @@
                 <input type="text" class="form-control" id="editTwitter" placeholder="twitter.com/" value="<%= (twitter) ?  twitter : '' %>">
               </div>
 
-
-
-              <a href="/tattoo/new" class="btn btn-link"><span class="flaticon-camera4"></span>Upload Tattoo</a>
+              <a href="/myprofile/upload" class="btn btn-link"><span class="flaticon-camera4"></span>Upload Tattoo</a>
             <% } %>
 
             
