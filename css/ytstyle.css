@@ -4035,12 +4035,6 @@ a:focus {
   color: gray; }
   .landingText .welcome {
     margin-top: 30vh; }
-  .landingText .main-logo {
-    display: block;
-    position: relative;
-    width: 300px;
-    margin-left: auto;
-    margin-right: auto; }
 
 .landingTattooContainer {
   width: 100%;
@@ -4085,6 +4079,15 @@ a:focus {
   @media screen and (max-width: 768px) {
     .main-logo {
       margin-left: 10px; } }
+  .main-logo.large {
+    display: block;
+    position: relative;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto; }
+    @media screen and (max-width: 768px) {
+      .main-logo.large {
+        width: 200px; } }
 
 .twitter-icon {
   background-image: url("../img/twitter.png"); }
@@ -4131,81 +4134,101 @@ a:focus {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-.flaticon-book104:before, .bootstrap-tagsinput:before {
+.flaticon-add85:before {
   content: "\e000"; }
 
-.flaticon-camera4:before {
-  content: "\e001";
-  font-size: 18px;
-  right: 5px; }
+.flaticon-arrow-back:before {
+  content: "\e001"; }
 
-.flaticon-cellphone5:before {
+.flaticon-arrow-next:before {
+  content: "\e001";
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg); }
+
+.flaticon-black373:before {
   content: "\e002"; }
 
-.flaticon-close20:before {
+.flaticon-book104:before, .bootstrap-tagsinput:before {
   content: "\e003"; }
 
-.flaticon-creative4:before {
+.flaticon-books8:before {
   content: "\e004"; }
 
-.flaticon-earth39:before {
+.flaticon-camera4:before {
   content: "\e005"; }
 
-.flaticon-external2:before {
+.flaticon-cellphone5:before {
   content: "\e006"; }
 
-.flaticon-home73:before {
+.flaticon-close20:before {
   content: "\e007"; }
 
-.flaticon-information:before {
-  content: "\e008";
-  right: 2px; }
+.flaticon-earth39:before {
+  content: "\e008"; }
 
-.flaticon-left65:before, .answer:before {
-  content: "\e009\00a0"; }
+.flaticon-external2:before {
+  content: "\e009"; }
 
-.flaticon-link35:before {
+.flaticon-home73:before {
   content: "\e00a"; }
 
-.flaticon-magnifier10:before {
+.flaticon-information:before {
   content: "\e00b"; }
 
-.flaticon-mechanical:before {
+.flaticon-left65:before, .answer:before {
   content: "\e00c"; }
 
-.flaticon-message7:before {
+.flaticon-link35:before, .link:after {
   content: "\e00d"; }
 
-.flaticon-phone13:before {
+.flaticon-magnifier10:before {
   content: "\e00e"; }
 
-.flaticon-placeholder8:before {
+.flaticon-message7:before {
   content: "\e00f"; }
 
-.flaticon-right52:before, .answer:after {
-  content: "\00a0\e010"; }
+.flaticon-phone13:before {
+  content: "\e010"; }
 
-.flaticon-screen14:before {
+.flaticon-pin31:before {
   content: "\e011"; }
 
-.flaticon-send5:before {
+.flaticon-placeholder8:before {
   content: "\e012"; }
 
-.flaticon-settings13:before {
+.flaticon-right44:before {
   content: "\e013"; }
 
-.flaticon-tattoo1:before {
+.flaticon-right52:before, .answer:after {
   content: "\e014"; }
 
-.flaticon-trophy4:before {
+.flaticon-screen14:before {
   content: "\e015"; }
 
+.flaticon-send5:before {
+  content: "\e016"; }
+
+.flaticon-settings13:before {
+  content: "\e017"; }
+
+.flaticon-sketched20:before {
+  content: "\e018"; }
+
+.flaticon-tattoo1:before {
+  content: "\e019"; }
+
+.flaticon-trophy4:before {
+  content: "\e01a"; }
+
 .flaticon-up49:before {
-  content: "\e016";
-  right: 0px; }
+  content: "\e01b"; }
 
 .flaticon-user56:before {
-  content: "\e017"; }
+  content: "\e01c"; }
+
+.flaticon-user91:before {
+  content: "\e01d"; }
 
 .facebook, .twitter, .instagram, .tumblr, .message, .link {
   display: inline-block;
@@ -4258,8 +4281,7 @@ a:focus {
   background-color: #c42020; }
 .link:after {
   font-family: Flaticon;
-  font-size: 24px;
-  content: "\e00a"; }
+  font-size: 24px; }
 
 @font-face {
   font-family: 'SocialGlyphs';
@@ -4681,14 +4703,27 @@ span.hover-content {
   margin-bottom: 60px; }
   .changeLocation .changeLocationOptions {
     position: absolute;
-    padding: 40px 60px;
     top: 0px;
     z-index: 1000;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.6);
-    color: white; }
+    color: white;
+    padding: 30px 10px 20px 10px; }
+    @media screen and (min-width: 992px) {
+      .changeLocation .changeLocationOptions {
+        padding: 40px 60px; } }
     .changeLocation .changeLocationOptions button {
       border: 1px solid #e6e6e6; }
+    .changeLocation .changeLocationOptions .input-group-addon {
+      display: none; }
+      @media screen and (min-width: 768px) {
+        .changeLocation .changeLocationOptions .input-group-addon {
+          display: table-cell; } }
+    .changeLocation .changeLocationOptions .worldwide {
+      display: none; }
+      @media screen and (min-width: 768px) {
+        .changeLocation .changeLocationOptions .worldwide {
+          display: table-cell; } }
 
 #changeAddressMap {
   background: url(../img/yestattoo-map.png) no-repeat center center;
@@ -5216,14 +5251,34 @@ span.hover-content {
 .clear {
   float: left; }
 
-.login .loginContainer {
+#login h3 {
+  margin-bottom: 60px;
+  text-align: center; }
+
+#login .bbm-modal, #tour .bbm-modal {
+  max-width: 540px; }
+
+#tour {
+  text-align: center; }
+  #tour i:before {
+    padding: 15px;
+    display: inline-block;
+    font-size: 40px; }
+    @media screen and (min-width: 768px) {
+      #tour i:before {
+        font-size: 80px; } }
+  #tour a.next:before, #tour a.back:before {
+    padding: 0px;
+    display: inline-block;
+    font-size: 30px;
+    color: #c42020; }
+    @media screen and (min-width: 768px) {
+      #tour a.next:before, #tour a.back:before {
+        font-size: 40px; } }
+
+.clearContainer {
   color: white;
   margin: 140px auto 140px auto; }
-  .login .loginContainer h3 {
-    margin-bottom: 60px;
-    text-align: center; }
-.login .bbm-modal {
-  max-width: 540px; }
 
 .open > img {
   cursor: zoom-in;
@@ -5263,10 +5318,6 @@ span.hover-content {
   border-width: 5px;
   border-image: radial-gradient(#1a1a1a 80%, #4d4d4d 100%, white) 1%;
   margin-top: 0px; }
-  .infoBox > hr {
-    border-top: 1px solid #0d0d0d;
-    margin-top: 20px;
-    margin-bottom: 20px; }
   .infoBox span {
     color: gray; }
   @media screen and (min-width: 992px) {
@@ -5290,6 +5341,10 @@ span.hover-content {
 
 .bbm-modal {
   display: block; }
+  .bbm-modal hr {
+    border-top: 1px solid #0d0d0d;
+    margin-top: 20px;
+    margin-bottom: 20px; }
 
 .bbm-views {
   width: 100%;

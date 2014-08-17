@@ -191,13 +191,6 @@ a {
   .welcome{
     margin-top: 30vh;
   }
-  .main-logo {
-    display: block;
-    position: relative;
-    width: 300px;
-    margin-left: auto;
-    margin-right: auto; 
-  }
 }
 .landingTattooContainer {
     width: 100%;
@@ -244,6 +237,16 @@ a {
     }
     @media screen and (max-width: $screen-sm) {
         margin-left: 10px;
+    }
+    &.large {
+        display: block;
+        position: relative;
+        width: 300px;
+        margin-left: auto;
+        margin-right: auto; 
+        @media screen and (max-width: $screen-sm) {
+            width: 200px;
+        }
     }
 }
 
@@ -296,83 +299,179 @@ a {
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}.flaticon-book104:before {
+// }.flaticon-book104:before {
+//     content: "\e000";
+// }
+// .flaticon-camera4:before {
+//     content: "\e001";
+//     font-size: 18px;
+//     right: 5px;
+// }
+// .flaticon-cellphone5:before {
+//     content: "\e002";
+// }
+// .flaticon-close20:before {
+//     content: "\e003";
+// }
+// .flaticon-creative4:before {
+//     content: "\e004";
+// }
+// .flaticon-earth39:before {
+//     content: "\e005";
+// }
+// .flaticon-external2:before {
+//     content: "\e006";
+// }
+// .flaticon-home73:before {
+//     content: "\e007";
+// }
+// .flaticon-information:before {
+//     content: "\e008";
+//     right: 2px;
+// }
+// .flaticon-left65:before {
+//     content: "\e009\00a0";
+// }
+// .flaticon-link35:before {
+//     content: "\e00a";
+// }
+// .flaticon-magnifier10:before {
+//     content: "\e00b";
+// }
+// .flaticon-mechanical:before {
+//     content: "\e00c";
+// }
+// .flaticon-message7:before {
+//     content: "\e00d";
+// }
+// .flaticon-phone13:before {
+//     content: "\e00e";
+// }
+// .flaticon-placeholder8:before {
+//     content: "\e00f";
+// }
+// .flaticon-right52:before {
+//     content: "\00a0\e010";
+// }
+// .flaticon-screen14:before {
+//     content: "\e011";
+// }
+// .flaticon-send5:before {
+//     content: "\e012";
+// }
+// .flaticon-settings13:before {
+//     content: "\e013";
+// }
+// .flaticon-tattoo1:before {
+//     content: "\e014";
+// }
+// .flaticon-trophy4:before {
+//     content: "\e015";
+// }
+// .flaticon-up49:before {
+//     content: "\e016";
+//     right: 0px;
+// }
+// .flaticon-user56:before {
+//     content: "\e017";
+// }
+
+
+
+}.flaticon-add85:before {
     content: "\e000";
 }
-.flaticon-camera4:before {
+.flaticon-arrow-back:before {
     content: "\e001";
-    font-size: 18px;
-    right: 5px;
 }
-.flaticon-cellphone5:before {
+.flaticon-arrow-next:before {
+    content: "\e001";
+    @include rotate(180deg);
+}
+.flaticon-black373:before {
     content: "\e002";
 }
-.flaticon-close20:before {
+.flaticon-book104:before {
     content: "\e003";
 }
-.flaticon-creative4:before {
+.flaticon-books8:before {
     content: "\e004";
 }
-.flaticon-earth39:before {
+.flaticon-camera4:before {
     content: "\e005";
 }
-.flaticon-external2:before {
+.flaticon-cellphone5:before {
     content: "\e006";
 }
-.flaticon-home73:before {
+.flaticon-close20:before {
     content: "\e007";
 }
-.flaticon-information:before {
+.flaticon-earth39:before {
     content: "\e008";
-    right: 2px;
 }
-.flaticon-left65:before {
-    content: "\e009\00a0";
+.flaticon-external2:before {
+    content: "\e009";
 }
-.flaticon-link35:before {
+.flaticon-home73:before {
     content: "\e00a";
 }
-.flaticon-magnifier10:before {
+.flaticon-information:before {
     content: "\e00b";
 }
-.flaticon-mechanical:before {
+.flaticon-left65:before {
     content: "\e00c";
 }
-.flaticon-message7:before {
+.flaticon-link35:before {
     content: "\e00d";
 }
-.flaticon-phone13:before {
+.flaticon-magnifier10:before {
     content: "\e00e";
 }
-.flaticon-placeholder8:before {
+.flaticon-message7:before {
     content: "\e00f";
 }
-.flaticon-right52:before {
-    content: "\00a0\e010";
+.flaticon-phone13:before {
+    content: "\e010";
 }
-.flaticon-screen14:before {
+.flaticon-pin31:before {
     content: "\e011";
 }
-.flaticon-send5:before {
+.flaticon-placeholder8:before {
     content: "\e012";
 }
-.flaticon-settings13:before {
+.flaticon-right44:before {
     content: "\e013";
 }
-.flaticon-tattoo1:before {
+.flaticon-right52:before {
     content: "\e014";
 }
-.flaticon-trophy4:before {
+.flaticon-screen14:before {
     content: "\e015";
 }
-.flaticon-up49:before {
+.flaticon-send5:before {
     content: "\e016";
-    right: 0px;
 }
-.flaticon-user56:before {
+.flaticon-settings13:before {
     content: "\e017";
 }
-
+.flaticon-sketched20:before {
+    content: "\e018";
+}
+.flaticon-tattoo1:before {
+    content: "\e019";
+}
+.flaticon-trophy4:before {
+    content: "\e01a";
+}
+.flaticon-up49:before {
+    content: "\e01b";
+}
+.flaticon-user56:before {
+    content: "\e01c";
+}
+.flaticon-user91:before {
+    content: "\e01d";
+}
 
 
 //profile social icons
@@ -433,7 +532,7 @@ a {
     &:after {
         font-family: Flaticon;
         font-size:24px;
-        content: "\e00a"; }
+        @extend .flaticon-link35:before; }
 }
 
 
@@ -857,14 +956,32 @@ span.hover-content {
     margin-bottom: 60px;
     .changeLocationOptions {
         position: absolute;
-        padding: 40px 60px;
         top:0px;
         z-index: 1000;
         width: 100%;
         background-color: $black-trans;
         color: white;
+        padding: 30px 10px 20px 10px;
+        @media screen and (min-width: $screen-md) {
+            padding: 40px 60px;
+        }    
         button {
             border: 1px solid $gray-lighter;
+            @media screen and (min-width: $screen-md) {
+                
+            }    
+        }
+        .input-group-addon{
+            display: none;
+            @media screen and (min-width: $screen-sm) {
+                display: table-cell;
+            }    
+        }
+        .worldwide {
+            display: none;
+            @media screen and (min-width: $screen-sm) {
+                display: table-cell;
+            }    
         }
     }
 }
@@ -1483,18 +1600,47 @@ span.hover-content {
 
 
 ////// Backbone.modal.js 
-.login {
-    .loginContainer {
-        color: white;
-        margin: 140px auto 140px auto;
-        h3 {
-            margin-bottom: 60px;
-            text-align: center;
-        }
+
+#login {
+    h3 {
+        margin-bottom: 60px;
+        text-align: center;
     }
+}
+#login, #tour {
     .bbm-modal {
         max-width: 540px;
     }
+}
+#tour {
+    text-align: center;
+    i {
+        &:before {
+            padding: 15px;
+            display: inline-block;
+            font-size: 40px;
+            @media screen and (min-width: $screen-sm) {
+                font-size: 80px;
+            }
+        }
+    }
+    a.next, a.back {
+        &:before {
+            padding: 0px;
+            display: inline-block;
+            font-size: 30px;
+            color: $brand-primary;
+            @media screen and (min-width: $screen-sm) {
+                font-size: 40px;
+            }
+        }
+    }
+
+}
+
+.clearContainer {
+    color: white;
+    margin: 140px auto 140px auto;
 }
 
 .open > img{
@@ -1536,11 +1682,6 @@ span.hover-content {
     border-width: 5px;
     border-image: radial-gradient($gray-darker 80%, $gray-dark 100%, #fff) 1%;
     // border-image: radial-gradient(black 80%, $gray-dark 100%, #fff) 1%; //alt color
-    > hr {
-        border-top: 1px solid $gray-darkest;
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
     span {
         color: $gray;
     }
@@ -1567,6 +1708,11 @@ span.hover-content {
 }
 .bbm-modal {
     display: block;
+    hr {
+        border-top: 1px solid $gray-darkest;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
     @extend .container;
 }
 .bbm-views {

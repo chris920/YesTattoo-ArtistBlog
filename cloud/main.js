@@ -100,7 +100,6 @@ Parse.Cloud.afterSave('ArtistProfile', function(request) {
     profile.set('username', user.attributes.username);
     profile.set('email', user.attributes.email);
     profile.set('name', user.attributes.username);
-    profile.set('user', user);
     user.set('profile', profile);
     user.save();
     return;
@@ -166,7 +165,6 @@ Parse.Cloud.afterSave('UserProfile', function(request) {
     profileACL.setRoleWriteAccess("Admin",true);
     profile.set('username', user.attributes.username);
     profile.set('name', user.attributes.username);
-    profile.set('user', user);
     user.set('userprofile', profile);
     user.save();
   }
