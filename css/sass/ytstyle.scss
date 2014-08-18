@@ -299,84 +299,6 @@ a {
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-// }.flaticon-book104:before {
-//     content: "\e000";
-// }
-// .flaticon-camera4:before {
-//     content: "\e001";
-//     font-size: 18px;
-//     right: 5px;
-// }
-// .flaticon-cellphone5:before {
-//     content: "\e002";
-// }
-// .flaticon-close20:before {
-//     content: "\e003";
-// }
-// .flaticon-creative4:before {
-//     content: "\e004";
-// }
-// .flaticon-earth39:before {
-//     content: "\e005";
-// }
-// .flaticon-external2:before {
-//     content: "\e006";
-// }
-// .flaticon-home73:before {
-//     content: "\e007";
-// }
-// .flaticon-information:before {
-//     content: "\e008";
-//     right: 2px;
-// }
-// .flaticon-left65:before {
-//     content: "\e009\00a0";
-// }
-// .flaticon-link35:before {
-//     content: "\e00a";
-// }
-// .flaticon-magnifier10:before {
-//     content: "\e00b";
-// }
-// .flaticon-mechanical:before {
-//     content: "\e00c";
-// }
-// .flaticon-message7:before {
-//     content: "\e00d";
-// }
-// .flaticon-phone13:before {
-//     content: "\e00e";
-// }
-// .flaticon-placeholder8:before {
-//     content: "\e00f";
-// }
-// .flaticon-right52:before {
-//     content: "\00a0\e010";
-// }
-// .flaticon-screen14:before {
-//     content: "\e011";
-// }
-// .flaticon-send5:before {
-//     content: "\e012";
-// }
-// .flaticon-settings13:before {
-//     content: "\e013";
-// }
-// .flaticon-tattoo1:before {
-//     content: "\e014";
-// }
-// .flaticon-trophy4:before {
-//     content: "\e015";
-// }
-// .flaticon-up49:before {
-//     content: "\e016";
-//     right: 0px;
-// }
-// .flaticon-user56:before {
-//     content: "\e017";
-// }
-
-
 
 }.flaticon-add85:before {
     content: "\e000";
@@ -965,12 +887,7 @@ span.hover-content {
         @media screen and (min-width: $screen-md) {
             padding: 40px 60px;
         }    
-        button {
-            border: 1px solid $gray-lighter;
-            @media screen and (min-width: $screen-md) {
-                
-            }    
-        }
+
         .input-group-addon{
             display: none;
             @media screen and (min-width: $screen-sm) {
@@ -983,6 +900,14 @@ span.hover-content {
                 display: table-cell;
             }    
         }
+    }
+}
+.input-group-btn {
+    button {
+        border: 1px solid $gray-lighter;
+        @media screen and (min-width: $screen-md) {
+            
+        }    
     }
 }
 #changeAddressMap {
@@ -1549,6 +1474,19 @@ span.hover-content {
     .editProfileContainer {
         padding: 20px;
     }
+}
+.editLocation {
+    .input-group {
+        width: 100%;
+    }
+}
+.gm-style{
+    display: none;
+}
+#settingsMap {
+    background: url(../img/yestattoo-map.png) no-repeat center center;
+    background-size: auto 100%;
+    background-color: $gray-light !important;
 }
 
 .nav-pills {

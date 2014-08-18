@@ -4712,8 +4712,6 @@ span.hover-content {
     @media screen and (min-width: 992px) {
       .changeLocation .changeLocationOptions {
         padding: 40px 60px; } }
-    .changeLocation .changeLocationOptions button {
-      border: 1px solid #e6e6e6; }
     .changeLocation .changeLocationOptions .input-group-addon {
       display: none; }
       @media screen and (min-width: 768px) {
@@ -4724,6 +4722,9 @@ span.hover-content {
       @media screen and (min-width: 768px) {
         .changeLocation .changeLocationOptions .worldwide {
           display: table-cell; } }
+
+.input-group-btn button {
+  border: 1px solid #e6e6e6; }
 
 #changeAddressMap {
   background: url(../img/yestattoo-map.png) no-repeat center center;
@@ -5218,6 +5219,17 @@ span.hover-content {
   margin: 10px; }
 #settings .editProfileContainer {
   padding: 20px; }
+
+.editLocation .input-group {
+  width: 100%; }
+
+.gm-style {
+  display: none; }
+
+#settingsMap {
+  background: url(../img/yestattoo-map.png) no-repeat center center;
+  background-size: auto 100%;
+  background-color: #d9d9d9 !important; }
 
 .nav-pills {
   padding: 20px 20px;

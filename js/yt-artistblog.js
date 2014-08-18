@@ -108,7 +108,6 @@ App.Models.ArtistProfile = Parse.Object.extend({
 	    address:"",
 	    email:"",
 		locationName:"",
-	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999}),
 	    q1:"", q2:"", q3:"", q4:"", q5:"",
 	    a1:"", a2:"", a3:"", a4:"", a5:"",
 	    featuremonth:"", featureyear:"2014",
@@ -125,8 +124,7 @@ App.Models.UserProfile = Parse.Object.extend({
 	    username:"",
 	    name:"",
 	    desc:"",
-	   	locationName:"",
-	    location: new Parse.GeoPoint({latitude: 37.8029802, longitude: -122.41325749999999})
+	   	locationName:""
       };
 	}
 });
@@ -135,7 +133,6 @@ App.Models.Tattoo = Parse.Object.extend({
 	className: "Tattoo",
 	createAdd: function(startupBooks) {
 		var that = this;
-
 		if ($.inArray(this.id, App.Collections.adds.pluck('tattooId')) > -1) {
 			that.trigger('add:created', App.Collections.adds.getTattoo(this.id)[0]);
 		} else {
@@ -153,7 +150,6 @@ App.Models.Tattoo = Parse.Object.extend({
 				console.log(error);
 			});
 		}
-
 	},
 	removeAdd: function(){
 		var that = this;
@@ -226,7 +222,6 @@ App.Views.Search = Parse.View.extend({
 	id: 'search',
 	initialize: function(){
 		_.bindAll(this, 'focusIn', 'scrollToTop', 'scrollChecker', 'getTattoos', 'typeaheadInitialize', 'queryReset');
-
 		this.bindSearch();
 	},
 	template: _.template($("#searchTemplate").html()),
@@ -273,7 +268,6 @@ App.Views.Search = Parse.View.extend({
 				that.$('.tt-input').attr('placeholder','Search').val('');
 			}
 		});
-
 		input.on('itemAdded', function(event) {
 			that.queryReset()
 			that.booksQuery = input.tagsinput('items');
@@ -283,13 +277,11 @@ App.Views.Search = Parse.View.extend({
 			that.booksQuery = input.tagsinput('items');
 			that.getTattoos();
 		});
-
 		window.setTimeout(function(){
 			$('.bookSuggestion').on('click', function(e){
 				input.tagsinput('add', e.target.textContent);
 			});
 		}, 400);
-
 		this.focusIn();
 	},
 	bindSearch: function(){
@@ -306,7 +298,6 @@ App.Views.Search = Parse.View.extend({
 		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
 		    this.$('.tt-input').blur().val(' ');
 		}
-
 		this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
 		this.scrollToTop();
 		return this;
@@ -365,16 +356,11 @@ App.Views.Search = Parse.View.extend({
 	render: function(){
 		var html = this.template();
 		$(this.el).html(html);
-
 		this.tattoosCollection = new App.Collections.Tattoos();
 		this.tattoosView = new App.Views.Tattoos({collection: this.tattoosCollection, el: this.$('.tattoos')});
 		this.tattoosView.render();
-
 		this.typeaheadInitialize();
-
-		this.queryReset();
-		this.getTattoos();
-
+		this.queryReset().getTattoos();
 		return this;
 	}
 });
@@ -384,9 +370,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	template: _.template($("#artistsTemplate").html()),
 	initialize: function(){
 		_.bindAll(this, 'scrollChecker', 'initializeLocationPicker', 'queryReset');
-
 		this.bindArtists();
-
 	},
 	events: {
 	    'click .changeLocationButton': 	'showChangeLocation',
@@ -395,7 +379,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 	    'click .cancel': 				'hideChangeLocation',
 	    'focus #changeAddressInput': 	'initializeLocationPicker'
 	},
-
 	bindArtists: function(){
 		$(document).bind('scroll',this.scrollChecker);
 		// $(document).bind('keypress', this.focusIn);
@@ -414,12 +397,11 @@ App.Views.ArtistsPage = Parse.View.extend({
 	initializeLocationPicker: function(){
 		var that = this;
 		if (!this.locationPickerCreated) {
-			if(Parse.User.current()) {
+			if(Parse.User.current() && App.profile.attributes.location) {
 				var initialLocation = {latitude: App.profile.attributes.location.latitude, longitude: App.profile.attributes.location.longitude};
 			} else {
 				var initialLocation = {latitude: 34.0500, longitude: -118.2500};
 			}
-
 			$('#changeAddressMap').locationpicker({
 				location: initialLocation,
 				radius: 0,
@@ -434,10 +416,9 @@ App.Views.ArtistsPage = Parse.View.extend({
 					that.queryReset();
 			    	that.locationQuery = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
 			    	that.getArtists();
-			    	
+			    	that.$('.gm-style').fadeIn();
 			    	that.$('.changeLocationButton').html(currentLocationNameFormatted);
 			    	that.hideChangeLocation( 1200 );
-
 				},
 				onlocationnotfound: function(locationName) {
 					$("#changeAddressInput ~ .error").html("Couldn't find "+locationName+", Try another address?").show();				
@@ -446,7 +427,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 					that.$('#changeAddressInput').val('');
 				}
 			});
-
 			this.locationPickerCreated = true;
 		}
 	},
@@ -464,14 +444,15 @@ App.Views.ArtistsPage = Parse.View.extend({
 	byYou: function(){
 		this.$('.byYou').attr('disabled', 'disabled');
 		this.$('.changeLocationButton').html(this.$('.byYou').html());
-		this.queryReset().hideChangeLocation( 1200 );
+		this.queryReset().hideChangeLocation();
 		this.locationQuery = App.profile.get('location');
 		this.getArtists();
 	},
 	resetLocationPicker: function(){
 		this.$('.worldwide').attr('disabled', 'disabled');
-		this.$('#changeAddressMap').html('');
 		this.$('.changeLocationButton').html('Worldwide');
+		this.$('.gm-style').fadeOut();
+		this.$('#changeAddressInput').val('');
 		this.locationPickerCreated = false;
 		this.queryReset().getArtists();
 		this.hideChangeLocation( 1200 );
@@ -502,7 +483,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 	  	} else {
 	  		query.descending('createdAt');
 	  	}
-
 		var skip = 	this.artistsCollection.page * 25;
 		query.skip(skip);
 		query.limit(25);
@@ -524,13 +504,10 @@ App.Views.ArtistsPage = Parse.View.extend({
 	render: function(){
 		var html = this.template();
 		$(this.el).html(html);
-
 		this.artistsCollection = new App.Collections.Artists();
 		this.artistsView = new App.Views.Artists({collection: this.artistsCollection, el: this.$('.artists')});
 		this.artistsView.render();
-
 		this.queryReset().getArtists();
-
 		window.setTimeout(function(){
 			$('.changeLocationButton').tooltip({
 			    title: "Change location",
@@ -539,7 +516,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 			    placement: 'auto'
 			});
 		},0);
-
 		return this;
 	}
 });
@@ -736,14 +712,12 @@ App.Views.ArtistProfile = Parse.View.extend({
 	render: function(){
 		var attributes = this.model.attributes
 		this.$el.html(this.template(attributes));
-
 		if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
 			this.renderMyProfile();
 			this.getMyTattoos();
 		} else {
 			this.getTattoos();
 		}
-
 		return this;
 	}
 });
@@ -1594,16 +1568,20 @@ App.Views.Settings = Parse.View.extend({
 		this.profile = App.profile;
 	},
     events: {
-    	"submit form.infoForm": 			"saveInfo",
+    	"submit form.accountForm": 			"saveAccount",
     	"keyup #editUsername": 				"usernameVal",
     	"submit form.profileForm": 			"saveProfile",
     	"keyup #editFB, #editInstagram, #editTwitter, #editWebsite":"linkVal",
     	"change #profUpload": 				"updateProf",
     	"dblclick #profileSettings": 		"interview",
     	"click li": 						"scrollTo",
-    	"click [href='/myprofile/upload']":	"upload"
+    	"click [href='/myprofile/upload']":	"upload",
+	    'focus #settingsMapAddress': 		'initializeLocationPicker',
+	    'click .saveLocation': 				'saveLocation',
+	    'click .clearLocation': 			'clearLocation'
     },
-    saveInfo: function(e){
+    saveAccount: function(e){
+    	this.$('.saveAccount').attr("disabled", "disabled");
     	e.preventDefault();
     	this.user.set("username", this.$("#editUsername").val().replace(/\W/g, '').toLowerCase());
     	this.user.set("email", this.$("#editEmail").val());
@@ -1611,15 +1589,15 @@ App.Views.Settings = Parse.View.extend({
 		this.user.save(null,{
 			success: function(user) {
 				// flash the success class
-				$(".infoForm").each(function(){
+				$(".accountForm").each(function(){
 				    $(".input-group").addClass("has-success").fadeIn("slow");
 				    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
 				});
 				$("#editPassword").val("");
-
+				this.$('.saveAccount').removeAttr("disabled");
 			},
 			error: function(user, error) {
-				$(".infoForm .error").html(error.message).show();
+				$(".accountForm .error").html(error.message).show();
 			}
 		});
 		this.profile.set("username", this.$("#editUsername").val());
@@ -1631,6 +1609,7 @@ App.Views.Settings = Parse.View.extend({
     },
     saveProfile: function(e){
     	e.preventDefault();
+		this.$('.saveProfile').attr("disabled", "disabled");
     	this.profile.set("name", this.$("#editName").val());
     	this.profile.set("shop", this.$("#editShop").val());
     	this.profile.set("desc", this.$("#editAbout").val());
@@ -1644,6 +1623,7 @@ App.Views.Settings = Parse.View.extend({
 				    $(".input-group").addClass("has-success").fadeIn("slow");
 				    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
 				});
+				this.$('.saveProfile').removeAttr("disabled");
 			},
 			error: function(user, error) {
 				$(".profileForm .error").html(error.message).show();
@@ -1677,7 +1657,7 @@ App.Views.Settings = Parse.View.extend({
 				console.log(error);
 				$(".error:eq( 3 )").html(error.message).show();
 				$("#profUpload").removeAttr("disabled");
-				$( "span:contains('Choose Profile Picture')" ).removeClass( "disabled" );
+				$("span:contains('Choose Profile Picture')").removeClass( "disabled" );
 			});
 		}
     },
@@ -1697,51 +1677,108 @@ App.Views.Settings = Parse.View.extend({
     	e.preventDefault();
     	Parse.history.navigate('/myprofile/upload', {trigger: true});
     },
-	render: function(){
-		this.$el.html(this.template(this.profile.attributes));
-		return this;
-	},
-	renderMap: function(e){
-		var profile = this.profile;
+	clearLocation: function(){
+		this.locationPickerCreated = false;
+		this.$('.saveLocation').fadeOut();
+		this.$('.gm-style').fadeOut();
+		this.$('.clearLocation').attr("disabled", "disabled");
+    	App.profile.unset("location");
+    	App.profile.set("address", "");
+    	App.profile.set("locationName", "");
+		App.profile.save(null,{
+			success: function(user) {
+				$(".editLocation").addClass("has-success").fadeIn("slow");
+				setTimeout(function() { $(".editLocation").removeClass("has-success") }, 2400);
 
-		$('#settingsMap').locationpicker({
-			location: {latitude: profile.attributes.location.latitude, longitude: profile.attributes.location.longitude},
-			radius: 0,
-			zoom: 12,
-			enableAutocomplete: true,
-			enableReverseGeocode: true,
-			styles: App.mapStyles,
-			inputBinding: {
-				locationNameInput: $('#settingsMapAddress')
+				$("#locationSettings ~ .error").hide();
+				this.$('#settingsMapAddress').val('');
+			    this.$('.clearLocation').removeAttr("disabled").fadeOut();
 			},
-			onchanged: function(currentLocation, currentLocationNameFormatted) {
-		    	var point = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
-		    	profile.set("location", point);
-		    	profile.set("address", $("#settingsMapAddress").val());
-		    	profile.set("locationName", currentLocationNameFormatted);
-				profile.save(null,{
-					success: function(user) {
-						// flash the success class
-						$(".editLocation").addClass("has-success").fadeIn("slow");
-						setTimeout(function() { $(".editLocation").removeClass("has-success") }, 2400);
-					
-						$("#locationSettings ~ .error").hide();
-					},
-					error: function(user, error) {
-						$(".profileForm .error").html(error.message).show();
-					}
-				});
-			},
-			onlocationnotfound: function(locationName) {
-				$("#locationSettings ~ .error").html("Couldn't find "+locationName+", Try another address?").show();				
+			error: function(user, error) {
+				$(".profileForm .error").html(error.message).show();
 			}
 		});
+	},
+	saveLocation: function(){
+		var that = this;
+		this.$('.saveLocation').attr("disabled", "disabled");
+    	App.profile.set("location", this.locationPoint);
+    	App.profile.set("address", $("#settingsMapAddress").val());
+    	App.profile.set("locationName", this.locationName);
+		App.profile.save(null,{
+			success: function(user) {
+				// flash the success class
+				$(".editLocation").addClass("has-success").fadeIn("slow");
+				setTimeout(function() { $(".editLocation").removeClass("has-success") }, 2400);
+			
+				$("#locationSettings ~ .error").hide();
+
+			    that.$('.saveLocation').fadeOut();
+			    that.$('.clearLocation').fadeIn();
+			    that.$('.saveLocation').removeAttr("disabled");
+			},
+			error: function(user, error) {
+				$(".profileForm .error").html(error.message).show();
+			}
+		});
+	},
+	initializeLocationPicker: function(e){
+		var that = this;
+		if (!this.locationPickerCreated) {
+			if(Parse.User.current() && App.profile.attributes.location) {
+				var initialLocation = {latitude: App.profile.attributes.location.latitude, longitude: App.profile.attributes.location.longitude};
+			} else {
+				var initialLocation = {latitude: 34.0500, longitude: -118.2500};
+			}
+			$('#settingsMap').locationpicker({
+				location: initialLocation,
+				radius: 0,
+				zoom: 10,
+				enableAutocomplete: true,
+				enableReverseGeocode: true,
+				styles: App.mapStyles,
+				inputBinding: {
+					locationNameInput: $('#settingsMapAddress')
+				},
+				onchanged: function(currentLocation, currentLocationNameFormatted) {
+			    	that.locationPoint = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
+			    	that.locationName = currentLocationNameFormatted;
+			    	that.$('.gm-style').fadeIn();
+			    	that.$('.saveLocation').fadeIn();
+				},
+				onlocationnotfound: function(locationName) {
+					$("#locationSettings ~ .error").html("Couldn't find "+locationName+", Try another address?").show();				
+				},
+				oninitialized: function(component){
+			    	that.$('.clearLocation').fadeIn();
+					if(!App.profile.attributes.location) {
+				    	that.$('.gm-style').hide();
+						that.$('#settingsMapAddress').val('');
+					} else {
+						that.$('.gm-style').fadeIn();
+					}
+				}
+			});
+			this.locationPickerCreated = true;
+		}
+
 	},
 	renderProf: function(){
 		if(this.profile.get("prof")) {
 			var file = this.profile.get("profThumb");
 			$(".prof")[0].src = file.url();
 		}
+	},
+	render: function(){
+		this.$el.html(this.template(this.profile.attributes));
+		var that = this;
+		window.setTimeout(function(){
+			that.renderProf()
+			if(App.profile.attributes.location){
+				that.initializeLocationPicker();
+			}
+		},0);
+		return this;
 	}
 });
 
@@ -2184,14 +2221,12 @@ App.Router = Parse.Router.extend({
 				if(tab) {
 					profile[tab+'Tab']();
 				}
-console.log('showProfile called in router');//clear
 			}
 		}, function(error) {
 		    console.log("Error: " + error.code + " " + error.message);
 		});
 	},
 	showProfileTab: function(uname, tab){
-console.log('showProfileTab called in router, with tab' + tab);//clear
 		this.showProfile(uname, tab);
 	},
 	showUserProfile: function(uname, tab){
@@ -2263,8 +2298,6 @@ console.log('showProfileTab called in router, with tab' + tab);//clear
 		this.myProfile();
 		var settings = new App.Views.Settings();
 		$('#app').html(settings.render().el);
-		settings.renderMap();
-		settings.renderProf();
 	},
 	editTattoo: function(tattooId){
 		this.myProfile();

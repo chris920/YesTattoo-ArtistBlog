@@ -680,15 +680,15 @@
         <div class="">
           <ul class="nav nav-pills nav-justified">
             <li class="active"><a><span class="flaticon-settings13"></span><strong>Settings</strong></a></li>
-            <li data-target="#infoSettings"><a><span class="flaticon-information"></span>Info</a></li>
+            <li data-target="#accountSettings"><a><span class="flaticon-information"></span>Account</a></li>
             <li data-target="#locationSettings"><a><span class="flaticon-home73"></span>Location</a></li>
             <li data-target="#profileSettings"><a><span class="flaticon-user56"></span>Profile</a></li>
           </ul>
         </div>
 
         <div class="lightContainer">
-          <h3 id="infoSettings">Info</h3>
-          <form class="infoForm" role="form">
+          <h3 id="accountSettings">Account</h3>
+          <form class="accountForm" role="form">
             <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Yes.Tattoo /#</span>
@@ -702,13 +702,21 @@
               <span class="input-group-addon">Email </span>
               <input type="email" class="form-control" id="editEmail" placeholder="Email">
             </div>
-            <button type="submit" class="btn-submit">Submit</button>
+            <button type="submit" class="btn-submit saveAccount">Submit</button>
           </form> 
 
           <h3 id="locationSettings">Location</h3>
           <div class="error" style="display:none"></div>
           <div class="editLocation">
-            <p>Search by name or location</p><input type="text" class="form-control" id="settingsMapAddress">
+            <p>Search by name or location</p>
+            <div class="input-group">
+              <input type="text" class="form-control" id="settingsMapAddress" placeholder="Location">
+              <span class="input-group-btn">
+                <button class="btn-submit saveLocation" type="button" style="display:none">Save</button>
+                <button class="btn-submit clearLocation" type="button" style="display:none">X</button>
+              </span>
+            </div>
+            
           </div>
           <div id="settingsMap" style="width: 100%; height: 240px;"></div>
 
@@ -755,7 +763,7 @@
             <% } %>
 
             
-            <button type="submit" class="btn-submit">Submit</button>
+            <button type="submit" class="btn-submit saveProfile">Submit</button>
           </form>
 
         </div>
