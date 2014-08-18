@@ -758,13 +758,13 @@ pre {
   .row:after {
     clear: both; }
 
-.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-sm-3, .tattooContainer, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .tattooContainer, .col-sm-6, .col-md-6, .md6container, .col-lg-6, .lg6container, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .artistThumb, .md8container, .lightContainer, .lg6container, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .artistThumb, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .artistThumb, .lg6container, .col-sm-12, .col-md-12, .col-lg-12 {
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-sm-3, .tattooContainer, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .tattooContainer, .col-sm-6, .col-md-6, .md6container, .col-lg-6, .lg6container, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .artistThumb, .bookContainer, .md8container, .lightContainer, .lg6container, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .artistThumb, .bookContainer, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .artistThumb, .bookContainer, .lg6container, .col-sm-12, .col-md-12, .col-lg-12 {
   position: relative;
   min-height: 1px;
   padding-left: 2.5px;
   padding-right: 2.5px; }
 
-.col-xs-1, .col-xs-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-xs-4, .col-xs-5, .col-xs-6, .tattooContainer, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-xs-11, .col-xs-12, .lg8container, .artistThumb, .lg6container {
+.col-xs-1, .col-xs-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-xs-4, .col-xs-5, .col-xs-6, .tattooContainer, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-xs-11, .col-xs-12, .lg8container, .artistThumb, .bookContainer, .lg6container {
   float: left; }
 
 .col-xs-1 {
@@ -800,7 +800,7 @@ pre {
 .col-xs-11 {
   width: 91.66667%; }
 
-.col-xs-12, .lg8container, .artistThumb, .lg6container {
+.col-xs-12, .lg8container, .artistThumb, .bookContainer, .lg6container {
   width: 100%; }
 
 .col-xs-pull-0 {
@@ -881,7 +881,7 @@ pre {
 .col-xs-push-12 {
   left: 100%; }
 
-.col-xs-offset-0, .lg8container, .artistThumb, .lg6container {
+.col-xs-offset-0, .lg8container, .artistThumb, .bookContainer, .lg6container {
   margin-left: 0%; }
 
 .col-xs-offset-1, .md8container, .lightContainer, .md6container {
@@ -921,7 +921,7 @@ pre {
   margin-left: 100%; }
 
 @media (min-width: 768px) {
-  .col-sm-1, .col-sm-2, .col-sm-3, .tattooContainer, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .lg8container, .artistThumb, .col-sm-11, .col-sm-12 {
+  .col-sm-1, .col-sm-2, .col-sm-3, .tattooContainer, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .lg8container, .artistThumb, .bookContainer, .col-sm-11, .col-sm-12 {
     float: left; }
 
   .col-sm-1 {
@@ -951,7 +951,7 @@ pre {
   .col-sm-9 {
     width: 75%; }
 
-  .col-sm-10, .lg8container, .artistThumb {
+  .col-sm-10, .lg8container, .artistThumb, .bookContainer {
     width: 83.33333%; }
 
   .col-sm-11 {
@@ -1041,7 +1041,7 @@ pre {
   .col-sm-offset-0 {
     margin-left: 0%; }
 
-  .col-sm-offset-1, .lg8container, .artistThumb {
+  .col-sm-offset-1, .lg8container, .artistThumb, .bookContainer {
     margin-left: 8.33333%; }
 
   .col-sm-offset-2 {
@@ -1077,7 +1077,7 @@ pre {
   .col-sm-offset-12 {
     margin-left: 100%; } }
 @media (min-width: 992px) {
-  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .md6container, .col-md-7, .col-md-8, .lg8container, .artistThumb, .md8container, .lightContainer, .lg6container, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .md6container, .col-md-7, .col-md-8, .lg8container, .artistThumb, .bookContainer, .md8container, .lightContainer, .lg6container, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
     float: left; }
 
   .col-md-1 {
@@ -1101,7 +1101,7 @@ pre {
   .col-md-7 {
     width: 58.33333%; }
 
-  .col-md-8, .lg8container, .artistThumb, .md8container, .lightContainer, .lg6container {
+  .col-md-8, .lg8container, .artistThumb, .bookContainer, .md8container, .lightContainer, .lg6container {
     width: 66.66667%; }
 
   .col-md-9 {
@@ -1200,7 +1200,7 @@ pre {
   .col-md-offset-1 {
     margin-left: 8.33333%; }
 
-  .col-md-offset-2, .lg8container, .artistThumb, .md8container, .lightContainer, .lg6container {
+  .col-md-offset-2, .lg8container, .artistThumb, .bookContainer, .md8container, .lightContainer, .lg6container {
     margin-left: 16.66667%; }
 
   .col-md-offset-3, .md6container {
@@ -4775,6 +4775,49 @@ span.hover-content {
     .profHead span:before {
       content: "\00a0\00a0/\00a0"; }
 
+.bookContainer {
+  background-color: black;
+  padding: 20px 20px 20px 20px;
+  margin-top: 40px;
+  border-radius: 4px / 6px; }
+  .bookContainer .tattooContainer {
+    padding: 0px; }
+    .bookContainer .tattooContainer img {
+      padding: 0px; }
+  .bookContainer h3 {
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    padding: 35px 20px 0px 20px;
+    color: white;
+    position: absolute;
+    cursor: pointer;
+    background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.7) 60%, black);
+    background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.7) 60%, black);
+    background-repeat: no-repeat;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#FF000000', GradientType=0);
+    -webkit-transition: all 0.4s ease;
+    transition: all 0.4s ease; }
+    .bookContainer h3:hover {
+      padding: 55px 20px 0px 20px;
+      background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.7) 60%, black);
+      background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.7) 60%, black);
+      background-repeat: no-repeat;
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#FF000000', GradientType=0); }
+      .bookContainer h3:hover a.more {
+        color: #c42020;
+        margin-right: 20px;
+        font-size: 20px; }
+    .bookContainer h3 a.more {
+      color: gray;
+      margin-right: 20px;
+      font-size: 18px;
+      right: 0px;
+      bottom: 0px;
+      position: absolute;
+      -webkit-transition: all 0.4s ease;
+      transition: all 0.4s ease; }
+
 .affix-top > div > ul > li:first-child {
   left: -64px;
   opacity: 0;
@@ -5223,7 +5266,7 @@ span.hover-content {
 .editLocation .input-group {
   width: 100%; }
 
-.gm-style {
+#artistsPage .gm-style, #settings .gm-style {
   display: none; }
 
 #settingsMap {
@@ -5311,7 +5354,6 @@ span.hover-content {
   @media screen and (min-width: 992px) {
     .imageBox {
       width: 59%;
-      margin-top: 0px;
       display: inline-block; } }
   .imageBox .fullImage {
     max-width: 100%;

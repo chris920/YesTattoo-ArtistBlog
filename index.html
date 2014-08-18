@@ -250,7 +250,7 @@
               <h5 class="artistLoc"><%= (shop) ?  shop : '' %><%= (locationName) ? '<br>'+locationName : '' %></h5>
             </div>
           </div>
-          <div class="tattoos col-sm-6 col-xs-12">
+          <div class="artistTattoos col-sm-6 col-xs-12">
           </div>
         </div>
       </div>
@@ -577,6 +577,15 @@
         </div> 
     </script>
 
+    <!-- Book -->
+    <script type="text/html" id="bookTemplate">
+      <div class="bookContainer col-sm-6 col-xs-12">
+
+        <h3><%= book %><a class="more">View all</a></h3>
+      </div>
+    </script>
+
+
     <!-- Join page -->
     <script type="text/html" id="joinTemplate">
       <div class="container">
@@ -740,7 +749,7 @@
             <% if (Parse.User.current().attributes.role === 'artist') { %>
               <div class="input-group">
                 <span class="input-group-addon">Shop Name </span>
-                <input type="text" class="form-control" id="editShop" placeholder="Shop Name" maxlength="18" value="<%= (shop) ?  shop : '' %>">
+                <input type="text" class="form-control" id="editShop" placeholder="Shop Name" maxlength="28" value="<%= (shop) ?  shop : '' %>">
               </div>
               <div class="input-group">
                 <span class="input-group-addon">Personal or Shop Link </span>

@@ -951,7 +951,6 @@ span.hover-content {
         margin-right: 10px;
         color: $gray-light-opaque; }
 }
-
 .profHead {
     min-height:220px;
     padding: 20px 0;
@@ -967,6 +966,50 @@ span.hover-content {
             content: "\00a0\00a0/\00a0"
         }
     }
+}
+.bookContainer {
+    background-color: black;
+    padding: 20px 20px 20px 20px;
+    margin-top: 40px;
+    border-radius: 4px / 6px;
+    @extend .lg8container;
+    .tattooContainer {
+        padding: 0px;
+        img {
+            padding: 0px;
+        }
+    }
+    h3 {
+        left: 0px;
+        bottom: 0px;
+        width: 100%;
+        padding: 35px 20px 0px 20px;
+        color: white;
+        position: absolute;
+        cursor: pointer;
+        @include gradient-vertical-three-colors($start-color: rgba(0, 0, 0, 0), $mid-color: rgba(0, 0, 0, 0.7), $color-stop: 60%, $end-color: black );
+        @include transition(all 0.4s ease);
+        &:hover {
+            padding: 55px 20px 0px 20px;
+            @include gradient-vertical-three-colors($start-color: rgba(0, 0, 0, 0), $mid-color: rgba(0, 0, 0, 0.7), $color-stop: 60%, $end-color: black );
+            a.more {
+                color: $brand-primary;
+                margin-right: 20px;
+                font-size: 20px;
+            }
+
+        }
+        a.more {
+            color: $gray;
+            margin-right: 20px;
+            font-size: 18px;
+            right: 0px;
+            bottom: 0px;
+            position: absolute;
+            @include transition(all 0.4s ease);
+        }
+    }
+
 }
 
 // artist profile picture thumbnail shown at affix of submenu
@@ -1480,9 +1523,13 @@ span.hover-content {
         width: 100%;
     }
 }
-.gm-style{
-    display: none;
+
+#artistsPage, #settings {
+    .gm-style{
+        display: none;
+    }    
 }
+
 #settingsMap {
     background: url(../img/yestattoo-map.png) no-repeat center center;
     background-size: auto 100%;
@@ -1599,7 +1646,6 @@ span.hover-content {
     margin-top: 50px;
     @media screen and (min-width: $screen-md) {
         width: 59%;
-        margin-top: 0px;
         display: inline-block;
     }
     .fullImage {
