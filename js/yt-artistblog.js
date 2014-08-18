@@ -365,6 +365,7 @@ App.Views.Search = Parse.View.extend({
 		this.tattoosView.render();
 		this.typeaheadInitialize();
 		this.queryReset().getTattoos();
+		App.currentView = this;
 		return this;
 	}
 });
@@ -520,6 +521,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			    placement: 'auto'
 			});
 		},0);
+		App.currentView = this;
 		return this;
 	}
 });
@@ -582,7 +584,6 @@ App.Views.Login = Backbone.Modal.extend({
 	id: 'login',
 	initialize: function(){
 		Parse.history.navigate('login', {trigger: false});
-		if(App.search){App.search.unbindSearch()};
 	},
 	template: _.template($("#loginTemplate").html()),
 	viewContainer: '.clearContainer',
@@ -624,7 +625,7 @@ App.Views.Login = Backbone.Modal.extend({
 	cancel: function(){
 		$("body").css("overflow", "auto");
 		Parse.history.navigate(App.back, {trigger: false});
-		if(App.search){App.search.bindSearch()};
+		App.currentView.initialize();
 	}
 });
 
@@ -721,6 +722,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 		} else {
 			this.getTattoos();
 		}
+		App.currentView = this;
 		return this;
 	}
 });
@@ -734,7 +736,6 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		this.model.on('add:created', this.showYourBooks, this);
 		this.model.on('add:removed', this.showAddButton, this);
 
-		if(App.search){App.search.unbindSearch()};
 	},
 	template: _.template($("#tattooProfileTemplate").html()),
     viewContainer: '.container',
@@ -949,11 +950,11 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	},
 	beforeCancel: function(){
 		Parse.history.navigate(App.back, {trigger: false});
-		if(App.search){App.search.bindSearch()};
 		$("body").css("overflow", "auto");
 		this.$('booksInput').tagsinput('destroy');
 		$(window).unbind('keypress', this.focusIn);
 		this.off();
+		App.currentView.initialize();
 	}
 });
 
@@ -1203,6 +1204,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 	cancel: function(e){
 		$("body").css("overflow", "auto");
 		Parse.history.navigate("myprofile", {trigger: false});
+		App.currentView.initialize(); 
 	}
 });
 
@@ -1211,7 +1213,6 @@ App.Views.UserProfile = Parse.View.extend({
 	id: 'userProfile',
 	initialize: function() {
 		this.activateAffix();
-
 	},
 	template: _.template($("#userProfileTemplate").html()),
 	events: {
@@ -1281,7 +1282,6 @@ console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
     	}, this);
 
  		this.booksView.render();
-
 		return this;
 	},
 	renderArtists: function(addsCollection) {
@@ -1330,6 +1330,7 @@ console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
 			this.getAdds();
 			this.getTattoos();
 		}
+		App.currentView = this;
 		return this;
 	}
 });
@@ -1519,9 +1520,13 @@ App.Views.Landing = Parse.View.extend({
 App.Views.FeaturedArtistPage = Parse.View.extend({
 	id: 'featured',
 	featuredContainerTemplate: _.template($("#featuredContainerTemplate").html()),
+	initialize: function(){
+
+	},
 	render: function(){
 		var html = this.featuredContainerTemplate();
 		$(this.el).append(html);
+		App.currentView = this;
 		return this;
 	}
 });
@@ -2035,6 +2040,7 @@ App.Views.Upload = Backbone.Modal.extend({
 	cancel: function(e){
 		$("body").css("overflow", "auto");
 		Parse.history.navigate("myprofile", {trigger: false});
+		App.currentView.initialize();
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
