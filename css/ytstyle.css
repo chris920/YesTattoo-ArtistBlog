@@ -4869,10 +4869,14 @@ span.hover-content {
   margin: 20px;
   float: none;
   text-align: center; }
+  .profButtons .btn-submit {
+    float: none; }
   @media screen and (min-width: 768px) {
     .profButtons {
       float: right;
-      margin: 40px; } }
+      margin: 40px; }
+      .profButtons .btn-submit {
+        float: right; } }
 
 .collectorsBadge {
   display: inline-block;
@@ -5500,7 +5504,7 @@ span.hover-content {
     font-family: Flaticon;
     color: #d9d9d9; }
 
-.tattooProfile .bootstrap-tagsinput {
+#tattooProfile .bootstrap-tagsinput, #editTattoo .bootstrap-tagsinput {
   min-height: 80px;
   padding: 40px 20px;
   margin-bottom: 10px;
@@ -5509,7 +5513,7 @@ span.hover-content {
   border: 1px solid #4d4d4d;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   cursor: cell; }
-  .tattooProfile .bootstrap-tagsinput:before {
+  #tattooProfile .bootstrap-tagsinput:before, #editTattoo .bootstrap-tagsinput:before {
     padding: 8px;
     font-size: 30px;
     top: 5px;
@@ -5547,7 +5551,7 @@ span.hover-content {
 #search .message {
   text-align: right; }
 
-.tattooProfile .tt-dropdown-menu, .tattooProfile #search .globalBooks, #search .tattooProfile .globalBooks {
+#tattooProfile .tt-dropdown-menu, #tattooProfile #search .globalBooks, #search #tattooProfile .globalBooks, #editTattoo .tt-dropdown-menu, #editTattoo #search .globalBooks, #search #editTattoo .globalBooks {
   text-align: left;
   position: absolute;
   top: 100%;
@@ -5567,17 +5571,20 @@ span.hover-content {
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box; }
-.tattooProfile .twitter-typeahead .tt-hint {
+#tattooProfile .twitter-typeahead .tt-hint, #editTattoo .twitter-typeahead .tt-hint {
   display: none; }
-.tattooProfile .bootstrap-tagsinput.focused {
+#tattooProfile .bootstrap-tagsinput.focused, #editTattoo .bootstrap-tagsinput.focused {
   background-color: rgba(0, 0, 0, 0.6);
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
   cursor: text;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease; }
-.tattooProfile input.tt-input {
+#tattooProfile input.tt-input, #editTattoo input.tt-input {
   margin-left: 5px !important; }
+
+#editTattoo hr {
+  border-top: 1px solid #d9d9d9; }
 
 #search .tt-dropdown-menu, #search .globalBooks {
   width: 100%;

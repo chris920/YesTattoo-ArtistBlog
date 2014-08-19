@@ -676,7 +676,6 @@ App.Views.ArtistProfile = Parse.View.extend({
 	        icon: ' img/mapmarker.png'
 	    });
     }, 500),
-
 	centerMap: function() {
 		var center = this.map.getCenter();
 		google.maps.event.trigger(this.map, "resize");
@@ -709,9 +708,8 @@ App.Views.ArtistProfile = Parse.View.extend({
 	  	});
 	},
 	renderMyProfile: function(){
-/// show edit options
 
-
+		this.$('.profButtons').html(_.template('<button href="/myprofile/settings" class="btn btn-submit"><i class="flaticon-settings13"></i>Edit Profile</button><br><br><button href="/myprofile/upload" class="btn btn-submit"><i class="flaticon-camera4"></i>Upload Tattoo</button>'));
 	},
 	render: function(){
 		var attributes = this.model.attributes
@@ -728,7 +726,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 });
 
 App.Views.TattooProfile = Backbone.Modal.extend({
-	className: 'tattooProfile',
+	id: 'tattooProfile',
 	initialize: function(){
 		Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
 		_.bindAll(this, 'focusIn');
@@ -784,30 +782,57 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		}
 
 		this.booksByCount = this.model.attributes.books.byCount();
-		this.renderPopularBooks();
+		this.renderArtistsBooks().renderPopularBooks();
 	},
-	renderPopularBooks: function(){
-		if (this.model.attributes.books.length >= 1) {
-			this.count = this.count || 0;
-			var popularBooks = this.booksByCount.slice(this.count,(this.count+5));
-			_.each(popularBooks, function(book) {
-				this.$('.otherBooks span').append(_.template('<button type="button" class="btn-tag otherBook">'+ book +'</button>'));
+	renderArtistsBooks: function(){
+		if (this.model.attributes.artistBooks) {
+			this.$('.byArtist h5').html('By the Artist');
+			_.each(this.model.attributes.artistBooks, function(book) {
+				this.$('.otherBooks span.byArtist').append(_.template('<button type="button" class="btn-tag otherBook artistBook">'+ book +'</button>'));
 			}, this);
-			this.count = this.count + 5;
 			this.$('.otherBooks').fadeIn( 1000 );
 			var that = this;
 			window.setTimeout(function(){
-				if($('.otherBooks span').children().length >= Math.min(that.booksByCount.length,10)){
-					that.$('.more').attr('disabled', 'disabled').fadeOut(300);
-				}
-				var addTipTitle =  Parse.User.current() && Parse.User.current().attributes.role === 'artist' ? "Popular books by everyone" : "Add popular book";
-				$('.otherBook').tooltip({
+				var addTipTitle =  Parse.User.current() && Parse.User.current().attributes.role === 'artist' ? "Created by the artist" : "Add artist's book";
+				$('.otherBook.artistBook').tooltip({
 				    title: addTipTitle,
 				    delay: { show: 200, hide: 200 },
 				    placement: 'auto'
 				});
 			},0);
+			this.popularBooksLimit = 5 - this.model.attributes.artistBooks.length;
+			// this.loadMoreBooks = (this.model.attributes.artistBooks.length < 5) ? true : false;
+		}  else {
+			this.popularBooksLimit = 5;
 		}
+		return this;
+	},
+	renderPopularBooks: function(){
+		if (this.model.attributes.books.length >= 1 && this.popularBooksLimit) {
+			this.$('.byAll h5').html('By Everyone');
+			this.count = this.count || 0;
+			var popularBooks = this.booksByCount.slice(this.count, this.count + this.popularBooksLimit);
+			_.each(popularBooks, function(book) {
+				this.$('.otherBooks span.byAll').append(_.template('<button type="button" class="btn-tag otherBook userBook">'+ book +'</button>'));
+			}, this);
+			this.$('.otherBooks').fadeIn( 1000 );
+			var that = this;
+			window.setTimeout(function(){
+				if($('.otherBook').length >= Math.min(that.booksByCount.length+that.model.attributes.artistBooks.length,10)){
+					that.$('.more').attr('disabled', 'disabled').fadeOut(300);
+
+				}
+				var addTipTitle =  Parse.User.current() && Parse.User.current().attributes.role === 'artist' ? "Popular books by everyone" : "Add popular book";
+				$('.otherBook.userBook').tooltip({
+				    title: addTipTitle,
+				    delay: { show: 200, hide: 200 },
+				    placement: 'auto'
+				});
+			},0);
+			this.count = this.count + this.popularBooksLimit
+			this.popularBooksLimit = 5;
+		} else { 
+			this.popularBooksLimit = 5;
 	},
 	addOtherBook: function(e){
 		if (!Parse.User.current()) {
@@ -825,7 +850,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	},
 	setArtist: function(artist) {
 		if(artist.profThumb !== undefined){this.$(".prof")[0].src = artist.profThumb.url};
-		this.$(".artistName").html('By ' + artist.name).attr('href',"/" + artist.username);
+		this.$(".artistName").html('Artist: ' + artist.name).attr('href',"/" + artist.username);
 		this.$(".artistLoc").html('<span>' + artist.username + '</span><br>' + artist.shop + ' / ' + artist.locationName);
 		this.$(".infoBox").delay( 500 ).fadeIn();
 	},
@@ -1165,7 +1190,7 @@ App.Views.MyTattoo = Parse.View.extend({
 		this.model.on('remove', this.remove, this);
 	},
 	events: {
-		'click button': 'edit',
+		'click button, .open': 'edit',
 		'click .open': 	'open'
 	},
     open: function(){
@@ -1185,7 +1210,7 @@ App.Views.MyTattoo = Parse.View.extend({
 });
 
 App.Views.EditTattoo = Backbone.Modal.extend({
-	id: 'edit',
+	id: 'editTattoo',
 	template: _.template($("#editTattooTemplate").html()),
     viewContainer: '.lightContainer',
 	cancelEl: '.x, .cancel',
@@ -1195,16 +1220,122 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     events: {
 		"click .delete": 		"delete"
     },
+	focusIn: function(){
+		this.$('.tt-input').focus();
+		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+		    this.$('.tt-input').blur().val(' ');
+		}
+		this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
+		return this;
+	},
+	renderPopularBooks: function(){
+		this.booksByCount = this.model.attributes.books.byCount();
+		if (this.booksByCount.length >= 1) {
+			this.count = this.count || 0;
+			var popularBooks = this.booksByCount.slice(this.count,(this.count+5));
+			_.each(popularBooks, function(book) {
+				this.$('.otherBooks span').append(_.template('<button type="button" class="btn-tag otherBook">'+ book +'</button>'));
+			}, this);
+			this.count = this.count + 5;
+			this.$('.otherBooks').fadeIn( 1000 );
+			var that = this;
+			window.setTimeout(function(){
+				if($('.otherBooks span').children().length >= Math.min(that.booksByCount.length,10)){
+					that.$('.more').attr('disabled', 'disabled').fadeOut(300);
+				}
+				$('.otherBook').tooltip({
+				    title: "Popular books by everyone",
+				    delay: { show: 200, hide: 200 },
+				    placement: 'auto'
+				});
+			},0);
+		}
+	},	
+	initializeEditBooks: function(){
+		var that = this;
+
+		var input = this.$('.booksInput');
+		input.tagsinput({
+			tagClass: 'btn-tag',
+			trimValue: true,
+			maxChars: 20,
+			maxTags: 5,
+			onTagExists: function(item, $tag) {
+				$tag.addClass('blured');
+				window.setTimeout(function(){$tag.removeClass('blured');}, 1000);
+			}
+		});
+		input.tagsinput('input').typeahead(null, {
+			name: 'books',
+			displayKey: 'books',
+			source: App.booktt.ttAdapter()
+		}).attr('placeholder','Type to create a book').on('typeahead:selected', $.proxy(function (obj, datum) {
+			this.tagsinput('add', datum.books);
+			this.tagsinput('input').typeahead('val', '');
+		}, input)).on('focus', function () {
+			that.$('.bootstrap-tagsinput > .btn-tag').removeClass('blured');
+			that.$('.bootstrap-tagsinput').addClass('focused');
+			that.$('.tt-input').attr('placeholder','');
+		}).on('blur', function () {
+			that.$('.bootstrap-tagsinput > .btn-tag').addClass('blured');
+			that.$('.bootstrap-tagsinput').removeClass('focused');
+			if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+			    that.$('.tt-input').attr('placeholder','').val('');
+			} else {
+				that.$('.tt-input').attr('placeholder','Add + + +').val('');
+			}
+		});
+
+     	_.each(this.model.attributes.artistBooks, function(book) {
+			that.$('.booksInput').tagsinput('add', book);
+        });
+
+		input.on('itemAdded', function(event) {
+			that.saveBooks();
+		}).on('itemRemoved', function(event){
+			that.saveBooks();
+		});
+
+		window.setTimeout(function(){
+      		that.$('.btn-tag').addClass('blured');
+			if(that.$('.booksInput').tagsinput('items').length === 5) {
+				that.$('.booksInput').tagsinput('input').attr('placeholder','');
+			}
+		}, 400);
+
+		//focus in on the add input on keypress
+		$(window).bind('keypress', this.focusIn);
+	},
+	saveBooks: function(){
+		var that = this;
+		this.model.set('artistBooks', this.$('.booksInput').tagsinput('items').slice(0));
+		this.model.save(null,{
+			success: function(result) {
+				that.$('.bookMessage').html('Saved!!!');
+				window.setTimeout(function(){
+					that.$('.bookMessage').html('&nbsp;');
+				},2000)
+			},
+			error: function(error) {
+				that.$('.bookMessage').html(error.message);
+				console.log(error);
+			}
+		});
+	},
 	delete: function(e){
 		this.model.deleteTattoo();
 		this.triggerCancel();
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
+		this.initializeEditBooks();
+		this.renderPopularBooks();
 	},
-	cancel: function(e){
+	beforeCancel: function(){
 		$("body").css("overflow", "auto");
+		this.$('booksInput').tagsinput('destroy');
 		Parse.history.navigate("myprofile", {trigger: false});
+		$(window).unbind('keypress', this.focusIn);
 		if(App.currentView){App.currentView.initialize()};
 	}
 });
@@ -2382,7 +2513,6 @@ App.Router = Parse.Router.extend({
 			myProfile[tab+'Tab']();
 		}
 	  	return myProfile;
-
 	},
 	tour: function(){
 		this.myProfile();

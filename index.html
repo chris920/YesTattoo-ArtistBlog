@@ -322,7 +322,12 @@
 
           <div class="otherBooks" style="display:none">
             <h2>Books</h2>
-            <span></span><br>
+            <span class="byArtist">
+              <h5></h5>
+            </span>
+            <span class="byAll">
+              <h5></h5>
+            </span><br><br>
             <button class="btn-link more">More</button>
             
           </div>
@@ -503,7 +508,17 @@
       <div class="container">
         <div class="lightContainer">
           <h3 class="text-center">Edit Tattoo</h3>
-          <img src="<%= file.url %>" class="tattooImg">
+          <img src="<%= fileThumb.url %>" class="tattooImg">
+          <div class="otherBooks" style="display:none">
+            <h2>Books</h2>
+            <span></span><br>
+            <button class="btn-link more">More</button>
+          </div><hr>
+          <div class="yourBooks">
+            <h4>Add up to 5 of your own Books</h4>
+            <input class="booksInput" type="text" data-role="tagsinput" value="" />
+            <p class="bookMessage">&nbsp;</p>
+          </div>
           <div class="row"> <hr>
             <button href="#" class="btn btn-link cancel">Cancel</button>
             <button href="#" class="btn btn-link delete">Delete</button>
@@ -927,7 +942,7 @@
     </script>
 
     <script type="text/html" id="artistTour2Template">
-      <h3>Share your art and show the world your talent.</h3>
+      <h3>Share your art.</h3>
       <div class="row">
        <img alt="Profile Picture" src="img/tutorial-screenshot-uploadtattoo.png" class="largeprofpic">
       </div>
@@ -1012,10 +1027,10 @@
     </script>
 
     <script type="text/html" id="userTour6Template">
-      <h3>That&#39;s it!</h3>
+      <h3>Ready to explore?</h3>
       <div class="row"> <hr>
-        <button href="/myprofile/settings" class="btn btn-submit skip">Create your profile</button> or 
-        <button href="/search" class="btn btn-submit done">Explore tattoos</button>
+        <button href="/myprofile/settings" class="btn btn-submit skip">Create your profile</button><br> or <br>
+        <button href="/search" class="btn btn-submit done">Search for tattoos</button>
       </div>
     </script>
 
@@ -1034,9 +1049,9 @@
     </script>
 
     <script type="text/html" id="artistTour6Template">
-      <h3></h3>
+      <h3>Ready to show the world your talent?</h3>
       <div class="row"> <hr>
-        <button href="/myprofile/settings" class="btn btn-submit skip">Create your profile</button> or 
+        <button href="/myprofile/settings" class="btn btn-submit skip">Create your profile</button> <br> or <br>
         <button href="/myprofile/upload" class="btn btn-submit done">Upload tattoos</button>
       </div>
     </script>
