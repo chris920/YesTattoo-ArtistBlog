@@ -926,7 +926,23 @@ span.hover-content {
 }
 
 
-////// Profile Page
+////// User Profile & Artist Profile Page
+.profHead {
+    min-height:220px;
+    padding: 20px 0;
+    background-color:$gray-darker;
+    color:white;
+    @media screen and (max-width: $screen-sm) {
+        float: none;
+        text-align: center;
+    }
+    span { // username
+        color: $gray;
+        &:before {
+            content: "\00a0\00a0/\00a0"
+        }
+    }
+}
 
 .userHead {
     padding: 40px 0;
@@ -950,22 +966,6 @@ span.hover-content {
     span {
         margin-right: 10px;
         color: $gray-light-opaque; }
-}
-.profHead {
-    min-height:220px;
-    padding: 20px 0;
-    background-color:$gray-darker;
-    color:white;
-    @media screen and (max-width: $screen-sm) {
-        float: none;
-        text-align: center;
-    }
-    span { // username
-        color: $gray;
-        &:before {
-            content: "\00a0\00a0/\00a0"
-        }
-    }
 }
 .bookContainer {
     background-color: black;
@@ -1061,25 +1061,51 @@ span.hover-content {
         border: 2px solid $brand-primary;
         @include transition(all 0.2s ease); } 
 }
-
 .profButtons {
-    margin-top: 20px;
-    float: right;
-    @media screen and (max-width: $screen-sm) {
-        margin-top: 0px;
-        margin-bottom: 20px;
-        float: none;
-        text-align: center;
-    }
-}
-.collectorCount {
+    margin: 20px;
+    float: none;
     text-align: center;
-    h1 {
-        display: inline-block;
-        margin: 20px;
-        text-align: center;
+    @media screen and (min-width: $screen-sm) {
+        float: right;
+        margin: 40px;
     }
 }
+.collectorsBadge {  
+    display: inline-block;
+    text-align: center;
+    color: white;
+
+    padding: 0px;
+    background: url(../img/collectors-badge-180.png) no-repeat center center; 
+    width: 60px;
+    height: 60px;
+    float: none;
+    text-align: center;
+    @media screen and (min-width: $screen-sm) {
+        float: right;
+        width: 140px;
+        height: 140px;
+        padding: 10px;
+        // background: $gray;
+        background: url(../img/collectors-badge-180.png) no-repeat center center; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+    .collectorCount {
+        text-align: center;
+        h1 {
+            display: inline-block;
+            margin-bottom: 0px;
+            text-align: center;
+            font-weight: bold;
+            // color: $brand-primary;
+        }
+
+    }
+}
+
 
 //Profile nav
 #artistProfile .container-fluid, #artistProfile .tagFilters, #artistProfile .tattooImg  { //for more arrow cover
@@ -1599,6 +1625,11 @@ span.hover-content {
 }
 #tour {
     text-align: center;
+    .largeprofpic {
+        margin: 10px;
+        width: 240px;
+        height: 240px;
+    }
     i {
         &:before {
             padding: 15px;

@@ -625,7 +625,7 @@ App.Views.Login = Backbone.Modal.extend({
 	cancel: function(){
 		$("body").css("overflow", "auto");
 		Parse.history.navigate(App.back, {trigger: false});
-		App.currentView.initialize();
+		if(App.currentView){App.currentView.initialize()};
 	}
 });
 
@@ -736,6 +736,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		this.model.on('add:created', this.showYourBooks, this);
 		this.model.on('add:removed', this.showAddButton, this);
 
+		$(window).unbind();
 	},
 	template: _.template($("#tattooProfileTemplate").html()),
     viewContainer: '.container',
@@ -954,7 +955,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		this.$('booksInput').tagsinput('destroy');
 		$(window).unbind('keypress', this.focusIn);
 		this.off();
-		App.currentView.initialize();
+		if(App.currentView){App.currentView.initialize()};
 	}
 });
 
@@ -1204,7 +1205,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 	cancel: function(e){
 		$("body").css("overflow", "auto");
 		Parse.history.navigate("myprofile", {trigger: false});
-		App.currentView.initialize(); 
+		if(App.currentView){App.currentView.initialize()};
 	}
 });
 
@@ -2040,7 +2041,7 @@ App.Views.Upload = Backbone.Modal.extend({
 	cancel: function(e){
 		$("body").css("overflow", "auto");
 		Parse.history.navigate("myprofile", {trigger: false});
-		App.currentView.initialize();
+		if(App.currentView){App.currentView.initialize()};
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
@@ -2054,7 +2055,7 @@ App.Views.ForgotPassword = Parse.View.extend({
       "submit form.passwordForm": 	"resetPassword"
     },
     initialize: function() {
-    	Parse.history.navigate("myprofile/tour", {trigger: false, replace: true});
+   
     },
     resetPassword: function(e){
     	e.preventDefault();
@@ -2101,6 +2102,9 @@ App.Views.UserTour = Backbone.Modal.extend({
 		},
 		'click #step5': {
 		 	view: _.template($('#userTour5Template').html())
+		},
+		'click #step6': {
+		 	view: _.template($('#userTour6Template').html())
 		}
 	},
 	events: {
@@ -2146,7 +2150,7 @@ App.Views.ArtistTour = Backbone.Modal.extend({
 			view: _.template($('#artistTour2Template').html())
 		},
 		'click #step3': {
-		 	view: _.template($('#userTour3Template').html())
+		 	view: _.template($('#artistTour3Template').html())
 		},
 		'click #step4': {
 		 	view: _.template($('#artistTour4Template').html())
@@ -2289,7 +2293,6 @@ App.Router = Parse.Router.extend({
 		}
 	},
 	home: function(){
-		
 	},
 	featured: function(p) {
 		var featured = new App.Views.FeaturedArtistPage();

@@ -12,7 +12,6 @@
 
   <body>
 
-
     <div id="body">
       <div class="modalayheehoo"></div>
       <div class="navs"></div>
@@ -358,7 +357,14 @@
               </div>
             </div>
             <div class="col-md-6 col-sm-5">
-              <div class="profButtons row">
+              <% if (collectorCount) { %>
+                <div class="collectorsBadge">
+                  <div class="collectorCount">
+                    <h1><%= collectorCount %></h1><p>Collectors</p>
+                  </div>
+                </div>
+              <% } %>
+              <div class="profButtons">
                 <% if (fb) { %>
                   <a href= "<%= fb %>" class="facebook" title="Facebook"></a> 
                 <% } %>
@@ -374,13 +380,7 @@
                 <% if (email) { %>
                   <a href="mailto:<%= email %>?Subject=YesTattoo%20Message" class="message" title="Message"></a>
                 <% } %>
-              <% if (collectorCount) { %>
-                <div class="collectorCount">
-                    <h1><%= collectorCount %></h1>Collectors
-                </div>
-              <% } %>
               </div>
-
             </div>
           </div>
         </div>
@@ -914,6 +914,9 @@
 
     <script type="text/html" id="userTour2Template">
       <h3>Save your favorite tattoos and their artists.</h3>
+      <div class="row">
+       <img alt="Profile Picture" src="img/tutorial-screenshot-collectbutton.png" class="largeprofpic">
+      </div>
       <i class="flaticon-black373"></i>
       <i class="flaticon-right44"></i>
       <i class="flaticon-books8"></i>
@@ -925,6 +928,9 @@
 
     <script type="text/html" id="artistTour2Template">
       <h3>Share your art and show the world your talent.</h3>
+      <div class="row">
+       <img alt="Profile Picture" src="img/tutorial-screenshot-uploadtattoo.png" class="largeprofpic">
+      </div>
       <i class="flaticon-black373"></i>
       <i class="flaticon-right44"></i>
       <i class="flaticon-earth39"></i>
@@ -936,6 +942,23 @@
 
     <script type="text/html" id="userTour3Template">
       <h3>Create books and mark the style, theme, placement or flavor.</h3>
+      <div class="row">
+       <img alt="Profile Picture" src="img/tutorial-screenshot-yourbooks.png" class="largeprofpic">
+      </div>
+      <i class="flaticon-books8"></i>
+      <i class="flaticon-add85"></i>
+      <i class="flaticon-book104"></i>
+      <div class="row"><hr>
+        <a class="flaticon-arrow-back back"></a>
+        <a class="flaticon-arrow-next next"></a>
+      </div>
+    </script>
+
+    <script type="text/html" id="artistTour3Template">
+      <h3>Create books and mark the style, theme, placement or flavor.</h3>
+      <div class="row">
+       <img alt="Profile Picture" src="img/tutorial-screenshot-editbooks.png" class="largeprofpic">
+      </div>
       <i class="flaticon-books8"></i>
       <i class="flaticon-add85"></i>
       <i class="flaticon-book104"></i>
@@ -946,8 +969,11 @@
     </script>
 
 
-    <script type="text/html" id="userTour3Template">
+    <script type="text/html" id="userTour4Template">
       <h3>Get updates from the artists behind the tattoos you collect.</h3>
+      <div class="row">
+       <img alt="Profile Picture" src="img/tutorial-screenshot-collectors.png" class="largeprofpic">
+      </div>
       <i class="flaticon-book104"></i>
       <i class="flaticon-sketched20"></i>
       <i class="flaticon-tattoo1"></i>
@@ -957,8 +983,11 @@
       </div>
     </script>
 
-    <script type="text/html" id="userTour4Template">
+    <script type="text/html" id="userTour5Template">
       <h3>Share art with the world.</h3>
+      <div class="row">
+       <img alt="Profile Picture" src="img/tutorial-screenshot-uploadtattoo.png" class="largeprofpic">
+      </div>
       <i class="flaticon-black373"></i>
       <i class="flaticon-right44"></i>
       <i class="flaticon-earth39"></i>
@@ -970,6 +999,9 @@
 
     <script type="text/html" id="artistTour4Template">
       <h3>Build a following.<br> Anyone can bookmark your art and subscribe to updates.</h3>
+      <div class="row">
+       <img alt="Profile Picture" src="img/tutorial-screenshot-collectors.png" class="largeprofpic">
+      </div>
       <i class="flaticon-books8"></i>
       <i class="flaticon-sketched20"></i>
       <i class="flaticon-send5"></i>
@@ -979,7 +1011,7 @@
       </div>
     </script>
 
-    <script type="text/html" id="userTour5Template">
+    <script type="text/html" id="userTour6Template">
       <h3>That&#39;s it!</h3>
       <div class="row"> <hr>
         <button href="/myprofile/settings" class="btn btn-submit skip">Create your profile</button> or 
@@ -989,6 +1021,9 @@
 
     <script type="text/html" id="artistTour5Template">
       <h3>Connect with new clients.</h3>
+      <div class="row">
+       <img alt="Profile Picture" src="img/tutorial-screenshot-contact.png" class="largeprofpic">
+      </div>
       <i class="flaticon-user56"></i>
       <i class="flaticon-right44"></i>
       <i class="flaticon-tattoo1"></i>
@@ -999,7 +1034,7 @@
     </script>
 
     <script type="text/html" id="artistTour6Template">
-      <h3>That&#39;s it!</h3>
+      <h3></h3>
       <div class="row"> <hr>
         <button href="/myprofile/settings" class="btn btn-submit skip">Create your profile</button> or 
         <button href="/myprofile/upload" class="btn btn-submit done">Upload tattoos</button>
@@ -1017,18 +1052,17 @@
     <script src="js/libs/bootstrap.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDND9JGq1-cU9bJy12cTy1-nTNq0a96sOY&sensor=false&libraries=places"></script>
     <!--<script src="js/libs/underscore.js"></script>
-    <script src="js/libs/backbone-min.js"></script>-->
+    <script src="js/libs/backbone-min.js"></script>
+    <script src="js/libs/parse-1.2.19.js"></script>-->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
-    <!--<script src="http://www.parsecdn.com/js/parse-1.2.19.js"></script>-->
-    <script src="js/libs/parse-1.2.19.js"></script>
-    
+    <script src="http://www.parsecdn.com/js/parse-1.2.19.js"></script>
     <script src="js/libs/typeahead.bundle.js"></script>
     <script src="js/libs/bootstrap-tagsinput.js"></script>
     <script src="js/libs/backbone.modal.js"></script>    
     <!--<script src="js/libs/typeahead.bundle.min.js"></script>
     <script src="js/libs/bootstrap-tagsinput.min.js"></script>
-    <script src="js/libs/backbone.modal-min.js"></script>   -->
+    <script src="js/libs/backbone.modal-min.js"></script>  -->
     <script src="js/yt-artistblog.js"></script>
     <script src="js/yt-shared.js"></script>
 
