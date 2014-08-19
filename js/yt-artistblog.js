@@ -702,8 +702,8 @@ App.Views.ArtistProfile = Parse.View.extend({
 	  	query.find({
 	  		success: function(tats) {
 	  			App.myTattoos = new App.Collections.Tattoos(tats);
-	  			var portfolio = new App.Views.MyTattoos({collection: App.myTattoos});
-	  			portfolio.render();
+	  			var portfolio = new App.Views.Tattoos({collection: App.myTattoos, myTattoos: true});
+	  			portfolio.render().getBooks();
 	  		}
 	  	});
 	},
@@ -833,6 +833,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 			this.popularBooksLimit = 5;
 		} else { 
 			this.popularBooksLimit = 5;
+		}
 	},
 	addOtherBook: function(e){
 		if (!Parse.User.current()) {
@@ -989,7 +990,7 @@ App.Views.Tattoos = Parse.View.extend({
 	initialize: function(){
 		_.bindAll(this, 'render', 'renderTattoos', 'renderTattoo', 'renderBooks', 'renderMoreBooks','resetFilters');
 
-		this.collection.on('add', this.renderTattoo, this);
+		this.collection.on('add', this.prependTattoo, this);
 		this.collection.on('reset', this.render, this);
 
 		this.bookFilters = [];
@@ -1079,9 +1080,27 @@ App.Views.Tattoos = Parse.View.extend({
     	this.collection.forEach(this.renderTattoo, this);
 	},
 	renderTattoo: function(tat){
-		var tattoo = new App.Views.Tattoo({model: tat});
-		$(this.el).append(tattoo.render().el);
-		$('.reset').off('click', this.resetFilters);
+		if (!this.options.myTattoos) {
+			var tattoo = new App.Views.Tattoo({model: tat});
+			$(this.el).append(tattoo.render().el);
+			$('.reset').off('click', this.resetFilters);
+		} else {
+			var myTattoo = new App.Views.MyTattoo({model: tat});
+			$(this.el).append(myTattoo.render().el);
+			$('.reset').off('click', this.resetFilters);
+		}
+		return this;
+	},
+	prependTattoo: function(tattoo){
+		if (!this.options.myTattoos) {
+			var tattoo = new App.Views.Tattoo({model: tat});
+			$(this.el).prepend(tattoo.render().el);
+			$('.reset').off('click', this.resetFilters);
+		} else {
+			var myTattoo = new App.Views.MyTattoo({model: tat});
+			$(this.el).prepend(myTattoo.render().el);
+			$('.reset').off('click', this.resetFilters);
+		}
 		return this;
 	},
     renderTattoosByBooks: function(books) {
@@ -1155,31 +1174,6 @@ App.Views.Tattoo = Parse.View.extend({
 			this.showEdit();
 		}
 		return this;
-	}
-});
-
-App.Views.MyTattoos = Parse.View.extend({
-	el: '.tattoos',
-	initialize: function(){
-		_.bindAll(this, 'render', 'renderTattoos', 'renderTattoo');
-		this.collection.on('add', this.prependTattoo, this);
-		this.collection.on('reset', this.render, this);
-	},
-    render: function () {
-      this.renderTattoos();
-      return this;
-    },
-	renderTattoos: function(e){
-    	this.$el.empty();
-    	this.collection.forEach(this.renderTattoo);
-	},
-	renderTattoo: function(tattoo){
-		var tattoo = new App.Views.MyTattoo({model: tattoo});
-		$('.tattoos').append(tattoo.render().el);
-	},
-	prependTattoo: function(tattoo){
-		var tattoo = new App.Views.MyTattoo({model: tattoo});
-		$('.tattoos').prepend(tattoo.render().el);
 	}
 });
 
@@ -1440,7 +1434,7 @@ console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
 	  	query.find({
 	  		success: function(tats) {
 	  			App.myTattoos = new App.Collections.Tattoos(tats);
-	  			var portfolio = new App.Views.MyTattoos({collection: App.myTattoos});
+	  			var portfolio = new App.Views.Tattoos({collection: App.myTattoos, myTattoos: true});
 	  			portfolio.render();
 	  		}
 	  	});
