@@ -4296,9 +4296,6 @@ a:focus {
 #portfolioTab .tattooContainer, #tattoosPage .tattooContainer, #shopProfile .tattooContainer {
   padding-bottom: 5px; }
 
-.tab-content .tattooContainer {
-  background-color: #d9d9d9; }
-
 .tattooImg {
   display: block;
   width: 100%;
@@ -4543,7 +4540,6 @@ span.hover-content {
     color: white; }
 
 .tagFilters {
-  min-width: 200px;
   margin: 0 auto;
   padding: 30px 0;
   text-align: center; }
@@ -4625,7 +4621,6 @@ span.hover-content {
   overflow: auto; }
 
 .artistThumb {
-  min-height: 120px;
   background-color: #e6e6e6;
   border-left: 40px solid #d9d9d9;
   padding: 0px;
@@ -4650,12 +4645,10 @@ span.hover-content {
     padding: 0px; }
   .artistThumb .tattoos {
     display: flex; }
-  .artistThumb .artistTitleBG {
-    min-height: 100px; }
   .artistThumb .artistName, .artistThumb .artistLoc {
     text-align: left;
-    margin-bottom: 4px;
-    margin-top: 5px; }
+    margin-top: 5px;
+    min-height: 30px; }
     @media screen and (min-width: 768px) {
       .artistThumb .artistName, .artistThumb .artistLoc {
         margin-top: 7px; } }
@@ -4734,6 +4727,18 @@ span.hover-content {
   background-size: 100% auto;
   background-color: transparent !important; }
 
+.empty, .resetArtistFilter {
+  position: absolute;
+  text-align: right;
+  right: 10px;
+  bottom: 0px;
+  color: #d9d9d9; }
+
+.resetArtistFilter {
+  color: gray; }
+  .resetArtistFilter:hover {
+    color: #c42020; }
+
 .tattoosContainer {
   margin-top: 20px; }
 
@@ -4750,9 +4755,15 @@ span.hover-content {
     color: gray; }
     .profHead span:before {
       content: "\00a0\00a0/\00a0"; }
+  .profHead .btn-submit {
+    float: none; }
+  @media screen and (min-width: 768px) {
+    .profHead .btn-submit {
+      margin-right: 40px;
+      float: right; } }
 
 .userHead {
-  padding: 40px 0;
+  padding: 40px;
   background-color: #e6e6e6; }
   @media screen and (max-width: 768px) {
     .userHead {
@@ -4761,12 +4772,11 @@ span.hover-content {
   .userHead h3 {
     margin-top: 0;
     padding: 15px; }
-  .userHead p {
+  .userHead .bio {
     margin-top: auto;
-    margin-bottom: auto;
-    text-align: justify; }
+    margin-bottom: auto; }
     @media screen and (max-width: 768px) {
-      .userHead p {
+      .userHead .bio {
         float: none;
         padding: 20px;
         -moz-text-align-last: center;
@@ -4774,6 +4784,11 @@ span.hover-content {
   .userHead span {
     margin-right: 10px;
     color: rgba(217, 217, 217, 0.96); }
+  .userHead .btn-submit {
+    float: none; }
+  @media screen and (min-width: 768px) {
+    .userHead .btn-submit {
+      float: right; } }
 
 .bookContainer {
   background-color: black;
@@ -4869,14 +4884,10 @@ span.hover-content {
   margin: 20px;
   float: none;
   text-align: center; }
-  .profButtons .btn-submit {
-    float: none; }
   @media screen and (min-width: 768px) {
     .profButtons {
       float: right;
-      margin: 40px; }
-      .profButtons .btn-submit {
-        float: right; } }
+      margin: 40px; } }
 
 .collectorsBadge {
   display: inline-block;
@@ -4906,9 +4917,6 @@ span.hover-content {
       margin-bottom: 0px;
       text-align: center;
       font-weight: bold; }
-
-#artistProfile .container-fluid, #artistProfile .tagFilters, #artistProfile .tattooImg {
-  background-color: #d9d9d9; }
 
 .profNavBG {
   position: relative;
@@ -5472,26 +5480,6 @@ span.hover-content {
   -webkit-transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden; }
 
-#search {
-  color: white;
-  background-color: black;
-  min-height: 100vh;
-  margin-bottom: -49px;
-  padding-bottom: 100px; }
-
-.bigfatsearch input {
-  background-color: rgba(255, 255, 255, 0);
-  width: 100%;
-  border: none;
-  color: #c42020;
-  font-size: 65px;
-  line-height: 80px;
-  font-weight: 700;
-  margin-bottom: 40px;
-  margin-top: 40px; }
-  .bigfatsearch input:focus {
-    outline: none; }
-
 .bootstrap-tagsinput {
   display: inline-block;
   color: #555;
@@ -5520,9 +5508,26 @@ span.hover-content {
     position: relative;
     color: #d9d9d9; }
 
+#search .searchContainer, #search #tattoosPage {
+  background-color: black; }
+#search #tattoosPage {
+  min-height: 100vh;
+  margin-bottom: -49px;
+  padding-bottom: 100px; }
 #search input.tt-input {
-  position: absolute !important;
-  left: 0px; }
+  width: 100%;
+  border: none;
+  color: #c42020;
+  line-height: 80px;
+  font-weight: 700;
+  font-size: 36px;
+  margin-top: 40px; }
+  @media screen and (min-width: 768px) {
+    #search input.tt-input {
+      font-size: 65px;
+      margin-top: 0px; } }
+  #search input.tt-input:focus {
+    outline: none; }
 #search ::-webkit-input-placeholder {
   color: #4d4d4d; }
 #search :-moz-placeholder {
@@ -5533,23 +5538,75 @@ span.hover-content {
   color: #4d4d4d; }
 #search :-ms-input-placeholder {
   color: #4d4d4d; }
+#search .bigfatsearch {
+  min-height: 140px;
+  margin-top: 60px;
+  display: block; }
 #search .bootstrap-tagsinput {
-  min-height: 140px; }
+  display: inline-block; }
+  @media screen and (min-width: 768px) {
+    #search .bootstrap-tagsinput {
+      display: inline; } }
   #search .bootstrap-tagsinput:before {
-    font-size: 50px;
-    padding: 15px;
-    top: 60px;
-    position: relative;
-    display: inline-block;
-    color: white; }
-    @media screen and (max-width: 768px) {
+    display: none; }
+    @media screen and (min-width: 768px) {
       #search .bootstrap-tagsinput:before {
-        display: none; } }
+        display: inline;
+        font-size: 50px;
+        padding: 15px;
+        top: 40px;
+        position: relative;
+        color: white; } }
   #search .bootstrap-tagsinput .tag {
     position: relative;
-    top: 40px; }
-#search .message {
-  text-align: right; }
+    top: 22px; }
+#search .searchSelection {
+  text-align: right;
+  display: none; }
+  @media screen and (min-width: 768px) {
+    #search .searchSelection {
+      float: right;
+      display: inline; } }
+  #search .searchSelection .dropdown-menu {
+    min-width: 100%; }
+#search .tt-dropdown-menu, #search .globalBooks {
+  width: 100%;
+  float: center;
+  text-align: center;
+  position: fixed !important;
+  top: 120px !important;
+  vertical-align: top; }
+#search .twitter-typeahead .tt-hint {
+  color: #1a1a1a;
+  line-height: 80px;
+  font-weight: 700;
+  font-size: 36px;
+  margin-top: 40px; }
+  @media screen and (min-width: 768px) {
+    #search .twitter-typeahead .tt-hint {
+      font-size: 65px;
+      margin-top: 0px; } }
+#search .bookSuggestion {
+  margin: 2px;
+  padding: 10px;
+  border: 1px solid #1a1a1a;
+  color: white;
+  background-color: #1a1a1a !important;
+  border-radius: 4px / 6px;
+  background-color: transparent; }
+#search .globalBooks {
+  width: inherit !important;
+  z-index: 0 !important;
+  color: #4d4d4d; }
+
+.reset {
+  text-align: center;
+  padding: 60px; }
+  .reset .btn-submit {
+    margin: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto; }
 
 #tattooProfile .tt-dropdown-menu, #tattooProfile #search .globalBooks, #search #tattooProfile .globalBooks, #editTattoo .tt-dropdown-menu, #editTattoo #search .globalBooks, #search #editTattoo .globalBooks {
   text-align: left;
@@ -5585,23 +5642,6 @@ span.hover-content {
 
 #editTattoo hr {
   border-top: 1px solid #d9d9d9; }
-
-#search .tt-dropdown-menu, #search .globalBooks {
-  width: 100%;
-  float: center;
-  text-align: center;
-  position: fixed !important;
-  top: 120px !important;
-  vertical-align: top; }
-#search .twitter-typeahead .tt-hint {
-  color: #1a1a1a; }
-#search .tt-suggestion {
-  padding: 10px;
-  background-color: black; }
-#search .globalBooks {
-  width: inherit !important;
-  z-index: 0 !important;
-  color: #4d4d4d; }
 
 .tt-suggestion {
   display: inline !important;

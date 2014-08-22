@@ -51,16 +51,16 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <% if (!Parse.User.current()) { %>
-                  <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
                   <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
-                  <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/search/artist" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/search/tattoo" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
                   <li><a href="/join" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
                   <li><a href="/login" class="main-nav-item" id="#login"><i class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
-                <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
                 <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
-                <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
+                <li><a href="/search/artist" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
+                <li><a href="/search/tattoo" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
                  <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -75,9 +75,9 @@
                   </li>
 
                 <% } else { %>
-                  <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
                   <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
-                  <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/search/artist" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/search/tattoo" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -101,19 +101,14 @@
       <div class="menu-bg"></div>
     </script>
 
-
     <!-- Search Page-->
-    <script type="text/html" id="searchTemplate">
-      <div class="container">
-
-        <form class="bigfatsearch" role="search">
-          <input type="text" class="typeahead" placeholder="">
-
-          <div class="message" style="display:none">Searching for tattoos.</div>
-        </form>
+    <script type="text/html" id="searchTemplate">  
+    
+    <div class="searchContainer"><div class="container">
 
         <div class="globalBooks">
           <div class="tt-suggestions">
+            <span> Suggested Books: </span>
             <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Animal</span></div>
             <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Black And Gray</span></div>
             <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Color</span></div>
@@ -124,9 +119,73 @@
           </div>
         </div>
 
-        <div class="row tattoos">
+        <form class="bigfatsearch" role="search">
+          <input type="text" class="typeahead searchInput" placeholder="">
+          <div class="searchSelection">
+            <h5 class="">Searching for</h5>
+            <div class="btn-group">
+              <button class="btn-submit dropdown-toggle" type="button" data-toggle="dropdown">Tattoos</button>
+              <button type="button" class="btn-submit dropdown-toggle" data-toggle="dropdown">
+                  <span class="caret"></span>
+                  <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a id="forTattoos" style="display:none">Tattoos</a></li>
+                <li><a id="forArtists">Artists</a></li>
+              </ul>
+            </div>
+          </div>
+        </form>
+
+      </div></div>
+          
+      <div id="tattoosPage" style="display:none">
+        <div class="container">
+          <div class="row tattoos"></div>
+          <div class="reset" style="display:none"></div>
         </div>
       </div>
+      <div id="artistsPage" style="display:none">
+        <div class="row artists"></div>
+      </div>
+  </script>
+
+
+    <!-- Artists page -->
+    <script type="text/html" id="artistsTemplate">
+        <div class="container">        
+          <div class="lg8container">
+              <div class="tagFilters" data-toggle="buttons">
+                <div class="row">
+                  <span class="flaticon-home73"></span><button type="button" class="btn-tag changeLocationButton">Worldwide</button>
+                </div>
+              </div>  
+          </div>
+        </div>
+
+        <div class="changeLocation" style="display: none">
+            <div class="changeLocationOptions">            
+              <div class="error text-center" style="display:none"></div>
+
+              <div class="input-group">
+                <span class="input-group-addon">Find Artists Near </span>
+                <input type="text" class="form-control" id="changeAddressInput" placeholder="Location">
+                <span class="input-group-btn">
+                  <button class="btn-submit byYou" type="button" style="display:none"></button>
+                  <button class="btn-submit worldwide" type="button">Worldwide</button>
+                  <button class="btn-submit cancel" type="button">X</button>
+                </span>
+              </div>
+              
+            </div>
+            <div id="changeAddressMap" style="width: 100%; height: 540px;"></div>
+        </div>
+
+        <div class="container">
+          <div class="artistsSearch"></div>
+          <div class="artists"></div>
+        </div>
+
     </script>
 
     <!-- Landing Page-->
@@ -146,9 +205,9 @@
 
           <div class="landingLinks" style="display:none">
             <ul class="">
-              <li><a href="/search"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
               <li><a href="/featured"><i class="flaticon-trophy4"></i>Featured</a></li>
-              <li><a href="/artists"><i class="flaticon-tattoo1"></i>Artists</a></li>
+              <li><a href="/search/artist"><i class="flaticon-tattoo1"></i>Artists</a></li>
+              <li><a href="/search/tattoo"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
               <li><a href="/join"><i class="flaticon-send5"></i>Join</a></li>
               <li><a href="/login" id"#login"><i class="flaticon-user56"></i>Log In</a></li>
             </ul>
@@ -190,50 +249,6 @@
         </div>
         <div class="portfolioContainer">
         </div>
-    </script>
-
-    <!-- Artists page -->
-    <script type="text/html" id="artistsTemplate">
-      <div id="artistsPage">
-        <div class="container">        
-          <div class="lg8container">
-            <h2 class="page-header">Artists</h2>
-              <div class="tagFilters" data-toggle="buttons">
-                <div class="row">
-                  <span class="flaticon-home73"></span><button type="button" class="btn-tag changeLocationButton">Worldwide</button>
-                </div>
-              </div>  
-          </div>
-        </div>
-
-
-        <div class="changeLocation" style="display: none">
-            <div class="changeLocationOptions">            
-              <div class="error text-center" style="display:none"></div>
-
-              <div class="input-group">
-                <span class="input-group-addon">Find Artists Near </span>
-                <input type="text" class="form-control" id="changeAddressInput" placeholder="Location">
-                <span class="input-group-btn">
-                  <button class="btn-submit byYou" type="button" style="display:none"></button>
-                  <button class="btn-submit worldwide" type="button">Worldwide</button>
-                  <button class="btn-submit cancel" type="button">X</button>
-                </span>
-              </div>
-              
-            </div>
-            <div id="changeAddressMap" style="width: 100%; height: 540px;"></div>
-        </div>
-
-
-
-        <div class="container">
-          <div class="artistsSearch"></div>
-          <div class="artists"></div>
-        </div>
-
-      </div>
-
     </script>
 
     <!-- Artist Thumbnail -->
@@ -353,11 +368,11 @@
               <img alt="Profile Picture" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/tattooicon-medium.png <% } %>" class="largeprofpic">
             </div>
             <div class="col-md-4 col-sm-4">
-              <h3><%= (name) ?  name : '' %> <span><%= username %></span></h3>
+              <h3><%= (name) ?  name : ' ' %> <span><%= username %></span></h3>
               <div class="row">
                 <div class="col-sm-12">
-                  <h5><%= (shop) ?  shop : '' %></h5>
-                  <h5><%= (locationName) ?  locationName : '' %></h5>
+                  <h5><%= (shop) ?  shop : ' ' %></h5>
+                  <h5><%= (locationName) ?  locationName : ' ' %></h5>
                 </div>
               </div>
             </div>
@@ -531,7 +546,7 @@
     <script type="text/html" id="userProfileTemplate">
       <div class="container">
         <div class="row userHead">
-          <div class="col-xs-12 col-sm-4 col-sm-offset-1">
+          <div class="col-xs-12 col-sm-4">
             <div class="row">
               <div class="col-sm-2">
                 <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/usericon-medium.png <% } %>" alt="Prof">
@@ -540,12 +555,15 @@
                 <h3 class="artistName"><%= username %></h3>
               </div>
             </div>
-            <h5><%= (name) ?  name+' ' : '' %></h5>
-            <h5 ><%= (locationName) ?  locationName : '' %></h5>
+            
+            <h5 ></h5>
           </div>
-          <div class="col-xs-12 col-sm-6">
+          <div class="col-xs-12 col-sm-4">
+            <h5 class="username"><%= (name) ? name : '' %></h5><h5> <%= (locationName) ? locationName : '' %></h5>
+          </div>
+          <div class="col-xs-12 col-sm-4">
             <% if (desc) { %>
-               <p><span>Bio</span><%= desc %></p><br>
+               <p class="bio"><span>Bio</span><%= desc %></p>
             <% } %>
           </div>
         </div>
@@ -716,15 +734,15 @@
             <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Yes.Tattoo /#</span>
-              <input type="text" class="form-control" id="editUsername" placeholder="Username" value="<%= (username) ?  username : '' %>" maxlength="16">
+              <input type="text" class="form-control" id="editUsername" placeholder="Username" value="<%= Parse.User.current().attributes.username %>" maxlength="16">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Password</span>
-              <input type="password" class="form-control" id="editPassword" placeholder="Password">
+              <input type="password" class="form-control" id="editPassword" placeholder="*****">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Email </span>
-              <input type="email" class="form-control" id="editEmail" placeholder="Email">
+              <input type="email" class="form-control" id="editEmail" placeholder="Email" value="<%= Parse.User.current().attributes.email %>">
             </div>
             <button type="submit" class="btn-submit saveAccount">Submit</button>
           </form> 
@@ -737,7 +755,7 @@
               <input type="text" class="form-control" id="settingsMapAddress" placeholder="Location">
               <span class="input-group-btn">
                 <button class="btn-submit saveLocation" type="button" style="display:none">Save</button>
-                <button class="btn-submit clearLocation" type="button" style="display:none">X</button>
+                <button class="btn-submit clearLocation" type="button" style="display:none">Clear</button>
               </span>
             </div>
             
@@ -1030,7 +1048,7 @@
       <h3>Ready to explore?</h3>
       <div class="row"> <hr>
         <button href="/myprofile/settings" class="btn btn-submit skip">Create your profile</button><br> or <br>
-        <button href="/search" class="btn btn-submit done">Search for tattoos</button>
+        <button href="/search/tattoo" class="btn btn-submit done">Search for tattoos</button>
       </div>
     </script>
 

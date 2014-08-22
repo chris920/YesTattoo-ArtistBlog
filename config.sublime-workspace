@@ -1,0 +1,519 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"pre",
+				"preventDefault"
+			],
+			[
+				"featu",
+				"featuredArtists"
+			],
+			[
+				"gray",
+				"gray-light"
+			],
+			[
+				"dar",
+				"gray-darkest"
+			],
+			[
+				"margin",
+				"margin-left"
+			],
+			[
+				"conte",
+				"text-content"
+			],
+			[
+				"e",
+				"e"
+			],
+			[
+				"page",
+				"page"
+			],
+			[
+				"set",
+				"set"
+			],
+			[
+				"App",
+				"App"
+			],
+			[
+				"artist",
+				"artistForm"
+			],
+			[
+				"get",
+				"getUsername"
+			],
+			[
+				"user",
+				"user"
+			],
+			[
+				"tattoo",
+				"tattoo"
+			],
+			[
+				"add",
+				"add"
+			],
+			[
+				"upload",
+				"upload"
+			],
+			[
+				"uname",
+				"uname"
+			],
+			[
+				"col",
+				"col-xs-12"
+			],
+			[
+				"background",
+				"background-color"
+			],
+			[
+				"backgro",
+				"background-color"
+			],
+			[
+				"gra",
+				"gray-light"
+			],
+			[
+				"g",
+				"gray-lighter"
+			],
+			[
+				"margi",
+				"margin-left"
+			],
+			[
+				"padding",
+				"padding-bottom"
+			],
+			[
+				"inline",
+				"inline-block"
+			],
+			[
+				"gr",
+				"gray-darker"
+			],
+			[
+				"Link",
+				"Link"
+			],
+			[
+				"name",
+				"name"
+			],
+			[
+				"content",
+				"align-content"
+			],
+			[
+				"max-",
+				"max-width"
+			],
+			[
+				"rad",
+				"border-radius-base"
+			],
+			[
+				"ari",
+				"artistProfile"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"border",
+				"border-top"
+			],
+			[
+				"p",
+				"p	padding"
+			],
+			[
+				"gray-light",
+				"gray-light-opaque"
+			],
+			[
+				"bottom",
+				"border-bottom"
+			],
+			[
+				"text",
+				"text-align"
+			],
+			[
+				"gray-l",
+				"gray-light"
+			],
+			[
+				"trans",
+				"black-trans"
+			],
+			[
+				"size",
+				"font-size"
+			],
+			[
+				"bakground",
+				"background-color"
+			],
+			[
+				"align",
+				"vertical-align"
+			],
+			[
+				"backgr",
+				"background-color"
+			],
+			[
+				"line",
+				"line-height"
+			],
+			[
+				"impor",
+				"important"
+			],
+			[
+				"bg",
+				"background-color"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 47.0,
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/indexnewintro.html",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/css/sass/ytstyle.scss",
+		"/Users/chrisliu/Desktop/icons.css",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/choose_password.html",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/email_verification.html",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/invalid_link.html",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/password_updated.html",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/js/yt-artistblog.js",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/js/yt-proto.js",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/js/yt-shared.js",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/index.html",
+		"/Users/chrisliu/Downloads/backbonetutorials-gh-pages/examples/infinite-scroll/server.js",
+		"/Users/chrisliu/Downloads/backbonetutorials-gh-pages/examples/infinite-scroll/js/boilerplate.js",
+		"/Users/chrisliu/Downloads/backbone-contact-manager-gh-pages 2/app/js/models/contact.js",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/ytstyle.scss",
+		"/Users/chrisliu/Sites/YesTattoo-ArtistBlog/js/ytjs.js",
+		"/Users/chrisliu/Sites/YesTattoo/js/bootstrap-editable.js",
+		"/Users/chrisliu/Sites/YesTattoo/css/ytstyle.css",
+		"/Users/chrisliu/Sites/YesTattoo/Index.html",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/vendor/assets/stylesheets/bootstrap/_list-group.scss",
+		"/Users/chrisliu/Sites/University/index.html",
+		"/Users/chrisliu/Sites/YesTattoo/data/artists.js",
+		"/Users/chrisliu/Sites/YesTattoo/js/dummydata/artists.json",
+		"/Users/chrisliu/Sites/YesTattoo/authordash.html",
+		"/Users/chrisliu/Sites/YesTattoo/profilepage.html",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/vendor/assets/stylesheets/bootstrap-YTCustom.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/vendor/assets/stylesheets/bootstrap/_forms.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/vendor/assets/stylesheets/bootstrap/_buttons.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/libraries/_modals.scss",
+		"/Users/chrisliu/Sites/YesTattoo/about.html",
+		"/Users/chrisliu/Sites/YesTattoo/js/ytjs.js",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/vendor/assets/stylesheets/bootstrap/_glyphicons.scss",
+		"/Users/chrisliu/Sites/YesTattoo/YesTattoo-StyleTemplate.html",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/vendor/assets/stylesheets/bootstrap/_navs.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/vendor/assets/stylesheets/bootstrap/_mixins.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/libraries/_mixins.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/vendor/assets/stylesheets/bootstrap/_media.scss",
+		"/Users/chrisliu/Sites/YesTattoo/authordashboard.html",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/vendor/assets/stylesheets/bootstrap/_variables.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/pages/_home.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/_variables.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/preSassCSS",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/_globals.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/sass/libraries/_variables.scss",
+		"/Users/chrisliu/Sites/YesTattoo/css/bootstrap.min.css",
+		"/Users/chrisliu/Sites/YesTattoo.com/wp-content/themes/wynn/style.css",
+		"/Users/chrisliu/Sites/University/css/index.html",
+		"/Users/chrisliu/Sites/University/css/tablestyle",
+		"/Users/chrisliu/Sites/Enchanted Aquarium/New Landing Page/css/style.css",
+		"/Users/chrisliu/Downloads/script.js",
+		"/Users/chrisliu/Sites/LocalWP.com/wp-content/themes/wynn/css/YTWynnCustom.css",
+		"/Users/chrisliu/Sites/LocalWP.com/wp-content/themes/wynn/be-themes-options.php",
+		"/Users/chrisliu/Sites/LocalWP.com/wp-content/themes/wynn/style.css",
+		"/Users/chrisliu/Sites/LocalWP.com/wp-content/themes/wynn/css/be-themes-styles.php",
+		"/Users/chrisliu/Sites/LocalWP.com/wp-content/themes/wynn/functions.php",
+		"/Users/chrisliu/Sites/yestattoo-app/public/css/bootstrap-image-gallery.min.css",
+		"/Users/chrisliu/Sites/yestattoo-app/public/css/normalize.css",
+		"/Users/chrisliu/Sites/DealMedic/DealMedic-IGList/css/blueimp-gallery.css",
+		"/Users/chrisliu/Sites/DealMedic/DealMedic-IGList/css/bootstrap-image-gallery.css",
+		"/Users/chrisliu/Sites/DealMedic/DealMedic-IGList/js/bootstrap-image-gallery.js",
+		"/Users/chrisliu/Downloads/tellde5_wp621.sql",
+		"/Users/chrisliu/Desktop/Medium Saved/Medium.html",
+		"/Users/chrisliu/Desktop/BongSilhouette.svg"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"wizard",
+			"		Fix Overlapping Sugggestions													",
+			"wizard",
+			"typeahead",
+			"multiple",
+			"tattooprofile",
+			"42",
+			"totalartists",
+			"scroll",
+			"APP",
+			"landing",
+			".prof",
+			"artistprof",
+			".artistProf",
+			"artistProf",
+			"settings",
+			"tattootemplate",
+			"tattoo",
+			"intro",
+			"removeintro",
+			"welcome",
+			"App.Views.Intro",
+			"intr",
+			"intro",
+			"signup",
+			"scrollTop",
+			"scrollto",
+			"top",
+			"scroll",
+			"include",
+			"inlcude",
+			"user profile",
+			"upload",
+			"(4)",
+			"login",
+			"data",
+			"logout",
+			"login",
+			"join",
+			"body",
+			"label for",
+			"login",
+			"renderLoad",
+			"App.Views.FeaturedArtistPage",
+			"featuredcontainertemplate",
+			"featured",
+			"welcome",
+			"debounce",
+			"modal",
+			"login",
+			"esc",
+			"modal",
+			"login",
+			"tattooprofile",
+			"this.back",
+			"join",
+			"login page",
+			"login",
+			".app",
+			"'#app'",
+			"'.app'",
+			"landing",
+			".app",
+			"'.app'",
+			".app",
+			"app",
+			"tattooimg",
+			"modal",
+			"add",
+			"tattooimg",
+			".open",
+			"open",
+			"tattooImg",
+			"upload",
+			".open",
+			"tattooprofile",
+			"console.log",
+			"limit",
+			"featuredartist",
+			"modal",
+			"navigate",
+			".CLOSE",
+			"setartist",
+			"set artist",
+			"no location",
+			"artistProfile.name",
+			"setartist",
+			"src",
+			"artistprofile",
+			"activateAffix",
+			"user profile",
+			"my tattoo",
+			"hidden",
+			"src",
+			"modal",
+			"scroll",
+			"scroll up",
+			"modal--open",
+			".tattoo",
+			"modal",
+			"tattoo",
+			"style",
+			"input",
+			"bbm-open",
+			"      <div class=\"imageBox\">\n        <img src=\"img/tattoos/algarcia1.jpg\" class=\"fullImage\">\n      </div>\n      <div class=\"infoBox\">\n        <div class=\"bbm-modal__bottombar\">\n          <a href=\"#\" id=\"close\" class=\"btn-submit\">Close</a>\n        </div>\n      </div>",
+			"tattooImg",
+			"html/(",
+			"add",
+			"modal",
+			"#join",
+			"join",
+			"$(\"",
+			"parse.history.navigate('login",
+			"parse.history.navigate('/login",
+			"parse.history.navigate",
+			"parse.history.navigate(",
+			"parse.history.navigate(login",
+			"parse.history.navigate('#login",
+			"app.getprofile",
+			"login",
+			"console.log",
+			"logout",
+			"nav",
+			"var logi",
+			"var login = new App.Views.Login();",
+			"app.render",
+			"login",
+			"</span>Add</button>"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": false
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"index",
+				"YesTattoo/Index.html"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 134.0,
+	"status_bar_visible": true
+}
