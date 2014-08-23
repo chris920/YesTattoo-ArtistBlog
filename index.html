@@ -15,7 +15,7 @@
     <div id="body">
       <div class="modalayheehoo"></div>
       <div class="navs"></div>
-      <section id="landing"></section>
+      <section id="gutter"></section>
       <section id="app"></section>
     </div> 
           
@@ -64,7 +64,7 @@
                  <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                      <li><a href="/myprofile"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
+                      <button class="btn-submit" href="/myprofile">View Profile</button>
                       <li><a href="/myprofile/collection"><span class="flaticon-books8 pull-right"></span>Collection</a></li>
                       <li><a href="/myprofile/books"><span class="flaticon-book104 pull-right"></span>Books</a></li>
                       <li><a href="/myprofile/artists"><span class="flaticon-tattoo1 pull-right"></span>Artists</a></li>
@@ -83,7 +83,7 @@
                     <ul class="dropdown-menu">
                       <li><a href="/myprofile/upload"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
                       <li class="divider"></li>
-                      <li><a href="/myprofile"><span class="flaticon-user56 pull-right"></span>Your Profile</a></li>
+                      <button class="btn-submit" href="/myprofile">View Profile</button>
                       <li><a href="/myprofile/portfolio"><span class="flaticon-black373 pull-right"></span>Portfolio</a></li>
                       <li><a href="/myprofile/about"><span class="flaticon-information pull-right"></span>About</a></li>
                       <li class="divider"></li>
@@ -106,7 +106,7 @@
     
     <div class="searchContainer"><div class="container">
 
-        <div class="globalBooks">
+        <div class="globalBooks" style="display:none">
           <div class="tt-suggestions">
             <span> Suggested Books: </span>
             <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Animal</span></div>
@@ -548,24 +548,18 @@
         <div class="row userHead">
           <div class="col-xs-12 col-sm-4">
             <div class="row">
-              <div class="col-sm-2">
                 <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/usericon-medium.png <% } %>" alt="Prof">
-              </div>
-              <div class="col-sm-10">
                 <h3 class="artistName"><%= username %></h3>
-              </div>
             </div>
-            
-            <h5 ></h5>
           </div>
           <div class="col-xs-12 col-sm-4">
             <h5 class="username"><%= (name) ? name : '' %></h5><h5> <%= (locationName) ? locationName : '' %></h5>
           </div>
-          <div class="col-xs-12 col-sm-4">
-            <% if (desc) { %>
-               <p class="bio"><span>Bio</span><%= desc %></p>
-            <% } %>
-          </div>
+          <% if (desc) { %>
+            <div class="col-xs-12 col-sm-4">
+              <p class="bio"><span>Bio</span><%= desc %></p>
+            </div>
+          <% } %>
         </div>
       </div>
       

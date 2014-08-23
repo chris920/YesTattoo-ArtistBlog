@@ -3992,11 +3992,18 @@ a:focus {
   border-top: 0px solid #d9d9d9;
   border-bottom: 4px solid transparent;
   padding-left: 40px; }
-  .main-nav-item:hover {
+  .main-nav-item:hover, .main-nav-item:active {
     border-top: 4px solid #c42020;
     border-bottom: 0px solid transparent !important; }
 
-#landing {
+.navs .dropdown-menu {
+  padding: 20px;
+  min-width: 200px; }
+  .navs .dropdown-menu .btn-submit {
+    width: 100%;
+    margin-bottom: 10px; }
+
+#gutter {
   text-align: center;
   background: black;
   height: 100%;
@@ -4763,32 +4770,34 @@ span.hover-content {
       float: right; } }
 
 .userHead {
-  padding: 40px;
+  padding: 20px 10px;
   background-color: #e6e6e6; }
   @media screen and (max-width: 768px) {
     .userHead {
       float: none;
       text-align: center; } }
   .userHead h3 {
-    margin-top: 0;
-    padding: 15px; }
-  .userHead .bio {
-    margin-top: auto;
-    margin-bottom: auto; }
-    @media screen and (max-width: 768px) {
-      .userHead .bio {
-        float: none;
-        padding: 20px;
-        -moz-text-align-last: center;
-        text-align-last: center; } }
+    display: block; }
   .userHead span {
     margin-right: 10px;
     color: rgba(217, 217, 217, 0.96); }
   .userHead .btn-submit {
     float: none; }
   @media screen and (min-width: 768px) {
-    .userHead .btn-submit {
-      float: right; } }
+    .userHead {
+      padding: 0px 0px; }
+      .userHead h3 {
+        margin-left: 10px;
+        margin-top: 0;
+        display: inline; }
+      .userHead > div {
+        padding: 25px; }
+      .userHead > div:nth-child(2) {
+        min-height: 114px;
+        border-right: 1px solid #d9d9d9;
+        border-left: 1px solid #d9d9d9; }
+      .userHead .btn-submit {
+        float: right; } }
 
 .bookContainer {
   background-color: black;
@@ -5510,7 +5519,10 @@ span.hover-content {
 
 #search .searchContainer, #search #tattoosPage {
   background-color: black; }
+#search #artistsPage {
+  background-color: #d9d9d9; }
 #search #tattoosPage {
+  background-color: black;
   min-height: 100vh;
   margin-bottom: -49px;
   padding-bottom: 100px; }

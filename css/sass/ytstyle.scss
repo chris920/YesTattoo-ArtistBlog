@@ -141,21 +141,31 @@ a {
   border-top: 0px solid $gray-light;
   border-bottom: 4px solid transparent;
   padding-left: 40px;
-  &:hover {
+  &:hover, &:active {
       border-top: 4px solid $brand-primary;
       border-bottom: 0px solid transparent !important; 
   }
 }
 
+.navs .dropdown-menu {
+    padding: 20px;
+    min-width: 200px;
+    .btn-submit {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
 
-
-/////// landing page
-#landing {
+/////// home page
+#gutter {
     text-align:center;
     background: black;
     height:100%;
     border-bottom: 100px solid black;
 }
+
+/////// landing page
+
 
 .artistslide {
         overflow: hidden;
@@ -958,36 +968,42 @@ span.hover-content {
 }
 
 .userHead {
-    padding: 40px;
+    padding: 20px 10px;
     background-color:$gray-lighter;
     @media screen and (max-width: $screen-sm) {
         float: none;
-        text-align: center; }
+        text-align: center; 
+    }
     h3 {
-        margin-top: 0;
-        padding: 15px; }
-    .bio {
-
-        margin-top:auto;
-        margin-bottom:auto; 
-
-        @media screen and (max-width: $screen-sm) {
-            float: none;
-            padding: 20px;
-            -moz-text-align-last: center;
-            text-align-last: center;}
+        display: block;
     }
     span {
         margin-right: 10px;
-        color: $gray-light-opaque; }
+        color: $gray-light-opaque; 
+    }
     .btn-submit {
         float: none;
     }
     @media screen and (min-width: $screen-sm) {
+        padding: 0px 0px;
+        h3 {
+            margin-left: 10px;
+            margin-top: 0;
+            display: inline; 
+        }
+        > div {
+            padding: 25px;
+        }
+        > div:nth-child(2) {
+            min-height: 114px; //64 prof & 25+25 padding
+            border-right: 1px solid $gray-light;
+            border-left: 1px solid $gray-light;
+        }
         .btn-submit {
             float: right;
         }
     }
+
 }
 .bookContainer {
     background-color: black;
@@ -1832,7 +1848,11 @@ span.hover-content {
     .searchContainer, #tattoosPage {
         background-color: black;
     }
+    #artistsPage {
+        background-color: $gray-light;
+    }
     #tattoosPage {
+        background-color: black;
         min-height: 100vh;
         margin-bottom: -49px;
         padding-bottom: 100px;
