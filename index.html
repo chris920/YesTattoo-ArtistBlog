@@ -17,9 +17,10 @@
       <div class="navs"></div>
       <section id="gutter"></section>
       <section id="app"></section>
+      <div id="fb-root"></div>
     </div> 
           
-    <div id="footer" style="display:none">
+    <div id="footer">
       <div class="container">
         <div class="row">
           <div class="col-sm-6 col-xs-12">
@@ -62,7 +63,7 @@
                 <li><a href="/search/artist" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                 <li><a href="/search/tattoo" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
                  <li class="dropdown">
-                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
+                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= App.profile.attributes.username %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                       <button class="btn-submit" href="/myprofile">View Profile</button>
                       <li><a href="/myprofile/collection"><span class="flaticon-books8 pull-right"></span>Collection</a></li>
@@ -280,6 +281,8 @@
         </div>
 
         <div class="row">
+          <button class="btn-submit" id="facebookLogin"><i class="facebook"></i></button>
+          <p class="text-center">or</p>
           <form class="form-horizontal loginForm" role="form">
             <div class="error text-center" style="display:none"></div>
             <div class="form-group">
@@ -617,25 +620,30 @@
     <script type="text/html" id="joinTemplate">
       <div class="container">
         <div class="lightContainer">
+
           <h3 class="text-center">Join</h3>
-          <p class="text-center">Reserve your username. Subscribe to new featured artists. Stay up to date with YesTattoo.</p>
-          <form class="signupForm" role="form">
-            <div class="error" style="display:none"></div>
-            <div class="input-group">
-              <span class="input-group-addon">Yes.Tattoo /# </span>
-              <input type="text" class="form-control" id="inputUsername" placeholder="Username" maxlength="16">
-            </div>
-            <input type="email" class="form-control" id="inputEmail" placeholder="Email">
-            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-            <div class="artistForm" style="display: none;">
-              <select class="form-control" id="inputRole">
-                <option value="user" selected="selected">Select</option>
-                <option value="artist">Artist</option>
-              </select>
-            </div>
-            <a class="toggleArtist btn-tag">Are you an artist?</a>
-            </br><button type="submit" class="btn-submit">Submit</button>
-          </form> 
+
+          <div class="roleSelection">
+            <a class="btn-tag selectArtist"><i class="flaticon-tattoo1"></i>Artist</a>
+            <a class="btn-tag active selectUser"><i class="flaticon-user56"></i>Enthusiast</a>
+          </div>
+
+          <div class="input-group">
+            <span class="input-group-addon">Username </span>
+            <input type="text" class="form-control" id="inputUsername" placeholder="Yes.Tattoo /#You" maxlength="16">
+          </div>
+          <div class="signUpSelection" style="display:none">
+            <p>Signup with</p>
+            <form class="signupForm" role="form">
+              <div class="error" style="display:none"></div>
+              <input type="email" class="form-control btn-submit" id="inputEmail" placeholder="Email">
+              <input type="password" class="form-control" id="inputPassword" placeholder="Password" style="display:none">
+              </br><button type="submit" class="btn-submit" style="display:none">Submit</button>
+            </form>
+            <p>or</p>
+            <button class="btn-submit" id="facebookLogin"><i class="facebook"></i></button>
+          </div>
+
         </div>
       </div>
     </script>
@@ -655,7 +663,7 @@
             <button class="btn-submit">Submit</button>
           </form> 
         </div>
-      </div>
+        </div>
     </script>
 
     <!-- About page -->
@@ -724,6 +732,7 @@
 
         <div class="lightContainer">
           <h3 id="accountSettings">Account</h3>
+          <button class="btn-submit" id="facebookLogin"><i class="facebook"></i>Link Facebook</button>
           <form class="accountForm" role="form">
             <div class="error" style="display:none"></div>
             <div class="input-group">
@@ -770,7 +779,7 @@
             </div>
             <div class="input-group">
               <span class="input-group-addon">About </span>
-              <textarea class="form-control" id="editAbout" rows="8" placeholder="About" maxlength="500"><%= (desc) ?  desc : '' %></textarea>
+              <textarea class="form-control" id="editAbout" rows="6" placeholder="About" maxlength="500"><%= (desc) ?  desc : '' %></textarea>
             </div>
 
             <% if (Parse.User.current().attributes.role === 'artist') { %>
@@ -1093,8 +1102,9 @@
     <script src="js/yt-artistblog.js"></script>
     <script src="js/yt-shared.js"></script>
 
-    <!-- google analytics -->
+
     <script>
+      <!-- Google analytics -->
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -1103,6 +1113,24 @@
       ga('create', 'UA-51701131-1', 'yes.tattoo');
       ga('require', 'displayfeatures');
       ga('send', 'pageview');
+
+      <!-- Facebook init -->
+      window.fbAsyncInit = function() {
+        Parse.FacebookUtils.init({
+          appId      : '281013808759952',
+          status     : true,
+          xfbml      : true
+        });
+        FB.getLoginStatus();
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/all.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
 
     </script>
 

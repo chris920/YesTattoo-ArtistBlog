@@ -15,22 +15,20 @@ var App = new (Parse.View.extend({
 
 	},
 	start: function(){
-		// render initial nav
-		var nav = new App.Views.Nav();
-		$('#footer').fadeIn( 800 );
-		
-		this.typeaheadInitialize();
 		this.getProfile(this.startRouter);
-		this.mapStyles = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}];
+		this.initTypeahead();
+		this.initScrollToTop;
 	},
 	startRouter: function(){
 		App.router = new App.Router();
 		Parse.history.start({pushState: false, root: '/'});
 	},
 	getProfile: function(callBack){
+		// get user's data and render nav
 		var user = Parse.User.current();
 		if (!user) {
 			_.once(App.Collections.adds = new App.Collections.Adds());
+			var nav = new App.Views.Nav();
 			if (callBack) { callBack(); }
 			return;
 		} else if (App.profile === undefined) {
@@ -40,11 +38,12 @@ var App = new (Parse.View.extend({
 			} else {
 				var query = new Parse.Query(App.Models.ArtistProfile);
 			}
-			query.equalTo("username", user.getUsername());
+			query.equalTo("user", user);
 			query.first().then(function(result) {
 				App.profile = result;
 				return App.profile;
 			}).then(function(profile){
+				var nav = new App.Views.Nav();
 			  	var addsQuery = new Parse.Query(App.Models.Add);
 			  	addsQuery.descending("createdAt");
 			  	addsQuery.equalTo('user', user);
@@ -61,10 +60,11 @@ var App = new (Parse.View.extend({
 			});
 		} else {
 			if (callBack) { callBack(); }
+			var nav = new App.Views.Nav();
 		}
 		return App.profile;
 	},
-	typeaheadInitialize: function(){
+	initTypeahead: function(){
 		var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Rat","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Tattoo Events","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
 		///initial books local. needs to pull the user's books.
 		this.booktt = new Bloodhound({
@@ -84,7 +84,38 @@ var App = new (Parse.View.extend({
 			App.back = Parse.history.getFragment();
 			Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
 		}
-	}
+	},
+	initScrollToTop: $(function(){
+	 	$(window).scroll(function () {
+	        if ($(this).scrollTop() > 800) {
+	            $('#back-to-top').fadeIn( 2200 );
+	        } else {
+	            $('#back-to-top').fadeOut( 800 );
+	        }
+	    });
+	    $('#back-to-top').click(function () {
+	        $('#back-to-top').tooltip('hide');
+	        $('body,html').animate({
+	            scrollTop: 0
+	        }, 800);
+	        return false;
+	    });
+	    $('#back-to-top').tooltip('show');
+	}),
+	initFacebook: function(){
+
+
+		// $(document).ready(function() {
+		//   $.ajaxSetup({ cache: true });
+		//   $.getScript('https://connect.facebook.net/en_UK/all.js', function(){
+		//      Parse.FacebookUtils.init({
+		//       appId: '281013808759952'
+		//     });
+		//     FB.getLoginStatus(facebookInitiated);
+		//   });
+		// });
+	},
+	mapStyles: [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}]
 }))({el: document.body});
 
 
@@ -643,7 +674,6 @@ App.Views.Artist = Parse.View.extend({
 					that.$('.artistTattoos').append(_.template('<a class="tattooContainer"><img src="img/empty-tattoo.png" class="tattooImg" style="border: 1px solid #d9d9d9;"></a>'));
 				}, that);
   			}
-
   			if ( tats.length === 0 && App.search && App.search.searchingForView.query.length > 0) {
 	    		that.$('.artistTattoos').append('<a class="resetArtistFilter">Reset</a>')
 	    		that.$('.tattooImg').css('border', 'none');
@@ -666,7 +696,6 @@ App.Views.Artist = Parse.View.extend({
 	    		that.$('.artistTattoos').append('<span class="empty">No tattoos</span>')
 	    		that.$('.tattooImg').css('border', 'none');
   			}  
-
 	  	});
 		return this;
 	}
@@ -681,29 +710,55 @@ App.Views.Login = Backbone.Modal.extend({
 	viewContainer: '.clearContainer',
 	cancelEl: '.x',
 	events: {
-	      "submit form.loginForm": 		"logIn",
-	      "click .btn-link": 			"passwordForm"
+		"click #facebookLogin": 	"facebookLogin",
+		"submit form.loginForm": 	"login",
+		"click .btn-link": 			"passwordForm"
 	},
-    logIn: function(){
-      var that = this;
-      var username = this.$("#loginUsername").val();
-      var password = this.$("#loginPassword").val();
+    facebookLogin: function(){
+		this.$("#facebookLogin").attr("disabled", "disabled");
+		var that = this;
+		Parse.FacebookUtils.logIn(null, {
+			success: function(user) {
+				if (!user.existed()) { 
+					user.destroy().then(function(user){
+						Parse.User.logOut();
+						that.triggerCancel();
+						Parse.history.navigate('/join', {trigger: true});
+					});
+				} else {
+					App.getProfile();
+					that.undelegateEvents();
+					that.triggerCancel();
+					delete that;
+				}
+			},
+			error: function(user, error) {
+	        	console.log(error);
+	        	$(".loginForm .error").html(error.message).show();
+	        	$("#facebookLogin").removeAttr("disabled");
+			}
+		});
+      return false;
+    },
+    login: function(){
+		this.$(".loginForm button").attr("disabled", "disabled");
+		var that = this;
+		var username = this.$("#loginUsername").val();
+		var password = this.$("#loginPassword").val();
 
-      Parse.User.logIn(username, password, {
-        success: function(user) {
-			var nav = new App.Views.Nav();
-			App.getProfile();
-			that.triggerCancel();
-			that.undelegateEvents();
-			delete that;
-        },
-        error: function(user, error) {
-        	console.log(error);
-        	$(".loginForm .error").html("Invalid username or password. Please try again.").show();
-        	$(".loginForm button").removeAttr("disabled");
-        }
-      });
-      this.$(".loginForm button").attr("disabled", "disabled");
+		Parse.User.logIn(username, password, {
+			success: function(user) {
+				App.getProfile();
+				that.triggerCancel();
+				that.undelegateEvents();
+				delete that;
+			},
+			error: function(user, error) {
+				console.log(error);
+				$(".loginForm .error").html("Invalid username or password. Please try again.").show();
+				$(".loginForm button").removeAttr("disabled");
+			}
+		});
       return false;
     },
     passwordForm: function(){
@@ -1182,18 +1237,6 @@ App.Views.Tattoos = Parse.View.extend({
 		}
 		return this;
 	},
-	// prependTattoo: function(tat){
-	// 	if (!this.options.myTattoos) {
-	// 		var tattoo = new App.Views.Tattoo({model: tat});
-	// 		$(this.el).prepend(tattoo.render().el);
-	// 		$('.reset').off('click', this.resetFilters);
-	// 	} else {
-	// 		var myTattoo = new App.Views.MyTattoo({model: tat});
-	// 		$(this.el).prepend(myTattoo.render().el);
-	// 		$('.reset').off('click', this.resetFilters);
-	// 	}
-	// 	return this;
-	// },
     renderTattoosByBooks: function(books) {
     	this.$el.empty();
     	var filteredTattoos = this.collection.byBook(books)
@@ -1731,10 +1774,13 @@ App.Views.Landing = Parse.View.extend({
 		return this;
 	},
 	hideLanding:function(){
+		var that = this;
 	    this.$el.stop(true, true).animate({
             height:"toggle",
             opacity:"toggle"
-        },900);
+        },900, function(){
+        	that.remove();
+        });
 		clearInterval(this.artistTimer);
 		$('.navs').fadeIn( 900 );
 		$(window).unbind('scroll', this.continueToFeatured);
@@ -2144,41 +2190,84 @@ App.Views.Join = Parse.View.extend({
 	id: 'join',
 	template: _.template($("#joinTemplate").html()),
 	events: {
-		'click .toggleArtist': 		'toggleArtist',
+		"click .selectArtist": 		"selectArtist",
+		"click .selectUser": 		"selectUser",
+		"keypress #inputUsername": 	"initUsernameCheckTimer",
+		"focus #inputEmail": 		"showEmailForm",
 		"submit form.signupForm": 	"signUp",
-		"keyup #inputUsername": 	"usernameVal"
+		"click #facebookLogin": 	"signUpWithFacebook"
 	},
     initialize: function() {
-      _.bindAll(this, "signUp");
+		_.bindAll(this, "signUp", "signUpWithFacebook", "initUsernameCheckTimer", "showEmailForm", "checkUsername");
+		this.usernameCheckTimer;
+		this.role = 'user';
+    },
+    selectArtist: function(){
+    	this.$('.selectUser').removeClass('active');
+    	this.$('.selectArtist').addClass('active');
+    	this.role = 'artist';
+    },
+	selectUser: function(){
+		this.$('.selectArtist').removeClass('active');
+		this.$('.selectUser').addClass('active');
+		this.role = 'user';
+    },
+    initUsernameCheckTimer: function(e){
+    	this.$("#inputUsername").removeClass('inputError, inputSuccess');
+    	var that = this;
+		if ( e.which === 13 ) { 
+			if (this.usernameCheckTimer) clearTimeout(this.usernameCheckTimer);
 
+			that.checkUsername();
+		} else {
+			if (this.usernameCheckTimer) clearTimeout(this.usernameCheckTimer);
+			this.usernameCheckTimer = setTimeout(function(){
+
+				that.checkUsername();
+			}, 1250);
+		}
     },
-	toggleArtist: function() {
-    	if($(".artistForm").is(':hidden')){
-			$('.artistForm').fadeIn();
-			$('.toggleArtist').text("Actually, not an artist...").removeClass('btn-tag');
-			$('#inputRole').val('artist');
-    	} else if ($(".artistForm").is(':visible')) {
-			$('.artistForm').fadeOut();
-			$('.toggleArtist').text("Artist?").addClass('btn-tag');
-			$('#inputRole').val('user');
-    	};
-    },
-    usernameVal: function() {
-    	var validated = $("#inputUsername").val().replace(/\W/g, '').toLowerCase();
-		$("#inputUsername").val(validated);
+    checkUsername: function(){
+		this.username = this.$("#inputUsername").val().replace(/\W/g, '').toLowerCase();
+    	this.$("#inputUsername").val(this.username).removeClass('inputError').addClass('inputChecking');
+    	var that = this;
+    	var totalCount;
+    	var userQuery = new Parse.Query(App.Models.UserProfile);
+    	userQuery.equalTo('username', this.username);
+    	var artistQuery = new Parse.Query(App.Models.ArtistProfile);
+    	artistQuery.equalTo('username', this.username);
+
+    	userQuery.count().then(function(userCount){
+    		totalCount = userCount;
+    		return artistQuery.count();
+    	}).then(function(artistCount){
+    		totalCount = totalCount + artistCount;
+    	}).then(function(success){
+    		if(totalCount === 0 ) {
+    			that.$("#inputUsername").removeClass('inputChecking').addClass('inputSuccess');
+    			that.$(".signUpSelection").fadeIn( 800 );
+    		} else {
+    			that.$("#inputUsername").removeClass('inputChecking').addClass('inputError');
+    		}
+    	}, function(error){
+    		console.log(error);
+    	});
+    },	
+    showEmailForm: function(){
+    	var that = this;
+    	this.$('#inputEmail').removeClass('btn-submit');
+    	this.$('#facebookLogin').fadeOut( 600, function(){
+    		that.$('.signUpSelection > p').html('<br>');
+    		that.$('.signupForm').children().fadeIn( 1200 );
+    	});
     },
     signUp: function() {
-		var self = this;
-		var username = this.$("#inputUsername").val().replace(/\W/g, '').toLowerCase();
+		this.$(".signupForm button").attr("disabled", "disabled");
+		var that = this;
 		var email = this.$("#inputEmail").val();
 		var password = this.$("#inputPassword").val();
-		var role = this.$("#inputRole").val();
 		var userACL = new Parse.ACL(Parse.User.current());
-
-		Parse.User.signUp(username, password, { email: email, role: role, ACL: userACL 
-		}).then( function(user){
-			console.log(user);
-			return user;
+		Parse.User.signUp(this.username, password, { email: email, role: this.role, ACL: userACL 
 		}).then(function(user){
 	    	if(user.attributes.role === 'user'){
 	    		var profile = new App.Models.UserProfile();
@@ -2193,17 +2282,83 @@ App.Views.Join = Parse.View.extend({
 			var nav = new App.Views.Nav();
 			Parse.history.navigate('myprofile/tour', {trigger: true});
 
-			self.undelegateEvents();
-			delete self;
+			that.undelegateEvents();
+			delete that;
 		}, function(error) {
 			console.log(error);
 			$(".signupForm .error").html(error.message).show();
 			$(".signupForm button").removeAttr("disabled");
 		});
-
-		this.$(".signupForm button").attr("disabled", "disabled");
-
 		return false;
+    },
+    signUpWithFacebook: function(){
+		this.$("#facebookLogin").attr("disabled", "disabled");
+		var user = new Parse.User();
+		user.set('role', this.role);
+    	var that = this;
+		Parse.FacebookUtils.logIn('user_photos,user_location,user_friends,email,user_about_me,user_website', {
+			success: function(user) {
+				if (!user.existed()) {
+					// var self = this;
+					var userACL = new Parse.ACL(Parse.User.current());
+					FB.api('/me', function(response) {
+///check email. Logout / unlink if does not exist. 
+						user.set('email', response.email);
+						user.set('username', that.username);
+						var userACL = new Parse.ACL(user);
+						user.setACL(userACL);
+						user.save().then(function(user){
+					    	if(user.attributes.role === 'user'){
+					    		var profile = new App.Models.UserProfile();
+					    	} else  {
+					    		var profile = new App.Models.ArtistProfile(); 
+					    	};
+					    	profile.set('user', user);
+					    	profile.set('username', that.username);
+					    	profile.set('name', response.name);
+					    	profile.set('desc', response.bio);
+
+					    	/// set profile picture
+					    	///https://developers.facebook.com/docs/graph-api/reference/v2.1/user/picture
+							// FB.api(
+							//     "/me/picture",
+							//     function (response) {
+							//       if (response && !response.error) {
+							//         /* handle the result */
+							//       }
+							//     }
+							// );
+							// var upload = prof.files[0];
+							// var name = this.user.getUsername() + "prof.jpg";
+							// var file = new Parse.File(name, upload);
+							// profile.set("prof", file);
+
+					      	App.profile = profile;
+					      	return profile.save();
+						}).then(function(profile) {
+							var nav = new App.Views.Nav();
+							Parse.history.navigate('myprofile/tour', {trigger: true});
+
+							that.undelegateEvents();
+							delete that;
+						}, function(error) {
+							user.destroy().then(function(){
+								Parse.User.logOut();
+								Parse.history.navigate('/login', {trigger: true});
+							});
+							$(".signupForm .error").html(error.message).show();
+							console.log(error);
+						});
+					});
+				} else {
+					var nav = new App.Views.Nav();
+					Parse.history.navigate('/featured', {trigger: true});
+				}
+			},
+		 	error: function(user, error) {
+				$(".signupForm .error").html(error.message).show();
+		 	}
+		});
     },
 	render: function(){
 		var html = this.template();

@@ -165,8 +165,6 @@ a {
 }
 
 /////// landing page
-
-
 .artistslide {
         overflow: hidden;
         height: 100vh;
@@ -1379,10 +1377,40 @@ span.hover-content {
     }
 }
 
-.toggleArtist {
-    display: block;
-    margin-bottom: 10px;
+.roleSelection, .signUpSelection {
+    margin: 20px 0px;
 }
+#inputEmail {
+    @include transition(all 1.6s ease);
+}
+#facebookLogin {
+    background-color: #4f78b4;
+    width: 100%;
+    padding: 0px;
+    .facebook {
+        height:inherit;
+        font-size:28px;
+    }
+}
+.inputSuccess, .inputError, .inputChecking {
+    @include transition(all 1.6s ease);
+}
+#inputUsername {
+    background-position: center center; 
+}
+.inputSuccess {
+    background: white url('../img/inputsuccess.png') no-repeat;
+    background-position: center right !important;
+}
+.inputError {
+    background: white url('../img/inputerror.png') no-repeat;
+    background-position: center right !important;
+}
+.inputChecking {
+    background: white url('../img/spinner.gif') no-repeat;
+    background-position: center right !important;
+}
+
 @-webkit-keyframes pulse {
      50% {color: $gray-darker;}
 }
@@ -1911,8 +1939,11 @@ span.hover-content {
         }
     }
     .searchSelection {
+        h5 {
+            margin-top: 5px;
+            margin-bottom: 3px;
+        }
         text-align: right;
-        // float: right;
         display: none;
         @media screen and (min-width: $screen-sm) {
             float: right;
@@ -1920,6 +1951,7 @@ span.hover-content {
         }
         .dropdown-menu {
             min-width: 100%;
+            text-align: center;
         }
     }
     .tt-dropdown-menu {

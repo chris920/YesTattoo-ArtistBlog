@@ -97,7 +97,6 @@ Parse.Cloud.afterSave('ArtistProfile', function(request) {
     profile.setACL(profileACL);
     profileACL.setPublicReadAccess(true);
     profileACL.setRoleWriteAccess("Admin",true);
-    profile.set('username', user.attributes.username);
     profile.set('email', user.attributes.email);
     user.set('profile', profile);
     user.save();
@@ -162,7 +161,6 @@ Parse.Cloud.afterSave('UserProfile', function(request) {
     profile.setACL(profileACL);
     profileACL.setPublicReadAccess(true);
     profileACL.setRoleWriteAccess("Admin",true);
-    profile.set('username', user.attributes.username);
     user.set('userprofile', profile);
     user.save();
   }
@@ -429,7 +427,7 @@ Parse.Cloud.job("addArtistProfile", function(request, status) {
 });
 
 
-Parse.Cloud.job("TattooEmptyBooks", function(request, status) {
+Parse.Cloud.job("tattooEmptyBooks", function(request, status) {
   Parse.Cloud.useMasterKey();
   var counter = 0;
   var query = new Parse.Query("Tattoo");
@@ -447,7 +445,30 @@ Parse.Cloud.job("TattooEmptyBooks", function(request, status) {
       counter += 1;
       return tattoo.save();
   }).then(function() {
-    status.success("artist profile added.");
+    status.success("books emptied.");
+  }, function(error) {
+    status.error("Uh oh, something went wrong.");
+  });
+});
+
+Parse.Cloud.job("emptyLocation", function(request, status) {
+  Parse.Cloud.useMasterKey();
+  var counter = 0;
+  var query = new Parse.Query("ArtistProfile");
+  query.each(function(profile) {
+
+      if(profile.attributes.address === ''){
+        profile.unset("location");
+        profile.set("locationName", "");
+      }
+
+      if (counter % 100 === 0) {
+        status.message(counter + " profiles processed.");
+      }
+      counter += 1;
+      return profile.save();
+  }).then(function() {
+    status.success("location cleared.");
   }, function(error) {
     status.error("Uh oh, something went wrong.");
   });
