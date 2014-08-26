@@ -2,10 +2,7 @@
 
 Parse.$ = jQuery;
 
-// Initialize Parse with DEMO Parse application javascript keys
 Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK");
-
-
 
 var App = new (Parse.View.extend({
 	Models: {},
@@ -15,8 +12,8 @@ var App = new (Parse.View.extend({
 
 	},
 	start: function(){
-		this.getProfile(this.startRouter);
 		this.initTypeahead();
+		this.getProfile(this.startRouter);
 		this.initScrollToTop;
 	},
 	startRouter: function(){
@@ -102,19 +99,6 @@ var App = new (Parse.View.extend({
 	    });
 	    $('#back-to-top').tooltip('show');
 	}),
-	initFacebook: function(){
-
-
-		// $(document).ready(function() {
-		//   $.ajaxSetup({ cache: true });
-		//   $.getScript('https://connect.facebook.net/en_UK/all.js', function(){
-		//      Parse.FacebookUtils.init({
-		//       appId: '281013808759952'
-		//     });
-		//     FB.getLoginStatus(facebookInitiated);
-		//   });
-		// });
-	},
 	mapStyles: [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}]
 }))({el: document.body});
 
@@ -743,7 +727,7 @@ App.Views.Login = Backbone.Modal.extend({
     login: function(){
 		this.$(".loginForm button").attr("disabled", "disabled");
 		var that = this;
-		var username = this.$("#loginUsername").val();
+		var username = this.$("#loginUsername").val().replace(/\W/g, '').toLowerCase();
 		var password = this.$("#loginPassword").val();
 
 		Parse.User.logIn(username, password, {
@@ -1671,7 +1655,7 @@ App.Views.Landing = Parse.View.extend({
 
 	},
     events: {
-    	"click a":	"continue"
+    	"click a":	"continueToFeatured"
     },
 	land: function(){
 		var that = this;
@@ -1925,8 +1909,11 @@ App.Views.Settings = Parse.View.extend({
 	initialize: function(){
 		this.user = Parse.User.current();
 		this.profile = App.profile;
+
+		_.bindAll(this,'toggleFacebook', 'render');
 	},
     events: {
+    	"click #facebookLogin": 			"toggleFacebook",
     	"submit form.accountForm": 			"saveAccount",
     	"keyup #editUsername": 				"usernameVal",
     	"submit form.profileForm": 			"saveProfile",
@@ -1938,6 +1925,27 @@ App.Views.Settings = Parse.View.extend({
 	    'focus #settingsMapAddress': 		'initializeLocationPicker',
 	    'click .saveLocation': 				'saveLocation',
 	    'click .clearLocation': 			'clearLocation'
+    },
+    toggleFacebook: function(){
+    	var that = this;
+    	this.$('#facebookLogin').attr("disabled", "disabled");
+		if(!Parse.FacebookUtils.isLinked(this.user)) {
+			Parse.FacebookUtils.link(this.user, 'user_photos,user_location,user_friends,email,user_about_me,user_website', {
+				success: function(user) {
+					that.$('#facebookLogin').html('<i class="facebook"></i>Unlink Facebook').css({'background-color':'#cccccc'}).removeAttr("disabled");
+				},
+				error: function(user, error) {
+					$(".accountForm .error").html(error.message).show();
+				}
+			});
+		} else if (Parse.FacebookUtils.isLinked(this.user)) {
+			Parse.FacebookUtils.unlink(this.user, {
+				success: function(user) {
+					that.$('#facebookLogin').html('<i class="facebook"></i>Link Facebook').css({'background-color':'#4f78b4'}).removeAttr("disabled");
+					console.log("User no longer associated with their Facebook account.");
+				}
+			});
+		}
     },
     saveAccount: function(e){
     	this.$('.saveAccount').attr("disabled", "disabled");
@@ -2136,6 +2144,9 @@ App.Views.Settings = Parse.View.extend({
 			if(App.profile.attributes.location){
 				that.initializeLocationPicker();
 			}
+			if(Parse.FacebookUtils.isLinked(that.user)) {
+				that.$('#facebookLogin').html('<i class="facebook"></i>Unlink Facebook').css({'background-color':'#cccccc'});
+			}
 		},0);
 		return this;
 	}
@@ -2149,7 +2160,7 @@ App.Views.Interview = Parse.View.extend({
 		this.profile = App.profile;
 	},
     events: {
-    	"submit form.interviewForm": 		"saveInterview"
+    	"submit form.interviewForm": 	"saveInterview"
     },
     saveInterview: function(e){
     	e.preventDefault();
@@ -2164,8 +2175,8 @@ App.Views.Interview = Parse.View.extend({
     	this.profile.set("q5", this.$("#editQuestion5").val());
     	this.profile.set("a5", this.$("#editAnswer5").val());
     	this.profile.set("author", this.$("#editAuthor").val());
-    	this.profile.set("featureyear", this.$("#editFeatureYear").val());
     	this.profile.set("featuremonth", this.$("#editFeatureMonth").val());
+    	this.profile.set("featureyear", this.$("#editFeatureYear").val());
 		this.profile.save(null,{
 			success: function(profile) {
 				// flash the success class
@@ -2479,10 +2490,10 @@ App.Views.UserTour = Backbone.Modal.extend({
 		'click #step4': {
 		 	view: _.template($('#userTour4Template').html())
 		},
+		// 'click #step5': {
+		//  	view: _.template($('#userTour5Template').html())
+		// },
 		'click #step5': {
-		 	view: _.template($('#userTour5Template').html())
-		},
-		'click #step6': {
 		 	view: _.template($('#userTour6Template').html())
 		}
 	},
@@ -2568,6 +2579,31 @@ App.Views.ArtistTour = Backbone.Modal.extend({
 	}
 });
 
+App.Views.Feedback = Parse.View.extend({
+	id: 'feedback',
+	template: _.template($("#feedbackTemplate").html()),
+    initialize: function() {
+   
+    },
+	events: {
+		'click [href="#feedbackTab"]': 	'feedbackTab',
+		'click [href="#bugTab"]': 		'bugTab'
+	},
+	feedbackTab: function(){
+	    $('a[href="#feedbackTab"]').tab('show');
+	    return false;
+	},
+	bugTab: function(){
+	    $('a[href="#bugTab"]').tab('show');
+	    return false;
+	},
+	render: function(){
+		var html = this.template();
+		$(this.el).html(html);
+		return this;
+	}
+});
+
 ///////// Collections
 App.Collections.Artists = Parse.Collection.extend({
 	initialize: function(){
@@ -2643,6 +2679,8 @@ App.Router = Parse.Router.extend({
 		"join":        				    "join",
 		"login":        				"login",
 		"interview":      				"interview",
+		"feedback":      				"feedback",
+		"bug":      					"bug",
 		"myprofile": 					"myProfile",
 		"myprofile/tour":  				"tour",
 		"myprofile/settings":  			"settings",
@@ -2747,6 +2785,15 @@ App.Router = Parse.Router.extend({
 	interview: function(){
 		var interview = new App.Views.Interview();
 		$('#app').html(interview.render().el);
+	},
+	feedback: function(){
+		var feedback = new App.Views.Feedback();
+		$('#app').html(feedback.render().el);
+	},
+	bug: function(){
+		var bug = new App.Views.Feedback();
+		$('#app').html(bug.render().el);
+		bug.bugTab();
 	},
 	myProfile: function(tab){
 		if (Parse.User.current().attributes.role === 'user'){

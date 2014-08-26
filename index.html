@@ -295,20 +295,16 @@
               <label for="loginPassword" class="col-sm-2 control-label">Password</label>
               <div class="col-sm-10">
                 <input type="password" class="form-control" id="loginPassword" placeholder="Password">
-                 <a id="forgotPassword" class="btn btn-link pull-right">Forgot your password?</a>
+                 <a id="forgotPassword" class="btn btn-link">Forgot password</a>
+                 <a type="button" class="btn btn-link pull-right" href="/join">Not yet a member?</a>
               </div>
             </div>
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn-submit pull-right">Submit</button>
                 <div class="checkbox">
-                  <label> <input type="checkbox"> Remember me </label>
+                  <h5> <input type="checkbox"> Remember me </h5>
                 </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn-submit">Submit</button>
-                <a type="button" class="btn btn-link pull-right" href="/join">Not yet a member? Join YesTattoo</a>
               </div>
             </div>
           </form>
@@ -571,10 +567,10 @@
           <div class="profNavContainer col-xs-12 affix-top">
             <div class="container">
               <ul class="nav nav-tabs" id="profMenu">
-                  <li><span class="subMenuThumb"><img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/usericon-small.png <% } %>" alt="Artist Prof"></span></li>
-                  <li class="active"><a href="#collectionTab" data-toggle="tab"><span class="flaticon-books8"></span>Collection</a></li>
-                  <li><a href="#booksTab" data-toggle="tab"><span class="flaticon-book104"></span>Books</a></li>
-                  <li><a href="#artistsTab" data-toggle="tab"><span class="flaticon-tattoo1"></span>Artists</a></li>
+                <li><span class="subMenuThumb"><img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/usericon-small.png <% } %>" alt="Artist Prof"></span></li>
+                <li class="active"><a href="#collectionTab" data-toggle="tab"><span class="flaticon-books8"></span>Collection</a></li>
+                <li><a href="#booksTab" data-toggle="tab"><span class="flaticon-book104"></span>Books</a></li>
+                <li><a href="#artistsTab" data-toggle="tab"><span class="flaticon-tattoo1"></span>Artists</a></li>
               </ul>
             </div>
           </div>
@@ -653,7 +649,7 @@
       <div class="container">
         <div class="lightContainer">
           <h3 class="text-center">Password Reset</h3>
-          <p class="text-center">Don&#39;t worry, we have all been there....</p>
+          <p class="text-center">Don&#39;t worry, we&#8217ve all been there....</p>
           <form class="passwordForm" role="form">
             <div class="error" style="display:none"></div>
             <div class="input-group">
@@ -866,10 +862,7 @@
             <div class="input-group">
               <span class="input-group-addon">Answer 5 </span>
               <textarea class="form-control" id="editAnswer5" rows="6" placeholder="" ><%= (a5) ?  a5 : '' %></textarea>
-            </div>
-            <br>
-            <br>
-            
+            </div><br><br>
             <div class="input-group">
               <span class="input-group-addon">Feature Month </span>
               <input type="number" class="form-control" id="editFeatureMonth" placeholder="Month Number" value="<%= (featuremonth) ?  featuremonth : '' %>">
@@ -883,7 +876,7 @@
               <span class="input-group-addon">Author </span>
               <input type="text" class="form-control" id="editAuthor" placeholder="Your Name" value="<%= (author) ?  author : '' %>">
             </div>
-            <button type="submit" class="btn-submit">Submit</button>
+            <button type="submit" class="btn-submit">Save Interview</button>
           </form>
 
         </div>
@@ -1078,6 +1071,50 @@
     </script>
 
 
+    <!-- Feedback form-->
+    <script type="text/html" id="feedbackTemplate">
+      <div class="container">
+
+      </div>
+      <div class="container-fluid">
+        <div class="profNavBG">
+          <div class="profNavContainer col-xs-12">
+            <div class="container">
+              <ul class="nav nav-tabs" id="profMenu">
+                <li class="active"><a href="#feedbackTab" data-toggle="tab">Give Feedback</a></li>
+                <li><a href="#bugTab" data-toggle="tab">Report a Bug</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content">
+        <!-- Feedback Tab-->
+        <div class="tab-pane fade in active" id="feedbackTab">
+          <div class="container">          
+
+            <% if (Parse.User.current() && Parse.User.current().attributes.role === 'artist') { %>
+              <iframe id="gForm" src="https://docs.google.com/forms/d/19oHVOmIAlsmIOFIpeq_PSmu7LNK_5fNrdnovP9-wdf0/viewform?embedded=true" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;min-height: 100vh;width:100%;position:relative;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">Loading...</iframe>
+            <% } else {%>
+              <iframe id="gForm" src="https://docs.google.com/a/yes.tattoo/forms/d/1JkQjOnUKmxkbasSV0ltWjz6gD3N50K0AyPy4aHwr-SY/viewform?embedded=true" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;min-height: 100vh;width:100%;position:relative;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">Loading...</iframe>
+            <% } %>
+
+          </div>
+        </div> 
+        <!-- Report a bug-->
+        <div class="tab-pane fade in" id="bugTab">
+          <div class="container">          
+
+            <% if (Parse.User.current() && Parse.User.current().attributes.role === 'artist') { %>
+              <iframe id="gForm" src="https://docs.google.com/forms/d/1KRw3FsuVNsR-iT0DEoZwFC-3kM5i2gxkeOGfdmyN8qM/viewform?embedded=true" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;min-height: 100vh;width:100%;position:relative;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">Loading...</iframe>
+            <% } else {%>
+              <iframe id="gForm" src="https://docs.google.com/forms/d/1DLsu0C9r2ugW1ZKkrExmMGceAcQi0HfB7g21pacKX38/viewform?embedded=true" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;min-height: 100vh;width:100%;position:relative;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">Loading...</iframe>
+            <% } %>
+
+          </div>
+        </div> 
+    </script>
 
 
     <!-- Scroll to top button-->
@@ -1095,7 +1132,7 @@
     <script src="http://www.parsecdn.com/js/parse-1.2.19.js"></script>
     <script src="js/libs/typeahead.bundle.js"></script>
     <script src="js/libs/bootstrap-tagsinput.js"></script>
-    <script src="js/libs/backbone.modal.js"></script>    
+    <script src="js/libs/backbone.modal.js"></script>
     <!--<script src="js/libs/typeahead.bundle.min.js"></script>
     <script src="js/libs/bootstrap-tagsinput.min.js"></script>
     <script src="js/libs/backbone.modal-min.js"></script>  -->

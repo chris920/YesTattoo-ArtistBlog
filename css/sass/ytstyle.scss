@@ -944,6 +944,9 @@ span.hover-content {
     padding: 20px 0;
     background-color:$gray-darker;
     color:white;
+    h3 {
+        margin-top: 14px;
+    }
     @media screen and (max-width: $screen-sm) {
         float: none;
         text-align: center;
@@ -1386,7 +1389,6 @@ span.hover-content {
 #facebookLogin {
     background-color: #4f78b4;
     width: 100%;
-    padding: 0px;
     .facebook {
         height:inherit;
         font-size:28px;
@@ -1400,15 +1402,15 @@ span.hover-content {
 }
 .inputSuccess {
     background: white url('../img/inputsuccess.png') no-repeat;
-    background-position: center right !important;
+    background-position: 97% center !important;
 }
 .inputError {
     background: white url('../img/inputerror.png') no-repeat;
-    background-position: center right !important;
+    background-position: 97% center !important;
 }
 .inputChecking {
     background: white url('../img/spinner.gif') no-repeat;
-    background-position: center right !important;
+    background-position: 97% center !important;
 }
 
 @-webkit-keyframes pulse {
@@ -1606,6 +1608,9 @@ span.hover-content {
     .editProfileContainer {
         padding: 20px;
     }
+    #facebookLogin {
+        margin-bottom: 20px;
+    }
 }
 .editLocation {
     .input-group {
@@ -1720,6 +1725,10 @@ span.hover-content {
 .clearContainer {
     color: white;
     margin: 140px auto 140px auto;
+    padding: 10px;
+    @media screen and (min-width: $screen-sm) {
+        padding: inherit;
+    }
 }
 
 .open > img{
