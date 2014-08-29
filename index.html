@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>YesTattoo</title>
+    <meta name="description" content="Discover amazing artists, find inspiration and get your perfect tattoo.">
     <link href='http://fonts.googleapis.com/css?family=Josefin Sans' rel='stylesheet' type='text/css'>
     <link href="css/ytstyle.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon.png"/>
@@ -17,24 +18,8 @@
       <div class="navs"></div>
       <section id="gutter"></section>
       <section id="app"></section>
+      <section id="footer"></section>
       <div id="fb-root"></div>
-    </div> 
-          
-    <div id="footer">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-6 col-xs-12">
-            <a href="http://www.instagram.com/yestattoo" target="_blank"><i class="instagram-icon social-icon"></i></a>
-            <a href="https://www.facebook.com/pages/YesTattoo/587599791252654" target="_blank"><i class="social-icon facebook-icon"></i></a>
-            <a href="https://www.twitter.com/YesTattoo" target="_blank"><i class="social-icon twitter-icon"></i></a>
-          </div>
-          <div class="col-sm-6 col-xs-12 footerlinks">
-            <a href="">YesTattoo, Inc.</a>
-            <a href="http://yes.tattoo/terms.html">Terms</a>
-            <a href="/about">About</a>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Nav bar template-->
@@ -52,47 +37,46 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <% if (!Parse.User.current()) { %>
-                  <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
-                  <li><a href="/search/artist" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
-                  <li><a href="/search/tattoo" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
-                  <li><a href="/join" class="main-nav-item"><i class="flaticon-send5"></i>Join</a></li>
-                  <li><a href="/login" class="main-nav-item" id="#login"><i class="flaticon-user56"></i>Log In</a></li>
+                  <li><a href="/featured" class="main-nav-item"><i href="/featured" class="flaticon-trophy4"></i>Featured</a></li>
+                  <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li><a href="/join" class="main-nav-item"><i href="/join" class="flaticon-send5"></i>Join</a></li>
+                  <li><a href="/login" class="main-nav-item" id="#login"><i href="/login" class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
-                <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
-                <li><a href="/search/artist" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
-                <li><a href="/search/tattoo" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
-                 <li class="dropdown">
+                  <li><a href="/featured" class="main-nav-item"><i href="/featured" class="flaticon-trophy4"></i>Featured</a></li>
+                  <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= App.profile.attributes.username %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                       <button class="btn-submit" href="/myprofile">View Profile</button>
-                      <li><a href="/myprofile/collection"><span class="flaticon-books8 pull-right"></span>Collection</a></li>
-                      <li><a href="/myprofile/books"><span class="flaticon-book104 pull-right"></span>Books</a></li>
-                      <li><a href="/myprofile/artists"><span class="flaticon-tattoo1 pull-right"></span>Artists</a></li>
+                      <li><a href="/myprofile/collection"><i href="/myprofile/collection" class="flaticon-books8 pull-right"></i>Collection</a></li>
+                      <li><a href="/myprofile/books"><i href="/myprofile/books" class="flaticon-book104 pull-right"></i>Books</a></li>
+                      <li><a href="/myprofile/artists"><i href="/myprofile/artists" class="flaticon-tattoo1 pull-right"></i>Artists</a></li>
                       <li class="divider"></li>
-                      <li><a href="/myprofile/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
-                      <li><a id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
+                      <li><a href="/myprofile/settings"><i href="/myprofile/settings" class="flaticon-settings13 pull-right"></i>Settings</a></li>
+                      <li><a id="logout"><i class="flaticon-close20 pull-right"></i>Log Out</a></li>
                     </ul>
                   </li>
 
                 <% } else { %>
-                  <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
-                  <li><a href="/search/artist" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
-                  <li><a href="/search/tattoo" class="main-nav-item"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li><a href="/featured" class="main-nav-item"><i href="/featured" class="flaticon-trophy4"></i>Featured</a></li>
+                  <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-magnifier10"></i>Tattoos</a></li>
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                      <li><a href="/myprofile/upload"><span class="flaticon-camera4 pull-right"></span>Upload Tattoo</a></li>
+                      <li><a href="/myprofile/upload"><i href="/myprofile/upload" class="flaticon-camera4 pull-right"></i>Upload Tattoo</a></li>
                       <li class="divider"></li>
                       <button class="btn-submit" href="/myprofile">View Profile</button>
-                      <li><a href="/myprofile/portfolio"><span class="flaticon-black373 pull-right"></span>Portfolio</a></li>
-                      <li><a href="/myprofile/about"><span class="flaticon-information pull-right"></span>About</a></li>
+                      <li><a href="/myprofile/portfolio"><i href="/myprofile/portfolio" class="flaticon-black373 pull-right"></i>Portfolio</a></li>
+                      <li><a href="/myprofile/about"><i href="/myprofile/about" class="flaticon-information pull-right"></i>About</a></li>
                       <li class="divider"></li>
-                      <li><a href="/myprofile/settings"><span class="flaticon-settings13 pull-right"></span>Settings</a></li>
-                      <li><a id="logout"><span class="flaticon-close20 pull-right"></span>Log Out</a></li>
+                      <li><a href="/myprofile/settings"><i href="/myprofile/settings" class="flaticon-settings13 pull-right"></i>Settings</a></li>
+                      <li><a id="logout"><i class="flaticon-close20 pull-right"></i>Log Out</a></li>
                     </ul>
                   </li>
-
                 <% } %>
 
             </ul>
@@ -100,6 +84,32 @@
         </div>
       </div>
       <div class="menu-bg"></div>
+    </script>
+
+    <!-- Footer template-->
+    <script type="text/html" id="footerTemplate">
+      <div class="lg6container">
+        <div class="row footerlinks">
+          <div class="col-sm-4 col-xs-12">
+            <a href="/about">About</a>
+            <a href="mailto:contact@yes.tattoo?Subject=Hello%20YesTattoo">Contact</a>
+          </div>
+          <div class="col-sm-4 col-xs-12">
+            <a href="http://yes.tattoo/terms.html">Terms</a>
+            <a href="http://yes.tattoo/terms.html#privacy">Privacy</a>
+          </div>
+          <div class="col-sm-4 col-xs-12">
+            <a href="/feedback">Feedback</a>
+            <a href="/bug">Report a bug</a>
+          </div>
+        </div>
+        <div class="col-xs-12">
+          <span>Keep in touch</span>
+          <a href="http://www.instagram.com/yestattoo" class="instagram" target="_blank"></a>
+          <a href="https://www.facebook.com/pages/YesTattoo/587599791252654" class="facebook" target="_blank"></a>
+          <a href="https://www.twitter.com/YesTattoo" class="twitter" target="_blank"></a>
+        </div>
+      </div>
     </script>
 
     <!-- Search Page-->
@@ -206,6 +216,7 @@
 
           <div class="landingLinks" style="display:none">
             <ul class="">
+              <li><a href="/feedback">Beta Feedback</a></li>
               <li><a href="/featured"><i class="flaticon-trophy4"></i>Featured</a></li>
               <li><a href="/search/artist"><i class="flaticon-tattoo1"></i>Artists</a></li>
               <li><a href="/search/tattoo"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
@@ -227,7 +238,7 @@
       <div class="container">
         <div class="md6container">
           <h2 class="page-header"> Featured Artists<i class="flaticon-trophy4"></i></h2>
-          <div id="featuredArtists">
+          <div class="featuredArtists">
           </div>
         </div>
       </div>
@@ -1092,7 +1103,7 @@
       <div class="tab-content">
         <!-- Feedback Tab-->
         <div class="tab-pane fade in active" id="feedbackTab">
-          <div class="container">          
+          <div class="container">
 
             <% if (Parse.User.current() && Parse.User.current().attributes.role === 'artist') { %>
               <iframe id="gForm" src="https://docs.google.com/forms/d/19oHVOmIAlsmIOFIpeq_PSmu7LNK_5fNrdnovP9-wdf0/viewform?embedded=true" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;min-height: 100vh;width:100%;position:relative;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">Loading...</iframe>
@@ -1104,7 +1115,7 @@
         </div> 
         <!-- Report a bug-->
         <div class="tab-pane fade in" id="bugTab">
-          <div class="container">          
+          <div class="container">
 
             <% if (Parse.User.current() && Parse.User.current().attributes.role === 'artist') { %>
               <iframe id="gForm" src="https://docs.google.com/forms/d/1KRw3FsuVNsR-iT0DEoZwFC-3kM5i2gxkeOGfdmyN8qM/viewform?embedded=true" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;min-height: 100vh;width:100%;position:relative;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%">Loading...</iframe>
@@ -1118,7 +1129,7 @@
 
 
     <!-- Scroll to top button-->
-    <a id="back-to-top" href="#" class="btn btn-link back-to-top" role="button" title="Scroll to the top!!!" data-toggle="tooltip" data-placement="left"><span class="flaticon-up49"></span></a>
+    <a id="back-to-top" href="#" class="btn btn-link" role="button" title="Scroll to the top!!!" data-toggle="tooltip" data-placement="left"><span class="flaticon-up49"></span></a>
 
 
     <script src="js/libs/jquery-1.11.1.js"></script>

@@ -256,34 +256,45 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
   Parse.Cloud.useMasterKey();
 
   if (!add.existed()) {
+
     var userACL = new Parse.ACL(user);
     add.setACL(userACL);
     add.set('user', user);
     userACL.setRoleWriteAccess("Admin",true);
     userACL.setPublicReadAccess(true);
 
-    var artistProfile;
-    var collectors;
-    add.attributes.artistProfile.fetch().then(function(profile){
-      artistProfile = profile;
-      collectors = profile.relation('collectors');
-      var query = collectors.query();
-      query.equalTo('user', user);
-      return query.count();
-    }).then(function(count){
-      if( count < 1 ) {
-        collectors.add(user.attributes.userprofile);
-        artistProfile.increment("collectorCount");
-        artistProfile.save();
-        return add;
+
+    var query = new Parse.Query('Add');
+    query.equalTo('user', user);
+    query.equalTo('tattooId', add.attributes.tattooId);
+    query.count().then(function(count){
+      if( count > 0 ){
+        response.error(JSON.stringify('Tattoo already added'));
       } else {
-        console.log('artist already added');
-        return add;
+        var artistProfile;
+        var collectors;
+        add.attributes.artistProfile.fetch().then(function(profile){
+          artistProfile = profile;
+          collectors = profile.relation('collectors');
+          var query = collectors.query();
+          query.equalTo('user', user);
+          return query.count();
+        }).then(function(count){
+          if( count < 1 ) {
+            collectors.add(user.attributes.userprofile);
+            artistProfile.increment("collectorCount");
+            artistProfile.save();
+            return add;
+          } else {
+            console.log('artist already added');
+            return add;
+          }
+        }).then(function(result) {
+          response.success(result);
+        }, function(error) {
+          response.error(error);
+        });
       }
-    }).then(function(result) {
-      response.success(result);
-    }, function(error) {
-      response.error(error);
     });
 
   } else if (add.dirty('books')) {
@@ -427,16 +438,16 @@ Parse.Cloud.job("addArtistProfile", function(request, status) {
 });
 
 
-Parse.Cloud.job("tattooEmptyBooks", function(request, status) {
+Parse.Cloud.job("tattooEmptyArtistBooks", function(request, status) {
   Parse.Cloud.useMasterKey();
   var counter = 0;
   var query = new Parse.Query("Tattoo");
   query.include('artist');
   query.each(function(tattoo) {
 
-      if(tattoo.attributes.books === undefined){
+      if(tattoo.attributes.artistBooks === undefined){
         var emptyArray = [];
-        tattoo.set("books", emptyArray);
+        tattoo.set("artistBooks", emptyArray);
       }
 
       if (counter % 100 === 0) {
@@ -447,6 +458,7 @@ Parse.Cloud.job("tattooEmptyBooks", function(request, status) {
   }).then(function() {
     status.success("books emptied.");
   }, function(error) {
+    console.log(error);
     status.error("Uh oh, something went wrong.");
   });
 });

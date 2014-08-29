@@ -36,41 +36,77 @@ a {
     outline-offset: -2px; }
 
 //Sticky footer
+$footer-height: 300px;
+$footer-height-lg: $footer-height + 120px;
 #body {
     min-height: 100%;
-    margin-bottom: -150px;
+    margin-bottom: -$footer-height-lg;
     @media screen and (min-width: $screen-sm) {
-        margin-bottom: -100px;
+        margin-bottom: -$footer-height;
     }
 }
 #app {
-    padding-bottom: 150px;
+    padding-bottom: 100px;
 }
 #footer {
-    background-color: black;
-    height: 150px;
+    // background-color: black;
+
+    background: url('../img/scribble_dark_@2X.png') repeat;
+    height: $footer-height-lg;
     @media screen and (min-width: $screen-sm) {
-        height: 100px;
+        height: $footer-height;
+    }
+    > div > div:last-child {
+        text-align: center;
+        span {
+            color: white;
+            display: block;
+            width: 100%;
+        }
+    }
+    .facebook, .twitter, .instagram {
+        color: $brand-primary;
+        font-size: 49px;
+        width: 66px;
+        height: 66px;
+        &:hover {
+            @include transition(2s ease);
+           text-shadow:
+            -1px -1px 0 #000,
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;  
+        }
+
     }
 }
-.footerlinks > a, .footerlinks > p {
-    display: inline-block;
-    color: #c9c9c9;
-    margin: 20px 5px 15px 15px;
-    float: right !important;
-    @include slowtofast(0.65,.2s);
-    &:hover {
-        color: #fff;
-        opacity: 1;
-        text-decoration:none; }
-    @media screen and (min-width: $screen-sm) {
-        margin: 40px 5px 30px 15px;
+.footerlinks {
+    margin: 40px 0px;
+    padding: 20px;
+    border-top: solid 1px $gray-dark;
+    border-bottom: solid 1px $gray-dark;
+    > div:first-child {
+        text-align: left;
     }
+    > div:nth-child(2) {
+       text-align: center;
+    }
+    > div:last-child {
+        text-align: right;
+    }
+    > div > a, > div > p {
+        display: block;
+        color: #c9c9c9;
+        &:hover {
+            color: #fff;
+            opacity: 1;
+            text-decoration:none; }
+        @media screen and (max-width: $screen-sm) {
+            text-align: center !important;
+        }
+    }    
 }
 
-.tab-content {
-    margin-bottom: 80px;
-}
 *[href] { 
     cursor: pointer; 
 }
@@ -258,34 +294,6 @@ a {
     }
 }
 
-// footer icons
-.twitter-icon {
-    background-image: url('../img/twitter.png');
-}
-.facebook-icon{
-    background-image: url('../img/facebook.png');
-}
-.instagram-icon{
-    background-image: url('../img/instagram.png');
-}   
-.social-icon {
-    height: 48px;
-    width: 48px;
-    margin: 25px 10px 0 0;
-    float: left;
-    opacity: .8;
-    @include slowtofast(0.80,.32s);
-    @media screen and (max-width: $screen-sm) {
-        float: right;
-    }
-    &:hover {
-        margin: 15px 10px 0 0;
-        background-position: 0px -48px;
-        opacity: .95; }
-}
-
-
-
 //flat icons from flaticon.com
 @font-face {
     font-family: "Flaticon";
@@ -395,6 +403,7 @@ a {
 }
 .flaticon-up49:before {
     content: "\e01b";
+    right: 0px;
 }
 .flaticon-user56:before {
     content: "\e01c";
@@ -710,7 +719,7 @@ span.hover-content {
     }
 }
 
-.back-to-top {
+#back-to-top {
     z-index: 1050;
     cursor: pointer;
     position: fixed;
@@ -736,7 +745,7 @@ span.hover-content {
     left: 5px;
     bottom: 3px;
 }
-#featuredArtists {
+.featuredArtists {
     .answer {
         background-color: $gray-dark;
         padding: 0px;
@@ -1891,7 +1900,7 @@ span.hover-content {
     #tattoosPage {
         background-color: black;
         min-height: 100vh;
-        margin-bottom: -49px;
+        margin-bottom: -99px;
         padding-bottom: 100px;
     }
     // input.tt-input {
@@ -1965,16 +1974,19 @@ span.hover-content {
     }
     .tt-dropdown-menu {
         width: 100%;
-        // float: left;
-        // text-align: left;
         float: center;
         text-align: center;
-        // position: relative !important;
-        // top: 80px !important;
         position: fixed !important;
         top: 120px !important;
+        line-height: 22px !important;
         @extend .container;
         vertical-align: top;
+    }
+    .globalBooks{
+        @extend .tt-dropdown-menu;
+        width: inherit !important;
+        z-index: 0 !important;
+        color: $gray-dark;
     }
     .twitter-typeahead .tt-hint {
         color: $gray-darker;
@@ -2000,12 +2012,6 @@ span.hover-content {
         border-radius: 4px / 6px;
         background-color: rgba(0,0,0,0);
         // @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
-    }
-    .globalBooks{
-        @extend .tt-dropdown-menu;
-        width: inherit !important;
-        z-index: 0 !important;
-        color: $gray-dark;
     }
 }
 .reset {

@@ -3914,41 +3914,57 @@ a:focus {
 
 #body {
   min-height: 100%;
-  margin-bottom: -150px; }
+  margin-bottom: -420px; }
   @media screen and (min-width: 768px) {
     #body {
-      margin-bottom: -100px; } }
+      margin-bottom: -300px; } }
 
 #app {
-  padding-bottom: 150px; }
+  padding-bottom: 100px; }
 
 #footer {
-  background-color: black;
-  height: 150px; }
+  background: url("../img/scribble_dark_@2X.png") repeat;
+  height: 420px; }
   @media screen and (min-width: 768px) {
     #footer {
-      height: 100px; } }
+      height: 300px; } }
+  #footer > div > div:last-child {
+    text-align: center; }
+    #footer > div > div:last-child span {
+      color: white;
+      display: block;
+      width: 100%; }
+  #footer .facebook, #footer .twitter, #footer .instagram {
+    color: #c42020;
+    font-size: 49px;
+    width: 66px;
+    height: 66px; }
+    #footer .facebook:hover, #footer .twitter:hover, #footer .instagram:hover {
+      -webkit-transition: 2s ease;
+      transition: 2s ease;
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; }
 
-.footerlinks > a, .footerlinks > p {
-  display: inline-block;
-  color: #c9c9c9;
-  margin: 20px 5px 15px 15px;
-  float: right !important;
-  -webkit-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
-  -moz-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
-  -o-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
-  -ms-transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s;
-  transition: all cubic-bezier(0.08125, 0.21667, 0.65, -0.28333) 0.2s; }
-  .footerlinks > a:hover, .footerlinks > p:hover {
-    color: #fff;
-    opacity: 1;
-    text-decoration: none; }
-  @media screen and (min-width: 768px) {
-    .footerlinks > a, .footerlinks > p {
-      margin: 40px 5px 30px 15px; } }
-
-.tab-content {
-  margin-bottom: 80px; }
+.footerlinks {
+  margin: 40px 0px;
+  padding: 20px;
+  border-top: solid 1px #4d4d4d;
+  border-bottom: solid 1px #4d4d4d; }
+  .footerlinks > div:first-child {
+    text-align: left; }
+  .footerlinks > div:nth-child(2) {
+    text-align: center; }
+  .footerlinks > div:last-child {
+    text-align: right; }
+  .footerlinks > div > a, .footerlinks > div > p {
+    display: block;
+    color: #c9c9c9; }
+    .footerlinks > div > a:hover, .footerlinks > div > p:hover {
+      color: #fff;
+      opacity: 1;
+      text-decoration: none; }
+    @media screen and (max-width: 768px) {
+      .footerlinks > div > a, .footerlinks > div > p {
+        text-align: center !important; } }
 
 *[href] {
   cursor: pointer; }
@@ -4096,34 +4112,6 @@ a:focus {
       .main-logo.large {
         width: 200px; } }
 
-.twitter-icon {
-  background-image: url("../img/twitter.png"); }
-
-.facebook-icon {
-  background-image: url("../img/facebook.png"); }
-
-.instagram-icon {
-  background-image: url("../img/instagram.png"); }
-
-.social-icon {
-  height: 48px;
-  width: 48px;
-  margin: 25px 10px 0 0;
-  float: left;
-  opacity: .8;
-  -webkit-transition: all cubic-bezier(0.1, 0.26667, 0.8, -0.23333) 0.32s;
-  -moz-transition: all cubic-bezier(0.1, 0.26667, 0.8, -0.23333) 0.32s;
-  -o-transition: all cubic-bezier(0.1, 0.26667, 0.8, -0.23333) 0.32s;
-  -ms-transition: all cubic-bezier(0.1, 0.26667, 0.8, -0.23333) 0.32s;
-  transition: all cubic-bezier(0.1, 0.26667, 0.8, -0.23333) 0.32s; }
-  @media screen and (max-width: 768px) {
-    .social-icon {
-      float: right; } }
-  .social-icon:hover {
-    margin: 15px 10px 0 0;
-    background-position: 0px -48px;
-    opacity: .95; }
-
 @font-face {
   font-family: "Flaticon";
   src: url("../fonts/flaticon.eot");
@@ -4229,7 +4217,8 @@ a:focus {
   content: "\e01a"; }
 
 .flaticon-up49:before {
-  content: "\e01b"; }
+  content: "\e01b";
+  right: 0px; }
 
 .flaticon-user56:before {
   content: "\e01c"; }
@@ -4559,7 +4548,7 @@ span.hover-content {
     .tagFilters .more:hover {
       color: #c42020; }
 
-.back-to-top {
+#back-to-top {
   z-index: 1050;
   cursor: pointer;
   position: fixed;
@@ -4579,20 +4568,20 @@ span.hover-content {
   left: 5px;
   bottom: 3px; }
 
-#featuredArtists {
+.featuredArtists {
   background-color: #d9d9d9; }
-  #featuredArtists .answer {
+  .featuredArtists .answer {
     background-color: #4d4d4d;
     padding: 0px;
     color: white;
     text-align: justify; }
-  #featuredArtists .artistName {
+  .featuredArtists .artistName {
     margin-bottom: 0px; }
-  #featuredArtists .artistLoc {
+  .featuredArtists .artistLoc {
     color: gray; }
-  #featuredArtists span {
+  .featuredArtists span {
     color: gray; }
-    #featuredArtists span:before {
+    .featuredArtists span:before {
       content: "\00a0\00a0/\00a0"; }
 
 .featuredArtist {
@@ -5561,7 +5550,7 @@ span.hover-content {
 #search #tattoosPage {
   background-color: black;
   min-height: 100vh;
-  margin-bottom: -49px;
+  margin-bottom: -99px;
   padding-bottom: 100px; }
 #search input.tt-input {
   width: 100%;
@@ -5628,7 +5617,12 @@ span.hover-content {
   text-align: center;
   position: fixed !important;
   top: 120px !important;
+  line-height: 22px !important;
   vertical-align: top; }
+#search .globalBooks {
+  width: inherit !important;
+  z-index: 0 !important;
+  color: #4d4d4d; }
 #search .twitter-typeahead .tt-hint {
   color: #1a1a1a;
   line-height: 80px;
@@ -5647,10 +5641,6 @@ span.hover-content {
   background-color: #1a1a1a !important;
   border-radius: 4px / 6px;
   background-color: transparent; }
-#search .globalBooks {
-  width: inherit !important;
-  z-index: 0 !important;
-  color: #4d4d4d; }
 
 .reset {
   text-align: center;
