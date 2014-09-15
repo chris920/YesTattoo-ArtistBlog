@@ -39,14 +39,14 @@
                 <% if (!Parse.User.current()) { %>
                   <li><a href="/featured" class="main-nav-item"><i href="/featured" class="flaticon-trophy4"></i>Featured</a></li>
                   <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
-                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-black373"></i>Tattoos</a></li>
                   <li><a href="/join" class="main-nav-item"><i href="/join" class="flaticon-send5"></i>Join</a></li>
                   <li><a href="/login" class="main-nav-item" id="#login"><i href="/login" class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
                   <li><a href="/featured" class="main-nav-item"><i href="/featured" class="flaticon-trophy4"></i>Featured</a></li>
                   <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
-                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-black373"></i>Tattoos</a></li>
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= App.profile.attributes.username %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -63,7 +63,7 @@
                 <% } else { %>
                   <li><a href="/featured" class="main-nav-item"><i href="/featured" class="flaticon-trophy4"></i>Featured</a></li>
                   <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
-                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-magnifier10"></i>Tattoos</a></li>
+                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-black373"></i>Tattoos</a></li>
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -219,7 +219,7 @@
               <li><a href="/feedback">Beta Feedback</a></li>
               <li><a href="/featured"><i class="flaticon-trophy4"></i>Featured</a></li>
               <li><a href="/search/artist"><i class="flaticon-tattoo1"></i>Artists</a></li>
-              <li><a href="/search/tattoo"><i class="flaticon-magnifier10"></i>Tattoos</a></li>
+              <li><a href="/search/tattoo"><i class="flaticon-black373"></i>Tattoos</a></li>
               <li><a href="/join"><i class="flaticon-send5"></i>Join</a></li>
               <li><a href="/login" id"#login"><i class="flaticon-user56"></i>Log In</a></li>
             </ul>

@@ -3,6 +3,7 @@
 Parse.$ = jQuery;
 
 Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK");
+// Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr");
 
 var App = new (Parse.View.extend({
 	Models: {},
@@ -1632,6 +1633,7 @@ App.Views.Book = Parse.View.extend({
 	showAll: function(){
 		$('a[href="#collectionTab"]').tab('show');
 		var that = this;
+		$('.bookFilter.active').click();
 		$(".bookFilter").filter(function() {
 		    return $(this).text() === that.model.attributes.book;
 		}).click();
