@@ -24,14 +24,41 @@ var App = new (Parse.View.extend({
 		$(window).off('keypress');
 	},
 	// Really crude view manager, cleans up after previous view
-	// should be replace with Marionette regions
+	// should be replace with Marionette layouts/regions
 	switchView: function (view) {
 		console.log('switching view...');
 		if (this.view) {
+			console.log('cleaning view...');
 			this.view.remove();
+		}
+		if (this.modal) {
+			console.log('closing modal...');
+			this.modal.remove();
+			this.modal.close();
 		}
 		$('#app').html(view.render().el);
 		this.view = view;
+	},
+	// Again crude modal show/hide implementation, 
+	// should be replaced with Merionette layout/regions
+	showModal: function (view) {
+		console.log('showing modal...');
+		if (this.view) {
+			console.log('disabling view...');
+			this.view.remove();
+		}
+		$('.modalayheehoo').html(view.render().el);
+		this.modal = view;
+	},
+	hideModal: function () {
+		console.log('hiding modal...')
+		if (this.modal) {
+			console.log('enabling view...');
+			this.modal.initialize();
+		}
+		this.modal.remove();
+		this.modal = undefined;
+		window.history.back();
 	},
 	start: function(){
 		this.initTypeahead();
@@ -806,10 +833,14 @@ App.Views.Login = Backbone.Modal.extend({
 		$("body").css("overflow", "hidden");
 	},
 	cancel: function(){
+		console.log('login cancel');
 		$("body").css("overflow", "auto");
 		// Parse.history.navigate(App.back, {trigger: false});
 		// if(App.currentView){App.currentView.initialize()};
 		window.history.back();
+	},
+	cancel: function () {
+		App.hideModal();
 	}
 });
 
@@ -919,10 +950,10 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		this.model.on('add:removed', this.showAddButton, this);
 
 		// $(window).unbind();
-		App.on('app:keypress', this.focusIn);
+		// App.on('app:keypress', this.focusIn);
 	},
 	remove: function () {
-		App.off('app:keypress', this.focusIn);
+		// App.off('app:keypress', this.focusIn);
 	},
 	template: _.template($("#tattooProfileTemplate").html()),
     viewContainer: '.container',
@@ -1170,7 +1201,11 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		// $(window).unbind('keypress', this.focusIn);
 		this.off();
 		// if(App.currentView){App.currentView.initialize()};
-		window.history.back();
+		// window.history.back();
+		// App.hideModal();
+	},
+	cancel: function () {
+		App.hideModal();
 	}
 });
 
@@ -1373,12 +1408,14 @@ App.Views.MyTattoo = Parse.View.extend({
 	},
     open: function(){
     	var profile = new App.Views.TattooProfile({model: this.model});
-		$('.modalayheehoo').html(profile.render().el);
+		// $('.modalayheehoo').html(profile.render().el);
+		App.showModal(profile);
     },
 	edit: function(e){
 		e.stopPropagation();
 		var edit = new App.Views.EditTattoo({model: this.model});
-		$('.modalayheehoo').html(edit.render().el);
+		// $('.modalayheehoo').html(edit.render().el);
+		App.showModal(edit);
 	},
 	render: function(){
 		var attributes = this.model.toJSON();
@@ -1517,10 +1554,14 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 	beforeCancel: function(){
 		$("body").css("overflow", "auto");
 		this.$('booksInput').tagsinput('destroy');
-		Parse.history.navigate("myprofile", {trigger: false});
+		// Parse.history.navigate("myprofile", {trigger: false});
 		// $(window).unbind('keypress', this.focusIn);
 		// if(App.currentView){App.currentView.initialize()};
-		window.history.back();
+		// window.history.back();
+		// App.hideModal();
+	},
+	cancel: function () {
+		App.hideModal();
 	}
 });
 
@@ -1578,7 +1619,7 @@ App.Views.UserProfile = Parse.View.extend({
 		this.userAddsTattoos = new App.Views.Tattoos({collection: this.addsTattoosCollection, el: this.$('.adds')});
 		var booksByCount =  addsCollection.getBooksByCount( );
 		this.userAddsTattoos.render().renderBooks( booksByCount );
-console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
+		console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
 
 		this.renderBooks(addsCollection, booksByCount);
 		this.renderArtists(addsCollection);
@@ -2511,6 +2552,9 @@ App.Views.Upload = Backbone.Modal.extend({
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
+	},
+	cancel: function () {
+		App.hideModal();
 	}
 });
 
@@ -2597,6 +2641,9 @@ App.Views.UserTour = Backbone.Modal.extend({
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
+	},
+	cancel: function () {
+		App.hideModal();
 	}
 });
 
@@ -2652,6 +2699,9 @@ App.Views.ArtistTour = Backbone.Modal.extend({
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
+	},
+	cancel: function () {
+		App.hideModal();
 	}
 });
 
@@ -2878,7 +2928,8 @@ App.Router = Parse.Router.extend({
 	login: function(){
 		console.log('route login');
 		var login = new App.Views.Login();
-		$('.modalayheehoo').html(login.render().el);
+		// $('.modalayheehoo').html(login.render().el);
+		App.showModal(login);
 	},
 	interview: function(){
 		console.log('route interview');
@@ -2917,13 +2968,17 @@ App.Router = Parse.Router.extend({
 	tour: function(){
 		console.log('route tour');
 		this.myProfile();
+		var tour;
     	if(Parse.User.current().attributes.role === 'user'){
-			var userTour = new App.Views.UserTour();
-			$('.modalayheehoo').html(userTour.render().el);
+			// var userTour = new App.Views.UserTour();
+			// $('.modalayheehoo').html(userTour.render().el);
+			tour = new App.Views.UserTour();
     	} else  {
-			var artistTour = new App.Views.ArtistTour();
-			$('.modalayheehoo').html(artistTour.render().el);
+			// var artistTour = new App.Views.ArtistTour();
+			// $('.modalayheehoo').html(artistTour.render().el);
+			tour = new App.Views.ArtistTour();
     	};
+    	App.showModal(tour);
 	},
 	settings: function(){
 		console.log('route settings');
@@ -2939,7 +2994,8 @@ App.Router = Parse.Router.extend({
 		query.get(tattooId, {
 			success: function(tattoo) {
 				var profile = new App.Views.EditTattoo({model: tattoo});
-				$('.modalayheehoo').html(profile.render().el);
+				// $('.modalayheehoo').html(profile.render().el);
+				App.showModal(profile);
 			},
 			error: function(object, error) {
 				console.log(error);
@@ -2950,7 +3006,8 @@ App.Router = Parse.Router.extend({
 		console.log('route upload');
 		this.myProfile();
 		var upload = new App.Views.Upload();
-		$('.modalayheehoo').html(upload.render().el);
+		// $('.modalayheehoo').html(upload.render().el);
+		App.showModal(upload);
 	},
 	myProfileTab: function(tab){
 		console.log('route myProfileTab');
@@ -2963,7 +3020,8 @@ App.Router = Parse.Router.extend({
 			success: function(tattoo) {
 				console.log(tattoo);
 				var profile = new App.Views.TattooProfile({model: tattoo});
-				$('.modalayheehoo').html(profile.render().el);
+				// $('.modalayheehoo').html(profile.render().el);
+				App.showModal(profile);
 			},
 			error: function(object, error) {
 				console.log(error);
