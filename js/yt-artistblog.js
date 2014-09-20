@@ -833,12 +833,9 @@ App.Views.Login = Backbone.Modal.extend({
 		$("body").css("overflow", "hidden");
 	},
 	cancel: function(){
-		console.log('login cancel');
 		$("body").css("overflow", "auto");
 		// Parse.history.navigate(App.back, {trigger: false});
 		// if(App.currentView){App.currentView.initialize()};
-	},
-	cancel: function () {
 		App.hideModal();
 	}
 });
