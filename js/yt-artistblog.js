@@ -58,7 +58,7 @@ var App = new (Parse.View.extend({
 		}
 		this.modal.remove();
 		this.modal = undefined;
-		window.history.back();
+		App.router.back();
 	},
 	start: function(){
 		this.initTypeahead();
@@ -837,7 +837,6 @@ App.Views.Login = Backbone.Modal.extend({
 		$("body").css("overflow", "auto");
 		// Parse.history.navigate(App.back, {trigger: false});
 		// if(App.currentView){App.currentView.initialize()};
-		window.history.back();
 	},
 	cancel: function () {
 		App.hideModal();
@@ -2544,16 +2543,14 @@ App.Views.Upload = Backbone.Modal.extend({
 			});
 		}
 	},
+	onRender: function(){
+		$("body").css("overflow", "hidden");
+	},
 	cancel: function(e){
 		$("body").css("overflow", "auto");
 		// Parse.history.navigate("myprofile", {trigger: false});
 		// if(App.currentView){App.currentView.initialize()};
-		window.history.back();
-	},
-	onRender: function(){
-		$("body").css("overflow", "hidden");
-	},
-	cancel: function () {
+		// window.history.back();s
 		App.hideModal();
 	}
 });
@@ -2825,9 +2822,23 @@ App.Router = Parse.Router.extend({
 		":uname/:tab":   				"showProfileTab"
 	},
 	initialize: function(){
+		console.log('router init');
+		
+		// Track if we have app history, so closing modals don't send users away from site
+		this.hitRoutes = [];
+		this.on('all', function () { this.hitRoutes.push(Parse.history.getFragment); }, this);
+
 		//google analtic tracking
 		this.bind('route', this._pageView);
-		this.user = Parse.User.current();
+		// this.user = Parse.User.current(); // NOT USED?
+	},
+	back: function () {
+		if (this.hitRoutes.length > 1) {
+			window.history.back();
+		}
+		else {
+			this.index();
+		}
 	},
 	index: function(){
 		console.log('route index');
