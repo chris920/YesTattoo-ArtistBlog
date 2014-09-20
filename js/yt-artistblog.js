@@ -43,7 +43,11 @@ var App = new (Parse.View.extend({
 	// should be replaced with Merionette layout/regions
 	showModal: function (view) {
 		console.log('showing modal...');
-		if (this.view) {
+		if (this.modal) {
+			this.modal.remove();
+			this.modal.close();
+		}
+		else if (this.view) {
 			console.log('disabling view...');
 			this.view.remove();
 		}
@@ -52,9 +56,9 @@ var App = new (Parse.View.extend({
 	},
 	hideModal: function () {
 		console.log('hiding modal...')
-		if (this.modal) {
+		if (this.view) {
 			console.log('enabling view...');
-			this.modal.initialize();
+			this.view.initialize();
 		}
 		this.modal.remove();
 		this.modal = undefined;
