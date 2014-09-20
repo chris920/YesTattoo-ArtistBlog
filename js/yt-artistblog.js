@@ -770,7 +770,7 @@ App.Views.Artist = Parse.View.extend({
 App.Views.Login = Backbone.Modal.extend({
 	id: 'login',
 	initialize: function(){
-		Parse.history.navigate('login', {trigger: false});
+		// Parse.history.navigate('login', {trigger: false});
 	},
 	template: _.template($("#loginTemplate").html()),
 	viewContainer: '.clearContainer',
@@ -953,6 +953,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		// App.on('app:keypress', this.focusIn);
 	},
 	remove: function () {
+		console.log('tattoo profile remove');
 		// App.off('app:keypress', this.focusIn);
 	},
 	template: _.template($("#tattooProfileTemplate").html()),
@@ -1056,7 +1057,8 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	},
 	addOtherBook: function(e){
 		if (!Parse.User.current()) {
-			Parse.history.navigate('/login', {trigger: true, replace: true});
+			// Parse.history.navigate('/login', {trigger: true, replace: true});
+			App.trigger('app:login');
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		} else if(Parse.User.current().attributes.role === 'artist') {
 
@@ -1080,7 +1082,9 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		this.$('.add').attr('disabled', 'disabled');
 
 		if (!Parse.User.current()) {
-			Parse.history.navigate('/login', {trigger: true, replace: true});
+			console.log('test login');
+			// Parse.history.navigate('/login', {trigger: true, replace: true});
+			App.trigger('app:login');
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		} else {
 			this.$('.add').html('<span class="flaticon-books8"></span>Collected!!!');
@@ -1368,7 +1372,8 @@ App.Views.Tattoo = Parse.View.extend({
 		// var that = this;
 		if(!Parse.User.current()) {
 			// TODO Replace with event controller, don't call navigate direct.
-			Parse.history.navigate('/login', {trigger: true, replace: true});
+			// Parse.history.navigate('/login', {trigger: true, replace: true});
+			App.trigger('app:login');
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		} else {
 			this.$('button').addClass('add:active').html('<span class="flaticon-books8"></span>Collected!!!');
@@ -2471,7 +2476,8 @@ App.Views.Join = Parse.View.extend({
 						}, function(error) {
 							user.destroy().then(function(){
 								Parse.User.logOut();
-								Parse.history.navigate('/login', {trigger: true});
+								// Parse.history.navigate('/login', {trigger: true});
+								App.trigger('app:login');
 							});
 							$(".signupForm .error").html(error.message).show();
 							console.log(error);
@@ -2829,6 +2835,9 @@ App.Router = Parse.Router.extend({
 		this.hitRoutes = [];
 		this.on('all', function () { this.hitRoutes.push(Parse.history.getFragment); }, this);
 
+		// Initialize controller
+		App.controller.initialize();
+
 		//google analtic tracking
 		this.bind('route', this._pageView);
 		// this.user = Parse.User.current(); // NOT USED?
@@ -2939,9 +2948,10 @@ App.Router = Parse.Router.extend({
 	},
 	login: function(){
 		console.log('route login');
-		var login = new App.Views.Login();
-		// $('.modalayheehoo').html(login.render().el);
-		App.showModal(login);
+		// var login = new App.Views.Login();
+		// // $('.modalayheehoo').html(login.render().el);
+		// App.showModal(login);
+		App.controller.login();
 	},
 	interview: function(){
 		console.log('route interview');
@@ -3046,6 +3056,28 @@ App.Router = Parse.Router.extend({
 	  ga('send', 'pageview', {page: "/" + path});
 	}
 });
+
+App.controller = {
+
+	initialize: function (options) {
+		console.log('controller init');
+		var self = this;
+		App.on('app:login', function () { self.login(); });
+	},
+
+	destroy: function () {
+		console.log('controller destory');
+		App.on('app:login');
+	},
+
+	login: function () {
+		console.log('controller login');
+		// TODO Require load view ondemand
+		var login = new App.Views.Login();
+		App.showModal(login);
+		Parse.history.navigate('login', { trigger: false });
+	}
+};
 
 
 $(function() {
