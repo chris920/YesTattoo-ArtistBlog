@@ -3067,7 +3067,7 @@ App.controller = {
 
 	destroy: function () {
 		console.log('controller destory');
-		App.on('app:login');
+		App.off('app:login');
 	},
 
 	login: function () {
