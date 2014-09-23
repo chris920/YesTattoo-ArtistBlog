@@ -473,7 +473,7 @@ App.Views.Search = Parse.View.extend({
 
 App.Views.TattoosPage = Parse.View.extend({
 	initialize: function(){
-		Parse.history.navigate('search/tattoo', {trigger: false});
+		// Parse.history.navigate('search/tattoo', {trigger: false});
 		this.moreToLoad = true;
 	},
 	events: {
@@ -533,7 +533,7 @@ App.Views.TattoosPage = Parse.View.extend({
 App.Views.ArtistsPage = Parse.View.extend({
 	template: _.template($("#artistsTemplate").html()),
 	initialize: function(){
-		Parse.history.navigate('search/artist', {trigger: false});
+		// Parse.history.navigate('search/artist', {trigger: false});
 		this.moreToLoad = true;
 		_.bindAll(this, 'initializeLocationPicker', 'queryReset');
 	},
@@ -715,7 +715,8 @@ App.Views.Artist = Parse.View.extend({
       'click': 'viewProfile'
     },
 	viewProfile: function(){
-		Parse.history.navigate(this.model.attributes.username, {trigger: true});
+		// Parse.history.navigate(this.model.attributes.username, {trigger: true});
+		App.trigger('app:artist-profile', this.model.get('username'));
 		$("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	render: function(){
@@ -789,7 +790,8 @@ App.Views.Login = Backbone.Modal.extend({
 					user.destroy().then(function(user){
 						Parse.User.logOut();
 						that.triggerCancel();
-						Parse.history.navigate('/join', {trigger: true});
+						// Parse.history.navigate('/join', {trigger: true});
+						App.trigger('app:join');
 					});
 				} else {
 					App.getProfile();
@@ -855,21 +857,24 @@ App.Views.ArtistProfile = Parse.View.extend({
 		'click [href="#aboutTab"]': 	'aboutTab',
 		'click [href="#shopTab"]': 		'shopTab'
 	},
-	portfolioTab: function(){
+	portfolioTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#portfolioTab"]').tab('show');
 	    this.scroll();
-	    return false;
+	    Parse.history.navigate(this.model.get('username') + '/portfolio', { trigger: false });
 	},
-	aboutTab: function(){
+	aboutTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#aboutTab"]').tab('show');
 		this.scroll();
-	    return false;
+	    Parse.history.navigate(this.model.get('username') + '/about', { trigger: false });
 	},
-	shopTab: function(){
+	shopTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#shopTab"]').tab('show');
 	    this.renderMap();
 	    this.scroll()
-	    return false;
+	    // Parse.history.navigate(this.model.get('username') + '/shop', { trigger: false });
 	},
 	scroll: function(){
 		$("html, body").animate({ scrollTop: $('.profHead').outerHeight(true) + 41  }, 500);
@@ -943,7 +948,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	id: 'tattooProfile',
 	initialize: function(){
 		console.log('tattoo profile init');
-		Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
+		// Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
 		_.bindAll(this, 'focusIn');
 
 		this.model.on('add:created', this.showYourBooks, this);
@@ -1357,13 +1362,15 @@ App.Views.Tattoo = Parse.View.extend({
 		// TODO Not ideal, we shouldn't be calling the router direct or requerying the model 
 		// but better than previous implementation as handled by single route.
 		// Replace with events based architecture
-		console.log(this.model);
-		App.router.tattooProfile(this.model.id);
+		// console.log(this.model);
+		// App.router.tattooProfile(this.model.id);
+		App.trigger('app:tattoo-profile', this.model);
     },
     profile: function(e){
     	e.stopPropagation();
     	// TODO Replace with event controller, don't call navigate direct.
-    	Parse.history.navigate(this.model.attributes.artistProfile.attributes.username, {trigger: true, replace: true});
+    	// Parse.history.navigate(this.model.attributes.artistProfile.attributes.username, {trigger: true, replace: true});
+    	App.trigger('app:artist-profile-uname', this.model.attributes.artistProfile.attributes.username);
     	$("html, body").animate({ scrollTop: 0 }, 600);
     },
 	createAdd: function(e){
@@ -1412,15 +1419,17 @@ App.Views.MyTattoo = Parse.View.extend({
 		'click .open': 	'open'
 	},
     open: function(){
-    	var profile = new App.Views.TattooProfile({model: this.model});
-		// $('.modalayheehoo').html(profile.render().el);
-		App.showModal(profile);
+  //   	var profile = new App.Views.TattooProfile({model: this.model});
+		// // $('.modalayheehoo').html(profile.render().el);
+		// App.showModal(profile);
+		App.trigger('app:tattoo-profile', this.model);
     },
 	edit: function(e){
 		e.stopPropagation();
-		var edit = new App.Views.EditTattoo({model: this.model});
-		// $('.modalayheehoo').html(edit.render().el);
-		App.showModal(edit);
+		// var edit = new App.Views.EditTattoo({model: this.model});
+		// // $('.modalayheehoo').html(edit.render().el);
+		// App.showModal(edit);
+		App.trigger('app:edit-tattoo', this.model);
 	},
 	render: function(){
 		var attributes = this.model.toJSON();
@@ -1435,7 +1444,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     viewContainer: '.lightContainer',
 	cancelEl: '.x, .cancel',
     initialize: function() {
-    	Parse.history.navigate("myprofile/edit/"+this.model.id, {trigger: false, replace: true});
+    	// Parse.history.navigate("myprofile/edit/"+this.model.id, {trigger: false, replace: true});
 
 		App.on('app:keypress', this.focusIn);
     },
@@ -1579,23 +1588,26 @@ App.Views.UserProfile = Parse.View.extend({
 	template: _.template($("#userProfileTemplate").html()),
 	events: {
 		'click [href="#collectionTab"]': 'collectionTab',
-		'click [href="#tattoosTab"]': 'booksTab',
+		'click [href="#booksTab"]': 'booksTab',
 		'click [href="#artistsTab"]': 'artistsTab'
 	},
-	collectionTab: function(){
+	collectionTab: function (e) {
+		if (e) { e.preventDefault(); }
 		$('a[href="#collectionTab"]').tab('show');
 	    this.scroll();
-	    return false;
+	    Parse.history.navigate('myprofile/collection', { trigger: false });
 	},
-	booksTab: function(){
+	booksTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#booksTab"]').tab('show');
 	    this.scroll();
-	    return false;
+	    Parse.history.navigate('myprofile/books', { trigger: false });
 	},
-	artistsTab: function(){
+	artistsTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#artistsTab"]').tab('show');
 	    this.scroll();
-		return false;
+	    Parse.history.navigate('myprofile/artists', { trigger: false });
 	},
 	scroll: function(){
 		$("html, body").animate({ scrollTop: $('.userHead').outerHeight(true) + 41  }, 500);
@@ -1872,7 +1884,9 @@ App.Views.Landing = Parse.View.extend({
 		this.hideLanding();
 	},
 	continueToFeatured:function(){
-		Parse.history.navigate('featured', {trigger: true});
+		// Parse.history.navigate('featured', {trigger: true});
+		console.log('landing continueToFeatured');
+		App.trigger('app:featured');
 		this.hideLanding();
 	},
 	render: function(){
@@ -1912,20 +1926,12 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
 				}
 			}
 		});
-  //   	$(window).scroll(function () {
-  //   		console.log('scrolling....');	
-		// 	if ($(document).height() - 1 <= $(window).scrollTop() + $(window).height()) {
-		// 	 	$('.featuredArtist:hidden:first').fadeIn("slow");
-		// 		if($('.featuredArtist:last').is(':visible')) {
-		// 	 		$('.featuredArtists .end').fadeIn();
-		// 		}
-		// 	}
-		// });
 	},
     events: {
     	'click #more': 'more'
     },
     more: function(e){
+    	console.log('featured artist more');
     	//hides load button after clicked
 	 	$(e.target.parentElement).fadeOut("normal", function() {
 	        $(this).remove();
@@ -1934,6 +1940,7 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
     	$("html, body").animate({ scrollTop: $('.end').offset().top }, 400);
     },
     load: function() {
+    	console.log('featured artist load');
     	var that = this;
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
@@ -1956,6 +1963,7 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
 		  }
 		});
 		var p = (this.collection.page) ? '/p' + this.collection.page : '';
+		// TODO Not sure about this, needs revisiting
 		Parse.history.navigate('featured'+p, {trigger: false});
     },
     renderLoad: function() {
@@ -1994,7 +2002,8 @@ App.Views.FeaturedArtist = Parse.View.extend({
     },
 	viewProfile: function(){
 		//navigate to the specific model's username
-		Parse.history.navigate(this.model.attributes.username, {trigger: true});
+		// Parse.history.navigate(this.model.attributes.username, {trigger: true});
+		App.trigger('app:artist-profile-uname', this.model.get('username'));
 		$("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	render: function(){
@@ -2152,8 +2161,9 @@ App.Views.Settings = Parse.View.extend({
 		}
     },
 	interview: function(){
-		  Parse.history.navigate('interview', {trigger: true});
+		  // Parse.history.navigate('interview', {trigger: true});
 		  $("html, body").animate({ scrollTop: 0 }, 200);
+		  App.trigger('app:interview');
 	},
     scrollTo: function(e){
     	//get the section to scroll to from the data target attribute
@@ -2165,7 +2175,8 @@ App.Views.Settings = Parse.View.extend({
     },
     upload: function(e){
     	e.preventDefault();
-    	Parse.history.navigate('/myprofile/upload', {trigger: true});
+    	// Parse.history.navigate('/myprofile/upload', {trigger: true});
+    	App.trigger('app:upload');
     },
 	clearLocation: function(){
 		this.locationPickerCreated = false;
@@ -2805,7 +2816,6 @@ App.Router = Parse.Router.extend({
 	routes: {
 		"":								"index",
 		"landing":						"landing",
-		"home":							"home",
 		"search": 						"search",
 		"search/:searchFor": 			"search",
 		"featured":	    				"featured",
@@ -2816,17 +2826,21 @@ App.Router = Parse.Router.extend({
 		"interview":      				"interview",
 		"feedback":      				"feedback",
 		"bug":      					"bug",
+
 		"myprofile": 					"myProfile",
 		"myprofile/tour":  				"tour",
 		"myprofile/settings":  			"settings",
-		"myprofile/edit/:tattooId": 	"editTattoo",
 		"myprofile/upload": 			"upload",
-		"myprofile/:tab": 				"myProfileTab",
+		"myprofile/:tab": 				"myProfile",
+		"myprofile/edit/:id": 			"editTattoo",
+
 		"tattoo/:id": 					"tattooProfile",
-		"user/:uname":   				"showUserProfile",
-		"user/:uname/:tab":   			"showUserProfileTab",
-		":uname":   					"showProfile",
-		":uname/:tab":   				"showProfileTab"
+
+		"user/:uname":   				"userProfile",
+		"user/:uname/:tab":   			"userProfile",
+
+		":uname":   					"artistProfile",
+		":uname/:tab":   				"artistProfile"
 	},
 	initialize: function(){
 		console.log('router init');
@@ -2863,192 +2877,69 @@ App.Router = Parse.Router.extend({
 		var landing = new App.Views.Landing();
 		$('#gutter').html(landing.render().el);
 	},
-	home: function(){
-	},
 	search: function(searchFor){
-		console.log('route search');
-		App.search = new App.Views.Search();
-		// $('#app').html(App.search.render().el);
-		App.switchView(App.search);
-		if(searchFor) {
-			App.search[searchFor+'SearchInitialize']();
-		}
+		console.log('route search : ' + searchFor);
+		App.controller.search(searchFor);
 	},
-	featured: function(p) {
-		console.log('route featured');
-	    var featuredArtists = new App.Collections.FeaturedArtists();
-	    featuredArtists.page = (p) ? p : 0;
-		var featuredArtistPage = new App.Views.FeaturedArtistPage({collection:  featuredArtists});
-		// $('#app').html(featuredArtistPage.render().el);
-		App.switchView(featuredArtistPage);
-	},
-	showProfile: function(uname, tab){
-		console.log('route showProfile');
-		var query = new Parse.Query(App.Models.ArtistProfile);
-		query.equalTo("username", uname);
-		query.first().then(function(artist) {
-			if (typeof(artist)==='undefined'){
-				Parse.history.navigate('user/'+uname, {trigger: true});
-			} else  {
-				var profile = new App.Views.ArtistProfile({model: artist});
-				// $('#app').html(profile.render().el);
-				App.switchView(profile);
-				if(tab) {
-					profile[tab+'Tab']();
-				}
-			}
-		}, function(error) {
-		    console.log("Error: " + error.code + " " + error.message);
-		});
-	},
-	showProfileTab: function(uname, tab){
-		console.log('route showProfileTab');
-		this.showProfile(uname, tab);
-	},
-	showUserProfile: function(uname, tab){
-		console.log('route showUserProfile');
-		var query = new Parse.Query(App.Models.UserProfile);
-		query.equalTo("username", uname);
-		query.first().then(function(profile) {
-			if (typeof(profile)==='undefined'){
-				Parse.history.navigate('/', {trigger: true});
-				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
-			} else {
-				var userProfile = new App.Views.UserProfile({model: profile});
-				// $('#app').html(userProfile.render().el);
-				App.switchView(userProfile);
-				if(tab) {
-					userProfile[tab+'Tab']();
-				}
-			}
-		}, function(error) {
-		    console.log("Error: " + error.code + " " + error.message);
-		});
-
-	},
-	showUserProfileTab: function(uname, tab){
-		console.log('route showUserProfileTab');
-		this.showUserProfile(uname, tab);
+	featured: function(page) {
+		console.log('route featured : ' + page);
+	    App.controller.featured(page);
 	},
 	about: function(){
 		console.log('route about');
-		var about = new App.Views.About();
-		// $('#app').html(about.render().el);
-		App.switchView(about);
-		// Crude view switch doesn't work well here when appending views.
-		// Would be better to use regions, or a composite view.
-		var join = new App.Views.Join();
-		$('#app').append(join.render().el);
+		App.controller.about();
 	},
 	join: function(){
 		console.log('route join');
-		var join = new App.Views.Join();
-		// $('#app').html(join.render().el);
-		App.switchView(join);
+		App.controller.join();
 	},
 	login: function(){
 		console.log('route login');
-		// var login = new App.Views.Login();
-		// // $('.modalayheehoo').html(login.render().el);
-		// App.showModal(login);
 		App.controller.login();
 	},
 	interview: function(){
 		console.log('route interview');
-		var interview = new App.Views.Interview();
-		// $('#app').html(interview.render().el);
-		App.switchView(interview);
+		App.controller.interview();
 	},
 	feedback: function(){
 		console.log('route feedback');
-		var feedback = new App.Views.Feedback();
-		// $('#app').html(feedback.render().el);
-		App.switchView(feedback);
+		App.controller.feedback();
 	},
 	bug: function(){
 		console.log('route bug');
-		var bug = new App.Views.Feedback();
-		// $('#app').html(bug.render().el);
-		App.switchView(bug);
-		bug.bugTab();
+		App.controller.bug();
 	},
 	myProfile: function(tab){
 		console.log('route myProfile');
-		if (Parse.User.current().attributes.role === 'user'){
-			var myProfile = new App.Views.UserProfile({model: App.profile});
-			// $('#app').html(myProfile.render().el);
-		} else {
-			var myProfile = new App.Views.ArtistProfile({model: App.profile});
-			// $('#app').html(myProfile.render().el);
-		}
-		App.switchView(myProfile);
-		if(tab) {
-			myProfile[tab+'Tab']();
-		}
-	  	return myProfile;
+		App.controller.myProfile(tab);
 	},
 	tour: function(){
 		console.log('route tour');
-		this.myProfile();
-		var tour;
-    	if(Parse.User.current().attributes.role === 'user'){
-			// var userTour = new App.Views.UserTour();
-			// $('.modalayheehoo').html(userTour.render().el);
-			tour = new App.Views.UserTour();
-    	} else  {
-			// var artistTour = new App.Views.ArtistTour();
-			// $('.modalayheehoo').html(artistTour.render().el);
-			tour = new App.Views.ArtistTour();
-    	};
-    	App.showModal(tour);
+		App.controller.tour();
 	},
 	settings: function(){
 		console.log('route settings');
-		this.myProfile();
-		var settings = new App.Views.Settings();
-		// $('#app').html(settings.render().el);
-		App.switchView(settings);
+		App.controller.settings();
 	},
-	editTattoo: function(tattooId){
+	editTattoo: function(id){
 		console.log('show editTattoo');
-		this.myProfile();
-		var query = new Parse.Query(App.Models.Tattoo);
-		query.get(tattooId, {
-			success: function(tattoo) {
-				var profile = new App.Views.EditTattoo({model: tattoo});
-				// $('.modalayheehoo').html(profile.render().el);
-				App.showModal(profile);
-			},
-			error: function(object, error) {
-				console.log(error);
-			}
-		});
+		App.controller.editTattooById(id);
 	},
 	upload: function(){
 		console.log('route upload');
-		this.myProfile();
-		var upload = new App.Views.Upload();
-		// $('.modalayheehoo').html(upload.render().el);
-		App.showModal(upload);
-	},
-	myProfileTab: function(tab){
-		console.log('route myProfileTab');
-		this.myProfile(tab);
+		App.controller.upload();
 	},
 	tattooProfile: function(id){
 		console.log('route tattooProfile');
-		var query = new Parse.Query(App.Models.Tattoo);
-		query.get(id, {
-			success: function(tattoo) {
-				console.log(tattoo);
-				var profile = new App.Views.TattooProfile({model: tattoo});
-				// $('.modalayheehoo').html(profile.render().el);
-				App.showModal(profile);
-			},
-			error: function(object, error) {
-				console.log(error);
-			}
-		});
+		App.controller.tattooProfileById(id);
+	},
+	artistProfile: function(uname, tab){
+		console.log('route artistProfile');
+		App.controller.artistProfileByUname(uname, tab);
+	},
+	userProfile: function(uname, tab){
+		console.log('route userProfile');
+		App.controller.userProfileByUname(uname, tab);
 	},
 	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/
 	_pageView: function() {
@@ -3057,27 +2948,278 @@ App.Router = Parse.Router.extend({
 	}
 });
 
-App.controller = {
 
-	initialize: function (options) {
+App.controller = (function Controller() {
+
+	this.initialize = function (options) {
 		console.log('controller init');
 		var self = this;
+		App.on('app:search', function (searchFor) { self.search(searchFor); });
+		App.on('app:featured', function (page) { self.featured(page); });
 		App.on('app:login', function () { self.login(); });
-	},
+		App.on('app:about', function () { self.about(); });
+		App.on('app:join', function () { self.join(); });
+		App.on('app:interview', function () { self.interview(); });
+		App.on('app:feedback', function () { self.feedback(); });
+		App.on('app:bug', function () { self.bug(); });
+		App.on('app:myprofile', function (tab) { self.myProfile(tab); });
+		App.on('app:tour', function () { self.tour(); });
+		App.on('app:settings', function () { self.settings(); });
+		App.on('app:upload', function () { self.upload(); });
+		App.on('app:edit-tattoo-id', function (id) { self.editTattooById(id); });
+		App.on('app:edit-tattoo', function (tattoo) { self.editTattoo(tattoo); });
+		App.on('app:tattoo-profile-id', function (id) { self.tattooProfileById(id); });
+		App.on('app:tattoo-profile', function (tattoo) { self.tattooProfile(tattoo); });
+		App.on('app:user-profile-uname', function (uname, tab) { self.userProfileByUname(uname, tab); });
+		App.on('app:user-profile', function (user, tab) { self.userProfile(user, tab); });
+		App.on('app:artist-profile-uname', function (uname, tab) { self.artistProfileByUname(uname, tab); });
+		App.on('app:artist-profile', function (artist, tab) { self.artistProfile(artist, tab); });
+	}
 
-	destroy: function () {
+	this.destroy = function () {
 		console.log('controller destory');
+		App.off('app:search');
+		App.off('app:featured');
 		App.off('app:login');
-	},
+		App.off('app:about');
+		App.off('app:join');
+		App.off('app:interview');
+		App.off('app:feedback');
+		App.off('app:bug');
+		App.off('app:myprofile');
+		App.off('app:tour');
+		App.off('app:settings');
+		App.off('app:upload');
+		App.off('app:edit-tattoo-id');
+		App.off('app:edit-tattoo');
+		App.off('app:tattoo-profile-id');
+		App.off('app:tattoo-profile');
+		App.off('app:user-profile-uname');
+		App.off('app:user-profile');
+		App.off('app:artist-profile-uname');
+		App.off('app:artist-profile');
+	}
 
-	login: function () {
+	this.search = function (searchFor) {
+		console.log('controller search : ' + searchFor);
+		App.search = new App.Views.Search();
+		App.switchView(App.search);
+		if (searchFor) {
+			App.search[searchFor+'SearchInitialize']();
+		}
+		Parse.history.navigate('search/' + searchFor, { trigger: false });
+	}
+
+	this.featured = function (page) {
+		console.log('controller featured : ' + page);
+		var featuredArtists = new App.Collections.FeaturedArtists();
+	    featuredArtists.page = (page) ? page : 0;
+		var featuredArtistPage = new App.Views.FeaturedArtistPage({ collection: featuredArtists });
+		App.switchView(featuredArtistPage);
+		Parse.history.navigate('featured', { trigger: false });
+	}
+
+	this.login = function () {
 		console.log('controller login');
-		// TODO Require load view ondemand
 		var login = new App.Views.Login();
 		App.showModal(login);
 		Parse.history.navigate('login', { trigger: false });
 	}
-};
+
+	this.about = function () {
+		console.log('controller about');
+		var about = new App.Views.About();
+		App.switchView(about);
+		// Crude view switch doesn't work well here when appending views.
+		// Would be better to use regions, or a composite view.
+		var join = new App.Views.Join();
+		$('#app').append(join.render().el);
+		Parse.history.navigate('about', { trigger: false });
+	}
+
+	this.join = function () {
+		console.log('controller join');
+		var join = new App.Views.Join();
+		App.switchView(join);
+		Parse.history.navigate('join', { trigger: false });
+	}
+
+	this.interview = function () {
+		console.log('controller interview');
+		var interview = new App.Views.Interview();
+		App.switchView(interview);
+		Parse.history.navigate('interview', { trigger: false });
+	}
+
+	this.feedback = function () {
+		console.log('controller feedback');
+		var feedback = new App.Views.Feedback();
+		App.switchView(feedback);
+		Parse.history.navigate('feedback', { trigger: false });
+	}
+
+	this.bug = function () {
+		console.log('controller bug');
+		var bug = new App.Views.Feedback();
+		App.switchView(bug);
+		bug.bugTab();
+		Parse.history.navigate('bug', { trigger: false });
+	}
+
+	this.myProfile = function (tab) {
+		console.log('controller myprofile : ' + tab);
+
+		// if (!Parse.User.current()) {
+		// 	// TODO Update history we want to direct user here after they have logged in
+		// 	// TODO This causes loop, need callback
+			
+		// 	App.controller.login();
+		// }
+		// console.log('after');
+
+		var myProfile;
+		if (Parse.User.current().attributes.role === 'user') {
+			myProfile = new App.Views.UserProfile({ model: App.profile });
+		} else {
+			myProfile = new App.Views.ArtistProfile({ model: App.profile });
+		}
+		App.switchView(myProfile);
+
+		// TODO Bad, should be done in view init
+		if (tab) {
+			myProfile[tab+'Tab']();
+		}
+
+	  	Parse.history.navigate('myprofile', { trigger: false });
+	}
+
+	this.tour = function () {
+		console.log('controller tour');
+		this.myProfile();
+		var tour;
+		if (Parse.User.current().attributes.role === 'user') {
+			tour = new App.Views.UserTour();
+		} else  {
+			tour = new App.Views.ArtistTour();
+		};
+		App.showModal(tour);
+		Parse.history.navigate('myprofile/tour', { trigger: false });
+	}
+
+	this.settings = function () {
+		console.log('controller settings');
+		this.myProfile();
+		var settings = new App.Views.Settings();
+		App.switchView(settings);
+		Parse.history.navigate('myprofile/settings', { trigger: false });
+	}
+
+	this.upload = function () {
+		console.log('controller upload');
+		this.myProfile();
+		var upload = new App.Views.Upload();
+		App.showModal(upload);
+		Parse.history.navigate('myprofile/upload', { trigger: false });
+	}
+
+	this.editTattooById = function (id) {
+		console.log('controller editTattooById : ' + id);
+		var query = new Parse.Query(App.Models.Tattoo);
+		query.get(id, {
+			success: function (tattoo) {
+				this.editTattoo(tattoo);
+			},
+			error: function (object, error) {
+				console.log(error);
+			}
+		});
+	}
+
+	this.editTattoo = function (tattoo) {
+		console.log('controller editTattoo : ' + tattoo.id);
+		this.myProfile();
+		var profile = new App.Views.EditTattoo({ model: tattoo });
+		App.showModal(profile);
+		Parse.history.navigate('myprofile/edit/' + tattoo.id , { trigger: false });
+	}
+
+	this.tattooProfileById = function (id) {
+		console.log('controller tattooProfileById : ' + id);
+		var query = new Parse.Query(App.Models.Tattoo);
+		query.get(id, {
+			success: function (tattoo) {
+				this.tattooProfile(tattoo);
+			},
+			error: function (object, error) {
+				console.log(error);
+			}
+		});
+	}
+
+	this.tattooProfile = function (tattoo) {
+		console.log('controller tattooProfile : ' + tattoo.id);
+		var profile = new App.Views.TattooProfile({ model: tattoo });
+		App.showModal(profile);
+		Parse.history.navigate('tattoo/' + tattoo.id , { trigger: false });
+	}
+
+	this.userProfileByUname = function (uname, tab) {
+		console.log('controller userProfileByUname : ' + uname + ' / ' + tab);
+		var query = new Parse.Query(App.Models.UserProfile);
+		query.equalTo("username", uname);
+		query.first().then(function (user) {
+			console.log(user);
+			if (typeof(profile) === 'undefined') {
+				Parse.history.navigate('/', { trigger: true });
+				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
+			} else {
+				this.userProfile(user, tab);
+			}
+		}, 
+		function (error) {
+			console.log("Error: " + error.code + " " + error.message);
+		});
+	}
+
+	this.userProfile = function (user, tab) {
+		console.log('controller userProfile : ' + user.get('username') + ' / ' + tab);
+		var userProfile = new App.Views.UserProfile({model: profile});
+		App.switchView(userProfile);
+		if (tab) {
+			userProfile[tab+'Tab']();
+		}
+		Parse.history.navigate('user/' + user.get('username') + (tab ? '/' + tab : ''), { trigger: false });
+	}
+
+	this.artistProfileByUname = function (uname, tab) {
+		console.log('controller artistProfileByUname : ' + uname + ' / ' + tab);
+		var query = new Parse.Query(App.Models.ArtistProfile);
+		query.equalTo("username", uname);
+		query.first().then(function (artist) {
+			if (typeof(artist) === 'undefined') {
+				// Parse.history.navigate('user/'+uname, {trigger: true});
+				App.trigger('app:user-profile-uname', uname);
+			} else  {
+				this.artistProfile(artist, tab);
+			}
+		}, 
+		function (error) {
+			console.log("Error: " + error.code + " " + error.message);
+		});
+	}
+
+	this.artistProfile = function (artist, tab) {
+		console.log('controller artistProfile : ' + artist.get('username') + ' / ' + tab);
+		var profile = new App.Views.ArtistProfile({ model: artist, tab: tab });
+		App.switchView(profile);
+		if (tab) {
+			profile[tab+'Tab']();
+		}
+		Parse.history.navigate(artist.get('username') + (tab ? '/' + tab : ''), { trigger: false });
+	}
+
+	return this;
+})();
 
 
 $(function() {
