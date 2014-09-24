@@ -1696,7 +1696,7 @@ App.Views.UserProfile = Parse.View.extend({
 		var attributes = this.model.attributes
 		this.$el.html(this.template(attributes));
 
-		if(this.model.attributes.user.id === Parse.User.current().id){
+		if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
 			this.renderAdds(App.Collections.adds);
 			this.getMyTattoos();
 			this.renderMyProfile();
