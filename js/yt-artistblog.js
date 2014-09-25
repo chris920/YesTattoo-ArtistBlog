@@ -2,8 +2,8 @@
 
 Parse.$ = jQuery;
 
-Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK");
-// Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr");
+// Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK"); ///test
+Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live
 
 var App = new (Parse.View.extend({
 	Models: {},
@@ -79,9 +79,9 @@ var App = new (Parse.View.extend({
 	links: function(e){
 		e.preventDefault();
 		$(window).unbind();
-		if(typeof(e.target.attributes.href.value) !== undefined){
+		if(typeof(e.currentTarget.attributes.href.value) !== undefined){
 			App.back = Parse.history.getFragment();
-			Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
+			Parse.history.navigate(e.currentTarget.attributes.href.value, {trigger: true});
 		}
 	},
 	initScrollToTop: $(function(){
@@ -264,45 +264,63 @@ App.Views.Footer = Parse.View.extend({
 App.Views.Search = Parse.View.extend({
 	id: 'search',
 	initialize: function(){
-		_.bindAll(this, 'focusIn', 'scrollToTop', 'scrollChecker');
+		_.bindAll(this, 'scrollToTop', 'scrollChecker');
 		this.bindSearch();
 	},
 	template: _.template($("#searchTemplate").html()),
 	events: {
+		'click #forAll': 		'allSearchInitialize',
 		'click #forTattoos': 	'tattooSearchInitialize',
 		'click #forArtists': 	'artistSearchInitialize'
 	},
+	allSearchInitialize: function(){
+		this.$('#forArtists, #forTattoos').show();
+		this.$('#artistsPage, #tattoosPage, .searchFilterOptions').fadeOut();
+		this.$('.dropdown-toggle:first').html('All');
+
+/// content: "\e003"
+/// set bar to search
+
+		this.searchingForView = new App.Views.ExplorePage({el: this.$('#explorePage')});
+		this.searchingForView.render();
+		this.searchingForView.query = this.$('input.bookFilterInput').tagsinput('items');
+		// this.searchingForView.loadMore();
+
+		this.$('#forAll').hide();
+		this.$('#explorePage').fadeIn();
+		return this;
+	},
 	tattooSearchInitialize: function(){
-		this.$('#forArtists').show();
-		this.$('#artistsPage').fadeOut();
+		this.$('#forArtists, #forAll').show();
+		this.$('#artistsPage, #explorePage, .searchLocationOption').fadeOut();
 		this.$('.dropdown-toggle:first').html('Tattoos');
 
 		this.searchingForView = new App.Views.TattoosPage({el: this.$('#tattoosPage')});
 		this.searchingForView.render();
-		this.searchingForView.query = this.$('input.searchInput').tagsinput('items');
+		this.searchingForView.query = this.$('input.bookFilterInput').tagsinput('items');
 		this.searchingForView.loadMore();
 
 		this.$('#forTattoos').hide();
-		this.$('#tattoosPage').fadeIn();
+		this.$('#tattoosPage, .searchFilterOptions').fadeIn();
 		return this;
 	},
 	artistSearchInitialize: function(){
-		this.$('#forTattoos').show();
-		this.$('#tattoosPage').fadeOut();
+		this.$('#forTattoos, #forAll, .searchLocationOption').show();
+		this.$('#tattoosPage, #explorePage').fadeOut();
 		this.$('.dropdown-toggle:first').html('Artists');
 		
 		this.searchingForView = new App.Views.ArtistsPage({el: this.$('#artistsPage')});
 		this.searchingForView.render();
-		this.searchingForView.query = this.$('input.searchInput').tagsinput('items');
+		this.searchingForView.query = this.$('input.bookFilterInput').tagsinput('items');
 		this.searchingForView.loadMore();
 
 		this.$('#forArtists').hide();
-		this.$('#artistsPage').fadeIn();
+		this.$('#artistsPage, .searchFilterOptions').fadeIn();
 		return this;
 	},
 	typeaheadInitialize: function(){
 		var that = this;
-		var input = this.$('input.searchInput');
+		var input = this.$('input.bookFilterInput');
 		input.tagsinput({
 			tagClass: 'btn-tag',
 			trimValue: true,
@@ -320,22 +338,18 @@ App.Views.Search = Parse.View.extend({
 			source: App.booktt.ttAdapter(),
 			templates: {
 				// empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
-				suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
+				// suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
 			}
-		}).attr('placeholder','Search').on('typeahead:selected', function (obj,datum) {
+		}).attr('placeholder','Add Book Filter').on('typeahead:selected', function (obj,datum) {
 			input.tagsinput('add', datum.books);
 			input.tagsinput('input').typeahead('val', '');
-		}).on('typeahead:opened', function(){
-			$('.globalBooks').stop(true,true).hide();
-		}).on('typeahead:closed', function(){
-			$('.globalBooks').stop(true,true).show();
 		}).on('focus', function () {
 			that.$('.tt-input').attr('placeholder','');
 		}).on('blur', function () {
 			if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
 			    that.$('.tt-input').attr('placeholder','').val('');
 			} else {
-				that.$('.tt-input').attr('placeholder','Search').val('');
+				that.$('.tt-input').attr('placeholder','Add Book Filter').val('');
 			}
 		});
 		input.on('itemAdded', function(event) {
@@ -352,26 +366,26 @@ App.Views.Search = Parse.View.extend({
 				input.tagsinput('add', e.target.textContent);
 			});
 		}, 400);
-		this.focusIn();
+		// this.focusIn();
 	},
 	bindSearch: function(){
 		$(window).bind('scroll',this.scrollChecker);
-		$(window).bind('keypress', this.focusIn);
+		// $(window).bind('keypress', this.focusIn);
 	},
 	unbindSearch: function(){
 		$(window).unbind('scroll',this.scrollChecker);
-		$(window).unbind('keypress', this.focusIn);
+		// $(window).unbind('keypress', this.focusIn);
 	},
-	focusIn: function(){
-		var that = this;
-		this.$('.tt-input').focus();
-		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
-		    this.$('.tt-input').blur().val(' ');
-		}
-		this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
-		this.scrollToTop();
-		return this;
-	},
+	// focusIn: function(){
+	// 	var that = this;
+	// 	this.$('.tt-input').focus();
+	// 	if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+	// 	    this.$('.tt-input').blur().val(' ');
+	// 	}
+	// 	this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
+	// 	this.scrollToTop();
+	// 	return this;
+	// },
 	scrollToTop: function(){
 		if (1 <= $(window).scrollTop()) {
 			$("html, body").animate({ scrollTop: 0 }, 200);
@@ -379,18 +393,9 @@ App.Views.Search = Parse.View.extend({
 	},
 	scrollChecker: function(){
 		var that = this;
-		if (1 <= $(window).scrollTop()) {
-			that.$('.tt-dropdown-menu, .globalBooks').stop(true,true).fadeOut( 200 );
-		} else if (that.$('.tt-dropdown-menu > div.tt-dataset-books').children().length) {
-			that.$('.tt-dropdown-menu').stop(true,true).fadeIn( 300 );
-			that.$('.globalBooks').stop(true,true).hide( 300 );
-		} else {
-			that.$('.globalBooks').stop(true,true).fadeIn( 300 );
-			that.$('input.searchInput').tagsinput('input').typeahead('close');
-		}
 		if (this.searchingForView.moreToLoad && $('#search').height()-$(window).height()*2 <= $(window).scrollTop()) {
 			this.searchingForView.moreToLoad = false;
-			this.searchingForView.collection.page++;
+			this.searchingForView.collection.page++; ///needs to work with explore
 			this.searchingForView.loadMore();
 		}
 	},
@@ -399,8 +404,39 @@ App.Views.Search = Parse.View.extend({
 		$(this.el).html(html);
 
 		this.typeaheadInitialize();
-		this.$('.globalBooks').delay( 700 ).fadeIn( 1200 );
 		App.currentView = this;
+		return this;
+	}
+});
+
+App.Views.ExplorePage = Parse.View.extend({
+	template: _.template($("#exploreTemplate").html()),
+	initialize: function(){
+		Parse.history.navigate('search/all', {trigger: false});
+		this.moreToLoad = true;
+	},
+	events: {
+		"#findArtists": 	"findArtists"
+	},
+	findArtists: function(){
+/// open artists page and focus on location search
+	},
+	queryReset: function(){
+		this.query = [];
+		this.collection.reset();
+		return this;
+	},
+	loadMore: function(){
+/// get all types of search 
+	},
+	render: function(){
+		var html = this.template();
+		$(this.el).html(html);
+
+		// this.collection = new App.Collections.Artists();
+		// this.artistsView = new App.Views.Artists({collection: this.collection, el: this.$('.artists')});
+		// this.artistsView.render();
+
 		return this;
 	}
 });
@@ -439,7 +475,7 @@ App.Views.TattoosPage = Parse.View.extend({
 	  				that.moreToLoad = false;
 		    		that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
 		    		that.$('.reset').on('click', function(){
-						$('input.searchInput').tagsinput('removeAll');
+						$('input.bookFilterInput').tagsinput('removeAll');
 						that.queryReset().loadMore();
 						that.$('.reset').fadeOut();
 		    		}).fadeIn();
@@ -681,7 +717,7 @@ App.Views.Artist = Parse.View.extend({
 	    			e.stopPropagation();
 	    			e.preventDefault();
 					$('.resetArtistFilter').tooltip('destroy');
-					$('input.searchInput').tagsinput('removeAll');
+					$('input.bookFilterInput').tagsinput('removeAll');
 					App.search.searchingForView.queryReset().loadMore();
 	    		});
 				window.setTimeout(function(){
@@ -1522,7 +1558,6 @@ App.Views.UserProfile = Parse.View.extend({
 		this.userAddsTattoos = new App.Views.Tattoos({collection: this.addsTattoosCollection, el: this.$('.adds')});
 		var booksByCount =  addsCollection.getBooksByCount( );
 		this.userAddsTattoos.render().renderBooks( booksByCount );
-console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
 
 		this.renderBooks(addsCollection, booksByCount);
 		this.renderArtists(addsCollection);
@@ -1582,7 +1617,7 @@ console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
 		var attributes = this.model.attributes
 		this.$el.html(this.template(attributes));
 
-		if(this.model.attributes.user.id === Parse.User.current().id){
+		if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
 			this.renderAdds(App.Collections.adds);
 			this.getMyTattoos();
 			this.renderMyProfile();
@@ -1667,12 +1702,14 @@ App.Views.Landing = Parse.View.extend({
 			that.count = count;
 		});
 
-		_.bindAll(this, 'getArtists', 'continue', 'continueToFeatured','initiateArtists', 'hideLanding');
-	    $(window).bind('scroll',this.continueToFeatured);
+		_.bindAll(this, 'getArtists', 'continue','initiateArtists', 'hideLanding');
+	    // $(window).bind('scroll',this.continueToFeatured);
 
 	},
     events: {
-    	"click a":	"continueToFeatured"
+    	"click a":	"continue"
+    	// ,
+    	// "click a":	"continueToFeatured"
     },
 	land: function(){
 		var that = this;
@@ -1765,10 +1802,10 @@ App.Views.Landing = Parse.View.extend({
 	continue:function(){
 		this.hideLanding();
 	},
-	continueToFeatured:function(){
-		Parse.history.navigate('featured', {trigger: true});
-		this.hideLanding();
-	},
+	// continueToFeatured:function(){
+	// 	Parse.history.navigate('featured', {trigger: true});
+	// 	this.hideLanding();
+	// },
 	render: function(){
 		$(this.el).append(this.landingTemplate());
 		this.land();
@@ -2719,12 +2756,15 @@ App.Router = Parse.Router.extend({
 		$('#gutter').html(landing.render().el);
 	},
 	home: function(){
+
 	},
 	search: function(searchFor){
 		App.search = new App.Views.Search();
 		$('#app').html(App.search.render().el);
 		if(searchFor) {
 			App.search[searchFor+'SearchInitialize']();
+		} else {
+			App.search['allSearchInitialize']();
 		}
 	},
 	featured: function(p) {
