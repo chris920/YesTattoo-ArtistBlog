@@ -3198,7 +3198,7 @@ App.controller = (function Controller() {
 			if (artist) {
 				this.artistProfile(artist, tab);
 			}
-			else 
+			else {
 				App.trigger('app:user-profile-uname', uname);
 			}
 		}, 
