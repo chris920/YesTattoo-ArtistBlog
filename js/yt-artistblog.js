@@ -3168,12 +3168,11 @@ App.controller = (function Controller() {
 		var query = new Parse.Query(App.Models.UserProfile);
 		query.equalTo("username", uname);
 		query.first().then(function (user) {
-			console.log(user);
-			if (typeof(profile) === 'undefined') {
+			if (user) {
+				this.userProfile(user, tab);
+			} else {
 				Parse.history.navigate('/', { trigger: true });
 				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
-			} else {
-				this.userProfile(user, tab);
 			}
 		}, 
 		function (error) {
@@ -3183,7 +3182,7 @@ App.controller = (function Controller() {
 
 	this.userProfile = function (user, tab) {
 		console.log('controller userProfile : ' + user.get('username') + ' / ' + tab);
-		var userProfile = new App.Views.UserProfile({model: profile});
+		var userProfile = new App.Views.UserProfile({model: user});
 		App.switchView(userProfile);
 		if (tab) {
 			userProfile[tab+'Tab']();
@@ -3196,11 +3195,11 @@ App.controller = (function Controller() {
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.equalTo("username", uname);
 		query.first().then(function (artist) {
-			if (typeof(artist) === 'undefined') {
-				// Parse.history.navigate('user/'+uname, {trigger: true});
-				App.trigger('app:user-profile-uname', uname);
-			} else  {
+			if (artist) {
 				this.artistProfile(artist, tab);
+			}
+			else 
+				App.trigger('app:user-profile-uname', uname);
 			}
 		}, 
 		function (error) {
