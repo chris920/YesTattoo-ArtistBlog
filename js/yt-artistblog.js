@@ -3205,11 +3205,12 @@ App.viewManager = (function ViewManager() {
 		if (currentView) {
 			console.log('view manager - disposing view...');
 			currentView.remove();
+			currentView = undefined;
 		}
 
 		if (currentModal) {
 			console.log('view manager - disposing modal...');
-			// currentModal.close();
+			currentModal.close();
 			currentModal.remove();
 			currentModal = undefined;
 		}
