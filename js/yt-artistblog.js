@@ -789,10 +789,7 @@ App.Views.Login = Backbone.Modal.extend({
       return false;
     },
     passwordForm: function(){
-		var forgotPassword = new App.Views.ForgotPassword();
-		// $('#app').html(forgotPassword.render().el);
-		App.switchView(forgotPassword);
-		this.triggerCancel();
+		App.trigger('app:forgot');
     },
 	onRender: function(){
 		$("body").css("overflow", "hidden");
@@ -2783,6 +2780,7 @@ App.Router = Parse.Router.extend({
 		"about":   						"about",
 		"join":        				    "join",
 		"login":        				"login",
+		"forgot": 						"forgot",
 		"interview":      				"interview",
 		"feedback":      				"feedback",
 		"bug":      					"bug",
@@ -2857,6 +2855,10 @@ App.Router = Parse.Router.extend({
 		console.log('route login');
 		App.controller.login();
 	},
+	forgot: function () {
+		console.log('route forgot');
+		App.controller.forgot();
+	},
 	interview: function(){
 		console.log('route interview');
 		App.controller.interview();
@@ -2920,6 +2922,7 @@ App.controller = (function Controller() {
 		App.on('app:search', function (searchFor) { self.search(searchFor); });
 		App.on('app:featured', function (page) { self.featured(page); });
 		App.on('app:login', function () { self.login(); });
+		App.on('app:forgot', function () { self.forgot(); });
 		App.on('app:about', function () { self.about(); });
 		App.on('app:join', function () { self.join(); });
 		App.on('app:interview', function () { self.interview(); });
@@ -2944,6 +2947,7 @@ App.controller = (function Controller() {
 		App.off('app:search');
 		App.off('app:featured');
 		App.off('app:login');
+		App.off('app;forgot');
 		App.off('app:about');
 		App.off('app:join');
 		App.off('app:interview');
@@ -2987,6 +2991,13 @@ App.controller = (function Controller() {
 		var login = new App.Views.Login();
 		App.viewManager.show(login);
 		Parse.history.navigate('login', { trigger: false });
+	}
+
+	this.forgot = function () {
+		console.log('controller forgot');
+		var forgotPassword = new App.Views.ForgotPassword();
+		App.viewManager.show(forgotPassword);
+		Parse.history.navigate('forgot', { trigger: false });
 	}
 
 	this.about = function () {
