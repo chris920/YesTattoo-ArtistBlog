@@ -23,47 +23,6 @@ var App = new (Parse.View.extend({
 		$(window).off('scroll');
 		$(window).off('keypress');
 	},
-	// Really crude view manager, cleans up after previous view
-	// should be replace with Marionette layouts/regions
-	switchView: function (view) {
-		console.log('switching view...');
-		if (this.view) {
-			console.log('cleaning view...');
-			this.view.remove();
-		}
-		if (this.modal) {
-			console.log('closing modal...');
-			this.modal.remove();
-			this.modal.close();
-		}
-		$('#app').html(view.render().el);
-		this.view = view;
-	},
-	// Again crude modal show/hide implementation, 
-	// should be replaced with Merionette layout/regions
-	showModal: function (view) {
-		console.log('showing modal...');
-		if (this.modal) {
-			this.modal.remove();
-			this.modal.close();
-		}
-		else if (this.view) {
-			console.log('disabling view...');
-			this.view.remove();
-		}
-		$('.modalayheehoo').html(view.render().el);
-		this.modal = view;
-	},
-	hideModal: function () {
-		console.log('hiding modal...')
-		if (this.view) {
-			console.log('enabling view...');
-			this.view.initialize();
-		}
-		this.modal.remove();
-		this.modal = undefined;
-		App.router.back();
-	},
 	start: function(){
 		this.initTypeahead();
 		this.getProfile(this.startRouter);
@@ -717,7 +676,7 @@ App.Views.Artist = Parse.View.extend({
 	viewProfile: function(){
 		// Parse.history.navigate(this.model.attributes.username, {trigger: true});
 		App.trigger('app:artist-profile', this.model.get('username'));
-		$("html, body").animate({ scrollTop: 0 }, 200);
+		// $("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	render: function(){
 		var that = this;
@@ -842,7 +801,8 @@ App.Views.Login = Backbone.Modal.extend({
 		$("body").css("overflow", "auto");
 		// Parse.history.navigate(App.back, {trigger: false});
 		// if(App.currentView){App.currentView.initialize()};
-		App.hideModal();
+		// App.hideModal();
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -1211,10 +1171,10 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		this.off();
 		// if(App.currentView){App.currentView.initialize()};
 		// window.history.back();
-		// App.hideModal();
+		// App.trigger('app:modal-close');
 	},
 	cancel: function () {
-		App.hideModal();
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -1371,7 +1331,7 @@ App.Views.Tattoo = Parse.View.extend({
     	// TODO Replace with event controller, don't call navigate direct.
     	// Parse.history.navigate(this.model.attributes.artistProfile.attributes.username, {trigger: true, replace: true});
     	App.trigger('app:artist-profile-uname', this.model.attributes.artistProfile.attributes.username);
-    	$("html, body").animate({ scrollTop: 0 }, 600);
+    	// $("html, body").animate({ scrollTop: 0 }, 600);
     },
 	createAdd: function(e){
 		e.stopPropagation();
@@ -1421,14 +1381,14 @@ App.Views.MyTattoo = Parse.View.extend({
     open: function(){
   //   	var profile = new App.Views.TattooProfile({model: this.model});
 		// // $('.modalayheehoo').html(profile.render().el);
-		// App.showModal(profile);
+		// App.viewManager.show(profile);
 		App.trigger('app:tattoo-profile', this.model);
     },
 	edit: function(e){
 		e.stopPropagation();
 		// var edit = new App.Views.EditTattoo({model: this.model});
 		// // $('.modalayheehoo').html(edit.render().el);
-		// App.showModal(edit);
+		// App.viewManager.show(edit);
 		App.trigger('app:edit-tattoo', this.model);
 	},
 	render: function(){
@@ -1572,10 +1532,10 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 		// $(window).unbind('keypress', this.focusIn);
 		// if(App.currentView){App.currentView.initialize()};
 		// window.history.back();
-		// App.hideModal();
+		// App.trigger('app:modal-close');
 	},
 	cancel: function () {
-		App.hideModal();
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -2004,7 +1964,7 @@ App.Views.FeaturedArtist = Parse.View.extend({
 		//navigate to the specific model's username
 		// Parse.history.navigate(this.model.attributes.username, {trigger: true});
 		App.trigger('app:artist-profile-uname', this.model.get('username'));
-		$("html, body").animate({ scrollTop: 0 }, 200);
+		// $("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	render: function(){
 		var that = this;
@@ -2162,7 +2122,7 @@ App.Views.Settings = Parse.View.extend({
     },
 	interview: function(){
 		  // Parse.history.navigate('interview', {trigger: true});
-		  $("html, body").animate({ scrollTop: 0 }, 200);
+		  // $("html, body").animate({ scrollTop: 0 }, 200);
 		  App.trigger('app:interview');
 	},
     scrollTo: function(e){
@@ -2569,7 +2529,7 @@ App.Views.Upload = Backbone.Modal.extend({
 		// Parse.history.navigate("myprofile", {trigger: false});
 		// if(App.currentView){App.currentView.initialize()};
 		// window.history.back();s
-		App.hideModal();
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -2658,7 +2618,7 @@ App.Views.UserTour = Backbone.Modal.extend({
 		$("body").css("overflow", "hidden");
 	},
 	cancel: function () {
-		App.hideModal();
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -2716,7 +2676,7 @@ App.Views.ArtistTour = Backbone.Modal.extend({
 		$("body").css("overflow", "hidden");
 	},
 	cancel: function () {
-		App.hideModal();
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -2953,6 +2913,9 @@ App.controller = (function Controller() {
 
 	this.initialize = function (options) {
 		console.log('controller init');
+
+		App.viewManager.initialize();
+
 		var self = this;
 		App.on('app:search', function (searchFor) { self.search(searchFor); });
 		App.on('app:featured', function (page) { self.featured(page); });
@@ -3003,7 +2966,7 @@ App.controller = (function Controller() {
 	this.search = function (searchFor) {
 		console.log('controller search : ' + searchFor);
 		App.search = new App.Views.Search();
-		App.switchView(App.search);
+		App.viewManager.show(App.search);
 		if (searchFor) {
 			App.search[searchFor+'SearchInitialize']();
 		}
@@ -3015,21 +2978,21 @@ App.controller = (function Controller() {
 		var featuredArtists = new App.Collections.FeaturedArtists();
 	    featuredArtists.page = (page) ? page : 0;
 		var featuredArtistPage = new App.Views.FeaturedArtistPage({ collection: featuredArtists });
-		App.switchView(featuredArtistPage);
+		App.viewManager.show(featuredArtistPage);
 		Parse.history.navigate('featured', { trigger: false });
 	}
 
 	this.login = function () {
 		console.log('controller login');
 		var login = new App.Views.Login();
-		App.showModal(login);
+		App.viewManager.show(login);
 		Parse.history.navigate('login', { trigger: false });
 	}
 
 	this.about = function () {
 		console.log('controller about');
 		var about = new App.Views.About();
-		App.switchView(about);
+		App.viewManager.show(about);
 		// Crude view switch doesn't work well here when appending views.
 		// Would be better to use regions, or a composite view.
 		var join = new App.Views.Join();
@@ -3040,57 +3003,48 @@ App.controller = (function Controller() {
 	this.join = function () {
 		console.log('controller join');
 		var join = new App.Views.Join();
-		App.switchView(join);
+		App.viewManager.show(join);
 		Parse.history.navigate('join', { trigger: false });
 	}
 
 	this.interview = function () {
 		console.log('controller interview');
 		var interview = new App.Views.Interview();
-		App.switchView(interview);
+		App.viewManager.show(interview);
 		Parse.history.navigate('interview', { trigger: false });
 	}
 
 	this.feedback = function () {
 		console.log('controller feedback');
 		var feedback = new App.Views.Feedback();
-		App.switchView(feedback);
+		App.viewManager.show(feedback);
 		Parse.history.navigate('feedback', { trigger: false });
 	}
 
 	this.bug = function () {
 		console.log('controller bug');
 		var bug = new App.Views.Feedback();
-		App.switchView(bug);
+		App.viewManager.show(bug);
 		bug.bugTab();
 		Parse.history.navigate('bug', { trigger: false });
 	}
 
 	this.myProfile = function (tab) {
 		console.log('controller myprofile : ' + tab);
-
-		// if (!Parse.User.current()) {
-		// 	// TODO Update history we want to direct user here after they have logged in
-		// 	// TODO This causes loop, need callback
-			
-		// 	App.controller.login();
-		// }
-		// console.log('after');
-
 		var myProfile;
 		if (Parse.User.current().attributes.role === 'user') {
 			myProfile = new App.Views.UserProfile({ model: App.profile });
 		} else {
 			myProfile = new App.Views.ArtistProfile({ model: App.profile });
 		}
-		App.switchView(myProfile);
+		App.viewManager.show(myProfile);
 
 		// TODO Bad, should be done in view init
 		if (tab) {
 			myProfile[tab+'Tab']();
 		}
 
-	  	Parse.history.navigate('myprofile', { trigger: false });
+		Parse.history.navigate('myprofile', { trigger: false });
 	}
 
 	this.tour = function () {
@@ -3102,7 +3056,7 @@ App.controller = (function Controller() {
 		} else  {
 			tour = new App.Views.ArtistTour();
 		};
-		App.showModal(tour);
+		App.viewManager.show(tour);
 		Parse.history.navigate('myprofile/tour', { trigger: false });
 	}
 
@@ -3110,7 +3064,7 @@ App.controller = (function Controller() {
 		console.log('controller settings');
 		this.myProfile();
 		var settings = new App.Views.Settings();
-		App.switchView(settings);
+		App.viewManager.show(settings);
 		Parse.history.navigate('myprofile/settings', { trigger: false });
 	}
 
@@ -3118,7 +3072,7 @@ App.controller = (function Controller() {
 		console.log('controller upload');
 		this.myProfile();
 		var upload = new App.Views.Upload();
-		App.showModal(upload);
+		App.viewManager.show(upload);
 		Parse.history.navigate('myprofile/upload', { trigger: false });
 	}
 
@@ -3139,7 +3093,7 @@ App.controller = (function Controller() {
 		console.log('controller editTattoo : ' + tattoo.id);
 		this.myProfile();
 		var profile = new App.Views.EditTattoo({ model: tattoo });
-		App.showModal(profile);
+		App.viewManager.show(profile);
 		Parse.history.navigate('myprofile/edit/' + tattoo.id , { trigger: false });
 	}
 
@@ -3159,7 +3113,7 @@ App.controller = (function Controller() {
 	this.tattooProfile = function (tattoo) {
 		console.log('controller tattooProfile : ' + tattoo.id);
 		var profile = new App.Views.TattooProfile({ model: tattoo });
-		App.showModal(profile);
+		App.viewManager.show(profile);
 		Parse.history.navigate('tattoo/' + tattoo.id , { trigger: false });
 	}
 
@@ -3174,7 +3128,7 @@ App.controller = (function Controller() {
 				Parse.history.navigate('/', { trigger: true });
 				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
 			}
-		}, 
+		},
 		function (error) {
 			console.log("Error: " + error.code + " " + error.message);
 		});
@@ -3183,7 +3137,7 @@ App.controller = (function Controller() {
 	this.userProfile = function (user, tab) {
 		console.log('controller userProfile : ' + user.get('username') + ' / ' + tab);
 		var userProfile = new App.Views.UserProfile({model: user});
-		App.switchView(userProfile);
+		App.viewManager.show(userProfile);
 		if (tab) {
 			userProfile[tab+'Tab']();
 		}
@@ -3210,7 +3164,7 @@ App.controller = (function Controller() {
 	this.artistProfile = function (artist, tab) {
 		console.log('controller artistProfile : ' + artist.get('username') + ' / ' + tab);
 		var profile = new App.Views.ArtistProfile({ model: artist, tab: tab });
-		App.switchView(profile);
+		App.viewManager.show(profile);
 		if (tab) {
 			profile[tab+'Tab']();
 		}
@@ -3220,6 +3174,92 @@ App.controller = (function Controller() {
 	return this;
 })();
 
+App.viewManager = (function ViewManager() {
+
+	var currentView;
+	var currentModal;
+
+	function initialize() {
+		console.log('view manager init');
+		App.on('app:modal-close', closeModal);
+	}
+
+	function destroy() {
+		App.off('app:modal-close');
+	}
+
+	function show(view) {
+
+		console.log('view manager - show ');
+		if (currentView) {
+			console.log('view manager - disposing view...');
+			currentView.remove();
+		}
+
+		if (currentModal) {
+			console.log('view manager - disposing modal...');
+			// currentModal.close();
+			currentModal.remove();
+			currentModal = undefined;
+		}
+
+		render(view);
+	}
+
+	function closeModal() {
+		console.log('view manager - hide modal');
+
+		if (currentModal) {
+			console.log('view manager - disposing modal...');
+			currentModal = undefined;
+		}
+
+		App.router.back();
+	}
+
+	function render(view) {
+		console.log('view manager - rendering...');
+
+		if (Backbone.Modal.prototype.isPrototypeOf(view)) {
+			return _renderModal(view);
+		}
+		return _renderView(view);
+		
+		function _renderModal(view, callback) {
+			currentModal = view;
+			$('.modalayheehoo').html(currentModal.render().el);
+		}
+
+		function _renderView(view, callback) {
+			currentView = view;
+			$('#app').html(currentView.render().el);
+			App.transition.scrollIntoView();
+		}
+	}
+
+	return {
+		initialize: initialize,
+		destroy: destroy,
+		show: show
+	};
+})();
+
+App.transition = (function Transition() {
+
+	var duration = 400;
+
+	function scrollIntoView() {
+		console.log($(window).scrollTop().valueOf());
+		if ($(window).scrollTop().valueOf()) {
+			console.log('Scrolling into view...');
+			$('body, html').animate({ scrollTop: 0 }, duration);	
+		}
+	}
+
+	return {
+		scrollIntoView: scrollIntoView
+	};
+})();
 
 $(function() {
 	App.start();
