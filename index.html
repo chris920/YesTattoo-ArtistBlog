@@ -48,7 +48,7 @@
                   <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
                   <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-black373"></i>Tattoos</a></li>
                   <li class="dropdown">
-                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= App.profile.attributes.username %> <b class="caret"></b></a>
+                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                       <button class="btn-submit" href="/myprofile">View Profile</button>
                       <li><a href="/myprofile/collection"><i href="/myprofile/collection" class="flaticon-books8 pull-right"></i>Collection</a></li>

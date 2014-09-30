@@ -2354,7 +2354,7 @@ App.Views.Join = Parse.View.extend({
     	}, function(error){
     		console.log(error);
     	});
-    },	
+    },
     showEmailForm: function(){
     	var that = this;
     	this.$('#inputEmail').removeClass('btn-submit');
@@ -2378,6 +2378,7 @@ App.Views.Join = Parse.View.extend({
 	    	};
 	    	profile.set('user', user);
 	    	profile.set('name', user.attributes.username);
+	    	profile.set('username', user.attributes.username);
 	      	App.profile = profile;
 	      	return profile.save();
 		}).then(function(profile) {
