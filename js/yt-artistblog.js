@@ -297,6 +297,7 @@ App.Views.Search = Backbone.Modal.extend({
 	},
 	cancel: function(){
 		$("body").css("overflow", "auto");
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -388,72 +389,6 @@ App.Views.TattoosPage = Parse.View.extend({
 				input.tagsinput('add', e.target.textContent);
 			});
 		}, 400);
-		this.focusIn();
-	},
-	// bindSearch: function(){
-	// 	// $(window).bind('scroll',this.scrollChecker);
-	// 	// $(window).bind('keypress', this.focusIn);
-	// 	App.on('app:scroll', this.scrollChecker);
-	// 	App.on('app:keypress', this.focusIn);
-	// },
-	// unbindSearch: function(){
-	// 	// $(window).unbind('scroll',this.scrollChecker);
-	// 	// $(window).unbind('keypress', this.focusIn);
-	// 	App.off('app:scroll', this.scrollChecker);
-	// 	App.off('app:keypress', this.focusIn);
-	// },
-	focusIn: function(){
-		console.log('search focusIn');
-		var that = this;
-		this.$('.tt-input').focus();
-		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
-		    this.$('.tt-input').blur().val(' ');
-		}
-		this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
-		this.scrollToTop();
-		return this;
-	},
-	scrollToTop: function(){
-		if (1 <= $(window).scrollTop()) {
-			$("html, body").animate({ scrollTop: 0 }, 200);
-		}
-	},
-	scrollChecker: function(){
-		console.log('search scrollChecker');
-		var that = this;
-		if (1 <= $(window).scrollTop()) {
-			that.$('.tt-dropdown-menu, .globalBooks').stop(true,true).fadeOut( 200 );
-		} else if (that.$('.tt-dropdown-menu > div.tt-dataset-books').children().length) {
-			that.$('.tt-dropdown-menu').stop(true,true).fadeIn( 300 );
-			that.$('.globalBooks').stop(true,true).hide( 300 );
-		} else {
-			that.$('.globalBooks').stop(true,true).fadeIn( 300 );
-			that.$('input.searchInput').tagsinput('input').typeahead('close');
-		}
-		if (this.searchingForView.moreToLoad && $('#search').height()-$(window).height()*2 <= $(window).scrollTop()) {
-			this.searchingForView.moreToLoad = false;
-			this.searchingForView.collection.page++;
-			this.searchingForView.loadMore();
-		}
-	},
-	render: function(){
-		var html = this.template();
-		$(this.el).html(html);
-
-		this.typeaheadInitialize();
-		this.$('.globalBooks').delay( 700 ).fadeIn( 1200 );
-		// App.currentView = this;
-		return this;
-	}
-});
-
-App.Views.TattoosPage = Parse.View.extend({
-	initialize: function(){
-		// Parse.history.navigate('search/tattoo', {trigger: false});
-		this.moreToLoad = true;
-	},
-	events: {
-
 	},
 	queryReset: function(){
 		this.query = [];
@@ -2867,13 +2802,13 @@ App.Router = Parse.Router.extend({
 	routes: {
 		"":								"index",
 		"landing":						"landing",
-		// "home":							"home",
-		// "explore": 						"explore",
+		"home":							"home",
+		"explore": 						"explore",
 		"search": 						"search",
 		"featured":	    				"featured",
 		"featured/p:page":	 		    "featured",
-		// "artists": 						"artists",
-		// "tattoos": 						"tattoos",
+		"artists": 						"artists",
+		"tattoos": 						"tattoos",
 		"about":   						"about",
 		"join":        				    "join",
 		"login":        				"login",
@@ -2933,31 +2868,29 @@ App.Router = Parse.Router.extend({
 		var landing = new App.Views.Landing();
 		$('#gutter').html(landing.render().el);
 	},
-	// home: function(){
-	// 	this.explore();
-	// },
-	// explore: function(){
-	// 	var explore = new App.Views.Explore();
-	// 	$('#app').html(explore.render().el);
-	// },
-	search: function(searchFor){
-		console.log('route search : ' + searchFor);
-		App.controller.search(searchFor);
+	home: function(){
+		///TODO user's home page, routes to explore now.
+		this.explore();
 	},
-	// search: function(){
-	// 	App.search = new App.Views.Search();
-	// 	$('.modalayheehoo').html(App.search.render().el);
-	// },
+	explore: function(){
+		console.log('route explore');
+		App.controller.explore();
+	},
+	search: function(){
+		console.log('route search');
+		App.controller.search();
+	},
 	featured: function(page) {
 		console.log('route featured : ' + page);
 	    App.controller.featured(page);
-	// artists: function(){
-	// 	var artists = new App.Views.ArtistsPage();
-	// 	$('#app').html(artists.render().el);
-	// },
-	// tattoos: function(){
-	// 	var tattoos = new App.Views.TattoosPage();
-	// 	$('#app').html(tattoos.render().el);
+	},
+	artists: function(){
+		console.log('route artists');
+		App.controller.artists();
+	},
+	tattoos: function(){
+		console.log('route tattoos');
+		App.controller.tattoos();
 	},
 	about: function(){
 		console.log('route about');
@@ -3035,8 +2968,11 @@ App.controller = (function Controller() {
 		App.viewManager.initialize();
 
 		var self = this;
-		App.on('app:search', function (searchFor) { self.search(searchFor); });
+		App.on('app:explore', function () { self.explore(); });		
+		App.on('app:search', function () { self.search(); });
 		App.on('app:featured', function (page) { self.featured(page); });
+		App.on('app:artists', function () { self.artists(); });
+		App.on('app:tattoos', function () { self.tattoos(); });
 		App.on('app:login', function () { self.login(); });
 		App.on('app:forgot', function () { self.forgot(); });
 		App.on('app:about', function () { self.about(); });
@@ -3060,10 +2996,13 @@ App.controller = (function Controller() {
 
 	this.destroy = function () {
 		console.log('controller destory');
+		App.off('app:explore');
 		App.off('app:search');
 		App.off('app:featured');
+		App.off('app:artists');
+		App.off('app:tattoos');
 		App.off('app:login');
-		App.off('app;forgot');
+		App.off('app:forgot');
 		App.off('app:about');
 		App.off('app:join');
 		App.off('app:interview');
@@ -3083,14 +3022,18 @@ App.controller = (function Controller() {
 		App.off('app:artist-profile');
 	}
 
+	this.explore = function () {
+		console.log('controller explore');
+		var explore = new App.Views.Explore();
+		App.viewManager.show(explore);
+		Parse.history.navigate('explore', { trigger: false });
+	}
+
 	this.search = function (searchFor) {
-		console.log('controller search : ' + searchFor);
+		console.log('controller search');
 		App.search = new App.Views.Search();
 		App.viewManager.show(App.search);
-		if (searchFor) {
-			App.search[searchFor+'SearchInitialize']();
-		}
-		Parse.history.navigate('search/' + searchFor, { trigger: false });
+		Parse.history.navigate('search', { trigger: false });
 	}
 
 	this.featured = function (page) {
@@ -3100,6 +3043,20 @@ App.controller = (function Controller() {
 		var featuredArtistPage = new App.Views.FeaturedArtistPage({ collection: featuredArtists });
 		App.viewManager.show(featuredArtistPage);
 		Parse.history.navigate('featured', { trigger: false });
+	}
+
+	this.artists = function () {
+		console.log('controller artists');
+		var artists = new App.Views.ArtistsPage();
+		App.viewManager.show(artists);
+		Parse.history.navigate('artists', { trigger: false });
+	}
+
+	this.tattoos = function () {
+		console.log('controller tattoos');
+		var tattoos = new App.Views.TattoosPage();
+		App.viewManager.show(tattoos);
+		Parse.history.navigate('tattoos', { trigger: false });
 	}
 
 	this.login = function () {
@@ -3120,8 +3077,6 @@ App.controller = (function Controller() {
 		console.log('controller about');
 		var about = new App.Views.About();
 		App.viewManager.show(about);
-		// Crude view switch doesn't work well here when appending views.
-		// Would be better to use regions, or a composite view.
 		var join = new App.Views.Join();
 		$('#app').append(join.render().el);
 		Parse.history.navigate('about', { trigger: false });
