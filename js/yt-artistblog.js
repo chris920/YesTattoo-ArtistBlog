@@ -10,7 +10,18 @@ var App = new (Parse.View.extend({
 	Views: {},
 	Collections: {},
 	initialize: function(){
-
+		// Setup app proxy for windows events
+		$(window).on('scroll', function (e) {
+			App.trigger('app:scroll', e);
+		});
+		$(window).on('keypress', function (e) {
+			App.trigger('app:keypress', e);
+		});
+	},
+	remove: function () {
+		// Stop listening to windows events
+		$(window).off('scroll');
+		$(window).off('keypress');
 	},
 	start: function(){
 		this.initTypeahead();
@@ -78,14 +89,15 @@ var App = new (Parse.View.extend({
 	},
 	links: function(e){
 		e.preventDefault();
-		$(window).unbind();
-		if(typeof(e.target.attributes.href.value) !== undefined){
-			App.back = Parse.history.getFragment();
-			Parse.history.navigate(e.target.attributes.href.value, {trigger: true});
+		// $(window).unbind();
+		if(typeof(e.currentTarget.attributes.href.value) !== undefined){
+			// App.back = Parse.history.getFragment();
+			Parse.history.navigate(e.currentTarget.attributes.href.value, {trigger: true});
 		}
 	},
 	initScrollToTop: $(function(){
-	 	$(window).scroll(function () {
+	 	// $(window).scroll(function () {
+	 	App.on('app:scroll', function () {
 	        if ($(this).scrollTop() > 800) {
 	            $('#back-to-top').fadeIn();
 	        } else {
@@ -103,7 +115,6 @@ var App = new (Parse.View.extend({
 	}),
 	mapStyles: [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}]
 }))({el: document.body});
-
 
 ///////// Models
 App.Models.User = Parse.User.extend({
@@ -264,8 +275,16 @@ App.Views.Footer = Parse.View.extend({
 App.Views.Search = Parse.View.extend({
 	id: 'search',
 	initialize: function(){
+		console.log('search init');
 		_.bindAll(this, 'focusIn', 'scrollToTop', 'scrollChecker');
-		this.bindSearch();
+		// this.bindSearch();
+		App.on('app:scroll', this.scrollChecker);
+		App.on('app:keypress', this.focusIn);
+	},
+	remove: function () {
+		console.log('search remove');
+		App.off('app:scroll', this.scrollChecker);
+		App.off('app:keypress', this.focusIn);
 	},
 	template: _.template($("#searchTemplate").html()),
 	events: {
@@ -354,15 +373,20 @@ App.Views.Search = Parse.View.extend({
 		}, 400);
 		this.focusIn();
 	},
-	bindSearch: function(){
-		$(window).bind('scroll',this.scrollChecker);
-		$(window).bind('keypress', this.focusIn);
-	},
-	unbindSearch: function(){
-		$(window).unbind('scroll',this.scrollChecker);
-		$(window).unbind('keypress', this.focusIn);
-	},
+	// bindSearch: function(){
+	// 	// $(window).bind('scroll',this.scrollChecker);
+	// 	// $(window).bind('keypress', this.focusIn);
+	// 	App.on('app:scroll', this.scrollChecker);
+	// 	App.on('app:keypress', this.focusIn);
+	// },
+	// unbindSearch: function(){
+	// 	// $(window).unbind('scroll',this.scrollChecker);
+	// 	// $(window).unbind('keypress', this.focusIn);
+	// 	App.off('app:scroll', this.scrollChecker);
+	// 	App.off('app:keypress', this.focusIn);
+	// },
 	focusIn: function(){
+		console.log('search focusIn');
 		var that = this;
 		this.$('.tt-input').focus();
 		if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
@@ -378,6 +402,7 @@ App.Views.Search = Parse.View.extend({
 		}
 	},
 	scrollChecker: function(){
+		console.log('search scrollChecker');
 		var that = this;
 		if (1 <= $(window).scrollTop()) {
 			that.$('.tt-dropdown-menu, .globalBooks').stop(true,true).fadeOut( 200 );
@@ -400,14 +425,14 @@ App.Views.Search = Parse.View.extend({
 
 		this.typeaheadInitialize();
 		this.$('.globalBooks').delay( 700 ).fadeIn( 1200 );
-		App.currentView = this;
+		// App.currentView = this;
 		return this;
 	}
 });
 
 App.Views.TattoosPage = Parse.View.extend({
 	initialize: function(){
-		Parse.history.navigate('search/tattoo', {trigger: false});
+		// Parse.history.navigate('search/tattoo', {trigger: false});
 		this.moreToLoad = true;
 	},
 	events: {
@@ -467,7 +492,7 @@ App.Views.TattoosPage = Parse.View.extend({
 App.Views.ArtistsPage = Parse.View.extend({
 	template: _.template($("#artistsTemplate").html()),
 	initialize: function(){
-		Parse.history.navigate('search/artist', {trigger: false});
+		// Parse.history.navigate('search/artist', {trigger: false});
 		this.moreToLoad = true;
 		_.bindAll(this, 'initializeLocationPicker', 'queryReset');
 	},
@@ -479,7 +504,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	    'focus #changeAddressInput': 	'initializeLocationPicker'
 	},
 	initializeLocationPicker: function(){
-		App.search.unbindSearch();
+		// App.search.unbindSearch();
 		var that = this;
 		if (!this.locationPickerCreated) {
 			if(Parse.User.current() && App.profile.attributes.location) {
@@ -551,7 +576,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 		return this;
 	},
 	hideChangeLocation: function( delay ){
-		App.search.bindSearch();
+		// App.search.bindSearch();
 		var that = this;
 		window.setTimeout(function(){
 			that.$('.changeLocation').animate({ height: 'toggle', opacity: 'toggle' }, 'slow', function(){
@@ -649,8 +674,9 @@ App.Views.Artist = Parse.View.extend({
       'click': 'viewProfile'
     },
 	viewProfile: function(){
-		Parse.history.navigate(this.model.attributes.username, {trigger: true});
-		$("html, body").animate({ scrollTop: 0 }, 200);
+		// Parse.history.navigate(this.model.attributes.username, {trigger: true});
+		App.trigger('app:artist-profile', this.model.get('username'));
+		// $("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	render: function(){
 		var that = this;
@@ -704,7 +730,7 @@ App.Views.Artist = Parse.View.extend({
 App.Views.Login = Backbone.Modal.extend({
 	id: 'login',
 	initialize: function(){
-		Parse.history.navigate('login', {trigger: false});
+		// Parse.history.navigate('login', {trigger: false});
 	},
 	template: _.template($("#loginTemplate").html()),
 	viewContainer: '.clearContainer',
@@ -723,7 +749,8 @@ App.Views.Login = Backbone.Modal.extend({
 					user.destroy().then(function(user){
 						Parse.User.logOut();
 						that.triggerCancel();
-						Parse.history.navigate('/join', {trigger: true});
+						// Parse.history.navigate('/join', {trigger: true});
+						App.trigger('app:join');
 					});
 				} else {
 					App.getProfile();
@@ -762,17 +789,17 @@ App.Views.Login = Backbone.Modal.extend({
       return false;
     },
     passwordForm: function(){
-		var forgotPassword = new App.Views.ForgotPassword();
-		$('#app').html(forgotPassword.render().el);
-		this.triggerCancel();
+		App.trigger('app:forgot');
     },
 	onRender: function(){
 		$("body").css("overflow", "hidden");
 	},
 	cancel: function(){
 		$("body").css("overflow", "auto");
-		Parse.history.navigate(App.back, {trigger: false});
-		if(App.currentView){App.currentView.initialize()};
+		// Parse.history.navigate(App.back, {trigger: false});
+		// if(App.currentView){App.currentView.initialize()};
+		// App.hideModal();
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -787,21 +814,24 @@ App.Views.ArtistProfile = Parse.View.extend({
 		'click [href="#aboutTab"]': 	'aboutTab',
 		'click [href="#shopTab"]': 		'shopTab'
 	},
-	portfolioTab: function(){
+	portfolioTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#portfolioTab"]').tab('show');
 	    this.scroll();
-	    return false;
+	    Parse.history.navigate(this.model.get('username') + '/portfolio', { trigger: false });
 	},
-	aboutTab: function(){
+	aboutTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#aboutTab"]').tab('show');
 		this.scroll();
-	    return false;
+	    Parse.history.navigate(this.model.get('username') + '/about', { trigger: false });
 	},
-	shopTab: function(){
+	shopTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#shopTab"]').tab('show');
 	    this.renderMap();
 	    this.scroll()
-	    return false;
+	    // Parse.history.navigate(this.model.get('username') + '/shop', { trigger: false });
 	},
 	scroll: function(){
 		$("html, body").animate({ scrollTop: $('.profHead').outerHeight(true) + 41  }, 500);
@@ -866,7 +896,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 		} else {
 			this.getTattoos();
 		}
-		App.currentView = this;
+		// App.currentView = this;
 		return this;
 	}
 });
@@ -874,13 +904,19 @@ App.Views.ArtistProfile = Parse.View.extend({
 App.Views.TattooProfile = Backbone.Modal.extend({
 	id: 'tattooProfile',
 	initialize: function(){
-		Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
+		console.log('tattoo profile init');
+		// Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
 		_.bindAll(this, 'focusIn');
 
 		this.model.on('add:created', this.showYourBooks, this);
 		this.model.on('add:removed', this.showAddButton, this);
 
-		$(window).unbind();
+		// $(window).unbind();
+		// App.on('app:keypress', this.focusIn);
+	},
+	remove: function () {
+		console.log('tattoo profile remove');
+		// App.off('app:keypress', this.focusIn);
 	},
 	template: _.template($("#tattooProfileTemplate").html()),
     viewContainer: '.container',
@@ -983,7 +1019,8 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	},
 	addOtherBook: function(e){
 		if (!Parse.User.current()) {
-			Parse.history.navigate('/login', {trigger: true, replace: true});
+			// Parse.history.navigate('/login', {trigger: true, replace: true});
+			App.trigger('app:login');
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		} else if(Parse.User.current().attributes.role === 'artist') {
 
@@ -1007,7 +1044,9 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		this.$('.add').attr('disabled', 'disabled');
 
 		if (!Parse.User.current()) {
-			Parse.history.navigate('/login', {trigger: true, replace: true});
+			console.log('test login');
+			// Parse.history.navigate('/login', {trigger: true, replace: true});
+			App.trigger('app:login');
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		} else {
 			this.$('.add').html('<span class="flaticon-books8"></span>Collected!!!');
@@ -1101,7 +1140,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 			}
 		}, 400);
 		//focus in on the add input on keypress
-		$(window).bind('keypress', this.focusIn);
+		// $(window).bind('keypress', this.focusIn);
 	},
 	saveBooks: function() {
 		$('.save').attr('disabled', 'disabled');
@@ -1122,12 +1161,17 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		return this;
 	},
 	beforeCancel: function(){
-		Parse.history.navigate(App.back, {trigger: false});
+		// Parse.history.navigate(App.back, {trigger: false});
 		$("body").css("overflow", "auto");
 		this.$('booksInput').tagsinput('destroy');
-		$(window).unbind('keypress', this.focusIn);
+		// $(window).unbind('keypress', this.focusIn);
 		this.off();
-		if(App.currentView){App.currentView.initialize()};
+		// if(App.currentView){App.currentView.initialize()};
+		// window.history.back();
+		// App.trigger('app:modal-close');
+	},
+	cancel: function () {
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -1267,23 +1311,33 @@ App.Views.Tattoo = Parse.View.extend({
     },
     open: function(){
     	// e.stopPropagation();
-    	App.back = Parse.history.getFragment() || '';
-    	var profile = new App.Views.TattooProfile({model: this.model});
-		$('.modalayheehoo').html(profile.render().el);
-		return profile;
+  //   	App.back = Parse.history.getFragment() || '';
+  //   	var profile = new App.Views.TattooProfile({model: this.model});
+		// $('.modalayheehoo').html(profile.render().el);
+		// return profile;
+
+		// TODO Not ideal, we shouldn't be calling the router direct or requerying the model 
+		// but better than previous implementation as handled by single route.
+		// Replace with events based architecture
+		// console.log(this.model);
+		// App.router.tattooProfile(this.model.id);
+		App.trigger('app:tattoo-profile', this.model);
     },
     profile: function(e){
     	e.stopPropagation();
-    	Parse.history.navigate(this.model.attributes.artistProfile.attributes.username, {trigger: true, replace: true});
-    	$("html, body").animate({ scrollTop: 0 }, 600);
+    	// TODO Replace with event controller, don't call navigate direct.
+    	// Parse.history.navigate(this.model.attributes.artistProfile.attributes.username, {trigger: true, replace: true});
+    	App.trigger('app:artist-profile-uname', this.model.attributes.artistProfile.attributes.username);
+    	// $("html, body").animate({ scrollTop: 0 }, 600);
     },
 	createAdd: function(e){
 		e.stopPropagation();
-		var user = Parse.User.current();
-		var that = this;
-
+		// var user = Parse.User.current();
+		// var that = this;
 		if(!Parse.User.current()) {
-			Parse.history.navigate('/login', {trigger: true, replace: true});
+			// TODO Replace with event controller, don't call navigate direct.
+			// Parse.history.navigate('/login', {trigger: true, replace: true});
+			App.trigger('app:login');
 			$(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
 		} else {
 			this.$('button').addClass('add:active').html('<span class="flaticon-books8"></span>Collected!!!');
@@ -1322,13 +1376,17 @@ App.Views.MyTattoo = Parse.View.extend({
 		'click .open': 	'open'
 	},
     open: function(){
-    	var profile = new App.Views.TattooProfile({model: this.model});
-		$('.modalayheehoo').html(profile.render().el);
+  //   	var profile = new App.Views.TattooProfile({model: this.model});
+		// // $('.modalayheehoo').html(profile.render().el);
+		// App.viewManager.show(profile);
+		App.trigger('app:tattoo-profile', this.model);
     },
 	edit: function(e){
 		e.stopPropagation();
-		var edit = new App.Views.EditTattoo({model: this.model});
-		$('.modalayheehoo').html(edit.render().el);
+		// var edit = new App.Views.EditTattoo({model: this.model});
+		// // $('.modalayheehoo').html(edit.render().el);
+		// App.viewManager.show(edit);
+		App.trigger('app:edit-tattoo', this.model);
 	},
 	render: function(){
 		var attributes = this.model.toJSON();
@@ -1343,7 +1401,12 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     viewContainer: '.lightContainer',
 	cancelEl: '.x, .cancel',
     initialize: function() {
-    	Parse.history.navigate("myprofile/edit/"+this.model.id, {trigger: false, replace: true});
+    	// Parse.history.navigate("myprofile/edit/"+this.model.id, {trigger: false, replace: true});
+
+		App.on('app:keypress', this.focusIn);
+    },
+    remove: function () {
+    	App.off('app:keypress', this.focusIn);
     },
     events: {
 		"click .delete": 		"delete"
@@ -1432,7 +1495,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 		}, 400);
 
 		//focus in on the add input on keypress
-		$(window).bind('keypress', this.focusIn);
+		// $(window).bind('keypress', this.focusIn);
 	},
 	saveBooks: function(){
 		var that = this;
@@ -1462,9 +1525,14 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 	beforeCancel: function(){
 		$("body").css("overflow", "auto");
 		this.$('booksInput').tagsinput('destroy');
-		Parse.history.navigate("myprofile", {trigger: false});
-		$(window).unbind('keypress', this.focusIn);
-		if(App.currentView){App.currentView.initialize()};
+		// Parse.history.navigate("myprofile", {trigger: false});
+		// $(window).unbind('keypress', this.focusIn);
+		// if(App.currentView){App.currentView.initialize()};
+		// window.history.back();
+		// App.trigger('app:modal-close');
+	},
+	cancel: function () {
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -1477,23 +1545,26 @@ App.Views.UserProfile = Parse.View.extend({
 	template: _.template($("#userProfileTemplate").html()),
 	events: {
 		'click [href="#collectionTab"]': 'collectionTab',
-		'click [href="#tattoosTab"]': 'booksTab',
+		'click [href="#booksTab"]': 'booksTab',
 		'click [href="#artistsTab"]': 'artistsTab'
 	},
-	collectionTab: function(){
+	collectionTab: function (e) {
+		if (e) { e.preventDefault(); }
 		$('a[href="#collectionTab"]').tab('show');
 	    this.scroll();
-	    return false;
+	    Parse.history.navigate('myprofile/collection', { trigger: false });
 	},
-	booksTab: function(){
+	booksTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#booksTab"]').tab('show');
 	    this.scroll();
-	    return false;
+	    Parse.history.navigate('myprofile/books', { trigger: false });
 	},
-	artistsTab: function(){
+	artistsTab: function (e) {
+		if (e) { e.preventDefault(); }
 	    $('a[href="#artistsTab"]').tab('show');
 	    this.scroll();
-		return false;
+	    Parse.history.navigate('myprofile/artists', { trigger: false });
 	},
 	scroll: function(){
 		$("html, body").animate({ scrollTop: $('.userHead').outerHeight(true) + 41  }, 500);
@@ -1522,7 +1593,7 @@ App.Views.UserProfile = Parse.View.extend({
 		this.userAddsTattoos = new App.Views.Tattoos({collection: this.addsTattoosCollection, el: this.$('.adds')});
 		var booksByCount =  addsCollection.getBooksByCount( );
 		this.userAddsTattoos.render().renderBooks( booksByCount );
-console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
+		console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
 
 		this.renderBooks(addsCollection, booksByCount);
 		this.renderArtists(addsCollection);
@@ -1582,7 +1653,7 @@ console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
 		var attributes = this.model.attributes
 		this.$el.html(this.template(attributes));
 
-		if(this.model.attributes.user.id === Parse.User.current().id){
+		if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
 			this.renderAdds(App.Collections.adds);
 			this.getMyTattoos();
 			this.renderMyProfile();
@@ -1590,7 +1661,7 @@ console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
 			this.getAdds();
 			this.getTattoos();
 		}
-		App.currentView = this;
+		// App.currentView = this;
 		return this;
 	}
 });
@@ -1668,8 +1739,12 @@ App.Views.Landing = Parse.View.extend({
 		});
 
 		_.bindAll(this, 'getArtists', 'continue', 'continueToFeatured','initiateArtists', 'hideLanding');
-	    $(window).bind('scroll',this.continueToFeatured);
+	    // $(window).bind('scroll',this.continueToFeatured);
+	    App.on('app:scroll', this.continueToFeatured);
 
+	},
+	remove: function () {
+		App.off('app:scroll', this.continueToFeatured);
 	},
     events: {
     	"click a":	"continueToFeatured"
@@ -1766,7 +1841,9 @@ App.Views.Landing = Parse.View.extend({
 		this.hideLanding();
 	},
 	continueToFeatured:function(){
-		Parse.history.navigate('featured', {trigger: true});
+		// Parse.history.navigate('featured', {trigger: true});
+		console.log('landing continueToFeatured');
+		App.trigger('app:featured');
 		this.hideLanding();
 	},
 	render: function(){
@@ -1784,7 +1861,7 @@ App.Views.Landing = Parse.View.extend({
         });
 		clearInterval(this.artistTimer);
 		$('.navs').fadeIn( 900 );
-		$(window).unbind('scroll', this.continueToFeatured);
+		// $(window).unbind('scroll', this.continueToFeatured);
 	}
 });
 
@@ -1796,7 +1873,9 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
 		_.bindAll(this,'addAll', 'addOne', 'render')
     	this.collection.on('reset', this.render, this);
     	this.collection.on('add', this.addOne);
-    	$(window).scroll(function () {	
+
+    	App.on('app:scroll', function () {
+    		console.log('app.on scrolling....');	
 			if ($(document).height() - 1 <= $(window).scrollTop() + $(window).height()) {
 			 	$('.featuredArtist:hidden:first').fadeIn("slow");
 				if($('.featuredArtist:last').is(':visible')) {
@@ -1809,6 +1888,7 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
     	'click #more': 'more'
     },
     more: function(e){
+    	console.log('featured artist more');
     	//hides load button after clicked
 	 	$(e.target.parentElement).fadeOut("normal", function() {
 	        $(this).remove();
@@ -1817,6 +1897,7 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
     	$("html, body").animate({ scrollTop: $('.end').offset().top }, 400);
     },
     load: function() {
+    	console.log('featured artist load');
     	var that = this;
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
@@ -1839,6 +1920,7 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
 		  }
 		});
 		var p = (this.collection.page) ? '/p' + this.collection.page : '';
+		// TODO Not sure about this, needs revisiting
 		Parse.history.navigate('featured'+p, {trigger: false});
     },
     renderLoad: function() {
@@ -1860,7 +1942,7 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
 		var html = this.featuredContainerTemplate();
 		$(this.el).append(html);
 		this.load();
-		App.currentView = this;
+		// App.currentView = this;
 		return this;
 	}
 });
@@ -1877,8 +1959,9 @@ App.Views.FeaturedArtist = Parse.View.extend({
     },
 	viewProfile: function(){
 		//navigate to the specific model's username
-		Parse.history.navigate(this.model.attributes.username, {trigger: true});
-		$("html, body").animate({ scrollTop: 0 }, 200);
+		// Parse.history.navigate(this.model.attributes.username, {trigger: true});
+		App.trigger('app:artist-profile-uname', this.model.get('username'));
+		// $("html, body").animate({ scrollTop: 0 }, 200);
 	},
 	render: function(){
 		var that = this;
@@ -2035,8 +2118,9 @@ App.Views.Settings = Parse.View.extend({
 		}
     },
 	interview: function(){
-		  Parse.history.navigate('interview', {trigger: true});
-		  $("html, body").animate({ scrollTop: 0 }, 200);
+		  // Parse.history.navigate('interview', {trigger: true});
+		  // $("html, body").animate({ scrollTop: 0 }, 200);
+		  App.trigger('app:interview');
 	},
     scrollTo: function(e){
     	//get the section to scroll to from the data target attribute
@@ -2048,7 +2132,8 @@ App.Views.Settings = Parse.View.extend({
     },
     upload: function(e){
     	e.preventDefault();
-    	Parse.history.navigate('/myprofile/upload', {trigger: true});
+    	// Parse.history.navigate('/myprofile/upload', {trigger: true});
+    	App.trigger('app:upload');
     },
 	clearLocation: function(){
 		this.locationPickerCreated = false;
@@ -2269,7 +2354,7 @@ App.Views.Join = Parse.View.extend({
     	}, function(error){
     		console.log(error);
     	});
-    },	
+    },
     showEmailForm: function(){
     	var that = this;
     	this.$('#inputEmail').removeClass('btn-submit');
@@ -2293,6 +2378,7 @@ App.Views.Join = Parse.View.extend({
 	    	};
 	    	profile.set('user', user);
 	    	profile.set('name', user.attributes.username);
+	    	profile.set('username', user.attributes.username);
 	      	App.profile = profile;
 	      	return profile.save();
 		}).then(function(profile) {
@@ -2359,7 +2445,8 @@ App.Views.Join = Parse.View.extend({
 						}, function(error) {
 							user.destroy().then(function(){
 								Parse.User.logOut();
-								Parse.history.navigate('/login', {trigger: true});
+								// Parse.history.navigate('/login', {trigger: true});
+								App.trigger('app:login');
 							});
 							$(".signupForm .error").html(error.message).show();
 							console.log(error);
@@ -2432,13 +2519,15 @@ App.Views.Upload = Backbone.Modal.extend({
 			});
 		}
 	},
-	cancel: function(e){
-		$("body").css("overflow", "auto");
-		Parse.history.navigate("myprofile", {trigger: false});
-		if(App.currentView){App.currentView.initialize()};
-	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
+	},
+	cancel: function(e){
+		$("body").css("overflow", "auto");
+		// Parse.history.navigate("myprofile", {trigger: false});
+		// if(App.currentView){App.currentView.initialize()};
+		// window.history.back();s
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -2525,6 +2614,9 @@ App.Views.UserTour = Backbone.Modal.extend({
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
+	},
+	cancel: function () {
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -2580,6 +2672,9 @@ App.Views.ArtistTour = Backbone.Modal.extend({
 	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
+	},
+	cancel: function () {
+		App.trigger('app:modal-close');
 	}
 });
 
@@ -2679,7 +2774,6 @@ App.Router = Parse.Router.extend({
 	routes: {
 		"":								"index",
 		"landing":						"landing",
-		"home":							"home",
 		"search": 						"search",
 		"search/:searchFor": 			"search",
 		"featured":	    				"featured",
@@ -2687,27 +2781,50 @@ App.Router = Parse.Router.extend({
 		"about":   						"about",
 		"join":        				    "join",
 		"login":        				"login",
+		"forgot": 						"forgot",
 		"interview":      				"interview",
 		"feedback":      				"feedback",
 		"bug":      					"bug",
+
 		"myprofile": 					"myProfile",
 		"myprofile/tour":  				"tour",
 		"myprofile/settings":  			"settings",
-		"myprofile/edit/:tattooId": 	"editTattoo",
 		"myprofile/upload": 			"upload",
-		"myprofile/:tab": 				"myProfileTab",
+		"myprofile/:tab": 				"myProfile",
+		"myprofile/edit/:id": 			"editTattoo",
+
 		"tattoo/:id": 					"tattooProfile",
-		"user/:uname":   				"showUserProfile",
-		"user/:uname/:tab":   			"showUserProfileTab",
-		":uname":   					"showProfile",
-		":uname/:tab":   				"showProfileTab"
+
+		"user/:uname":   				"userProfile",
+		"user/:uname/:tab":   			"userProfile",
+
+		":uname":   					"artistProfile",
+		":uname/:tab":   				"artistProfile"
 	},
 	initialize: function(){
+		console.log('router init');
+		
+		// Track if we have app history, so closing modals don't send users away from site
+		this.hitRoutes = [];
+		this.on('all', function () { this.hitRoutes.push(Parse.history.getFragment); }, this);
+
+		// Initialize controller
+		App.controller.initialize();
+
 		//google analtic tracking
 		this.bind('route', this._pageView);
-		this.user = Parse.User.current();
+		// this.user = Parse.User.current(); // NOT USED?
+	},
+	back: function () {
+		if (this.hitRoutes.length > 1) {
+			window.history.back();
+		}
+		else {
+			this.index();
+		}
 	},
 	index: function(){
+		console.log('route index');
 		if (!Parse.User.current()){
 			this.landing();
 		} else {
@@ -2715,154 +2832,77 @@ App.Router = Parse.Router.extend({
 		}
 	},
 	landing: function(){
+		console.log('route landing');
 		var landing = new App.Views.Landing();
 		$('#gutter').html(landing.render().el);
 	},
-	home: function(){
-	},
 	search: function(searchFor){
-		App.search = new App.Views.Search();
-		$('#app').html(App.search.render().el);
-		if(searchFor) {
-			App.search[searchFor+'SearchInitialize']();
-		}
+		console.log('route search : ' + searchFor);
+		App.controller.search(searchFor);
 	},
-	featured: function(p) {
-	    var featuredArtists = new App.Collections.FeaturedArtists();
-	    featuredArtists.page = (p) ? p : 0;
-		var featuredArtistPage = new App.Views.FeaturedArtistPage({collection:  featuredArtists});
-		$('#app').html(featuredArtistPage.render().el);
-	},
-	showProfile: function(uname, tab){
-		var query = new Parse.Query(App.Models.ArtistProfile);
-		query.equalTo("username", uname);
-		query.first().then(function(artist) {
-			if (typeof(artist)==='undefined'){
-				Parse.history.navigate('user/'+uname, {trigger: true});
-			} else  {
-				var profile = new App.Views.ArtistProfile({model: artist});
-				$('#app').html(profile.render().el);
-				if(tab) {
-					profile[tab+'Tab']();
-				}
-			}
-		}, function(error) {
-		    console.log("Error: " + error.code + " " + error.message);
-		});
-	},
-	showProfileTab: function(uname, tab){
-		this.showProfile(uname, tab);
-	},
-	showUserProfile: function(uname, tab){
-		var query = new Parse.Query(App.Models.UserProfile);
-		query.equalTo("username", uname);
-		query.first().then(function(profile) {
-			if (typeof(profile)==='undefined'){
-				Parse.history.navigate('/', {trigger: true});
-				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
-			} else {
-				var userProfile = new App.Views.UserProfile({model: profile});
-				$('#app').html(userProfile.render().el);
-				if(tab) {
-					userProfile[tab+'Tab']();
-				}
-			}
-		}, function(error) {
-		    console.log("Error: " + error.code + " " + error.message);
-		});
-
-	},
-	showUserProfileTab: function(uname, tab){
-		this.showUserProfile(uname, tab);
+	featured: function(page) {
+		console.log('route featured : ' + page);
+	    App.controller.featured(page);
 	},
 	about: function(){
-		var about = new App.Views.About();
-		$('#app').html(about.render().el);
-		var join = new App.Views.Join();
-		$('#app').append(join.render().el);
+		console.log('route about');
+		App.controller.about();
 	},
 	join: function(){
-		var join = new App.Views.Join();
-		$('#app').html(join.render().el);
+		console.log('route join');
+		App.controller.join();
 	},
 	login: function(){
-		var login = new App.Views.Login();
-		$('.modalayheehoo').html(login.render().el);
+		console.log('route login');
+		App.controller.login();
+	},
+	forgot: function () {
+		console.log('route forgot');
+		App.controller.forgot();
 	},
 	interview: function(){
-		var interview = new App.Views.Interview();
-		$('#app').html(interview.render().el);
+		console.log('route interview');
+		App.controller.interview();
 	},
 	feedback: function(){
-		var feedback = new App.Views.Feedback();
-		$('#app').html(feedback.render().el);
+		console.log('route feedback');
+		App.controller.feedback();
 	},
 	bug: function(){
-		var bug = new App.Views.Feedback();
-		$('#app').html(bug.render().el);
-		bug.bugTab();
+		console.log('route bug');
+		App.controller.bug();
 	},
 	myProfile: function(tab){
-		if (Parse.User.current().attributes.role === 'user'){
-			var myProfile = new App.Views.UserProfile({model: App.profile});
-			$('#app').html(myProfile.render().el);
-
-		} else {
-			var myProfile = new App.Views.ArtistProfile({model: App.profile});
-			$('#app').html(myProfile.render().el);
-		}
-		if(tab) {
-			myProfile[tab+'Tab']();
-		}
-	  	return myProfile;
+		console.log('route myProfile');
+		App.controller.myProfile(tab);
 	},
 	tour: function(){
-		this.myProfile();
-    	if(Parse.User.current().attributes.role === 'user'){
-			var userTour = new App.Views.UserTour();
-			$('.modalayheehoo').html(userTour.render().el);
-    	} else  {
-			var artistTour = new App.Views.ArtistTour();
-			$('.modalayheehoo').html(artistTour.render().el);
-    	};
+		console.log('route tour');
+		App.controller.tour();
 	},
 	settings: function(){
-		this.myProfile();
-		var settings = new App.Views.Settings();
-		$('#app').html(settings.render().el);
+		console.log('route settings');
+		App.controller.settings();
 	},
-	editTattoo: function(tattooId){
-		this.myProfile();
-		var query = new Parse.Query(App.Models.Tattoo);
-		query.get(tattooId, {
-			success: function(tattoo) {
-				var profile = new App.Views.EditTattoo({model: tattoo});
-				$('.modalayheehoo').html(profile.render().el);
-			},
-			error: function(object, error) {
-				console.log(error);
-			}
-		});
+	editTattoo: function(id){
+		console.log('show editTattoo');
+		App.controller.editTattooById(id);
 	},
 	upload: function(){
-		this.myProfile();
-		var upload = new App.Views.Upload();
-		$('.modalayheehoo').html(upload.render().el);
-	},
-	myProfileTab: function(tab){
-		this.myProfile(tab);
+		console.log('route upload');
+		App.controller.upload();
 	},
 	tattooProfile: function(id){
-		var query = new Parse.Query(App.Models.Tattoo);
-		query.get(id, {
-			success: function(tattoo) {
-				var profile = new App.Views.TattooProfile({model: tattoo});
-				$('.modalayheehoo').html(profile.render().el);
-			},
-			error: function(object, error) {
-				console.log(error);
-			}
-		});
+		console.log('route tattooProfile');
+		App.controller.tattooProfileById(id);
+	},
+	artistProfile: function(uname, tab){
+		console.log('route artistProfile');
+		App.controller.artistProfileByUname(uname, tab);
+	},
+	userProfile: function(uname, tab){
+		console.log('route userProfile');
+		App.controller.userProfileByUname(uname, tab);
 	},
 	//google analytic tracking - http://nomethoderror.com/blog/2013/11/19/track-backbone-dot-js-page-views-with-google-analytics/
 	_pageView: function() {
@@ -2871,6 +2911,368 @@ App.Router = Parse.Router.extend({
 	}
 });
 
+
+App.controller = (function Controller() {
+
+	this.initialize = function (options) {
+		console.log('controller init');
+
+		App.viewManager.initialize();
+
+		var self = this;
+		App.on('app:search', function (searchFor) { self.search(searchFor); });
+		App.on('app:featured', function (page) { self.featured(page); });
+		App.on('app:login', function () { self.login(); });
+		App.on('app:forgot', function () { self.forgot(); });
+		App.on('app:about', function () { self.about(); });
+		App.on('app:join', function () { self.join(); });
+		App.on('app:interview', function () { self.interview(); });
+		App.on('app:feedback', function () { self.feedback(); });
+		App.on('app:bug', function () { self.bug(); });
+		App.on('app:myprofile', function (tab) { self.myProfile(tab); });
+		App.on('app:tour', function () { self.tour(); });
+		App.on('app:settings', function () { self.settings(); });
+		App.on('app:upload', function () { self.upload(); });
+		App.on('app:edit-tattoo-id', function (id) { self.editTattooById(id); });
+		App.on('app:edit-tattoo', function (tattoo) { self.editTattoo(tattoo); });
+		App.on('app:tattoo-profile-id', function (id) { self.tattooProfileById(id); });
+		App.on('app:tattoo-profile', function (tattoo) { self.tattooProfile(tattoo); });
+		App.on('app:user-profile-uname', function (uname, tab) { self.userProfileByUname(uname, tab); });
+		App.on('app:user-profile', function (user, tab) { self.userProfile(user, tab); });
+		App.on('app:artist-profile-uname', function (uname, tab) { self.artistProfileByUname(uname, tab); });
+		App.on('app:artist-profile', function (artist, tab) { self.artistProfile(artist, tab); });
+	}
+
+	this.destroy = function () {
+		console.log('controller destory');
+		App.off('app:search');
+		App.off('app:featured');
+		App.off('app:login');
+		App.off('app;forgot');
+		App.off('app:about');
+		App.off('app:join');
+		App.off('app:interview');
+		App.off('app:feedback');
+		App.off('app:bug');
+		App.off('app:myprofile');
+		App.off('app:tour');
+		App.off('app:settings');
+		App.off('app:upload');
+		App.off('app:edit-tattoo-id');
+		App.off('app:edit-tattoo');
+		App.off('app:tattoo-profile-id');
+		App.off('app:tattoo-profile');
+		App.off('app:user-profile-uname');
+		App.off('app:user-profile');
+		App.off('app:artist-profile-uname');
+		App.off('app:artist-profile');
+	}
+
+	this.search = function (searchFor) {
+		console.log('controller search : ' + searchFor);
+		App.search = new App.Views.Search();
+		App.viewManager.show(App.search);
+		if (searchFor) {
+			App.search[searchFor+'SearchInitialize']();
+		}
+		Parse.history.navigate('search/' + searchFor, { trigger: false });
+	}
+
+	this.featured = function (page) {
+		console.log('controller featured : ' + page);
+		var featuredArtists = new App.Collections.FeaturedArtists();
+	    featuredArtists.page = (page) ? page : 0;
+		var featuredArtistPage = new App.Views.FeaturedArtistPage({ collection: featuredArtists });
+		App.viewManager.show(featuredArtistPage);
+		Parse.history.navigate('featured', { trigger: false });
+	}
+
+	this.login = function () {
+		console.log('controller login');
+		var login = new App.Views.Login();
+		App.viewManager.show(login);
+		Parse.history.navigate('login', { trigger: false });
+	}
+
+	this.forgot = function () {
+		console.log('controller forgot');
+		var forgotPassword = new App.Views.ForgotPassword();
+		App.viewManager.show(forgotPassword);
+		Parse.history.navigate('forgot', { trigger: false });
+	}
+
+	this.about = function () {
+		console.log('controller about');
+		var about = new App.Views.About();
+		App.viewManager.show(about);
+		// Crude view switch doesn't work well here when appending views.
+		// Would be better to use regions, or a composite view.
+		var join = new App.Views.Join();
+		$('#app').append(join.render().el);
+		Parse.history.navigate('about', { trigger: false });
+	}
+
+	this.join = function () {
+		console.log('controller join');
+		var join = new App.Views.Join();
+		App.viewManager.show(join);
+		Parse.history.navigate('join', { trigger: false });
+	}
+
+	this.interview = function () {
+		console.log('controller interview');
+		var interview = new App.Views.Interview();
+		App.viewManager.show(interview);
+		Parse.history.navigate('interview', { trigger: false });
+	}
+
+	this.feedback = function () {
+		console.log('controller feedback');
+		var feedback = new App.Views.Feedback();
+		App.viewManager.show(feedback);
+		Parse.history.navigate('feedback', { trigger: false });
+	}
+
+	this.bug = function () {
+		console.log('controller bug');
+		var bug = new App.Views.Feedback();
+		App.viewManager.show(bug);
+		bug.bugTab();
+		Parse.history.navigate('bug', { trigger: false });
+	}
+
+	this.myProfile = function (tab) {
+		console.log('controller myprofile : ' + tab);
+		var myProfile;
+		if (Parse.User.current().attributes.role === 'user') {
+			myProfile = new App.Views.UserProfile({ model: App.profile });
+		} else {
+			myProfile = new App.Views.ArtistProfile({ model: App.profile });
+		}
+		App.viewManager.show(myProfile);
+
+		// TODO Bad, should be done in view init
+		if (tab) {
+			myProfile[tab+'Tab']();
+		}
+
+		Parse.history.navigate('myprofile', { trigger: false });
+	}
+
+	this.tour = function () {
+		console.log('controller tour');
+		this.myProfile();
+		var tour;
+		if (Parse.User.current().attributes.role === 'user') {
+			tour = new App.Views.UserTour();
+		} else  {
+			tour = new App.Views.ArtistTour();
+		};
+		App.viewManager.show(tour);
+		Parse.history.navigate('myprofile/tour', { trigger: false });
+	}
+
+	this.settings = function () {
+		console.log('controller settings');
+		this.myProfile();
+		var settings = new App.Views.Settings();
+		App.viewManager.show(settings);
+		Parse.history.navigate('myprofile/settings', { trigger: false });
+	}
+
+	this.upload = function () {
+		console.log('controller upload');
+		this.myProfile();
+		var upload = new App.Views.Upload();
+		App.viewManager.show(upload);
+		Parse.history.navigate('myprofile/upload', { trigger: false });
+	}
+
+	this.editTattooById = function (id) {
+		console.log('controller editTattooById : ' + id);
+		var query = new Parse.Query(App.Models.Tattoo);
+		query.get(id, {
+			success: function (tattoo) {
+				this.editTattoo(tattoo);
+			},
+			error: function (object, error) {
+				console.log(error);
+			}
+		});
+	}
+
+	this.editTattoo = function (tattoo) {
+		console.log('controller editTattoo : ' + tattoo.id);
+		this.myProfile();
+		var profile = new App.Views.EditTattoo({ model: tattoo });
+		App.viewManager.show(profile);
+		Parse.history.navigate('myprofile/edit/' + tattoo.id , { trigger: false });
+	}
+
+	this.tattooProfileById = function (id) {
+		console.log('controller tattooProfileById : ' + id);
+		var query = new Parse.Query(App.Models.Tattoo);
+		query.get(id, {
+			success: function (tattoo) {
+				this.tattooProfile(tattoo);
+			},
+			error: function (object, error) {
+				console.log(error);
+			}
+		});
+	}
+
+	this.tattooProfile = function (tattoo) {
+		console.log('controller tattooProfile : ' + tattoo.id);
+		var profile = new App.Views.TattooProfile({ model: tattoo });
+		App.viewManager.show(profile);
+		Parse.history.navigate('tattoo/' + tattoo.id , { trigger: false });
+	}
+
+	this.userProfileByUname = function (uname, tab) {
+		console.log('controller userProfileByUname : ' + uname + ' / ' + tab);
+		var query = new Parse.Query(App.Models.UserProfile);
+		query.equalTo("username", uname);
+		query.first().then(function (user) {
+			if (user) {
+				this.userProfile(user, tab);
+			} else {
+				Parse.history.navigate('/', { trigger: true });
+				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
+			}
+		},
+		function (error) {
+			console.log("Error: " + error.code + " " + error.message);
+		});
+	}
+
+	this.userProfile = function (user, tab) {
+		console.log('controller userProfile : ' + user.get('username') + ' / ' + tab);
+		var userProfile = new App.Views.UserProfile({model: user});
+		App.viewManager.show(userProfile);
+		if (tab) {
+			userProfile[tab+'Tab']();
+		}
+		Parse.history.navigate('user/' + user.get('username') + (tab ? '/' + tab : ''), { trigger: false });
+	}
+
+	this.artistProfileByUname = function (uname, tab) {
+		console.log('controller artistProfileByUname : ' + uname + ' / ' + tab);
+		var query = new Parse.Query(App.Models.ArtistProfile);
+		query.equalTo("username", uname);
+		query.first().then(function (artist) {
+			if (artist) {
+				this.artistProfile(artist, tab);
+			}
+			else {
+				App.trigger('app:user-profile-uname', uname);
+			}
+		}, 
+		function (error) {
+			console.log("Error: " + error.code + " " + error.message);
+		});
+	}
+
+	this.artistProfile = function (artist, tab) {
+		console.log('controller artistProfile : ' + artist.get('username') + ' / ' + tab);
+		var profile = new App.Views.ArtistProfile({ model: artist, tab: tab });
+		App.viewManager.show(profile);
+		if (tab) {
+			profile[tab+'Tab']();
+		}
+		Parse.history.navigate(artist.get('username') + (tab ? '/' + tab : ''), { trigger: false });
+	}
+
+	return this;
+})();
+
+App.viewManager = (function ViewManager() {
+
+	var currentView;
+	var currentModal;
+
+	function initialize() {
+		console.log('view manager init');
+		App.on('app:modal-close', closeModal);
+	}
+
+	function destroy() {
+		App.off('app:modal-close');
+	}
+
+	function show(view) {
+
+		console.log('view manager - show ');
+		if (currentView) {
+			console.log('view manager - disposing view...');
+			currentView.remove();
+			currentView = undefined;
+		}
+
+		if (currentModal) {
+			console.log('view manager - disposing modal...');
+			currentModal.close();
+			currentModal.remove();
+			currentModal = undefined;
+		}
+
+		render(view);
+	}
+
+	function closeModal() {
+		console.log('view manager - hide modal');
+
+		if (currentModal) {
+			console.log('view manager - disposing modal...');
+			currentModal = undefined;
+		}
+
+		App.router.back();
+	}
+
+	function render(view) {
+		console.log('view manager - rendering...');
+
+		if (Backbone.Modal.prototype.isPrototypeOf(view)) {
+			return _renderModal(view);
+		}
+		return _renderView(view);
+		
+		function _renderModal(view, callback) {
+			currentModal = view;
+			$('.modalayheehoo').html(currentModal.render().el);
+		}
+
+		function _renderView(view, callback) {
+			currentView = view;
+			$('#app').html(currentView.render().el);
+			App.transition.scrollIntoView();
+		}
+	}
+
+	return {
+		initialize: initialize,
+		destroy: destroy,
+		show: show
+	};
+})();
+
+App.transition = (function Transition() {
+
+	var duration = 400;
+
+	function scrollIntoView() {
+		console.log($(window).scrollTop().valueOf());
+		if ($(window).scrollTop().valueOf()) {
+			console.log('Scrolling into view...');
+			$('body, html').animate({ scrollTop: 0 }, duration);	
+		}
+	}
+
+	return {
+		scrollIntoView: scrollIntoView
+	};
+})();
 
 $(function() {
 	App.start();
