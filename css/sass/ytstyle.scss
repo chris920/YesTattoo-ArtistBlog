@@ -795,6 +795,12 @@ span.hover-content {
 }
 
 ////// Artists page
+#artistsPage {
+    .artists {
+        margin-top: 40px;
+    }
+}
+
 .artistThumb { 
     @extend .lg8container;
     // min-height: 120px;
@@ -942,10 +948,119 @@ span.hover-content {
 
 
 ////// Tattoos page
-.tattoosContainer {
-    margin-top: 20px;
+#tattoosPage {
+    background-color: black;
+    min-height: 100vh;
+    margin-bottom: -99px;
+    padding-bottom: 100px;
+    .tattoos {
+        margin-top: 40px;
+    }
 }
 
+
+//// large book search & typahead hint
+#tattoosPage, #artistsPage {
+    input.tt-input {
+        // position: relative !important;
+        // left: 0px;
+
+        // box-shadow: none;
+        // outline: none;
+        // display: inline-block;
+
+        // width:100%;
+
+        border: none;
+        color: $brand-primary;
+        line-height: 80px;
+        font-weight: 700;
+
+        font-size: 36px;
+        // margin: 10px;
+        @media screen and (min-width: $screen-sm) {
+            font-size: 65px;
+            // margin: 20px;
+        }
+        &:focus {outline: none}
+        &:before {
+            font-family: Flaticon;
+            @extend .flaticon-magnifier10:before;
+            color: $gray-light;             
+            padding: 8px;
+            font-size: 30px;
+            top: 5px;
+            position: relative;
+            color: $gray-light; 
+        }
+
+    }
+
+    .bootstrap-tagsinput {
+        // display: inline-block;
+        // @media screen and (min-width: $screen-sm) {
+        //     display: inline;
+        // }
+        &:before {
+            display: none;
+            @media screen and (min-width: $screen-sm) {
+                display: inline;
+                font-size: 50px;
+                padding: 15px;
+                top: 40px;
+                position: relative;
+                color: white; 
+            }
+        }
+        // .tag {
+        //     position: relative;
+        //     top: 22px;
+        // }
+    }
+    .twitter-typeahead .tt-hint {
+        color: $gray-darker;
+        line-height: 80px;
+        font-weight: 700;
+
+        font-size: 36px;
+        margin-top: 40px;
+        @media screen and (min-width: $screen-sm) {
+            font-size: 65px;
+            margin-top: 0px;
+        }
+    }
+    .tt-suggestion {
+
+    }
+}
+.searchFilterOptions {
+    width: 100%;
+    position: relative;
+    right: 0px;
+
+    // background-color: $gray-darker;
+    border-top: 1px solid black;
+
+    // overflow-y: scroll;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    color: white;
+    height: 100px;
+    // text-align: right;
+    i {
+        padding-left: 15px;
+    }
+    .bootstrap-tagsinput {
+
+    }
+    > div {
+        display: inline;
+    }
+    > button.btn-submit {
+        float: right;
+        background-color: $gray-darker;
+    }
+}
 
 ////// User Profile & Artist Profile Page
 .profHead {
@@ -1091,6 +1206,17 @@ span.hover-content {
     border-radius: 99em;
     border: 5px solid $gray-dark;
     box-shadow: 2px 5px 3px rgba(0, 0, 0, 0.1); 
+}
+
+.smallprof {
+    float: left;
+    background-color: $gray-lighter;
+    -webkit-border-radius: 99em;
+    -moz-border-radius: 99em;
+    border-radius: 99em;
+    border: 1px solid $gray-light;
+    width: 30px;
+    height: auto;
 }
 
 .prof {
@@ -1686,6 +1812,172 @@ span.hover-content {
 }
 
 
+//////// explore page
+
+#explore {
+    background-color: black;
+    color: white;
+    text-align: center;
+    min-height: 100vh;
+    margin-bottom: -99px;
+    > .exploreTattoosContainer, > .findArtistsContainer, > .userContainer {
+        @extend .row;
+        padding-top: 80px;
+        padding-bottom: 80px;        
+    }
+    > .exploreTattoosContainer {
+        .popularBook {
+            border: 2.5px solid black;
+            height:360px;
+            display:block; 
+            position:relative;
+            overflow:hidden;
+            @include transition(all 0.4s ease);
+            &:hover {
+                text-shadow:1px 2px 5px #000;
+                @include transition(all 0.4s ease);
+            }
+            h2, h5 {
+                font-weight: 900;
+                z-index: 1;
+                position:absolute;
+                width: 100%;
+            }
+            h2 {
+                top:150px;
+            }
+            h5 {
+                bottom:0px;
+            }
+            img {
+                position:absolute;
+                top:-5%;
+                left:0; 
+                width:100%;
+                min-height:105%;
+                @include transition(all 0.4s ease);
+                &:hover {
+                    top:0;
+                    @include transition(all 0.4s ease);
+                }
+            }
+        }
+    }
+    > .findArtistsContainer {
+        background-image: url(../img/linemap.svg);
+    }
+    > .userContainer {
+        background-color: #000;
+    }
+}
+
+//////// search page
+
+#search {
+    color: white;
+    margin-top: 100px;
+    .results {
+        .tattooResults {
+            margin-top: 9px;
+        }
+        .btn-tag {
+            display: table;
+            margin: 18px 0px;
+        }
+        .userResult {
+            padding: 10px;
+            h4 {
+                margin: 5px 10px 5px 45px;
+            }
+            span {
+                margin-left: 15px;
+                display: inline;
+                color: $gray;
+            }
+
+            border-radius: 4px / 6px;
+            @include transition(all 0.3s ease);
+            &:hover {
+                background-color: $gray-darker;
+            }
+        }
+    }
+
+//// unused gray tags 
+    // .bookSuggestion {
+    //     margin: 2px;
+    //     padding: 10px;
+    //     border: 1px solid $gray-darker;
+    //     color: white;
+    //     background-color: $gray-darker !important;
+    //     border-radius: 4px / 6px;
+    //     background-color: rgba(0,0,0,0);
+    //     // @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
+    // }
+}
+input.mainSearchInput {
+    box-shadow: none;
+    outline: none;
+    background-color: transparent;
+
+    display: inline-block;
+    // width:100%;
+    border: none;
+    color: $brand-primary;
+    line-height: 80px;
+    font-weight: 700;
+
+    font-size: 36px;
+    margin: 10px;
+    @media screen and (min-width: $screen-sm) {
+        font-size: 65px;
+        margin: 20px;
+    }
+    &:focus {outline: none}
+    // &:before {
+    //     font-family: Flaticon;
+    //     @extend .flaticon-magnifier10:before;
+    //     color: $gray-light;             
+    //     padding: 8px;
+    //     font-size: 30px;
+    //     top: 5px;
+    //     position: relative;
+    //     color: $gray-light; 
+    // }
+}
+::-webkit-input-placeholder {
+   color: $gray-dark; }
+:-moz-placeholder { /* Firefox 18- */
+   color: $gray-dark; }
+::-moz-placeholder {  /* Firefox 19+ */
+   color: $gray-dark; }
+:-ms-input-placeholder {  
+   color: $gray-dark; }
+.bigfatsearch {
+    background-color: $gray-darker;
+    min-height: 100px;
+    display: block;
+    border: solid 1px black;
+    border-bottom: solid 4px black;
+    .x {
+        padding: 0px;
+        font-size: 65px;
+        right: 20px;
+    }
+    i {
+        margin-left: 30px;
+        color: $gray;
+        &.flaticon-magnifier10:before {
+            font-size: 50px;
+        }
+
+        display: none;
+        @media screen and (min-width: $screen-sm) {
+            display: inline-block;
+        }
+    }
+}
+
 
 ////// Backbone.modal.js 
 
@@ -1888,223 +2180,6 @@ span.hover-content {
             color: $gray-light; 
         }
     }
-}
-
-#search {
-
-    input.mainSearchInput {
-        box-shadow: none;
-        outline: none;
-        background-color: transparent;
-
-        display: inline-block;
-        // width:100%;
-        border: none;
-        color: $brand-primary;
-        line-height: 80px;
-        font-weight: 700;
-
-        font-size: 36px;
-        margin-top: 40px;
-        @media screen and (min-width: $screen-sm) {
-            font-size: 65px;
-            margin-top: 0px;
-        }
-        &:focus {outline: none}
-        // &:before {
-        //     font-family: Flaticon;
-        //     @extend .flaticon-magnifier10:before;
-        //     color: $gray-light;             
-        //     padding: 8px;
-        //     font-size: 30px;
-        //     top: 5px;
-        //     position: relative;
-        //     color: $gray-light; 
-        // }
-    }
-    ::-webkit-input-placeholder {
-       color: $gray-dark; }
-    :-moz-placeholder { /* Firefox 18- */
-       color: $gray-dark; }
-    ::-moz-placeholder {  /* Firefox 19+ */
-       color: $gray-dark; }
-    :-ms-input-placeholder {  
-       color: $gray-dark; }
-    .bigfatsearch {
-        min-height: 100px;
-        margin-top:20px;
-        display: block;
-        i {
-            padding-right: 20px;
-            color: black;
-            &.flaticon-magnifier10:before {
-                font-size: 50px;
-            }
-        }
-    }
-    // input.tt-input {
-    //     position: absolute !important;
-    //     left: 0px;
-    // }
-    // .bootstrap-tagsinput {
-    //     display: inline-block;
-    //     @media screen and (min-width: $screen-sm) {
-    //         display: inline;
-    //     }
-    //     &:before {
-    //         display: none;
-    //         @media screen and (min-width: $screen-sm) {
-    //             display: inline;
-    //             font-size: 50px;
-    //             padding: 15px;
-    //             top: 40px;
-    //             position: relative;
-    //             color: white; 
-    //         }
-    //     }
-    //     .tag {
-    //         position: relative;
-    //         top: 22px;
-    //     }
-    // }
-    // .twitter-typeahead .tt-hint {
-    //     color: $gray-darker;
-    //     line-height: 80px;
-    //     font-weight: 700;
-
-    //     font-size: 36px;
-    //     margin-top: 40px;
-    //     @media screen and (min-width: $screen-sm) {
-    //         font-size: 65px;
-    //         margin-top: 0px;
-    //     }
-    // }
-    // .tt-suggestion {
-
-    // }
-    // .bookSuggestion {
-    //     margin: 2px;
-    //     padding: 10px;
-    //     border: 1px solid $gray-darker;
-    //     color: white;
-    //     background-color: $gray-darker !important;
-    //     border-radius: 4px / 6px;
-    //     background-color: rgba(0,0,0,0);
-    //     // @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
-    // }
-
-    .searchSelection {
-        h5 {
-            margin-top: 5px;
-            margin-bottom: 3px;
-        }
-        text-align: right;
-        display: none;
-        @media screen and (min-width: $screen-sm) {
-            float: right;
-            display: inline;
-        }
-        .dropdown-menu {
-            min-width: 100%;
-            text-align: center;
-        }
-    }
-    .searchFilterOptions {
-        background-color: $gray-darker;
-        border-top: 1px solid black;
-
-        // overflow-y: scroll;
-        padding: 25px;
-        color: white;
-        height: 100px;
-        text-align: center;
-        i {
-            padding-left: 15px;
-
-        }
-        .searchLocationOption {
-
-        }
-        .bootstrap-tagsinput {
-
-        }
-        > div {
-            display: inline;
-        }
-    }
-    .bookFilterInput {
-
-    }
-    .searchContainer {
-        background-color: $gray-darker;
-    }
-    #explorePage {
-        background-color: black;
-        color: white;
-        text-align: center;
-        min-height: 100vh;
-        margin-bottom: -99px;
-        > .exploreTattoosContainer, > .findArtistsContainer, > .userContainer {
-            @extend .row;
-            padding-top: 80px;
-            padding-bottom: 80px;        
-        }
-        > .exploreTattoosContainer {
-            .popularBook {
-                border: 2.5px solid black;
-                height:360px;
-                display:block; 
-                position:relative;
-                overflow:hidden;
-                @include transition(all 0.4s ease);
-                &:hover {
-                    text-shadow:1px 2px 5px #000;
-                    @include transition(all 0.4s ease);
-                }
-                h2, h5 {
-                    font-weight: 900;
-                    z-index: 1;
-                    position:absolute;
-                    width: 100%;
-                }
-                h2 {
-                    top:150px;
-                }
-                h5 {
-                    bottom:0px;
-                }
-                img {
-                    position:absolute;
-                    top:-5%;
-                    left:0; 
-                    width:100%;
-                    min-height:105%;
-                    @include transition(all 0.4s ease);
-                    &:hover {
-                        top:0;
-                        @include transition(all 0.4s ease);
-                    }
-                }
-            }
-        }
-        > .findArtistsContainer {
-            background-image: url(../img/linemap.svg);
-        }
-        > .userContainer {
-            background-color: #000;
-        }
-    }
-    #artistsPage {
-        background-color: $gray-light;
-    }
-    #tattoosPage {
-        background-color: black;
-        min-height: 100vh;
-        margin-bottom: -99px;
-        padding-top: 100px;
-        padding-bottom: 100px;
-    }
-
 }
 
 

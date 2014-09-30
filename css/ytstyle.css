@@ -749,13 +749,13 @@ pre {
   .container-fluid:after {
     clear: both; }
 
-.row, #search #explorePage > .exploreTattoosContainer, #search #explorePage > .findArtistsContainer, #search #explorePage > .userContainer {
+.row, #explore > .exploreTattoosContainer, #explore > .findArtistsContainer, #explore > .userContainer {
   margin-left: -2.5px;
   margin-right: -2.5px; }
-  .row:before, #search #explorePage > .exploreTattoosContainer:before, #search #explorePage > .findArtistsContainer:before, #search #explorePage > .userContainer:before, .row:after, #search #explorePage > .exploreTattoosContainer:after, #search #explorePage > .findArtistsContainer:after, #search #explorePage > .userContainer:after {
+  .row:before, #explore > .exploreTattoosContainer:before, #explore > .findArtistsContainer:before, #explore > .userContainer:before, .row:after, #explore > .exploreTattoosContainer:after, #explore > .findArtistsContainer:after, #explore > .userContainer:after {
     content: " ";
     display: table; }
-  .row:after, #search #explorePage > .exploreTattoosContainer:after, #search #explorePage > .findArtistsContainer:after, #search #explorePage > .userContainer:after {
+  .row:after, #explore > .exploreTattoosContainer:after, #explore > .findArtistsContainer:after, #explore > .userContainer:after {
     clear: both; }
 
 .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-sm-3, .tattooContainer, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .tattooContainer, .col-sm-6, .col-md-6, .md6container, .col-lg-6, .lg6container, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .artistThumb, .bookContainer, .md8container, .lightContainer, .lg6container, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .artistThumb, .bookContainer, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .artistThumb, .bookContainer, .lg6container, .col-sm-12, .col-md-12, .col-lg-12 {
@@ -4173,7 +4173,7 @@ a:focus {
 .flaticon-link35:before, .link:after {
   content: "\e00d"; }
 
-.flaticon-magnifier10:before {
+.flaticon-magnifier10:before, #tattoosPage input.tt-input:before, #artistsPage input.tt-input:before {
   content: "\e00e"; }
 
 .flaticon-message7:before {
@@ -4612,6 +4612,9 @@ span.hover-content {
   padding: 2.5px 5px;
   overflow: auto; }
 
+#artistsPage .artists {
+  margin-top: 40px; }
+
 .artistThumb {
   background-color: #e6e6e6;
   border-left: 40px solid #d9d9d9;
@@ -4731,8 +4734,70 @@ span.hover-content {
   .resetArtistFilter:hover {
     color: #c42020; }
 
-.tattoosContainer {
-  margin-top: 20px; }
+#tattoosPage {
+  background-color: black;
+  min-height: 100vh;
+  margin-bottom: -99px;
+  padding-bottom: 100px; }
+  #tattoosPage .tattoos {
+    margin-top: 40px; }
+
+#tattoosPage input.tt-input, #artistsPage input.tt-input {
+  border: none;
+  color: #c42020;
+  line-height: 80px;
+  font-weight: 700;
+  font-size: 36px; }
+  @media screen and (min-width: 768px) {
+    #tattoosPage input.tt-input, #artistsPage input.tt-input {
+      font-size: 65px; } }
+  #tattoosPage input.tt-input:focus, #artistsPage input.tt-input:focus {
+    outline: none; }
+  #tattoosPage input.tt-input:before, #artistsPage input.tt-input:before {
+    font-family: Flaticon;
+    color: #d9d9d9;
+    padding: 8px;
+    font-size: 30px;
+    top: 5px;
+    position: relative;
+    color: #d9d9d9; }
+#tattoosPage .bootstrap-tagsinput:before, #artistsPage .bootstrap-tagsinput:before {
+  display: none; }
+  @media screen and (min-width: 768px) {
+    #tattoosPage .bootstrap-tagsinput:before, #artistsPage .bootstrap-tagsinput:before {
+      display: inline;
+      font-size: 50px;
+      padding: 15px;
+      top: 40px;
+      position: relative;
+      color: white; } }
+#tattoosPage .twitter-typeahead .tt-hint, #artistsPage .twitter-typeahead .tt-hint {
+  color: #1a1a1a;
+  line-height: 80px;
+  font-weight: 700;
+  font-size: 36px;
+  margin-top: 40px; }
+  @media screen and (min-width: 768px) {
+    #tattoosPage .twitter-typeahead .tt-hint, #artistsPage .twitter-typeahead .tt-hint {
+      font-size: 65px;
+      margin-top: 0px; } }
+
+.searchFilterOptions {
+  width: 100%;
+  position: relative;
+  right: 0px;
+  border-top: 1px solid black;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  color: white;
+  height: 100px; }
+  .searchFilterOptions i {
+    padding-left: 15px; }
+  .searchFilterOptions > div {
+    display: inline; }
+  .searchFilterOptions > button.btn-submit {
+    float: right;
+    background-color: #1a1a1a; }
 
 .profHead {
   min-height: 220px;
@@ -4857,6 +4922,16 @@ span.hover-content {
   border-radius: 99em;
   border: 5px solid #4d4d4d;
   box-shadow: 2px 5px 3px rgba(0, 0, 0, 0.1); }
+
+.smallprof {
+  float: left;
+  background-color: #e6e6e6;
+  -webkit-border-radius: 99em;
+  -moz-border-radius: 99em;
+  border-radius: 99em;
+  border: 1px solid #d9d9d9;
+  width: 30px;
+  height: auto; }
 
 .prof {
   background-color: #e6e6e6;
@@ -5366,6 +5441,127 @@ span.hover-content {
 .clear {
   float: left; }
 
+#explore {
+  background-color: black;
+  color: white;
+  text-align: center;
+  min-height: 100vh;
+  margin-bottom: -99px; }
+  #explore > .exploreTattoosContainer, #explore > .findArtistsContainer, #explore > .userContainer {
+    padding-top: 80px;
+    padding-bottom: 80px; }
+  #explore > .exploreTattoosContainer .popularBook {
+    border: 2.5px solid black;
+    height: 360px;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    -webkit-transition: all 0.4s ease;
+    transition: all 0.4s ease; }
+    #explore > .exploreTattoosContainer .popularBook:hover {
+      text-shadow: 1px 2px 5px #000;
+      -webkit-transition: all 0.4s ease;
+      transition: all 0.4s ease; }
+    #explore > .exploreTattoosContainer .popularBook h2, #explore > .exploreTattoosContainer .popularBook h5 {
+      font-weight: 900;
+      z-index: 1;
+      position: absolute;
+      width: 100%; }
+    #explore > .exploreTattoosContainer .popularBook h2 {
+      top: 150px; }
+    #explore > .exploreTattoosContainer .popularBook h5 {
+      bottom: 0px; }
+    #explore > .exploreTattoosContainer .popularBook img {
+      position: absolute;
+      top: -5%;
+      left: 0;
+      width: 100%;
+      min-height: 105%;
+      -webkit-transition: all 0.4s ease;
+      transition: all 0.4s ease; }
+      #explore > .exploreTattoosContainer .popularBook img:hover {
+        top: 0;
+        -webkit-transition: all 0.4s ease;
+        transition: all 0.4s ease; }
+  #explore > .findArtistsContainer {
+    background-image: url(../img/linemap.svg); }
+  #explore > .userContainer {
+    background-color: #000; }
+
+#search {
+  color: white;
+  margin-top: 100px; }
+  #search .results .tattooResults {
+    margin-top: 9px; }
+  #search .results .btn-tag {
+    display: table;
+    margin: 18px 0px; }
+  #search .results .userResult {
+    padding: 10px;
+    border-radius: 4px / 6px;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease; }
+    #search .results .userResult h4 {
+      margin: 5px 10px 5px 45px; }
+    #search .results .userResult span {
+      margin-left: 15px;
+      display: inline;
+      color: gray; }
+    #search .results .userResult:hover {
+      background-color: #1a1a1a; }
+
+input.mainSearchInput {
+  box-shadow: none;
+  outline: none;
+  background-color: transparent;
+  display: inline-block;
+  border: none;
+  color: #c42020;
+  line-height: 80px;
+  font-weight: 700;
+  font-size: 36px;
+  margin: 10px; }
+  @media screen and (min-width: 768px) {
+    input.mainSearchInput {
+      font-size: 65px;
+      margin: 20px; } }
+  input.mainSearchInput:focus {
+    outline: none; }
+
+::-webkit-input-placeholder {
+  color: #4d4d4d; }
+
+:-moz-placeholder {
+  /* Firefox 18- */
+  color: #4d4d4d; }
+
+::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #4d4d4d; }
+
+:-ms-input-placeholder {
+  color: #4d4d4d; }
+
+.bigfatsearch {
+  background-color: #1a1a1a;
+  min-height: 100px;
+  display: block;
+  border: solid 1px black;
+  border-bottom: solid 4px black; }
+  .bigfatsearch .x {
+    padding: 0px;
+    font-size: 65px;
+    right: 20px; }
+  .bigfatsearch i {
+    margin-left: 30px;
+    color: gray;
+    display: none; }
+    .bigfatsearch i.flaticon-magnifier10:before {
+      font-size: 50px; }
+    @media screen and (min-width: 768px) {
+      .bigfatsearch i {
+        display: inline-block; } }
+
 #login h3 {
   margin-bottom: 60px;
   text-align: center; }
@@ -5537,123 +5733,6 @@ span.hover-content {
     top: 5px;
     position: relative;
     color: #d9d9d9; }
-
-#search input.mainSearchInput {
-  box-shadow: none;
-  outline: none;
-  background-color: transparent;
-  display: inline-block;
-  border: none;
-  color: #c42020;
-  line-height: 80px;
-  font-weight: 700;
-  font-size: 36px;
-  margin-top: 40px; }
-  @media screen and (min-width: 768px) {
-    #search input.mainSearchInput {
-      font-size: 65px;
-      margin-top: 0px; } }
-  #search input.mainSearchInput:focus {
-    outline: none; }
-#search ::-webkit-input-placeholder {
-  color: #4d4d4d; }
-#search :-moz-placeholder {
-  /* Firefox 18- */
-  color: #4d4d4d; }
-#search ::-moz-placeholder {
-  /* Firefox 19+ */
-  color: #4d4d4d; }
-#search :-ms-input-placeholder {
-  color: #4d4d4d; }
-#search .bigfatsearch {
-  min-height: 100px;
-  margin-top: 20px;
-  display: block; }
-  #search .bigfatsearch i {
-    padding-right: 20px;
-    color: black; }
-    #search .bigfatsearch i.flaticon-magnifier10:before {
-      font-size: 50px; }
-#search .searchSelection {
-  text-align: right;
-  display: none; }
-  #search .searchSelection h5 {
-    margin-top: 5px;
-    margin-bottom: 3px; }
-  @media screen and (min-width: 768px) {
-    #search .searchSelection {
-      float: right;
-      display: inline; } }
-  #search .searchSelection .dropdown-menu {
-    min-width: 100%;
-    text-align: center; }
-#search .searchFilterOptions {
-  background-color: #1a1a1a;
-  border-top: 1px solid black;
-  padding: 25px;
-  color: white;
-  height: 100px;
-  text-align: center; }
-  #search .searchFilterOptions i {
-    padding-left: 15px; }
-  #search .searchFilterOptions > div {
-    display: inline; }
-#search .searchContainer {
-  background-color: #1a1a1a; }
-#search #explorePage {
-  background-color: black;
-  color: white;
-  text-align: center;
-  min-height: 100vh;
-  margin-bottom: -99px; }
-  #search #explorePage > .exploreTattoosContainer, #search #explorePage > .findArtistsContainer, #search #explorePage > .userContainer {
-    padding-top: 80px;
-    padding-bottom: 80px; }
-  #search #explorePage > .exploreTattoosContainer .popularBook {
-    border: 2.5px solid black;
-    height: 360px;
-    display: block;
-    position: relative;
-    overflow: hidden;
-    -webkit-transition: all 0.4s ease;
-    transition: all 0.4s ease; }
-    #search #explorePage > .exploreTattoosContainer .popularBook:hover {
-      text-shadow: 1px 2px 5px #000;
-      -webkit-transition: all 0.4s ease;
-      transition: all 0.4s ease; }
-    #search #explorePage > .exploreTattoosContainer .popularBook h2, #search #explorePage > .exploreTattoosContainer .popularBook h5 {
-      font-weight: 900;
-      z-index: 1;
-      position: absolute;
-      width: 100%; }
-    #search #explorePage > .exploreTattoosContainer .popularBook h2 {
-      top: 150px; }
-    #search #explorePage > .exploreTattoosContainer .popularBook h5 {
-      bottom: 0px; }
-    #search #explorePage > .exploreTattoosContainer .popularBook img {
-      position: absolute;
-      top: -5%;
-      left: 0;
-      width: 100%;
-      min-height: 105%;
-      -webkit-transition: all 0.4s ease;
-      transition: all 0.4s ease; }
-      #search #explorePage > .exploreTattoosContainer .popularBook img:hover {
-        top: 0;
-        -webkit-transition: all 0.4s ease;
-        transition: all 0.4s ease; }
-  #search #explorePage > .findArtistsContainer {
-    background-image: url(../img/linemap.svg); }
-  #search #explorePage > .userContainer {
-    background-color: #000; }
-#search #artistsPage {
-  background-color: #d9d9d9; }
-#search #tattoosPage {
-  background-color: black;
-  min-height: 100vh;
-  margin-bottom: -99px;
-  padding-top: 100px;
-  padding-bottom: 100px; }
 
 .reset {
   text-align: center;
