@@ -276,18 +276,18 @@ App.Views.Search = Backbone.Modal.extend({
 	id: 'search',
 	initialize: function(){
 		console.log('search init');
-		// _.bindAll(this, 'focusIn', 'scrollToTop', 'scrollChecker');
-		// this.bindSearch();
-		App.on('app:scroll', this.scrollChecker);
-		App.on('app:keypress', this.focusIn);
+		// _.bindAll(this, 'focusIn', 'scrollChecker');
+
+		/// TODO load more results & focus on search bar
+		// App.on('app:scroll', this.scrollChecker);
+		// App.on('app:keypress', this.focusIn);
 	},
 	remove: function () {
 		console.log('search remove');
-		App.off('app:scroll', this.scrollChecker);
-		App.off('app:keypress', this.focusIn);
+		// App.off('app:scroll', this.scrollChecker);
+		// App.off('app:keypress', this.focusIn);
 	},
 	template: _.template($("#searchTemplate").html()),
-	// viewContainer: '.clearContainer',
 	cancelEl: '.x',
 	events: {
 
@@ -327,9 +327,12 @@ App.Views.TattoosPage = Parse.View.extend({
 	initialize: function(){
 		Parse.history.navigate('tattoos', {trigger: false});
 
+		///TODO change to app binding
 		_.bindAll(this, 'scrollChecker');
 		$(window).bind('scroll',this.scrollChecker);
-
+	},
+	remove: function () {
+		console.log('tattoos page remove');
 	},
 	events: {
 
@@ -337,7 +340,7 @@ App.Views.TattoosPage = Parse.View.extend({
 	scrollChecker: function(){
 		if (this.moreToLoad && $('#tattoosPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
 			this.moreToLoad = false;
-			this.collection.page++; ///needs to work with explore
+			this.collection.page++;
 			this.loadMore();
 		}
 	},
@@ -1347,7 +1350,14 @@ App.Views.Tattoo = Parse.View.extend({
 		// Replace with events based architecture
 		// console.log(this.model);
 		// App.router.tattooProfile(this.model.id);
-		App.trigger('app:tattoo-profile', this.model);
+
+		// App.trigger('app:tattoo-profile', this.model);
+
+
+		// TODO Navigating directly because of modal history / back logic. Needs to use this.model
+		Parse.history.navigate('tattoo/' + this.model.id , { trigger: true });
+
+
     },
     profile: function(e){
     	e.stopPropagation();
@@ -1764,18 +1774,13 @@ App.Views.Landing = Parse.View.extend({
 			that.count = count;
 		});
 
-		_.bindAll(this, 'getArtists', 'continue', 'continueToFeatured','initiateArtists', 'hideLanding');
+		_.bindAll(this, 'getArtists', 'continue', 'continueExplore','initiateArtists', 'hideLanding');
 	    // $(window).bind('scroll',this.continueToFeatured);
-	    App.on('app:scroll', this.continueToFeatured);
+	    App.on('app:scroll', this.continueExplore);
 
-	},
-	remove: function () {
-		App.off('app:scroll', this.continueToFeatured);
 	},
     events: {
     	"click a":	"continue"
-    	// ,
-    	// "click a":	"continueToFeatured"
     },
 	land: function(){
 		var that = this;
@@ -1868,10 +1873,9 @@ App.Views.Landing = Parse.View.extend({
 	continue:function(){
 		this.hideLanding();
 	},
-	continueToFeatured:function(){
-		// Parse.history.navigate('featured', {trigger: true});
-		console.log('landing continueToFeatured');
-		App.trigger('app:featured');
+	continueExplore:function(){
+		console.log('landing continueExplore');
+		App.trigger('app:explore');
 		this.hideLanding();
 	},
 	render: function(){
@@ -1889,7 +1893,9 @@ App.Views.Landing = Parse.View.extend({
         });
 		clearInterval(this.artistTimer);
 		$('.navs').fadeIn( 900 );
-		// $(window).unbind('scroll', this.continueToFeatured);
+
+		console.log('landing hidden');
+		App.off('app:scroll', this.continueExplore);
 	}
 });
 
@@ -2837,14 +2843,13 @@ App.Router = Parse.Router.extend({
 		
 		// Track if we have app history, so closing modals don't send users away from site
 		this.hitRoutes = [];
-		this.on('all', function () { this.hitRoutes.push(Parse.history.getFragment); }, this);
+		this.on('all', function () { this.hitRoutes.unshift(Parse.history.getFragment()); }, this);
 
 		// Initialize controller
 		App.controller.initialize();
 
 		//google analtic tracking
 		this.bind('route', this._pageView);
-		// this.user = Parse.User.current(); // NOT USED?
 	},
 	back: function () {
 		if (this.hitRoutes.length > 1) {
@@ -2858,7 +2863,6 @@ App.Router = Parse.Router.extend({
 		console.log('route index');
 		if (!Parse.User.current()){
 			this.landing();
-			this.explore();
 		} else {
 			this.home();
 		}
@@ -3273,7 +3277,7 @@ App.viewManager = (function ViewManager() {
 	function show(view) {
 
 		console.log('view manager - show ');
-		if (currentView) {
+		if (currentView && !Backbone.Modal.prototype.isPrototypeOf(view)) {
 			console.log('view manager - disposing view...');
 			currentView.remove();
 			currentView = undefined;
@@ -3297,7 +3301,18 @@ App.viewManager = (function ViewManager() {
 			currentModal = undefined;
 		}
 
-		App.router.back();
+		// checks if there is a view under the modal, routes accordingly ///clear
+		if (currentView) {
+			console.log(currentView);
+			console.log('routing to ' + App.router.hitRoutes);///clear
+			//removes modal from hitRoutes for repeated modal opens. ///clear
+			App.router.hitRoutes.shift();
+			Parse.history.navigate(App.router.hitRoutes[0], { trigger: false });
+		} else {
+			console.log('App.router.back() called');///clear
+			App.router.back();
+		}
+
 	}
 
 	function render(view) {
