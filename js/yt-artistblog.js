@@ -18,7 +18,7 @@ var App = new (Parse.View.extend({
 			App.trigger('app:keypress', e);
 		});
 	},
-	remove: function () {
+	disable: function () {
 		// Stop listening to windows events
 		$(window).off('scroll');
 		$(window).off('keypress');
@@ -228,7 +228,7 @@ App.Models.FeaturedArtist = Parse.User.extend({
 
 ///////// Views
 App.Views.Nav = Parse.View.extend({
-	el: '.navs',
+	el: '#navs',
 	initialize: function() {
 		this.render();
 	},
@@ -249,7 +249,7 @@ App.Views.Nav = Parse.View.extend({
 		}
 	},
     render: function(){
-    	$('.navs').html(this.template());
+    	$('#navs').html(this.template());
     	return this;
     }
 });
@@ -282,8 +282,8 @@ App.Views.Search = Backbone.Modal.extend({
 		// App.on('app:scroll', this.scrollChecker);
 		// App.on('app:keypress', this.focusIn);
 	},
-	remove: function () {
-		console.log('search remove');
+	disable: function () {
+		console.log('search disabled');
 		// App.off('app:scroll', this.scrollChecker);
 		// App.off('app:keypress', this.focusIn);
 	},
@@ -293,10 +293,8 @@ App.Views.Search = Backbone.Modal.extend({
 
 	},
 	onRender: function(){
-		$("body").css("overflow", "hidden");
 	},
 	cancel: function(){
-		$("body").css("overflow", "auto");
 		App.trigger('app:modal-close');
 	}
 });
@@ -331,8 +329,8 @@ App.Views.TattoosPage = Parse.View.extend({
 		_.bindAll(this, 'scrollChecker');
 		$(window).bind('scroll',this.scrollChecker);
 	},
-	remove: function () {
-		console.log('tattoos page remove');
+	disable: function () {
+		console.log('tattoos page disabled');
 	},
 	events: {
 
@@ -821,13 +819,8 @@ App.Views.Login = Backbone.Modal.extend({
 		App.trigger('app:forgot');
     },
 	onRender: function(){
-		$("body").css("overflow", "hidden");
 	},
 	cancel: function(){
-		$("body").css("overflow", "auto");
-		// Parse.history.navigate(App.back, {trigger: false});
-		// if(App.currentView){App.currentView.initialize()};
-		// App.hideModal();
 		App.trigger('app:modal-close');
 	}
 });
@@ -943,8 +936,8 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		// $(window).unbind();
 		// App.on('app:keypress', this.focusIn);
 	},
-	remove: function () {
-		console.log('tattoo profile remove');
+	disable: function () {
+		console.log('tattoo profile disable');
 		// App.off('app:keypress', this.focusIn);
 	},
 	template: _.template($("#tattooProfileTemplate").html()),
@@ -968,7 +961,6 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		return this;
 	},
 	onRender: function(){
-		$("body").css("overflow", "hidden");
 
 		//checks if the user has added the tattoo
 		if ($.inArray(this.model.id, App.Collections.adds.pluck('tattooId')) > -1) {
@@ -1190,14 +1182,8 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 		return this;
 	},
 	beforeCancel: function(){
-		// Parse.history.navigate(App.back, {trigger: false});
-		$("body").css("overflow", "auto");
 		this.$('booksInput').tagsinput('destroy');
-		// $(window).unbind('keypress', this.focusIn);
 		this.off();
-		// if(App.currentView){App.currentView.initialize()};
-		// window.history.back();
-		// App.trigger('app:modal-close');
 	},
 	cancel: function () {
 		App.trigger('app:modal-close');
@@ -1342,7 +1328,7 @@ App.Views.Tattoo = Parse.View.extend({
     	// e.stopPropagation();
   //   	App.back = Parse.history.getFragment() || '';
   //   	var profile = new App.Views.TattooProfile({model: this.model});
-		// $('.modalayheehoo').html(profile.render().el);
+		// $('#modalayheehoo').html(profile.render().el);
 		// return profile;
 
 		// TODO Not ideal, we shouldn't be calling the router direct or requerying the model 
@@ -1413,14 +1399,14 @@ App.Views.MyTattoo = Parse.View.extend({
 	},
     open: function(){
   //   	var profile = new App.Views.TattooProfile({model: this.model});
-		// // $('.modalayheehoo').html(profile.render().el);
+		// // $('#modalayheehoo').html(profile.render().el);
 		// App.viewManager.show(profile);
 		App.trigger('app:tattoo-profile', this.model);
     },
 	edit: function(e){
 		e.stopPropagation();
 		// var edit = new App.Views.EditTattoo({model: this.model});
-		// // $('.modalayheehoo').html(edit.render().el);
+		// // $('#modalayheehoo').html(edit.render().el);
 		// App.viewManager.show(edit);
 		App.trigger('app:edit-tattoo', this.model);
 	},
@@ -1441,7 +1427,8 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 
 		App.on('app:keypress', this.focusIn);
     },
-    remove: function () {
+    disable: function () {
+    	console.log('EditTattoo disabled');
     	App.off('app:keypress', this.focusIn);
     },
     events: {
@@ -1554,12 +1541,10 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 		this.triggerCancel();
 	},
 	onRender: function(){
-		$("body").css("overflow", "hidden");
 		this.initializeEditBooks();
 		this.renderPopularBooks();
 	},
 	beforeCancel: function(){
-		$("body").css("overflow", "auto");
 		this.$('booksInput').tagsinput('destroy');
 		// Parse.history.navigate("myprofile", {trigger: false});
 		// $(window).unbind('keypress', this.focusIn);
@@ -1697,7 +1682,6 @@ App.Views.UserProfile = Parse.View.extend({
 			this.getAdds();
 			this.getTattoos();
 		}
-		// App.currentView = this;
 		return this;
 	}
 });
@@ -1764,7 +1748,7 @@ App.Views.Landing = Parse.View.extend({
 	landingTemplate: _.template($("#landingTemplate").html()),
 	initialize: function(){
 		var that = this;
-		$('.navs').hide();
+		$('#navs').hide();
 		this.initiateArtists();
 
 		/// Workaround for getting a random artist. Will not scale over 1,000 due to query constraint....
@@ -1892,7 +1876,7 @@ App.Views.Landing = Parse.View.extend({
         	that.remove();
         });
 		clearInterval(this.artistTimer);
-		$('.navs').fadeIn( 900 );
+		$('#navs').fadeIn( 900 );
 
 		console.log('landing hidden');
 		App.off('app:scroll', this.continueExplore);
@@ -2554,10 +2538,8 @@ App.Views.Upload = Backbone.Modal.extend({
 		}
 	},
 	onRender: function(){
-		$("body").css("overflow", "hidden");
 	},
 	cancel: function(e){
-		$("body").css("overflow", "auto");
 		// Parse.history.navigate("myprofile", {trigger: false});
 		// if(App.currentView){App.currentView.initialize()};
 		// window.history.back();s
@@ -2643,11 +2625,9 @@ App.Views.UserTour = Backbone.Modal.extend({
 		Parse.history.navigate("myprofile/settings", {trigger: true});
 	},
 	cancel: function(e){
-		$("body").css("overflow", "auto");
 		Parse.history.navigate("myprofile", {trigger: false});
 	},
 	onRender: function(){
-		$("body").css("overflow", "hidden");
 	},
 	cancel: function () {
 		App.trigger('app:modal-close');
@@ -2701,11 +2681,10 @@ App.Views.ArtistTour = Backbone.Modal.extend({
 		Parse.history.navigate("myprofile/settings", {trigger: true});
 	},
 	cancel: function(e){
-		$("body").css("overflow", "auto");
 		Parse.history.navigate("myprofile", {trigger: false});
 	},
 	onRender: function(){
-		$("body").css("overflow", "hidden");
+
 	},
 	cancel: function () {
 		App.trigger('app:modal-close');
@@ -3276,15 +3255,20 @@ App.viewManager = (function ViewManager() {
 
 	function show(view) {
 
-		console.log('view manager - show ');
-		if (currentView && !Backbone.Modal.prototype.isPrototypeOf(view)) {
-			console.log('view manager - disposing view...');
+		console.log('view manager - show ');///clear
+		if (currentView && Backbone.Modal.prototype.isPrototypeOf(view)) {
+			console.log('view manager - disabling view...');///clear
+			if (currentView.disable) { currentView.disable(); };
+		}
+		else if (currentView) {
+			console.log('view manager - disposing view...');///clear
 			currentView.remove();
+			if (currentView.disable) { currentView.disable(); };
 			currentView = undefined;
 		}
 
 		if (currentModal) {
-			console.log('view manager - disposing modal...');
+			console.log('view manager - disposing modal...');///clear
 			currentModal.close();
 			currentModal.remove();
 			currentModal = undefined;
@@ -3308,11 +3292,13 @@ App.viewManager = (function ViewManager() {
 			//removes modal from hitRoutes for repeated modal opens. ///clear
 			App.router.hitRoutes.shift();
 			Parse.history.navigate(App.router.hitRoutes[0], { trigger: false });
+			currentView.initialize();
 		} else {
 			console.log('App.router.back() called');///clear
 			App.router.back();
 		}
 
+		App.transition.disableModal();
 	}
 
 	function render(view) {
@@ -3325,7 +3311,8 @@ App.viewManager = (function ViewManager() {
 		
 		function _renderModal(view, callback) {
 			currentModal = view;
-			$('.modalayheehoo').html(currentModal.render().el);
+			$('#modalayheehoo').html(currentModal.render().el);
+			App.transition.initModal();
 		}
 
 		function _renderView(view, callback) {
@@ -3354,8 +3341,20 @@ App.transition = (function Transition() {
 		}
 	}
 
+	function initModal() {
+		console.log('initModal called');///clear
+		$("body").css("overflow", "hidden");
+	}
+
+	function disableModal() {
+		console.log('disable called');///clear
+		$("body").css("overflow", "auto");
+	}
+
 	return {
-		scrollIntoView: scrollIntoView
+		scrollIntoView: scrollIntoView,
+		initModal: initModal,
+		disableModal: disableModal
 	};
 })();
 
