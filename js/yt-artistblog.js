@@ -168,14 +168,10 @@ App.Models.Session = Parse.Object.extend({
 	logout: function () {
 		console.log('session logout : ' + arguments.callee.identity);
 		var self = this;
-		var defer = $.Deferred();
 		$.when(Parse.User.logOut())
 			.then(function () {
-				console.log('session logged out');
 				self.checkAuth();
-				defer.resolve();
 			});
-		return defer.promise();
 	}
 });
 
@@ -299,11 +295,8 @@ App.Views.Nav = Parse.View.extend({
 		"click #logout": "logout"
 	},
 	logout: function () {
-		// Parse.User.logOut();
 		App.session.logout();
-		// App.profile = undefined;
-		// App.Collections.adds = new App.Collections.Adds();
-		// this.render();
+		// TODO This needs reviewing, should use events
 		var current = Parse.history.getFragment();
 		if ( current == 'settings' || current == 'upload' || current == 'myprofile' ) {
 			Parse.history.navigate('', {trigger: true});
