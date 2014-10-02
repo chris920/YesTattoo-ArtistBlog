@@ -37,11 +37,16 @@ var App = new (Parse.View.extend({
 		// get user's data and render nav
 		var user = Parse.User.current();
 		if (!user) {
-			_.once(App.Collections.adds = new App.Collections.Adds());
+			// This did nothing, _.once creates a modified function 
+			// but it is never defined and therefore never used
+			// _.once(App.Collections.adds = new App.Collections.Adds());
+			App.Collections.adds = new App.Collections.Adds()
+			// Nav should already be created, initialized in response to event
 			var nav = new App.Views.Nav();
 			if (callBack) { callBack(); }
 			return;
-		} else if (App.profile === undefined) {
+		} 
+		else if (App.profile === undefined) {
 			//gets the user's profile
 			if (user.attributes.role === 'user'){
 				var query = new Parse.Query(App.Models.UserProfile);
@@ -49,26 +54,29 @@ var App = new (Parse.View.extend({
 				var query = new Parse.Query(App.Models.ArtistProfile);
 			}
 			query.equalTo("user", user);
-			query.first().then(function(result) {
-				App.profile = result;
-				return App.profile;
-			}).then(function(profile){
-				var nav = new App.Views.Nav();
-			  	var addsQuery = new Parse.Query(App.Models.Add);
-			  	addsQuery.descending("createdAt");
-			  	addsQuery.equalTo('user', user);
-			  	addsQuery.include('tattoo');
-			  	addsQuery.include('artistProfile');
-			  	return addsQuery.find();
-			}).then(function(adds){
-				App.Collections.adds = new App.Collections.Adds(adds);
-				return;
-			}).then(function(results){
-				if (callBack) { callBack(); }
-			}, function(error) {
-			    console.log("Error: " + error.code + " " + error.message);
-			});
-		} else {
+			query.first()
+				.then(function (profile) {
+					App.profile = profile;
+					var nav = new App.Views.Nav();
+				  	var addsQuery = new Parse.Query(App.Models.Add);
+				  	addsQuery.descending("createdAt");
+				  	addsQuery.equalTo('user', user);
+				  	addsQuery.include('tattoo');
+				  	addsQuery.include('artistProfile');
+				  	return addsQuery.find();
+				})
+				.then(function (adds) {
+						App.Collections.adds = new App.Collections.Adds(adds);
+					}, function (error) {
+						console.log("Error: " + error.code + " " + error.message);
+					}
+				)
+				.always(function () {
+					console.log('always');
+					if (callBack) { callBack(); }
+				});
+		} 
+		else {
 			if (callBack) { callBack(); }
 			var nav = new App.Views.Nav();
 		}
