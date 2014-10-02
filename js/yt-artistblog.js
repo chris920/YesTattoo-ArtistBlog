@@ -306,10 +306,16 @@ App.Views.Explore = Parse.View.extend({
 		this.moreToLoad = true;
 	},
 	events: {
-		"click #findArtists": 	"findArtists"
+		"click #findArtists": 	"findArtists",
+		"click .popularBook": 	"tattoosByBook"
 	},
 	findArtists: function(){
 		App.trigger('app:artists', 'location');
+	},
+	tattoosByBook: function(e){
+		var book = e.currentTarget.children[0].textContent;
+		console.log(book);///clear
+		App.trigger('app:tattoos', book);
 	},
 	render: function(){
 		var html = this.template();
@@ -322,18 +328,48 @@ App.Views.Explore = Parse.View.extend({
 App.Views.TattoosPage = Parse.View.extend({
 	template: _.template($("#tattoosPageTemplate").html()),
 	id: 'tattoosPage',
-	initialize: function(){
-		Parse.history.navigate('tattoos', {trigger: false});
+	initialize: function(books){
+		console.log('Tattos page init with = ');///clear
+		console.log(books);///clear
+		_.bindAll(this, 'scrollChecker', 'render');
+		App.on('app:scroll', this.scrollChecker);
 
-		///TODO change to app binding
-		_.bindAll(this, 'scrollChecker');
-		$(window).bind('scroll',this.scrollChecker);
+		if (books) {
+			console.log('tattoosPage init with books');///clear
+	    	var that = this;
+
+	        this.render = _.wrap(this.render, function(render) { 
+	            var booksArray = books.split("-").join(" ").split('+');
+	            render().setBooks(booksArray);
+	            return that;
+	        });
+		}
+		else {
+			var that = this;
+	        this.render = _.wrap(this.render, function(render) { 
+	            render();
+				that.queryReset();
+				that.loadMore();
+	            return that;
+	        });
+		}
+
 	},
 	disable: function () {
-		console.log('tattoos page disabled');
+		console.log('tattoos page disabled');///clear
+		App.off('app:scroll', this.scrollChecker);
 	},
 	events: {
 
+	},
+	setBooks: function(booksArray){
+		console.log('set books called with');///clear
+		console.log(booksArray);///clear
+		// accepts an array and adds the book filter ///clear
+		var that = this;
+     	_.each(booksArray, function(book) {
+			that.$('input.bookFilterInput').tagsinput('add', book);
+        });
 	},
 	scrollChecker: function(){
 		if (this.moreToLoad && $('#tattoosPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
@@ -364,7 +400,7 @@ App.Views.TattoosPage = Parse.View.extend({
 				// empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
 				// suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
 			}
-		}).attr('placeholder','Tatttoos').on('typeahead:selected', function (obj,datum) {
+		}).attr('placeholder','Tattoos').on('typeahead:selected', function (obj,datum) {
 			input.tagsinput('add', datum.books);
 			input.tagsinput('input').typeahead('val', '');
 		}).on('focus', function () {
@@ -380,16 +416,13 @@ App.Views.TattoosPage = Parse.View.extend({
 			that.queryReset();
 			that.query = input.tagsinput('items');
 			that.loadMore();
+			App.trigger('app:tattoosByBook', that.query);
 		}).on('itemRemoved', function(event){
 			that.queryReset();
 			that.query = input.tagsinput('items');
 			that.loadMore();
+			App.trigger('app:tattoosByBook', that.query);
 		});
-		window.setTimeout(function(){
-			$('.bookSuggestion').on('click', function(e){
-				input.tagsinput('add', e.target.textContent);
-			});
-		}, 400);
 	},
 	queryReset: function(){
 		this.query = [];
@@ -420,6 +453,7 @@ App.Views.TattoosPage = Parse.View.extend({
 						$('input.bookFilterInput').tagsinput('removeAll');
 						that.queryReset().loadMore();
 						that.$('.reset').fadeOut();
+						App.trigger('app:tattoosByBook', that.query);
 		    		}).fadeIn();
 	  			} else if (tats.length < 40) {
  				// that.$el.append('<div class="end" style="display: none"><img src="img/yt-featuredend.png"></div>');
@@ -443,9 +477,6 @@ App.Views.TattoosPage = Parse.View.extend({
 		this.tattoosView.render();
 		this.typeaheadInitialize();
 
-		this.queryReset();
-		this.loadMore();
-
 		return this;
 	}
 });
@@ -454,7 +485,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 	template: _.template($("#artistsTemplate").html()),
 	id: 'artistsPage',
 	initialize: function(options){
-		this.moreToLoad = true;
 		_.bindAll(this, 'initializeLocationPicker', 'queryReset', 'scrollChecker', 'showChangeLocation', 'render');
 
 		//Accepts the open location option and wraps the render function ///clear
@@ -462,7 +492,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			console.log('ArtistsPage init with location');///clear
 	       var that = this; 
 	        this.render = _.wrap(this.render, function(render) { 
-	            render(); 
+	            render();
 	            that.showChangeLocation(); 
 	            return that;
 	        });
@@ -2810,6 +2840,7 @@ App.Router = Parse.Router.extend({
 		"featured/p:page":	 		    "featured",
 		"artists": 						"artists",
 		"tattoos": 						"tattoos",
+		"tattoos/:books": 				"tattoos",
 		"about":   						"about",
 		"join":        				    "join",
 		"login":        				"login",
@@ -2887,9 +2918,9 @@ App.Router = Parse.Router.extend({
 		console.log('route artists');
 		App.controller.artists();
 	},
-	tattoos: function(){
+	tattoos: function(books){
 		console.log('route tattoos');
-		App.controller.tattoos();
+		App.controller.tattoos(books);
 	},
 	about: function(){
 		console.log('route about');
@@ -2971,7 +3002,8 @@ App.controller = (function Controller() {
 		App.on('app:search', function () { self.search(); });
 		App.on('app:featured', function (page) { self.featured(page); });
 		App.on('app:artists', function (options) { self.artists(options); });
-		App.on('app:tattoos', function () { self.tattoos(); });
+		App.on('app:tattoos', function (books) { self.tattoos(books); });
+		App.on('app:tattoosByBook', function (books) { self.tattoosByBook(books); });
 		App.on('app:login', function () { self.login(); });
 		App.on('app:forgot', function () { self.forgot(); });
 		App.on('app:about', function () { self.about(); });
@@ -3000,6 +3032,7 @@ App.controller = (function Controller() {
 		App.off('app:featured');
 		App.off('app:artists');
 		App.off('app:tattoos');
+		App.off('app:tattoosByBook');
 		App.off('app:login');
 		App.off('app:forgot');
 		App.off('app:about');
@@ -3051,11 +3084,27 @@ App.controller = (function Controller() {
 		Parse.history.navigate('artists', { trigger: false });
 	}
 
-	this.tattoos = function () {
+	this.tattoos = function (books) {
 		console.log('controller tattoos');
-		var tattoos = new App.Views.TattoosPage();
-		App.viewManager.show(tattoos);
-		Parse.history.navigate('tattoos', { trigger: false });
+		var tattoosPage = new App.Views.TattoosPage(books);
+		App.viewManager.show(tattoosPage);
+		if (books) {
+			console.log('tattoos by book from tattoos controller');///clear
+			this.tattoosByBook(books);
+		} else {
+			Parse.history.navigate('tattoos', { trigger: false });
+		}
+	}
+
+	this.tattoosByBook = function (books) {
+		console.log('controller tattoosByBook');///clear
+		if (books instanceof Array) {
+			var booksRoute = books.join('+').split(" ").join("-");
+		} 
+		else if (typeof(books) === 'string') {
+			var booksRoute = books;
+		}
+		Parse.history.navigate('tattoos/' + booksRoute, { trigger: false });
 	}
 
 	this.login = function () {
