@@ -2383,8 +2383,8 @@ App.Views.Join = Parse.View.extend({
 	      	return profile.save();
 		}).then(function(profile) {
 			var nav = new App.Views.Nav();
-			Parse.history.navigate('myprofile/tour', {trigger: true});
-
+			// Parse.history.navigate('myprofile/tour', {trigger: true});
+			App.trigger('app:tour');
 			that.undelegateEvents();
 			delete that;
 		}, function(error) {
@@ -2438,8 +2438,8 @@ App.Views.Join = Parse.View.extend({
 					      	return profile.save();
 						}).then(function(profile) {
 							var nav = new App.Views.Nav();
-							Parse.history.navigate('myprofile/tour', {trigger: true});
-
+							// Parse.history.navigate('myprofile/tour', {trigger: true});
+							App.trigger('app:tour');
 							that.undelegateEvents();
 							delete that;
 						}, function(error) {
@@ -2454,7 +2454,8 @@ App.Views.Join = Parse.View.extend({
 					});
 				} else {
 					var nav = new App.Views.Nav();
-					Parse.history.navigate('/featured', {trigger: true});
+					// Parse.history.navigate('/featured', {trigger: true});
+					App.trigger('app:featured');
 				}
 			},
 		 	error: function(user, error) {
@@ -2547,7 +2548,8 @@ App.Views.ForgotPassword = Parse.View.extend({
 		  success: function() {
 		    // Password reset request was sent successfully
 		    this.$('p').html('Check your email for the password reset link!')
-		    setTimeout(function() { Parse.history.navigate('', {trigger: true}) }, 2400);
+		    // setTimeout(function() { Parse.history.navigate('', {trigger: true}) }, 2400);
+		    setTimeout(function() { App.trigger('app:index'); }, 2400);
 		  },
 		  error: function(error) {
 		    // Show the error message somewhere
@@ -2606,7 +2608,8 @@ App.Views.UserTour = Backbone.Modal.extend({
 	editProfile: function(e) {
 		e.preventDefault();
 		this.triggerCancel();
-		Parse.history.navigate("myprofile/settings", {trigger: true});
+		// Parse.history.navigate("myprofile/settings", {trigger: true});
+		App.trigger('app:settings');
 	},
 	cancel: function(e){
 		$("body").css("overflow", "auto");
@@ -2664,12 +2667,13 @@ App.Views.ArtistTour = Backbone.Modal.extend({
 	editProfile: function(e) {
 		e.preventDefault();
 		this.triggerCancel();
-		Parse.history.navigate("myprofile/settings", {trigger: true});
+		// Parse.history.navigate("myprofile/settings", {trigger: true});
+		App.trigger('app:settings');
 	},
-	cancel: function(e){
-		$("body").css("overflow", "auto");
-		Parse.history.navigate("myprofile", {trigger: false});
-	},
+	// cancel: function(e){
+	// 	$("body").css("overflow", "auto");
+	// 	Parse.history.navigate("myprofile", {trigger: false});
+	// },
 	onRender: function(){
 		$("body").css("overflow", "hidden");
 	},
@@ -2825,16 +2829,11 @@ App.Router = Parse.Router.extend({
 	},
 	index: function(){
 		console.log('route index');
-		if (!Parse.User.current()){
-			this.landing();
-		} else {
-			this.featured();
-		}
+		App.controller.index();
 	},
 	landing: function(){
 		console.log('route landing');
-		var landing = new App.Views.Landing();
-		$('#gutter').html(landing.render().el);
+		App.controller.landing();
 	},
 	search: function(searchFor){
 		console.log('route search : ' + searchFor);
@@ -2920,6 +2919,8 @@ App.controller = (function Controller() {
 		App.viewManager.initialize();
 
 		var self = this;
+		App.on('app:index', function () { self.index(); });
+		App.on('app:landing', function () { self.landing(); });
 		App.on('app:search', function (searchFor) { self.search(searchFor); });
 		App.on('app:featured', function (page) { self.featured(page); });
 		App.on('app:login', function () { self.login(); });
@@ -2945,6 +2946,8 @@ App.controller = (function Controller() {
 
 	this.destroy = function () {
 		console.log('controller destory');
+		App.off('app:index');
+		App.off('app:landing');
 		App.off('app:search');
 		App.off('app:featured');
 		App.off('app:login');
@@ -2966,6 +2969,21 @@ App.controller = (function Controller() {
 		App.off('app:user-profile');
 		App.off('app:artist-profile-uname');
 		App.off('app:artist-profile');
+	}
+
+	this.index = function () {
+		console.log('controller index');
+		if (!Parse.User.current()){
+			this.landing();
+		} else {
+			this.featured();
+		}
+	}
+
+	this.landing = function () {
+		console.log('controller landing');
+		var landing = new App.Views.Landing();
+		$('#gutter').html(landing.render().el);
 	}
 
 	this.search = function (searchFor) {
@@ -3137,7 +3155,8 @@ App.controller = (function Controller() {
 			if (user) {
 				this.userProfile(user, tab);
 			} else {
-				Parse.history.navigate('/', { trigger: true });
+				// Parse.history.navigate('/', { trigger: true });
+				App.trigger('app:index');
 				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
 			}
 		},
