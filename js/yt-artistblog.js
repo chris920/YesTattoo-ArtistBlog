@@ -11,12 +11,8 @@ var App = new (Parse.View.extend({
 	Collections: {},
 	initialize: function(){
 		// Setup app proxy for windows events
-		$(window).on('scroll', function (e) {
-			App.trigger('app:scroll', e);
-		});
-		$(window).on('keypress', function (e) {
-			App.trigger('app:keypress', e);
-		});
+		$(window).on('scroll', function (e) { App.trigger('app:scroll', e); });
+		$(window).on('keypress', function (e) { App.trigger('app:keypress', e); });
 	},
 	remove: function () {
 		// Stop listening to windows events
@@ -24,69 +20,66 @@ var App = new (Parse.View.extend({
 		$(window).off('keypress');
 	},
 	start: function(){
-
+		// Initialized session, tracks user log on/off 
 		App.session = new App.Models.Session();
 		App.session.on('change:logged_in', function (model, value) {
-			console.log('logged_in changed : ' + value);
+			App.setProfile();
 		});
 
+		this.setProfile(this.startRouter);
 		this.initTypeahead();
-		this.getProfile(this.startRouter);
 		this.initScrollToTop;
+
+		// TODO Should be managed by region / view manager
+		var nav = new App.Views.Nav();
 		var footer = new App.Views.Footer();
 	},
 	startRouter: function(){
 		App.router = new App.Router();
 		Parse.history.start({pushState: false, root: '/'});
 	},
-	getProfile: function(callBack){
-		// get user's data and render nav
+	setProfile: function (callBack) {
+
 		var user = Parse.User.current();
 		if (!user) {
-			// This did nothing, _.once creates a modified function 
-			// but it is never defined and therefore never used
-			// _.once(App.Collections.adds = new App.Collections.Adds());
-			App.Collections.adds = new App.Collections.Adds()
-			// Nav should already be created, initialized in response to event
-			var nav = new App.Views.Nav();
+
+			// No user, not logged in
+			App.profile = undefined;
+			App.Collections.adds = new App.Collections.Adds();
 			if (callBack) { callBack(); }
-			return;
 		} 
 		else if (App.profile === undefined) {
-			//gets the user's profile
-			if (user.attributes.role === 'user'){
-				var query = new Parse.Query(App.Models.UserProfile);
-			} else {
-				var query = new Parse.Query(App.Models.ArtistProfile);
-			}
-			query.equalTo("user", user);
-			query.first()
-				.then(function (profile) {
-					App.profile = profile;
-					var nav = new App.Views.Nav();
-				  	var addsQuery = new Parse.Query(App.Models.Add);
-				  	addsQuery.descending("createdAt");
-				  	addsQuery.equalTo('user', user);
-				  	addsQuery.include('tattoo');
-				  	addsQuery.include('artistProfile');
-				  	return addsQuery.find();
-				})
-				.then(function (adds) {
+			
+			// User logged in but no profile
+			var profileQuery = (user.attributes.role === 'user') ?
+				new Parse.Query(App.Models.UserProfile) :
+				new Parse.Query(App.Models.ArtistProfile);
+			profileQuery.equalTo("user", user);
+
+			var addsQuery = new Parse.Query(App.Models.Add);
+			addsQuery.descending("createdAt");
+			addsQuery.equalTo('user', user);
+			addsQuery.include('tattoo');
+			addsQuery.include('artistProfile');
+			
+			Parse.Promise.when([profileQuery.first(), addsQuery.find()])
+				.then(function (profile, adds) {
+						App.profile = profile;
 						App.Collections.adds = new App.Collections.Adds(adds);
-					}, function (error) {
+					},
+					function (error) {
 						console.log("Error: " + error.code + " " + error.message);
 					}
 				)
 				.always(function () {
-					console.log('always');
 					if (callBack) { callBack(); }
 				});
 		}
-		else {
-			if (callBack) { callBack(); }
-			var nav = new App.Views.Nav();
-		}
-		return App.profile;
+		// This would never happen!!!
+		// else {
+		// 	// User logged in, profile already retrieved
+		// 	if (callBack) { callBack(); }
+		// }
 	},
 	initTypeahead: function(){
 		var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Rat","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Tattoo Events","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
@@ -295,7 +288,11 @@ App.Models.FeaturedArtist = Parse.User.extend({
 App.Views.Nav = Parse.View.extend({
 	el: '.navs',
 	initialize: function() {
-		this.render();
+		self = this;
+		self.render();
+		App.session.on('change:logged_in', function (model, value) {
+			self.render();
+		});
 	},
 	template: _.template($("#navTemplate").html()),
 	events: {
@@ -304,10 +301,9 @@ App.Views.Nav = Parse.View.extend({
 	logout: function () {
 		// Parse.User.logOut();
 		App.session.logout();
-		console.log('nav logout');
-		App.profile = undefined;
-		App.Collections.adds = new App.Collections.Adds();
-		this.render();
+		// App.profile = undefined;
+		// App.Collections.adds = new App.Collections.Adds();
+		// this.render();
 		var current = Parse.history.getFragment();
 		if ( current == 'settings' || current == 'upload' || current == 'myprofile' ) {
 			Parse.history.navigate('', {trigger: true});
@@ -315,9 +311,8 @@ App.Views.Nav = Parse.View.extend({
 			Parse.history.navigate(current, {trigger: true});
 		}
 	},
-    render: function(){
-    	$('.navs').html(this.template());
-    	return this;
+    render: function () {
+    	$('#nav-main').html(this.template());
     }
 });
 
@@ -814,7 +809,7 @@ App.Views.Login = Backbone.Modal.extend({
 
 		var that = this;
 		App.session.loginFb({
-			success: function(user) {
+			success: function (user) {
 				if (!user.existed()) { 
 					user.destroy().then(function(user){
 						App.session.logout();
@@ -822,12 +817,12 @@ App.Views.Login = Backbone.Modal.extend({
 						App.trigger('app:join');
 					});
 				} else {
-					App.getProfile();
+					// App.setProfile();
 					that.undelegateEvents();
 					that.triggerCancel();
 				}
 			},
-			error: function(user, error) {
+			error: function (user, error) {
 				console.log(error);
 				$(".loginForm .error").html(error.message).show();
 				that.enableLogin(true);
@@ -843,12 +838,12 @@ App.Views.Login = Backbone.Modal.extend({
 		var username = this.$("#loginUsername").val().replace(/\W/g, '').toLowerCase();
 		var password = this.$("#loginPassword").val();
 		App.session.login(username, password, {
-			success: function(user) {
-				App.getProfile();
+			success: function (user) {
+				// App.setProfile();
 				that.triggerCancel();
 				that.undelegateEvents();
 			},
-			error: function(user, error) {
+			error: function (user, error) {
 				console.log(error);
 				$(".loginForm .error").html("Invalid username or password. Please try again.").show();
 				that.enableLogin(true);
@@ -2452,7 +2447,7 @@ App.Views.Join = Parse.View.extend({
 	      	App.profile = profile;
 	      	return profile.save();
 		}).then(function(profile) {
-			var nav = new App.Views.Nav();
+			// var nav = new App.Views.Nav();
 			Parse.history.navigate('myprofile/tour', {trigger: true});
 
 			that.undelegateEvents();
@@ -2507,7 +2502,7 @@ App.Views.Join = Parse.View.extend({
 					      	App.profile = profile;
 					      	return profile.save();
 						}).then(function(profile) {
-							var nav = new App.Views.Nav();
+							// var nav = new App.Views.Nav();
 							Parse.history.navigate('myprofile/tour', {trigger: true});
 
 							that.undelegateEvents();
@@ -2524,7 +2519,7 @@ App.Views.Join = Parse.View.extend({
 						});
 					});
 				} else {
-					var nav = new App.Views.Nav();
+					// var nav = new App.Views.Nav();
 					Parse.history.navigate('/featured', {trigger: true});
 				}
 			},
