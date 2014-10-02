@@ -306,10 +306,10 @@ App.Views.Explore = Parse.View.extend({
 		this.moreToLoad = true;
 	},
 	events: {
-		"#findArtists": 	"findArtists"
+		"click #findArtists": 	"findArtists"
 	},
 	findArtists: function(){
-/// open artists page and focus on location search
+		App.trigger('app:artists', 'location');
 	},
 	render: function(){
 		var html = this.template();
@@ -453,13 +453,29 @@ App.Views.TattoosPage = Parse.View.extend({
 App.Views.ArtistsPage = Parse.View.extend({
 	template: _.template($("#artistsTemplate").html()),
 	id: 'artistsPage',
-	initialize: function(){
-		// Parse.history.navigate('search/artist', {trigger: false});
+	initialize: function(options){
 		this.moreToLoad = true;
-		_.bindAll(this, 'initializeLocationPicker', 'queryReset', 'scrollChecker');
+		_.bindAll(this, 'initializeLocationPicker', 'queryReset', 'scrollChecker', 'showChangeLocation', 'render');
 
-		/// TODO Setup scroll binding for artists + tattoos page
-		$(window).bind('scroll',this.scrollChecker);
+		//Accepts the open location option and wraps the render function ///clear
+		if (options && options === 'location') {
+			console.log('ArtistsPage init with location');///clear
+	       var that = this; 
+	        this.render = _.wrap(this.render, function(render) { 
+	            render(); 
+	            that.showChangeLocation(); 
+	            return that;
+	        });
+		}
+
+		App.on('app:scroll', this.scrollChecker);
+		// App.on('app:keypress', this.focusIn);
+	},
+	disable: function () {
+		console.log('ArtistsPage disabled');///clear
+		this.off();
+		App.off('app:scroll', this.scrollChecker);
+		// App.off('app:keypress', this.focusIn);
 	},
 	events: {
 	    'click .changeLocationButton': 	'showChangeLocation',
@@ -525,8 +541,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 		}, 400);
 	},
 	initializeLocationPicker: function(){
-		// App.search.unbindSearch();
-
 		var that = this;
 		if (!this.locationPickerCreated) {
 			if(Parse.User.current() && App.profile.attributes.location) {
@@ -569,9 +583,11 @@ App.Views.ArtistsPage = Parse.View.extend({
 		if(Parse.User.current() && App.profile.attributes.locationName){
 			this.$('.byYou').html(App.profile.attributes.locationName.split(",").splice(0,1).join("")).fadeIn();
 		}
-	    $('html, body').animate({
-	        scrollTop: this.$('#changeAddressMap').offset().top-100
-	    }, 1000);
+		setTimeout( function(){
+		    $('html, body').animate({
+		        scrollTop: this.$('#changeAddressMap').offset().top-100
+		    }, 1000);
+		}, 0);
 	},
 	byYou: function(){
 		this.$('.byYou').attr('disabled', 'disabled');
@@ -2954,7 +2970,7 @@ App.controller = (function Controller() {
 		App.on('app:explore', function () { self.explore(); });		
 		App.on('app:search', function () { self.search(); });
 		App.on('app:featured', function (page) { self.featured(page); });
-		App.on('app:artists', function () { self.artists(); });
+		App.on('app:artists', function (options) { self.artists(options); });
 		App.on('app:tattoos', function () { self.tattoos(); });
 		App.on('app:login', function () { self.login(); });
 		App.on('app:forgot', function () { self.forgot(); });
@@ -3028,9 +3044,9 @@ App.controller = (function Controller() {
 		Parse.history.navigate('featured', { trigger: false });
 	}
 
-	this.artists = function () {
+	this.artists = function (options) {
 		console.log('controller artists');
-		var artists = new App.Views.ArtistsPage();
+		var artists = new App.Views.ArtistsPage(options);
 		App.viewManager.show(artists);
 		Parse.history.navigate('artists', { trigger: false });
 	}
