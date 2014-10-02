@@ -24,6 +24,12 @@ var App = new (Parse.View.extend({
 		$(window).off('keypress');
 	},
 	start: function(){
+
+		App.session = new App.Models.Session();
+		App.session.on('change:logged_in', function (model, value) {
+			console.log('logged_in changed : ' + value);
+		});
+
 		this.initTypeahead();
 		this.getProfile(this.startRouter);
 		this.initScrollToTop;
@@ -75,7 +81,7 @@ var App = new (Parse.View.extend({
 					console.log('always');
 					if (callBack) { callBack(); }
 				});
-		} 
+		}
 		else {
 			if (callBack) { callBack(); }
 			var nav = new App.Views.Nav();
@@ -127,6 +133,57 @@ var App = new (Parse.View.extend({
 ///////// Models
 App.Models.User = Parse.User.extend({
 	className: "User"
+});
+
+App.Models.Session = Parse.Object.extend({
+	className: 'Session',
+
+	defaults: {
+		logged_in: false
+	},
+
+	initialize: function () {
+		console.log('session init : ' + arguments.callee.identity);
+		this.checkAuth();
+	},
+
+	checkAuth: function () {
+		if (Parse.User.current() && Parse.User.current().authenticated()) {
+			this.set('logged_in', true);
+		}
+		else {
+			this.set('logged_in', false);
+		}
+	},
+
+	login: function (user, pass, cb) {
+		var self = this;
+		Parse.User.logIn(user, pass, cb)
+			.always(function () {
+				self.checkAuth();
+			});
+	},
+
+	loginFb: function (cb) {
+		var self = this;
+		Parse.FacebookUtils.logIn(null, cb)
+			.always(function () {
+				self.checkAuth();
+			});	
+	},
+
+	logout: function () {
+		console.log('session logout : ' + arguments.callee.identity);
+		var self = this;
+		var defer = $.Deferred();
+		$.when(Parse.User.logOut())
+			.then(function () {
+				console.log('session logged out');
+				self.checkAuth();
+				defer.resolve();
+			});
+		return defer.promise();
+	}
 });
 
 App.Models.ArtistProfile = Parse.Object.extend({
@@ -242,10 +299,12 @@ App.Views.Nav = Parse.View.extend({
 	},
 	template: _.template($("#navTemplate").html()),
 	events: {
-		"click #logout": 		"logout"
+		"click #logout": "logout"
 	},
-	logout: function(){
-		Parse.User.logOut();
+	logout: function () {
+		// Parse.User.logOut();
+		App.session.logout();
+		console.log('nav logout');
 		App.profile = undefined;
 		App.Collections.adds = new App.Collections.Adds();
 		this.render();
@@ -738,7 +797,6 @@ App.Views.Artist = Parse.View.extend({
 App.Views.Login = Backbone.Modal.extend({
 	id: 'login',
 	initialize: function(){
-		// Parse.history.navigate('login', {trigger: false});
 	},
 	template: _.template($("#loginTemplate").html()),
 	viewContainer: '.clearContainer',
@@ -749,68 +807,68 @@ App.Views.Login = Backbone.Modal.extend({
 		"click #forgotPassword": "passwordForm",
 		'click #join': 'joinForm'
 	},
-    facebookLogin: function(){
-		this.$("#facebookLogin").attr("disabled", "disabled");
+	facebookLogin: function (e) {
+		if (e) { e.preventDefault(); }
+		
+		this.enableLogin(false);
+
 		var that = this;
-		Parse.FacebookUtils.logIn(null, {
+		App.session.loginFb({
 			success: function(user) {
 				if (!user.existed()) { 
 					user.destroy().then(function(user){
-						Parse.User.logOut();
+						App.session.logout();
 						that.triggerCancel();
-						// Parse.history.navigate('/join', {trigger: true});
 						App.trigger('app:join');
 					});
 				} else {
 					App.getProfile();
 					that.undelegateEvents();
 					that.triggerCancel();
-					delete that;
 				}
 			},
 			error: function(user, error) {
-	        	console.log(error);
-	        	$(".loginForm .error").html(error.message).show();
-	        	$("#facebookLogin").removeAttr("disabled");
+				console.log(error);
+				$(".loginForm .error").html(error.message).show();
+				that.enableLogin(true);
 			}
 		});
-      return false;
-    },
-    login: function(){
-		this.$(".loginForm button").attr("disabled", "disabled");
+	},
+	login: function (e) {
+		if (e) { e.preventDefault(); }
+		
+		this.enableLogin(false);
+
 		var that = this;
 		var username = this.$("#loginUsername").val().replace(/\W/g, '').toLowerCase();
 		var password = this.$("#loginPassword").val();
-
-		Parse.User.logIn(username, password, {
+		App.session.login(username, password, {
 			success: function(user) {
 				App.getProfile();
 				that.triggerCancel();
 				that.undelegateEvents();
-				delete that;
 			},
 			error: function(user, error) {
 				console.log(error);
 				$(".loginForm .error").html("Invalid username or password. Please try again.").show();
-				$(".loginForm button").removeAttr("disabled");
+				that.enableLogin(true);
 			}
 		});
-      return false;
-    },
-    passwordForm: function(){
+	},
+	enableLogin: function (enable) {
+		$("#login .btn-submit").attr('disabled', !enable);
+	},
+	passwordForm: function(){
 		App.trigger('app:forgot');
-    },
-    joinForm: function () {
-    	App.trigger('app:join');
-    },
+	},
+	joinForm: function () {
+		App.trigger('app:join');
+	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
 	},
 	cancel: function(){
 		$("body").css("overflow", "auto");
-		// Parse.history.navigate(App.back, {trigger: false});
-		// if(App.currentView){App.currentView.initialize()};
-		// App.hideModal();
 		App.trigger('app:modal-close');
 	}
 });
@@ -2456,7 +2514,8 @@ App.Views.Join = Parse.View.extend({
 							delete that;
 						}, function(error) {
 							user.destroy().then(function(){
-								Parse.User.logOut();
+								// Parse.User.logOut();
+								App.session.logout();
 								// Parse.history.navigate('/login', {trigger: true});
 								App.trigger('app:login');
 							});
