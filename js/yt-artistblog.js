@@ -736,9 +736,10 @@ App.Views.Login = Backbone.Modal.extend({
 	viewContainer: '.clearContainer',
 	cancelEl: '.x',
 	events: {
-		"click #facebookLogin": 	"facebookLogin",
-		"submit form.loginForm": 	"login",
-		"click .btn-link": 			"passwordForm"
+		"click #facebookLogin": "facebookLogin",
+		"submit form.loginForm": "login",
+		"click #forgotPassword": "passwordForm",
+		'click #join': 'joinForm'
 	},
     facebookLogin: function(){
 		this.$("#facebookLogin").attr("disabled", "disabled");
@@ -790,6 +791,9 @@ App.Views.Login = Backbone.Modal.extend({
     },
     passwordForm: function(){
 		App.trigger('app:forgot');
+    },
+    joinForm: function () {
+    	App.trigger('app:join');
     },
 	onRender: function(){
 		$("body").css("overflow", "hidden");
