@@ -310,7 +310,7 @@ App.Views.Explore = Parse.View.extend({
 		"click .popularBook": 	"tattoosByBook"
 	},
 	findArtists: function(){
-		App.trigger('app:artists', 'location');
+		App.trigger('app:artists', {show: 'location'});
 	},
 	tattoosByBook: function(e){
 		var book = e.currentTarget.children[0].textContent;
@@ -488,7 +488,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 		_.bindAll(this, 'initializeLocationPicker', 'queryReset', 'scrollChecker', 'showChangeLocation', 'render');
 
 		//Accepts the open location option and wraps the render function ///clear
-		if (options && options === 'location') {
+		if (options && options.show === 'location') {
 			console.log('ArtistsPage init with location');///clear
 	       var that = this; 
 	        this.render = _.wrap(this.render, function(render) { 
