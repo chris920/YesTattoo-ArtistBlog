@@ -11,12 +11,8 @@ var App = new (Parse.View.extend({
 	Collections: {},
 	initialize: function(){
 		// Setup app proxy for windows events
-		$(window).on('scroll', function (e) {
-			App.trigger('app:scroll', e);
-		});
-		$(window).on('keypress', function (e) {
-			App.trigger('app:keypress', e);
-		});
+		$(window).on('scroll', function (e) { App.trigger('app:scroll', e); });
+		$(window).on('keypress', function (e) { App.trigger('app:keypress', e); });
 	},
 	remove: function () {
 		// Stop listening to windows events
@@ -24,55 +20,66 @@ var App = new (Parse.View.extend({
 		$(window).off('keypress');
 	},
 	start: function(){
+		// Initialized session, tracks user log on/off 
+		App.session = new App.Models.Session();
+		App.session.on('change:logged_in', function (model, value) {
+			App.setProfile();
+		});
+
+		this.setProfile(this.startRouter);
 		this.initTypeahead();
-		this.getProfile(this.startRouter);
 		this.initScrollToTop;
+
+		// TODO Should be managed by region / view manager
+		var nav = new App.Views.Nav();
 		var footer = new App.Views.Footer();
 	},
 	startRouter: function(){
 		App.router = new App.Router();
 		Parse.history.start({pushState: false, root: '/'});
 	},
-	getProfile: function(callBack){
-		// get user's data and render nav
+	setProfile: function (callBack) {
+
 		var user = Parse.User.current();
 		if (!user) {
-			_.once(App.Collections.adds = new App.Collections.Adds());
-			var nav = new App.Views.Nav();
+
+			// No user, not logged in
+			App.profile = undefined;
+			App.Collections.adds = new App.Collections.Adds();
 			if (callBack) { callBack(); }
-			return;
-		} else if (App.profile === undefined) {
-			//gets the user's profile
-			if (user.attributes.role === 'user'){
-				var query = new Parse.Query(App.Models.UserProfile);
-			} else {
-				var query = new Parse.Query(App.Models.ArtistProfile);
-			}
-			query.equalTo("user", user);
-			query.first().then(function(result) {
-				App.profile = result;
-				return App.profile;
-			}).then(function(profile){
-				var nav = new App.Views.Nav();
-			  	var addsQuery = new Parse.Query(App.Models.Add);
-			  	addsQuery.descending("createdAt");
-			  	addsQuery.equalTo('user', user);
-			  	addsQuery.include('tattoo');
-			  	addsQuery.include('artistProfile');
-			  	return addsQuery.find();
-			}).then(function(adds){
-				App.Collections.adds = new App.Collections.Adds(adds);
-				return;
-			}).then(function(results){
-				if (callBack) { callBack(); }
-			}, function(error) {
-			    console.log("Error: " + error.code + " " + error.message);
-			});
-		} else {
-			if (callBack) { callBack(); }
-			var nav = new App.Views.Nav();
+		} 
+		else if (App.profile === undefined) {
+			
+			// User logged in but no profile
+			var profileQuery = (user.attributes.role === 'user') ?
+				new Parse.Query(App.Models.UserProfile) :
+				new Parse.Query(App.Models.ArtistProfile);
+			profileQuery.equalTo("user", user);
+
+			var addsQuery = new Parse.Query(App.Models.Add);
+			addsQuery.descending("createdAt");
+			addsQuery.equalTo('user', user);
+			addsQuery.include('tattoo');
+			addsQuery.include('artistProfile');
+			
+			Parse.Promise.when([profileQuery.first(), addsQuery.find()])
+				.then(function (profile, adds) {
+						App.profile = profile;
+						App.Collections.adds = new App.Collections.Adds(adds);
+					},
+					function (error) {
+						console.log("Error: " + error.code + " " + error.message);
+					}
+				)
+				.always(function () {
+					if (callBack) { callBack(); }
+				});
 		}
-		return App.profile;
+		// This would never happen!!!
+		// else {
+		// 	// User logged in, profile already retrieved
+		// 	if (callBack) { callBack(); }
+		// }
 	},
 	initTypeahead: function(){
 		var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Rat","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Tattoo Events","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
@@ -119,6 +126,53 @@ var App = new (Parse.View.extend({
 ///////// Models
 App.Models.User = Parse.User.extend({
 	className: "User"
+});
+
+App.Models.Session = Parse.Object.extend({
+	className: 'Session',
+
+	defaults: {
+		logged_in: false
+	},
+
+	initialize: function () {
+		console.log('session init : ' + arguments.callee.identity);
+		this.checkAuth();
+	},
+
+	checkAuth: function () {
+		if (Parse.User.current() && Parse.User.current().authenticated()) {
+			this.set('logged_in', true);
+		}
+		else {
+			this.set('logged_in', false);
+		}
+	},
+
+	login: function (user, pass, cb) {
+		var self = this;
+		Parse.User.logIn(user, pass, cb)
+			.always(function () {
+				self.checkAuth();
+			});
+	},
+
+	loginFb: function (cb) {
+		var self = this;
+		Parse.FacebookUtils.logIn(null, cb)
+			.always(function () {
+				self.checkAuth();
+			});	
+	},
+
+	logout: function () {
+		console.log('session logout : ' + arguments.callee.identity);
+		var self = this;
+		$.when(Parse.User.logOut())
+			.then(function () {
+				self.checkAuth();
+			});
+	}
 });
 
 App.Models.ArtistProfile = Parse.Object.extend({
@@ -230,17 +284,19 @@ App.Models.FeaturedArtist = Parse.User.extend({
 App.Views.Nav = Parse.View.extend({
 	el: '.navs',
 	initialize: function() {
-		this.render();
+		self = this;
+		self.render();
+		App.session.on('change:logged_in', function (model, value) {
+			self.render();
+		});
 	},
 	template: _.template($("#navTemplate").html()),
 	events: {
-		"click #logout": 		"logout"
+		"click #logout": "logout"
 	},
-	logout: function(){
-		Parse.User.logOut();
-		App.profile = undefined;
-		App.Collections.adds = new App.Collections.Adds();
-		this.render();
+	logout: function () {
+		App.session.logout();
+		// TODO This needs reviewing, should use events
 		var current = Parse.history.getFragment();
 		if ( current == 'settings' || current == 'upload' || current == 'myprofile' ) {
 			Parse.history.navigate('', {trigger: true});
@@ -248,9 +304,8 @@ App.Views.Nav = Parse.View.extend({
 			Parse.history.navigate(current, {trigger: true});
 		}
 	},
-    render: function(){
-    	$('.navs').html(this.template());
-    	return this;
+    render: function () {
+    	$('#nav-main').html(this.template());
     }
 });
 
@@ -730,75 +785,78 @@ App.Views.Artist = Parse.View.extend({
 App.Views.Login = Backbone.Modal.extend({
 	id: 'login',
 	initialize: function(){
-		// Parse.history.navigate('login', {trigger: false});
 	},
 	template: _.template($("#loginTemplate").html()),
 	viewContainer: '.clearContainer',
 	cancelEl: '.x',
 	events: {
-		"click #facebookLogin": 	"facebookLogin",
-		"submit form.loginForm": 	"login",
-		"click .btn-link": 			"passwordForm"
+		"click #facebookLogin": "facebookLogin",
+		"submit form.loginForm": "login",
+		"click #forgotPassword": "passwordForm",
+		'click #join': 'joinForm'
 	},
-    facebookLogin: function(){
-		this.$("#facebookLogin").attr("disabled", "disabled");
+	facebookLogin: function (e) {
+		if (e) { e.preventDefault(); }
+		
+		this.enableLogin(false);
+
 		var that = this;
-		Parse.FacebookUtils.logIn(null, {
-			success: function(user) {
+		App.session.loginFb({
+			success: function (user) {
 				if (!user.existed()) { 
 					user.destroy().then(function(user){
-						Parse.User.logOut();
+						App.session.logout();
 						that.triggerCancel();
-						// Parse.history.navigate('/join', {trigger: true});
 						App.trigger('app:join');
 					});
 				} else {
-					App.getProfile();
+					// App.setProfile();
 					that.undelegateEvents();
 					that.triggerCancel();
-					delete that;
 				}
 			},
-			error: function(user, error) {
-	        	console.log(error);
-	        	$(".loginForm .error").html(error.message).show();
-	        	$("#facebookLogin").removeAttr("disabled");
+			error: function (user, error) {
+				console.log(error);
+				$(".loginForm .error").html(error.message).show();
+				that.enableLogin(true);
 			}
 		});
-      return false;
-    },
-    login: function(){
-		this.$(".loginForm button").attr("disabled", "disabled");
+	},
+	login: function (e) {
+		if (e) { e.preventDefault(); }
+		
+		this.enableLogin(false);
+
 		var that = this;
 		var username = this.$("#loginUsername").val().replace(/\W/g, '').toLowerCase();
 		var password = this.$("#loginPassword").val();
-
-		Parse.User.logIn(username, password, {
-			success: function(user) {
-				App.getProfile();
+		App.session.login(username, password, {
+			success: function (user) {
+				// App.setProfile();
 				that.triggerCancel();
 				that.undelegateEvents();
-				delete that;
 			},
-			error: function(user, error) {
+			error: function (user, error) {
 				console.log(error);
 				$(".loginForm .error").html("Invalid username or password. Please try again.").show();
-				$(".loginForm button").removeAttr("disabled");
+				that.enableLogin(true);
 			}
 		});
-      return false;
-    },
-    passwordForm: function(){
+	},
+	enableLogin: function (enable) {
+		$("#login .btn-submit").attr('disabled', !enable);
+	},
+	passwordForm: function(){
 		App.trigger('app:forgot');
-    },
+	},
+	joinForm: function () {
+		App.trigger('app:join');
+	},
 	onRender: function(){
 		$("body").css("overflow", "hidden");
 	},
 	cancel: function(){
 		$("body").css("overflow", "auto");
-		// Parse.history.navigate(App.back, {trigger: false});
-		// if(App.currentView){App.currentView.initialize()};
-		// App.hideModal();
 		App.trigger('app:modal-close');
 	}
 });
@@ -2383,8 +2441,7 @@ App.Views.Join = Parse.View.extend({
 	      	return profile.save();
 		}).then(function(profile) {
 			var nav = new App.Views.Nav();
-			Parse.history.navigate('myprofile/tour', {trigger: true});
-
+			App.trigger('app:tour');
 			that.undelegateEvents();
 			delete that;
 		}, function(error) {
@@ -2438,13 +2495,14 @@ App.Views.Join = Parse.View.extend({
 					      	return profile.save();
 						}).then(function(profile) {
 							var nav = new App.Views.Nav();
-							Parse.history.navigate('myprofile/tour', {trigger: true});
+							App.trigger('app:tour');
 
 							that.undelegateEvents();
 							delete that;
 						}, function(error) {
 							user.destroy().then(function(){
-								Parse.User.logOut();
+								// Parse.User.logOut();
+								App.session.logout();
 								// Parse.history.navigate('/login', {trigger: true});
 								App.trigger('app:login');
 							});
@@ -2454,7 +2512,7 @@ App.Views.Join = Parse.View.extend({
 					});
 				} else {
 					var nav = new App.Views.Nav();
-					Parse.history.navigate('/featured', {trigger: true});
+					App.trigger('app:featured');
 				}
 			},
 		 	error: function(user, error) {
@@ -2547,7 +2605,8 @@ App.Views.ForgotPassword = Parse.View.extend({
 		  success: function() {
 		    // Password reset request was sent successfully
 		    this.$('p').html('Check your email for the password reset link!')
-		    setTimeout(function() { Parse.history.navigate('', {trigger: true}) }, 2400);
+		    // setTimeout(function() { Parse.history.navigate('', {trigger: true}) }, 2400);
+		    setTimeout(function() { App.trigger('app:index'); }, 2400);
 		  },
 		  error: function(error) {
 		    // Show the error message somewhere
@@ -2606,7 +2665,8 @@ App.Views.UserTour = Backbone.Modal.extend({
 	editProfile: function(e) {
 		e.preventDefault();
 		this.triggerCancel();
-		Parse.history.navigate("myprofile/settings", {trigger: true});
+		// Parse.history.navigate("myprofile/settings", {trigger: true});
+		App.trigger('app:settings');
 	},
 	cancel: function(e){
 		$("body").css("overflow", "auto");
@@ -2664,12 +2724,13 @@ App.Views.ArtistTour = Backbone.Modal.extend({
 	editProfile: function(e) {
 		e.preventDefault();
 		this.triggerCancel();
-		Parse.history.navigate("myprofile/settings", {trigger: true});
+		// Parse.history.navigate("myprofile/settings", {trigger: true});
+		App.trigger('app:settings');
 	},
-	cancel: function(e){
-		$("body").css("overflow", "auto");
-		Parse.history.navigate("myprofile", {trigger: false});
-	},
+	// cancel: function(e){
+	// 	$("body").css("overflow", "auto");
+	// 	Parse.history.navigate("myprofile", {trigger: false});
+	// },
 	onRender: function(){
 		$("body").css("overflow", "hidden");
 	},
@@ -2825,16 +2886,11 @@ App.Router = Parse.Router.extend({
 	},
 	index: function(){
 		console.log('route index');
-		if (!Parse.User.current()){
-			this.landing();
-		} else {
-			this.featured();
-		}
+		App.controller.index();
 	},
 	landing: function(){
 		console.log('route landing');
-		var landing = new App.Views.Landing();
-		$('#gutter').html(landing.render().el);
+		App.controller.landing();
 	},
 	search: function(searchFor){
 		console.log('route search : ' + searchFor);
@@ -2920,6 +2976,8 @@ App.controller = (function Controller() {
 		App.viewManager.initialize();
 
 		var self = this;
+		App.on('app:index', function () { self.index(); });
+		App.on('app:landing', function () { self.landing(); });
 		App.on('app:search', function (searchFor) { self.search(searchFor); });
 		App.on('app:featured', function (page) { self.featured(page); });
 		App.on('app:login', function () { self.login(); });
@@ -2945,6 +3003,8 @@ App.controller = (function Controller() {
 
 	this.destroy = function () {
 		console.log('controller destory');
+		App.off('app:index');
+		App.off('app:landing');
 		App.off('app:search');
 		App.off('app:featured');
 		App.off('app:login');
@@ -2966,6 +3026,21 @@ App.controller = (function Controller() {
 		App.off('app:user-profile');
 		App.off('app:artist-profile-uname');
 		App.off('app:artist-profile');
+	}
+
+	this.index = function () {
+		console.log('controller index');
+		if (!Parse.User.current()){
+			this.landing();
+		} else {
+			this.featured();
+		}
+	}
+
+	this.landing = function () {
+		console.log('controller landing');
+		var landing = new App.Views.Landing();
+		$('#gutter').html(landing.render().el);
 	}
 
 	this.search = function (searchFor) {
@@ -3137,7 +3212,8 @@ App.controller = (function Controller() {
 			if (user) {
 				this.userProfile(user, tab);
 			} else {
-				Parse.history.navigate('/', { trigger: true });
+				// Parse.history.navigate('/', { trigger: true });
+				App.trigger('app:index');
 				$('.intro').html("<h3>Couldn't find the user you were looking for...</h3>");
 			}
 		},
