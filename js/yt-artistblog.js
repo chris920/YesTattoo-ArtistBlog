@@ -27,9 +27,6 @@ var App = new (Parse.View.extend({
 			App.setProfile();
 		});
 
-		// Initialize query handler
-		// App.query.initialize();
-
 		this.setProfile(this.startRouter);
 		this.initTypeahead();
 		this.initScrollToTop;
@@ -2019,7 +2016,7 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
 		// query.descending("featuremonth,createdAt");
 		// query.find({
 		var options = {
-			skip: this.collection * 7,
+			skip: this.collection.page * 7,
 			limit: 7
 		};
 		App.query.featuredArtists(options)
