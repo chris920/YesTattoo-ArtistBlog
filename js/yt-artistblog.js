@@ -1918,6 +1918,7 @@ App.Views.Landing = Parse.View.extend({
 	getArtists: function(){
 		this.count = this.count || 50; // total number of artist profiles
 		var that = this;
+		// var that = this,
 	 //    requestCount = 10, // number of random artists to query
 	 //    query1, query2, randomQuery,
 	 //    queries = [],
@@ -1926,15 +1927,17 @@ App.Views.Landing = Parse.View.extend({
 		//     query1 = new Parse.Query(App.Models.ArtistProfile);
 		//     query2 = new Parse.Query(App.Models.ArtistProfile);
 		//     query1.skip(Math.floor(Math.random() * this.count));
-		//     query1.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
+		//     // query1.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
+		//     query1.notEqualTo('featuremonth','');
 		//     query1.limit(1);
 		//     // query2.select("name", "username", "locationName", "tattoos");
 		//     query2.matchesKeyInQuery("objectId", "objectId", query1);
 		//     queries.push(query2);
+		//     console.log(query2);
 		// }
+		// return Parse.Query.or.apply(this, queries).find()
 		App.query.randomFeaturedArtists({ limit: 10, count: this.count })
 			.then(function (artists) {
-				console.log('random artists work');
 				clearInterval(that.artistTimer);
 				that.collection.reset(artists);
 				that.artistTimer = setInterval(function(){
@@ -3541,11 +3544,15 @@ App.query = (function QueryHandler() {
 	this.randomFeaturedArtists = function (options) {
 		var queries = [];
 		for (var i = 0; i < options.limit; i++) {
+
 			var q = new Parse.Query(App.Models.ArtistProfile);
 			q.notEqualTo('featuremonth','');
 			q.skip(Math.floor(Math.random() * options.count)); // <- Replace options.count with pre-query once #20 implemented
 			q.limit(1);
-			queries.push(q);
+		    
+		    var query = new Parse.Query(App.Models.ArtistProfile);
+		    query.matchesKeyInQuery("objectId", "objectId", q);
+			queries.push(query);
 		}
 		return Parse.Query.or.apply(this, queries).find();
 	}
