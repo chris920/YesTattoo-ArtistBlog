@@ -1828,6 +1828,10 @@ App.Views.Landing = Parse.View.extend({
 		this.initiateArtists();
 
 		/// Workaround for getting a random artist. Will not scale over 1,000 due to query constraint....
+		// TODO Replace this with cloud code function, give all featured artists an incrementing id
+		// ... then you can query max fid by sorting in descending order and using .first()
+		// #20 Add auto-incrementing featured artists id [to better support random artists query]
+		// I would also embed this first into the randomFeaturedArtists query for reusability
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
 		query.count().then(function(count){
@@ -1893,6 +1897,7 @@ App.Views.Landing = Parse.View.extend({
 		this.$('.artistLoc').fadeOut( 700, function() {
 			$(this).html(currentArtist.attributes.locationName).fadeIn( 900 );
 		});
+
 		this.$('.landingTattooContainer:visible:first').fadeOut( 800 );
 
 	  	// var tattoos = currentArtist.relation('tattoos');
@@ -1912,29 +1917,33 @@ App.Views.Landing = Parse.View.extend({
 	},
 	getArtists: function(){
 		this.count = this.count || 50; // total number of artist profiles
-		var that = this,
-		    requestCount = 10, // number of random artists to query
-		    query1, query2, randomQuery,
-		    queries = [],
-		    i;
-		for (i = 0; i < requestCount; i++) {
-		    query1 = new Parse.Query(App.Models.ArtistProfile);
-		    query2 = new Parse.Query(App.Models.ArtistProfile);
-		    query1.skip(Math.floor(Math.random() * this.count));
-		    query1.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
-		    query1.limit(1);
-		    // query2.select("name", "username", "locationName", "tattoos");
-		    query2.matchesKeyInQuery("objectId", "objectId", query1);
-		    queries.push(query2);
-		}
-		randomQuery = Parse.Query.or.apply(this, queries);
-		randomQuery.find().then(function(artists) {
-			clearInterval(that.artistTimer);
-			that.collection.reset(artists);
-			that.artistTimer = setInterval(function(){
-				that.showNextArtist();
-			}, 6000);
-		});
+		var that = this;
+	 //    requestCount = 10, // number of random artists to query
+	 //    query1, query2, randomQuery,
+	 //    queries = [],
+	 //    i;
+		// for (i = 0; i < requestCount; i++) {
+		//     query1 = new Parse.Query(App.Models.ArtistProfile);
+		//     query2 = new Parse.Query(App.Models.ArtistProfile);
+		//     query1.skip(Math.floor(Math.random() * this.count));
+		//     query1.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
+		//     query1.limit(1);
+		//     // query2.select("name", "username", "locationName", "tattoos");
+		//     query2.matchesKeyInQuery("objectId", "objectId", query1);
+		//     queries.push(query2);
+		// }
+		App.query.randomFeaturedArtists({ limit: 10, count: this.count })
+			.then(function (artists) {
+				console.log('random artists work');
+				clearInterval(that.artistTimer);
+				that.collection.reset(artists);
+				that.artistTimer = setInterval(function(){
+					that.showNextArtist();
+				}, 6000);
+			},
+			function (error) {
+				console.log(error);
+			});
 	},
 	continue:function(){
 		this.hideLanding();
@@ -3519,12 +3528,26 @@ App.query = (function QueryHandler() {
 	*/
 	this.featuredArtists = function (options) {
 		var query = new Parse.Query('ArtistProfile');
-		query.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
+		query.notEqualTo('featuremonth', '')
 		query.skip(options.skip || 0);
 		query.limit(options.limit || 0);
 		query.descending("featuremonth,createdAt");
-		console.log('test');
 		return query.find();
+	}
+
+	/*
+		Query random featured artists
+	*/
+	this.randomFeaturedArtists = function (options) {
+		var queries = [];
+		for (var i = 0; i < options.limit; i++) {
+			var q = new Parse.Query(App.Models.ArtistProfile);
+			q.notEqualTo('featuremonth','');
+			q.skip(Math.floor(Math.random() * options.count)); // <- Replace options.count with pre-query once #20 implemented
+			q.limit(1);
+			queries.push(q);
+		}
+		return Parse.Query.or.apply(this, queries).find();
 	}
 
 	return this;
