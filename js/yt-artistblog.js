@@ -2503,7 +2503,6 @@ App.Views.Join = Parse.View.extend({
 		}).then(function(profile) {
 			var nav = new App.Views.Nav();
 			App.trigger('app:tour');
-
 			that.undelegateEvents();
 			delete that;
 		}, function(error) {
@@ -2558,7 +2557,6 @@ App.Views.Join = Parse.View.extend({
 						}).then(function(profile) {
 							var nav = new App.Views.Nav();
 							App.trigger('app:tour');
-
 							that.undelegateEvents();
 							delete that;
 						}, function(error) {
