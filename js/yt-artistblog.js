@@ -27,8 +27,8 @@ var App = new (Parse.View.extend({
 			App.setProfile();
 		});
 
-		this.setProfile(this.startRouter);
 		this.initTypeahead();
+		this.setProfile(this.startRouter);
 		this.initScrollToTop;
 
 		// TODO Should be managed by region / view manager
