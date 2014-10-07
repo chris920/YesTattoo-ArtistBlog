@@ -3528,7 +3528,7 @@ App.query = (function QueryHandler() {
 		var query = new Parse.Query('ArtistProfile');
 		query.notEqualTo('featuremonth', '')
 		query.skip(options.skip || 0);
-		query.limit(options.limit || 0);
+		query.limit(options.limit || 1000);
 		query.descending("featuremonth,createdAt");
 		return query.find();
 	}
