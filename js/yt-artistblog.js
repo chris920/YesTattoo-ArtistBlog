@@ -3537,19 +3537,11 @@ App.query = (function QueryHandler() {
 		Query random featured artists
 	*/
 	this.randomFeaturedArtists = function (options) {
-		var queries = [];
-		for (var i = 0; i < options.limit; i++) {
-
-			var q = new Parse.Query(App.Models.ArtistProfile);
-			q.notEqualTo('featuremonth','');
-			q.skip(Math.floor(Math.random() * options.count)); // <- Replace options.count with pre-query once #20 implemented
-			q.limit(1);
-		    
-		    var query = new Parse.Query(App.Models.ArtistProfile);
-		    query.matchesKeyInQuery("objectId", "objectId", q);
-			queries.push(query);
-		}
-		return Parse.Query.or.apply(this, queries).find();
+		var query = new Parse.Query(App.Models.ArtistProfile);
+		query.notEqualTo('featuremonth','');
+		query.skip(Math.floor(Math.random() * options.count)); // <- Replace options.count with pre-query once #20 implemented
+		query.limit(options.limit || 1000);
+		return query.find();
 	}
 
 	return this;
