@@ -276,23 +276,52 @@ App.Views.Search = Backbone.Modal.extend({
 	id: 'search',
 	initialize: function(){
 		console.log('search init');
-		// _.bindAll(this, 'focusIn', 'scrollChecker');
+		this.searchTimer;
 
-		/// TODO load more results & focus on search bar
-		// App.on('app:scroll', this.scrollChecker);
-		// App.on('app:keypress', this.focusIn);
+		_.bindAll(this, 'focusIn', 'keypressSearchTimer', 'initSearchTimer', 'searchAll');
+		App.on('app:keypress', this.focusIn);
 	},
 	disable: function () {
 		console.log('search disabled');
-		// App.off('app:scroll', this.scrollChecker);
-		// App.off('app:keypress', this.focusIn);
+		App.off('app:keypress', this.focusIn);
 	},
 	template: _.template($("#searchTemplate").html()),
 	cancelEl: '.x',
 	events: {
-
+		'keypress': 'keypressSearchTimer'
+	},
+	keypressSearchTimer: function(e){
+		if ( e.which === 13 ) {
+			this.searchAll();
+		} else {
+			this.initSearchTimer(this);
+		}
+	},
+    initSearchTimer: _.debounce(function(){ this.searchAll(); }, 1250),
+    searchAll: function(){
+    	//TODO query all types
+    	console.log('searchAll triggered');///clear
+    	var that = this;
+    	this.$('.resultsMessage').fadeOut( 800, function(){
+	    	that.searchTattoo();
+	    	that.searchArtist();
+	    	that.searchUser();    		
+    	});
+    },
+    searchTattoo: function(){
+ 		this.$('.tattooResultsContainer').fadeIn();
+    },
+    searchArtist: function(){
+		this.$('.artistResultsContainer').fadeIn();
+    },
+    searchUser: function(){
+		this.$('.userResultsContainer').fadeIn();
+    },
+	focusIn: function(){
+		this.$('input.mainSearchInput').focus();
 	},
 	onRender: function(){
+		this.focusIn();
 	},
 	cancel: function(){
 		App.trigger('app:modal-close');
@@ -314,7 +343,6 @@ App.Views.Explore = Parse.View.extend({
 	},
 	tattoosByBook: function(e){
 		var book = e.currentTarget.children[0].textContent;
-		console.log(book);///clear
 		App.trigger('app:tattoos', book);
 	},
 	render: function(){
@@ -1673,8 +1701,7 @@ App.Views.UserProfile = Parse.View.extend({
 
     	_.each(booksByCount, function(book){
     		var bookModel = new App.Models.Book({book: book});
- ///need to put a count limiter on the by book filters rather than get all and boil down.
-
+ 			///TODO ~ improve this
  			bookModel.set('tattoos', this.addsTattoosCollection.byBooks([book]).slice(0,4));
 			this.booksCollection.add(bookModel);
     	}, this);

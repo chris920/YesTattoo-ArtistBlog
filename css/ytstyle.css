@@ -4003,7 +4003,22 @@ a:focus {
   transition: 0.2s ease;
   border-top: 0px solid #d9d9d9;
   border-bottom: 4px solid transparent;
-  padding-left: 40px; }
+  text-align: left;
+  padding: 10px 20px !important; }
+  .main-nav-item i:before {
+    font-size: inherit;
+    right: 4px;
+    top: 2px;
+    display: inline; }
+  @media screen and (min-width: 992px) {
+    .main-nav-item {
+      padding: 22px 25px !important;
+      text-align: center; }
+      .main-nav-item i:before {
+        font-size: 24px;
+        right: 0px;
+        top: 0px;
+        display: block; } }
   .main-nav-item:hover, .main-nav-item:active {
     border-top: 4px solid #c42020;
     border-bottom: 0px solid transparent !important; }
@@ -5491,11 +5506,10 @@ span.hover-content {
 #search {
   color: white;
   margin-top: 100px; }
-  #search .results .tattooResults {
-    margin-top: 9px; }
-  #search .results .btn-tag {
-    display: table;
-    margin: 18px 0px; }
+  #search .results h3 {
+    margin-top: 60px; }
+  #search .results .resultsMessage {
+    text-align: center; }
   #search .results .userResult {
     padding: 10px;
     border-radius: 4px / 6px;
@@ -5509,6 +5523,25 @@ span.hover-content {
       color: gray; }
     #search .results .userResult:hover {
       background-color: #1a1a1a; }
+  #search .bookSuggestion {
+    overflow: hidden;
+    height: 80px;
+    width: 100%;
+    border-radius: 4px / 6px;
+    margin: 10px 0px;
+    padding: 60px 40px 100px 40px;
+    border: 1px solid #4d4d4d;
+    background-size: cover;
+    background-position: 40% 50%;
+    background-repeat: no-repeat; }
+    #search .bookSuggestion span {
+      -webkit-box-shadow: -40px 0px 40px 80px rgba(0, 0, 0, 0.6);
+      -moz-box-shadow: -40px 0px 40px 80px rgba(0, 0, 0, 0.6);
+      box-shadow: -40px 0px 40px 80px rgba(0, 0, 0, 0.6);
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 35px;
+      float: left; }
 
 input.mainSearchInput {
   box-shadow: none;
@@ -5524,7 +5557,7 @@ input.mainSearchInput {
   @media screen and (min-width: 768px) {
     input.mainSearchInput {
       font-size: 65px;
-      margin: 20px; } }
+      margin: 20px 40px; } }
   input.mainSearchInput:focus {
     outline: none; }
 
@@ -5532,26 +5565,26 @@ input.mainSearchInput {
   color: #4d4d4d; }
 
 :-moz-placeholder {
-  /* Firefox 18- */
   color: #4d4d4d; }
 
 ::-moz-placeholder {
-  /* Firefox 19+ */
   color: #4d4d4d; }
 
 :-ms-input-placeholder {
   color: #4d4d4d; }
 
 .bigfatsearch {
-  background-color: #1a1a1a;
-  min-height: 100px;
   display: block;
+  width: 100%;
+  min-height: 100px;
+  background-color: #1a1a1a;
   border: solid 1px black;
   border-bottom: solid 4px black; }
   .bigfatsearch .x {
     padding: 0px;
     font-size: 65px;
-    right: 20px; }
+    right: 20px;
+    top: 0px; }
   .bigfatsearch i {
     margin-left: 30px;
     color: gray;

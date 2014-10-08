@@ -173,14 +173,33 @@ $footer-height-lg: $footer-height + 120px;
 }
 
 .main-nav-item {
-  @include transition(0.2s ease);
-  border-top: 0px solid $gray-light;
-  border-bottom: 4px solid transparent;
-  padding-left: 40px;
-  &:hover, &:active {
-      border-top: 4px solid $brand-primary;
-      border-bottom: 0px solid transparent !important; 
-  }
+    @include transition(0.2s ease);
+    border-top: 0px solid $gray-light;
+    border-bottom: 4px solid transparent;
+    
+    text-align: left;
+    padding: 10px 20px !important;
+    i:before {
+        font-size: inherit;
+        right: 4px;
+        top: 2px;
+        display: inline;
+    }
+    @media screen and (min-width: $screen-md) {
+        padding: 22px 25px !important;
+        text-align: center;
+        i:before {
+            font-size: 24px;
+            right: 0px;
+            top: 0px;
+            display: block;
+        }
+    }
+
+    &:hover, &:active {
+        border-top: 4px solid $brand-primary;
+        border-bottom: 0px solid transparent !important; 
+    }
 }
 
 .navs .dropdown-menu {
@@ -1877,12 +1896,11 @@ span.hover-content {
     color: white;
     margin-top: 100px;
     .results {
-        .tattooResults {
-            margin-top: 9px;
+        h3 {
+            margin-top: 60px;
         }
-        .btn-tag {
-            display: table;
-            margin: 18px 0px;
+        .resultsMessage {
+            text-align: center;
         }
         .userResult {
             padding: 10px;
@@ -1902,18 +1920,39 @@ span.hover-content {
             }
         }
     }
+    .bookSuggestion {
+        overflow: hidden;
+        height: 80px;
+        width: 100%;
+        border-radius: 4px / 6px;
+        margin: 10px 0px;
+        padding: 60px 40px 100px 40px;
 
-//// unused gray tags 
-    // .bookSuggestion {
-    //     margin: 2px;
-    //     padding: 10px;
-    //     border: 1px solid $gray-darker;
-    //     color: white;
-    //     background-color: $gray-darker !important;
-    //     border-radius: 4px / 6px;
-    //     background-color: rgba(0,0,0,0);
-    //     // @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
-    // }
+        border: 1px solid $gray-dark;
+        background-size: cover;
+        background-position: 40% 50%;
+        background-repeat: no-repeat;
+        span {
+            -webkit-box-shadow: -40px 0px 40px 80px $black-trans;
+            -moz-box-shadow: -40px 0px 40px 80px $black-trans;
+            box-shadow: -40px 0px 40px 80px $black-trans;
+            background-color: $black-trans;
+            color: white;
+            font-size: 35px;
+            float: left;
+        }
+
+
+        //previous simple gray button
+        // margin: 2px;
+        // padding: 10px;
+        // border: 1px solid $gray-darker;
+        // color: white;
+        // background-color: $gray-darker !important;
+        // border-radius: 4px / 6px;
+        // background-color: rgba(0,0,0,0);
+        // @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
+    }
 }
 input.mainSearchInput {
     box-shadow: none;
@@ -1921,7 +1960,6 @@ input.mainSearchInput {
     background-color: transparent;
 
     display: inline-block;
-    // width:100%;
     border: none;
     color: $brand-primary;
     line-height: 80px;
@@ -1931,38 +1969,30 @@ input.mainSearchInput {
     margin: 10px;
     @media screen and (min-width: $screen-sm) {
         font-size: 65px;
-        margin: 20px;
+        margin: 20px 40px;
     }
     &:focus {outline: none}
-    // &:before {
-    //     font-family: Flaticon;
-    //     @extend .flaticon-magnifier10:before;
-    //     color: $gray-light;             
-    //     padding: 8px;
-    //     font-size: 30px;
-    //     top: 5px;
-    //     position: relative;
-    //     color: $gray-light; 
-    // }
 }
 ::-webkit-input-placeholder {
    color: $gray-dark; }
-:-moz-placeholder { /* Firefox 18- */
+:-moz-placeholder { 
    color: $gray-dark; }
-::-moz-placeholder {  /* Firefox 19+ */
+::-moz-placeholder {
    color: $gray-dark; }
 :-ms-input-placeholder {  
    color: $gray-dark; }
 .bigfatsearch {
-    background-color: $gray-darker;
-    min-height: 100px;
     display: block;
+    width: 100%;
+    min-height: 100px;
+    background-color: $gray-darker;
     border: solid 1px black;
     border-bottom: solid 4px black;
     .x {
         padding: 0px;
         font-size: 65px;
         right: 20px;
+        top: 0px;
     }
     i {
         margin-left: 30px;
