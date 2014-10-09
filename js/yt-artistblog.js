@@ -3133,9 +3133,11 @@ App.Router = Parse.Router.extend({
 });
 
 
-App.controller = (function Controller() {
+App.controller = (function () {
 
-	this.initialize = function (options) {
+	var controller = {};
+
+	controller.initialize = function (options) {
 		console.log('controller init');
 
 		App.viewManager.initialize();
@@ -3170,7 +3172,7 @@ App.controller = (function Controller() {
 		App.on('app:artist-profile', function (artist, tab) { self.artistProfile(artist, tab); });
 	}
 
-	this.destroy = function () {
+	controller.destroy = function () {
 		console.log('controller destory');
 		App.off('app:index');
 		App.off('app:landing');
@@ -3201,7 +3203,7 @@ App.controller = (function Controller() {
 		App.off('app:artist-profile');
 	}
 
-	this.index = function () {
+	controller.index = function () {
 		console.log('controller index');
 		if (!Parse.User.current()){
 			this.landing();
@@ -3210,55 +3212,55 @@ App.controller = (function Controller() {
 		}
 	}
 
-	this.landing = function () {
+	controller.landing = function () {
 		console.log('controller landing');
 		var landing = new App.Views.Landing();
 		$('#gutter').html(landing.render().el);
 	}
 
-	this.explore = function () {
+	controller.explore = function () {
 		console.log('controller explore');
 		var explore = new App.Views.Explore();
 		App.viewManager.show(explore);
 		Parse.history.navigate('explore', { trigger: false });
 	}
 
-	this.search = function (searchFor) {
+	controller.search = function (searchFor) {
 		console.log('controller search');
 		App.search = new App.Views.Search();
 		App.viewManager.show(App.search);
 		Parse.history.navigate('search', { trigger: false });
 	}
 
-	this.featured = function (page) {
+	controller.featured = function (page) {
 		console.log('controller featured : ' + page);
 		var featuredArtists = new App.Collections.FeaturedArtists();
-	    featuredArtists.page = (page) ? page : 0;
+		featuredArtists.page = (page) ? page : 0;
 		var featuredArtistPage = new App.Views.FeaturedArtistPage({ collection: featuredArtists });
 		App.viewManager.show(featuredArtistPage);
 		Parse.history.navigate('featured', { trigger: false });
 	}
 
-	this.artists = function (options) {
+	controller.artists = function (options) {
 		console.log('controller artists');
 		var artists = new App.Views.ArtistsPage(options);
 		App.viewManager.show(artists);
 		Parse.history.navigate('artists', { trigger: false });
 	}
 
-	this.tattoos = function (books) {
+	controller.tattoos = function (books) {
 		console.log('controller tattoos');
 		var tattoosPage = new App.Views.TattoosPage(books);
 		App.viewManager.show(tattoosPage);
 		if (books) {
 			console.log('tattoos by book from tattoos controller');///clear
-			this.tattoosByBook(books);
+			controller.tattoosByBook(books);
 		} else {
 			Parse.history.navigate('tattoos', { trigger: false });
 		}
 	}
 
-	this.tattoosByBook = function (books) {
+	controller.tattoosByBook = function (books) {
 		console.log('controller tattoosByBook');///clear
 		if (books instanceof Array) {
 			var booksRoute = books.join('+').split(" ").join("-");
@@ -3269,21 +3271,21 @@ App.controller = (function Controller() {
 		Parse.history.navigate('tattoos/' + booksRoute, { trigger: false });
 	}
 
-	this.login = function () {
+	controller.login = function () {
 		console.log('controller login');
 		var login = new App.Views.Login();
 		App.viewManager.show(login);
 		Parse.history.navigate('login', { trigger: false });
 	}
 
-	this.forgot = function () {
+	controller.forgot = function () {
 		console.log('controller forgot');
 		var forgotPassword = new App.Views.ForgotPassword();
 		App.viewManager.show(forgotPassword);
 		Parse.history.navigate('forgot', { trigger: false });
 	}
 
-	this.about = function () {
+	controller.about = function () {
 		console.log('controller about');
 		var about = new App.Views.About();
 		App.viewManager.show(about);
@@ -3292,28 +3294,28 @@ App.controller = (function Controller() {
 		Parse.history.navigate('about', { trigger: false });
 	}
 
-	this.join = function () {
+	controller.join = function () {
 		console.log('controller join');
 		var join = new App.Views.Join();
 		App.viewManager.show(join);
 		Parse.history.navigate('join', { trigger: false });
 	}
 
-	this.interview = function () {
+	controller.interview = function () {
 		console.log('controller interview');
 		var interview = new App.Views.Interview();
 		App.viewManager.show(interview);
 		Parse.history.navigate('interview', { trigger: false });
 	}
 
-	this.feedback = function () {
+	controller.feedback = function () {
 		console.log('controller feedback');
 		var feedback = new App.Views.Feedback();
 		App.viewManager.show(feedback);
 		Parse.history.navigate('feedback', { trigger: false });
 	}
 
-	this.bug = function () {
+	controller.bug = function () {
 		console.log('controller bug');
 		var bug = new App.Views.Feedback();
 		App.viewManager.show(bug);
@@ -3321,7 +3323,7 @@ App.controller = (function Controller() {
 		Parse.history.navigate('bug', { trigger: false });
 	}
 
-	this.myProfile = function (tab) {
+	controller.myProfile = function (tab) {
 		console.log('controller myprofile : ' + tab);
 		var myProfile;
 		if (Parse.User.current().attributes.role === 'user') {
@@ -3339,7 +3341,7 @@ App.controller = (function Controller() {
 		Parse.history.navigate('myprofile', { trigger: false });
 	}
 
-	this.tour = function () {
+	controller.tour = function () {
 		console.log('controller tour');
 		this.myProfile();
 		var tour;
@@ -3352,7 +3354,7 @@ App.controller = (function Controller() {
 		Parse.history.navigate('myprofile/tour', { trigger: false });
 	}
 
-	this.settings = function () {
+	controller.settings = function () {
 		console.log('controller settings');
 		this.myProfile();
 		var settings = new App.Views.Settings();
@@ -3360,7 +3362,7 @@ App.controller = (function Controller() {
 		Parse.history.navigate('myprofile/settings', { trigger: false });
 	}
 
-	this.upload = function () {
+	controller.upload = function () {
 		console.log('controller upload');
 		this.myProfile();
 		var upload = new App.Views.Upload();
@@ -3368,20 +3370,20 @@ App.controller = (function Controller() {
 		Parse.history.navigate('myprofile/upload', { trigger: false });
 	}
 
-	this.editTattooById = function (id) {
+	controller.editTattooById = function (id) {
 		console.log('controller editTattooById : ' + id);
 		// var query = new Parse.Query(App.Models.Tattoo);
 		// query.get(id, {
 		App.query.tattooById(id)
 			.then(function (tattoo) {
-				this.editTattoo(tattoo);
+				controller.editTattoo(tattoo);
 			},
 			function (object, error) {
 				console.log(error);
 			});
 	}
 
-	this.editTattoo = function (tattoo) {
+	controller.editTattoo = function (tattoo) {
 		console.log('controller editTattoo : ' + tattoo.id);
 		this.myProfile();
 		var profile = new App.Views.EditTattoo({ model: tattoo });
@@ -3389,27 +3391,27 @@ App.controller = (function Controller() {
 		Parse.history.navigate('myprofile/edit/' + tattoo.id , { trigger: false });
 	}
 
-	this.tattooProfileById = function (id) {
+	controller.tattooProfileById = function (id) {
 		console.log('controller tattooProfileById : ' + id);
 		// var query = new Parse.Query(App.Models.Tattoo);
 		// query.get(id, {
 		App.query.tattooById(id)
 			.then(function (tattoo) {
-				this.tattooProfile(tattoo);
+				controller.tattooProfile(tattoo);
 			},
 			function (object, error) {
 				console.log(error);
 			});
 	}
 
-	this.tattooProfile = function (tattoo) {
+	controller.tattooProfile = function (tattoo) {
 		console.log('controller tattooProfile : ' + tattoo.id);
 		var profile = new App.Views.TattooProfile({ model: tattoo });
 		App.viewManager.show(profile);
 		Parse.history.navigate('tattoo/' + tattoo.id , { trigger: false });
 	}
 
-	this.userProfileByUname = function (uname, tab) {
+	controller.userProfileByUname = function (uname, tab) {
 		console.log('controller userProfileByUname : ' + uname + ' / ' + tab);
 		// var query = new Parse.Query(App.Models.UserProfile);
 		// query.equalTo("username", uname);
@@ -3417,7 +3419,7 @@ App.controller = (function Controller() {
 		App.query.usersProfile(uname)
 			.then(function (user) {
 				if (user) {
-					this.userProfile(user, tab);
+					controller.userProfile(user, tab);
 				} else {
 					// Parse.history.navigate('/', { trigger: true });
 					App.trigger('app:index');
@@ -3429,7 +3431,7 @@ App.controller = (function Controller() {
 			});
 	}
 
-	this.userProfile = function (user, tab) {
+	controller.userProfile = function (user, tab) {
 		console.log('controller userProfile : ' + user.get('username') + ' / ' + tab);
 		var userProfile = new App.Views.UserProfile({model: user});
 		App.viewManager.show(userProfile);
@@ -3439,7 +3441,7 @@ App.controller = (function Controller() {
 		Parse.history.navigate('user/' + user.get('username') + (tab ? '/' + tab : ''), { trigger: false });
 	}
 
-	this.artistProfileByUname = function (uname, tab) {
+	controller.artistProfileByUname = function (uname, tab) {
 		console.log('controller artistProfileByUname : ' + uname + ' / ' + tab);
 		// var query = new Parse.Query(App.Models.ArtistProfile);
 		// query.equalTo("username", uname);
@@ -3447,7 +3449,7 @@ App.controller = (function Controller() {
 		App.query.artistsProfile(uname)
 			.then(function (artist) {
 				if (artist) {
-					this.artistProfile(artist, tab);
+					controller.artistProfile(artist, tab);
 				}
 				else {
 					App.trigger('app:user-profile-uname', uname);
@@ -3458,7 +3460,7 @@ App.controller = (function Controller() {
 			});
 	}
 
-	this.artistProfile = function (artist, tab) {
+	controller.artistProfile = function (artist, tab) {
 		console.log('controller artistProfile : ' + artist.get('username') + ' / ' + tab);
 		var profile = new App.Views.ArtistProfile({ model: artist, tab: tab });
 		App.viewManager.show(profile);
@@ -3468,7 +3470,7 @@ App.controller = (function Controller() {
 		Parse.history.navigate(artist.get('username') + (tab ? '/' + tab : ''), { trigger: false });
 	}
 
-	return this;
+	return controller;
 })();
 
 App.viewManager = (function ViewManager() {
@@ -3594,13 +3596,15 @@ App.transition = (function Transition() {
 /* 
 	Query Handler 
 */
-App.query = (function QueryHandler() {
+App.query = (function () {
+
+	var query = {};
 
 	/*
 		Query users profile,
 		return either [User|Artist]Profile dependant on user account
 	*/
-	this.profile = function (user) {
+	query.profile = function (user) {
 		var user = user || App.session.user();
 		var query = (user.attributes.role === 'user') ?
 				new Parse.Query(App.Models.UserProfile) : 
@@ -3613,7 +3617,7 @@ App.query = (function QueryHandler() {
 		Query user profile, 
 		by username
 	*/
-	this.usersProfile = function (uname) {
+	query.usersProfile = function (uname) {
 		var query = new Parse.Query(App.Models.UserProfile);
 		query.equalTo("username", uname);
 		return query.first();
@@ -3623,7 +3627,7 @@ App.query = (function QueryHandler() {
 		Query artists profile,
 		by username
 	*/
-	this.artistsProfile = function (uname) {
+	query.artistsProfile = function (uname) {
 		var query = new Parse.Query(App.Models.ArtistProfile);
 		query.equalTo("username", uname);
 		return query.first();
@@ -3632,7 +3636,7 @@ App.query = (function QueryHandler() {
 	/* 
 		Query users adds
 	*/
-	this.adds = function (user) {
+	query.adds = function (user) {
 		var query = new Parse.Query(App.Models.Add);
 		query.descending("createdAt");
 		query.equalTo('user', user || App.session.user());
@@ -3645,7 +3649,7 @@ App.query = (function QueryHandler() {
 		Query tattoos,
 		filter by books
 	*/
-	this.tattoos = function (books, options) {
+	query.tattoos = function (books, options) {
 		var query = new Parse.Query('Tattoo');
 		if (books && books.length > 0) {
 			query.containsAll('books', books);
@@ -3661,7 +3665,7 @@ App.query = (function QueryHandler() {
 		Query tattoos by profile, 
 		filter by books 
 	*/
-	this.tattoosByProfile = function (profile, books, options) {
+	query.tattoosByProfile = function (profile, books, options) {
 		var query = profile.relation('tattoos').query();
 	  	if (books && books.length > 0) {
 			query.containsAll('books', books);
@@ -3675,7 +3679,7 @@ App.query = (function QueryHandler() {
 		Query tattoo,
 		by id
 	*/
-	this.tattooById = function (id) {
+	query.tattooById = function (id) {
 		var query = new Parse.Query('Tattoo');
 		return query.get(id);
 	}
@@ -3684,7 +3688,7 @@ App.query = (function QueryHandler() {
 		Query artists,
 		filter either by location or date created
 	*/
-	this.artists = function (location, options) {
+	query.artists = function (location, options) {
 		var query = new Parse.Query('ArtistProfile');
 		if (location) {
 			query.near("location", location);
@@ -3700,7 +3704,7 @@ App.query = (function QueryHandler() {
 	/*
 		Query featured artists
 	*/
-	this.featuredArtists = function (options) {
+	query.featuredArtists = function (options) {
 		var query = new Parse.Query('ArtistProfile');
 		query.notEqualTo('featuremonth', '')
 		query.skip(options.skip || 0);
@@ -3712,7 +3716,7 @@ App.query = (function QueryHandler() {
 	/*
 		Query random featured artists
 	*/
-	this.randomFeaturedArtists = function (options) {
+	query.randomFeaturedArtists = function (options) {
 		var queries = [];
 		for (var i = 0; i < options.limit; i++) {
 
@@ -3728,7 +3732,7 @@ App.query = (function QueryHandler() {
 		return Parse.Query.or.apply(this, queries).find();
 	}
 
-	return this;
+	return query;
 })();
 
 $(function() {
