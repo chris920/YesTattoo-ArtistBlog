@@ -977,108 +977,143 @@ span.hover-content {
     }
 }
 
-
 //// large book search & typahead hint
 #tattoosPage, #artistsPage {
-    input.tt-input {
-        // position: relative !important;
-        // left: 0px;
-
-        // box-shadow: none;
-        // outline: none;
-        // display: inline-block;
-
-        // width:100%;
-
-        border: none;
-        color: $brand-primary;
-        line-height: 80px;
-        font-weight: 700;
-
-        font-size: 36px;
-        // margin: 10px;
-        @media screen and (min-width: $screen-sm) {
-            font-size: 65px;
-            // margin: 20px;
-        }
-        &:focus {outline: none}
-        &:before {
-            font-family: Flaticon;
-            @extend .flaticon-magnifier10:before;
-            color: $gray-light;             
-            padding: 8px;
-            font-size: 30px;
-            top: 5px;
-            position: relative;
-            color: $gray-light; 
-        }
-
+    .filterHeader {
+        background-color: #000;
+        @include transition(all 0.8s ease);
     }
+    .filterHeader.active {
+        background-color: $gray-darker;
+        @include transition(all 0.8s ease);
+    }
+    .filterTitles {
+        padding: 20px 0px;
+        .filterTitle {
+            position: absolute;
+            color: white;
 
-    .bootstrap-tagsinput {
-        // display: inline-block;
-        // @media screen and (min-width: $screen-sm) {
-        //     display: inline;
-        // }
-        &:before {
-            display: none;
+            font-size: 36px;
             @media screen and (min-width: $screen-sm) {
-                display: inline;
-                font-size: 50px;
-                padding: 15px;
-                top: 40px;
-                position: relative;
-                color: white; 
+                font-size: 55px;
             }
         }
-        // .tag {
-        //     position: relative;
-        //     top: 22px;
-        // }
     }
-    .twitter-typeahead .tt-hint {
-        color: $gray-darker;
-        line-height: 80px;
-        font-weight: 700;
+    .bookFilterContainer {
+     
+    }
+    // input.tt-input {
+    //     // position: relative !important;
+    //     // left: 0px;
 
-        font-size: 36px;
-        margin-top: 40px;
-        @media screen and (min-width: $screen-sm) {
-            font-size: 65px;
-            margin-top: 0px;
-        }
-    }
-    .tt-suggestion {
+    //     // box-shadow: none;
+    //     // outline: none;
+    //     // display: inline-block;
 
-    }
+    //     // width:100%;
+
+    //     border: none;
+    //     color: $brand-primary;
+    //     line-height: 80px;
+    //     font-weight: 700;
+
+    //     font-size: 36px;
+    //     // margin: 10px;
+    //     @media screen and (min-width: $screen-sm) {
+    //         font-size: 65px;
+    //         // margin: 20px;
+    //     }
+    //     &:focus {outline: none}
+    //     &:before {
+    //         font-family: Flaticon;
+    //         @extend .flaticon-magnifier10:before;
+    //         color: $gray-light;             
+    //         padding: 8px;
+    //         font-size: 30px;
+    //         top: 5px;
+    //         position: relative;
+    //         color: $gray-light; 
+    //     }
+
+    // }
+
+    // .bootstrap-tagsinput {
+    //     // display: inline-block;
+    //     // @media screen and (min-width: $screen-sm) {
+    //     //     display: inline;
+    //     // }
+    //     &:before {
+    //         display: none;
+    //         @media screen and (min-width: $screen-sm) {
+    //             display: inline;
+    //             font-size: 50px;
+    //             padding: 15px;
+    //             top: 40px;
+    //             position: relative;
+    //             color: white; 
+    //         }
+    //     }
+    //     // .tag {
+    //     //     position: relative;
+    //     //     top: 22px;
+    //     // }
+    // }
+    // .twitter-typeahead .tt-hint {
+    //     color: $gray-darker;
+    //     line-height: 80px;
+    //     font-weight: 700;
+
+    //     font-size: 36px;
+    //     margin-top: 40px;
+    //     @media screen and (min-width: $screen-sm) {
+    //         font-size: 65px;
+    //         margin-top: 0px;
+    //     }
+    // }
 }
-.searchFilterOptions {
+.filterInputContainer, .filterInputContainer > span.twitter-typeahead  {
     width: 100%;
-    position: relative;
-    right: 0px;
-
-    // background-color: $gray-darker;
-    border-top: 1px solid black;
-
-    // overflow-y: scroll;
-    padding-top: 40px;
-    padding-bottom: 40px;
     color: white;
-    height: 100px;
-    // text-align: right;
+    text-align: center;
     i {
         padding-left: 15px;
     }
-    .bootstrap-tagsinput {
+    input {
+        margin: 40px 0px;
+        padding: 20px;
+        min-width: 100%;
+        @media screen and (min-width: $screen-sm) {
+            min-width: 50%;            
+        }
+    }
+    .tt-dropdown-menu {
+        min-width: 100%;
+        margin-left: 0%;
+        @media screen and (min-width: $screen-sm) {
+            min-width: 50%;
+            margin-left: 25%;            
+        }   
+    }
+}
+.grayInput {
+    box-shadow: none;
+    outline: none;
+    background-color: $gray-darker;
+    display: inline-block;
+    border: solid 1px black;
+    border-bottom: solid 4px black;
+    &:focus {
+        box-shadow: inset 0 0 2px $brand-primary;
+        outline: none;
+        border: solid 1px transparent;
+        border-bottom: solid 4px transparent;
+    }
+}
 
-    }
-    > div {
-        display: inline;
-    }
-    > button.btn-submit {
-        float: right;
-        background-color: $gray-darker;
-    }
+button.toggleBookFilters {
+    margin-top: 30px;
+    float: right;
+    background-color: $gray-darker;
 }
 
 ////// User Profile & Artist Profile Page
@@ -1920,58 +1955,73 @@ span.hover-content {
             }
         }
     }
-    .bookSuggestion {
-        overflow: hidden;
-        height: 80px;
-        width: 100%;
-        border-radius: 4px / 6px;
-        margin: 10px 0px;
-        padding: 60px 40px 100px 40px;
+}
+.bookSuggestion {
+    overflow: hidden;
+    height: 80px;
+    width: 100%;
+    border-radius: 4px / 6px;
+    margin: 10px 0px;
+    padding: 60px 40px 100px 40px;
 
-        border: 1px solid $gray-dark;
-        background-size: cover;
-        background-position: 40% 50%;
-        background-repeat: no-repeat;
+    border: 1px solid $gray-dark;
+    background-size: cover;
+    background-position: 40% 50%;
+    background-repeat: no-repeat;
+    span {
+        -webkit-box-shadow: -40px 0px 40px 80px $black-trans;
+        -moz-box-shadow: -40px 0px 40px 80px $black-trans;
+        box-shadow: -40px 0px 40px 80px $black-trans;
+        background-color: $black-trans;
+        color: white;
+        font-size: 35px;
+        float: left;
+    }
+
+
+    //previous simple gray button
+    // margin: 2px;
+    // padding: 10px;
+    // border: 1px solid $gray-darker;
+    // color: white;
+    // background-color: $gray-darker !important;
+    // border-radius: 4px / 6px;
+    // background-color: rgba(0,0,0,0);
+    // @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
+}
+.bookSuggestionContainer {
+    overflow-x: hidden;
+    white-space: nowrap;
+    .bookSuggestion {
+        display: inline-block;
+        width: 225px;
+        margin: 10px 0px;
+        padding: 40px 20px 80px 20px;
         span {
-            -webkit-box-shadow: -40px 0px 40px 80px $black-trans;
-            -moz-box-shadow: -40px 0px 40px 80px $black-trans;
-            box-shadow: -40px 0px 40px 80px $black-trans;
+            min-width: 225px;
+            -webkit-box-shadow: 0px 0px 20px 40px $black-trans;
+            -moz-box-shadow: 0px 0px 20px 40px $black-trans;
+            box-shadow: 0px 0px 20px 40px $black-trans;
             background-color: $black-trans;
             color: white;
-            font-size: 35px;
-            float: left;
+            font-size: 26px;
+            float: none;
+            text-align: center;
         }
-
-
-        //previous simple gray button
-        // margin: 2px;
-        // padding: 10px;
-        // border: 1px solid $gray-darker;
-        // color: white;
-        // background-color: $gray-darker !important;
-        // border-radius: 4px / 6px;
-        // background-color: rgba(0,0,0,0);
-        // @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
     }
 }
-input.mainSearchInput {
-    box-shadow: none;
-    outline: none;
-    background-color: transparent;
 
-    display: inline-block;
-    border: none;
+input.mainSearchInput {
     color: $brand-primary;
     line-height: 80px;
     font-weight: 700;
-
+    width: 100%;
     font-size: 36px;
-    margin: 10px;
+    padding: 10px;
     @media screen and (min-width: $screen-sm) {
         font-size: 65px;
-        margin: 20px 40px;
+        padding: 20px 40px;
     }
-    &:focus {outline: none}
 }
 ::-webkit-input-placeholder {
    color: $gray-dark; }
@@ -1981,13 +2031,10 @@ input.mainSearchInput {
    color: $gray-dark; }
 :-ms-input-placeholder {  
    color: $gray-dark; }
-.bigfatsearch {
+.mainSearchInputContainer {
     display: block;
     width: 100%;
     min-height: 100px;
-    background-color: $gray-darker;
-    border: solid 1px black;
-    border-bottom: solid 4px black;
     .x {
         padding: 0px;
         font-size: 65px;

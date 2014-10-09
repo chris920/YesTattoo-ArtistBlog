@@ -119,8 +119,8 @@
     <script type="text/html" id="searchTemplate">
 
       <div class="lg8container">
-        <form class="bigfatsearch" role="search">
-          <input type="text" class="mainSearchInput"></input>
+        <form class="mainSearchInputContainer" role="search">
+          <input type="text" class="mainSearchInput grayInput"></input>
           <a href="#" class="btn-text x">x</a>
         </form>
       </div>
@@ -305,16 +305,38 @@
 
     <!-- Tattoos page -->
     <script type="text/html" id="tattoosPageTemplate">
-      <div class="container">
-        <div class="searchFilterOptions">
-          <input type="text" class="typeahead bookFilterInput" placeholder="">
-          <button id="" class="btn-submit">Book Filters</button>
+
+      <div class="filterHeader">
+        <div class="container">
+          <div class="row filterTitles">
+            <span class="filterTitle">Tattoos</span>
+            <button class="btn-submit toggleBookFilters">Book Filters</button>
+          </div>
+
+          <div class="bookFilterContainer" style="display: none;">
+            <div class="bookSuggestionContainer">
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-color.jpg');"><span>Water Color</span></div>
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-real.jpg');"><span>Color</span></div>
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-b&g.jpg');"><span>Black And Gray</span></div>
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-Traditional.jpg');"><span>Traditional</span></div>
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-real.jpg');"><span>Realistic</span></div>
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-portrait.jpg');"><span>Portrait</span></div>
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-j.jpg');"><span>Japanese</span></div>
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-animal.jpg');"><span>Animal</span></div>
+            </div>
+
+            <div class="filterInputContainer">
+              <input type="text" class="typeahead bookFilterInput grayInput" placeholder="">
+            </div>
+
+          </div>  
         </div>
-        <hr>
+      </div>
+
+      <div class="container">
         <div class="row tattoos"></div>
         <div class="reset" style="display:none"></div>
       </div>
-
     </script>
 
 

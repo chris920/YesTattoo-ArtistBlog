@@ -407,8 +407,9 @@ App.Views.TattoosPage = Parse.View.extend({
 	initialize: function(books){
 		console.log('Tattos page init with = ');///clear
 		console.log(books);///clear
-		_.bindAll(this, 'scrollChecker', 'render');
+		_.bindAll(this, 'showBookFilters', 'hideBookFilters', 'focusIn', 'scrollChecker', 'render');
 		App.on('app:scroll', this.scrollChecker);
+		App.on('app:keypress', this.focusIn);
 
 		if (books) {
 			console.log('tattoosPage init with books');///clear
@@ -434,9 +435,24 @@ App.Views.TattoosPage = Parse.View.extend({
 	disable: function () {
 		console.log('tattoos page disabled');///clear
 		App.off('app:scroll', this.scrollChecker);
+		App.off('app:keypress', this.focusIn);
 	},
 	events: {
-
+		'click .toggleBookFilters':	'showBookFilters',
+		'click .toggleBookFilters.active':	'hideBookFilters'
+	},
+	showBookFilters: function(){
+		this.$('.toggleBookFilters, .filterHeader, .bookFilterContainer').addClass('active');
+		this.$('.bookFilterContainer').slideDown();
+		this.$('.toggleBookFilters').html('Hide Filters');
+	},
+	hideBookFilters: function(){
+		this.$('.toggleBookFilters, .filterHeader, .bookFilterContainer').removeClass('active');
+		this.$('.bookFilterContainer').slideUp();
+		this.$('.toggleBookFilters').html('Show Filters');
+	},
+	focusIn: function(){
+		this.$('input.bookFilterInput').focus();
 	},
 	setBooks: function(booksArray){
 		console.log('set books called with');///clear
@@ -457,18 +473,7 @@ App.Views.TattoosPage = Parse.View.extend({
 	typeaheadInitialize: function(){
 		var that = this;
 		var input = this.$('input.bookFilterInput');
-		input.tagsinput({
-			tagClass: 'btn-tag',
-			trimValue: true,
-			maxChars: 20,
-			maxTags: 5,
-			confirmKeys: [13, 9, 39, 40, 188],
-			onTagExists: function(item, $tag) {
-				$tag.addClass('blured');
-				window.setTimeout(function(){$tag.removeClass('blured');}, 1000);
-			}
-		});
-		input.tagsinput('input').typeahead(null, {
+		input.typeahead(null, {
 			name: 'books',
 			displayKey: 'books',
 			source: App.booktt.ttAdapter(),
@@ -476,28 +481,14 @@ App.Views.TattoosPage = Parse.View.extend({
 				// empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
 				// suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
 			}
-		}).attr('placeholder','Tattoos').on('typeahead:selected', function (obj,datum) {
-			input.tagsinput('add', datum.books);
-			input.tagsinput('input').typeahead('val', '');
+		}).attr('placeholder','Enter any book').on('typeahead:selected', function (obj,datum) {
+			// TOODO ~ Wire this up
+			// input.tagsinput('add', datum.books);
+			// input.tagsinput('input').typeahead('val', '');
 		}).on('focus', function () {
 			that.$('.tt-input').attr('placeholder','');
 		}).on('blur', function () {
-			if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
-			    that.$('.tt-input').attr('placeholder','').val('');
-			} else {
-				that.$('.tt-input').attr('placeholder','+').val('');
-			}
-		});
-		input.on('itemAdded', function(event) {
-			that.queryReset();
-			that.query = input.tagsinput('items');
-			that.loadMore();
-			App.trigger('app:tattoosByBook', that.query);
-		}).on('itemRemoved', function(event){
-			that.queryReset();
-			that.query = input.tagsinput('items');
-			that.loadMore();
-			App.trigger('app:tattoosByBook', that.query);
+			that.$('.tt-input').attr('placeholder','Enter any book').val('');
 		});
 	},
 	queryReset: function(){
@@ -532,7 +523,7 @@ App.Views.TattoosPage = Parse.View.extend({
 		  				that.moreToLoad = false;
 			    		that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
 			    		that.$('.reset').on('click', function(){
-							$('input.searchInput').tagsinput('removeAll');
+							$('input.bookFilterInput').tagsinput('removeAll');
 							that.queryReset().loadMore();
 							that.$('.reset').fadeOut();
 			    		}).fadeIn();

@@ -4188,7 +4188,7 @@ a:focus {
 .flaticon-link35:before, .link:after {
   content: "\e00d"; }
 
-.flaticon-magnifier10:before, #tattoosPage input.tt-input:before, #artistsPage input.tt-input:before {
+.flaticon-magnifier10:before {
   content: "\e00e"; }
 
 .flaticon-message7:before {
@@ -4757,62 +4757,62 @@ span.hover-content {
   #tattoosPage .tattoos {
     margin-top: 40px; }
 
-#tattoosPage input.tt-input, #artistsPage input.tt-input {
-  border: none;
-  color: #c42020;
-  line-height: 80px;
-  font-weight: 700;
-  font-size: 36px; }
-  @media screen and (min-width: 768px) {
-    #tattoosPage input.tt-input, #artistsPage input.tt-input {
-      font-size: 65px; } }
-  #tattoosPage input.tt-input:focus, #artistsPage input.tt-input:focus {
-    outline: none; }
-  #tattoosPage input.tt-input:before, #artistsPage input.tt-input:before {
-    font-family: Flaticon;
-    color: #d9d9d9;
-    padding: 8px;
-    font-size: 30px;
-    top: 5px;
-    position: relative;
-    color: #d9d9d9; }
-#tattoosPage .bootstrap-tagsinput:before, #artistsPage .bootstrap-tagsinput:before {
-  display: none; }
-  @media screen and (min-width: 768px) {
-    #tattoosPage .bootstrap-tagsinput:before, #artistsPage .bootstrap-tagsinput:before {
-      display: inline;
-      font-size: 50px;
-      padding: 15px;
-      top: 40px;
-      position: relative;
-      color: white; } }
-#tattoosPage .twitter-typeahead .tt-hint, #artistsPage .twitter-typeahead .tt-hint {
-  color: #1a1a1a;
-  line-height: 80px;
-  font-weight: 700;
-  font-size: 36px;
-  margin-top: 40px; }
-  @media screen and (min-width: 768px) {
-    #tattoosPage .twitter-typeahead .tt-hint, #artistsPage .twitter-typeahead .tt-hint {
-      font-size: 65px;
-      margin-top: 0px; } }
+#tattoosPage .filterHeader, #artistsPage .filterHeader {
+  background-color: #000;
+  -webkit-transition: all 0.8s ease;
+  transition: all 0.8s ease; }
+#tattoosPage .filterHeader.active, #artistsPage .filterHeader.active {
+  background-color: #1a1a1a;
+  -webkit-transition: all 0.8s ease;
+  transition: all 0.8s ease; }
+#tattoosPage .filterTitles, #artistsPage .filterTitles {
+  padding: 20px 0px; }
+  #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .filterTitle {
+    position: absolute;
+    color: white;
+    font-size: 36px; }
+    @media screen and (min-width: 768px) {
+      #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .filterTitle {
+        font-size: 55px; } }
 
-.searchFilterOptions {
+.filterInputContainer, .filterInputContainer > span.twitter-typeahead {
   width: 100%;
-  position: relative;
-  right: 0px;
-  border-top: 1px solid black;
-  padding-top: 40px;
-  padding-bottom: 40px;
   color: white;
-  height: 100px; }
-  .searchFilterOptions i {
+  text-align: center; }
+  .filterInputContainer i, .filterInputContainer > span.twitter-typeahead i {
     padding-left: 15px; }
-  .searchFilterOptions > div {
-    display: inline; }
-  .searchFilterOptions > button.btn-submit {
-    float: right;
-    background-color: #1a1a1a; }
+  .filterInputContainer input, .filterInputContainer > span.twitter-typeahead input {
+    margin: 40px 0px;
+    padding: 20px;
+    min-width: 100%; }
+    @media screen and (min-width: 768px) {
+      .filterInputContainer input, .filterInputContainer > span.twitter-typeahead input {
+        min-width: 50%; } }
+  .filterInputContainer .tt-dropdown-menu, .filterInputContainer > span.twitter-typeahead .tt-dropdown-menu {
+    min-width: 100%;
+    margin-left: 0%; }
+    @media screen and (min-width: 768px) {
+      .filterInputContainer .tt-dropdown-menu, .filterInputContainer > span.twitter-typeahead .tt-dropdown-menu {
+        min-width: 50%;
+        margin-left: 25%; } }
+
+.grayInput {
+  box-shadow: none;
+  outline: none;
+  background-color: #1a1a1a;
+  display: inline-block;
+  border: solid 1px black;
+  border-bottom: solid 4px black; }
+  .grayInput:focus {
+    box-shadow: inset 0 0 2px #c42020;
+    outline: none;
+    border: solid 1px transparent;
+    border-bottom: solid 4px transparent; }
+
+button.toggleBookFilters {
+  margin-top: 30px;
+  float: right;
+  background-color: #1a1a1a; }
 
 .profHead {
   min-height: 220px;
@@ -5523,43 +5523,57 @@ span.hover-content {
       color: gray; }
     #search .results .userResult:hover {
       background-color: #1a1a1a; }
-  #search .bookSuggestion {
-    overflow: hidden;
-    height: 80px;
-    width: 100%;
-    border-radius: 4px / 6px;
+
+.bookSuggestion {
+  overflow: hidden;
+  height: 80px;
+  width: 100%;
+  border-radius: 4px / 6px;
+  margin: 10px 0px;
+  padding: 60px 40px 100px 40px;
+  border: 1px solid #4d4d4d;
+  background-size: cover;
+  background-position: 40% 50%;
+  background-repeat: no-repeat; }
+  .bookSuggestion span {
+    -webkit-box-shadow: -40px 0px 40px 80px rgba(0, 0, 0, 0.6);
+    -moz-box-shadow: -40px 0px 40px 80px rgba(0, 0, 0, 0.6);
+    box-shadow: -40px 0px 40px 80px rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 35px;
+    float: left; }
+
+.bookSuggestionContainer {
+  overflow-x: hidden;
+  white-space: nowrap; }
+  .bookSuggestionContainer .bookSuggestion {
+    display: inline-block;
+    width: 225px;
     margin: 10px 0px;
-    padding: 60px 40px 100px 40px;
-    border: 1px solid #4d4d4d;
-    background-size: cover;
-    background-position: 40% 50%;
-    background-repeat: no-repeat; }
-    #search .bookSuggestion span {
-      -webkit-box-shadow: -40px 0px 40px 80px rgba(0, 0, 0, 0.6);
-      -moz-box-shadow: -40px 0px 40px 80px rgba(0, 0, 0, 0.6);
-      box-shadow: -40px 0px 40px 80px rgba(0, 0, 0, 0.6);
+    padding: 40px 20px 80px 20px; }
+    .bookSuggestionContainer .bookSuggestion span {
+      min-width: 225px;
+      -webkit-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
+      -moz-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
+      box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
       background-color: rgba(0, 0, 0, 0.6);
       color: white;
-      font-size: 35px;
-      float: left; }
+      font-size: 26px;
+      float: none;
+      text-align: center; }
 
 input.mainSearchInput {
-  box-shadow: none;
-  outline: none;
-  background-color: transparent;
-  display: inline-block;
-  border: none;
   color: #c42020;
   line-height: 80px;
   font-weight: 700;
+  width: 100%;
   font-size: 36px;
-  margin: 10px; }
+  padding: 10px; }
   @media screen and (min-width: 768px) {
     input.mainSearchInput {
       font-size: 65px;
-      margin: 20px 40px; } }
-  input.mainSearchInput:focus {
-    outline: none; }
+      padding: 20px 40px; } }
 
 ::-webkit-input-placeholder {
   color: #4d4d4d; }
@@ -5573,26 +5587,23 @@ input.mainSearchInput {
 :-ms-input-placeholder {
   color: #4d4d4d; }
 
-.bigfatsearch {
+.mainSearchInputContainer {
   display: block;
   width: 100%;
-  min-height: 100px;
-  background-color: #1a1a1a;
-  border: solid 1px black;
-  border-bottom: solid 4px black; }
-  .bigfatsearch .x {
+  min-height: 100px; }
+  .mainSearchInputContainer .x {
     padding: 0px;
     font-size: 65px;
     right: 20px;
     top: 0px; }
-  .bigfatsearch i {
+  .mainSearchInputContainer i {
     margin-left: 30px;
     color: gray;
     display: none; }
-    .bigfatsearch i.flaticon-magnifier10:before {
+    .mainSearchInputContainer i.flaticon-magnifier10:before {
       font-size: 50px; }
     @media screen and (min-width: 768px) {
-      .bigfatsearch i {
+      .mainSearchInputContainer i {
         display: inline-block; } }
 
 #login h3 {
