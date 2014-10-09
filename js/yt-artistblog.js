@@ -298,7 +298,7 @@ App.Views.Nav = Parse.View.extend({
 		}
 	},
     render: function () {
-    	$('#nav-main').html(this.template());
+    	$('#navs').html(this.template());
     }
 });
 
