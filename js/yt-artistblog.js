@@ -407,7 +407,7 @@ App.Views.TattoosPage = Parse.View.extend({
 	initialize: function(books){
 		console.log('Tattos page init with = ');///clear
 		console.log(books);///clear
-		_.bindAll(this, 'showBookFilters', 'hideBookFilters', 'focusIn', 'scrollChecker', 'render');
+		_.bindAll(this, 'showBookFilters', 'hideBookFilters', 'focusIn', 'scrollChecker', 'render', 'addBookSuggestion');
 		App.on('app:scroll', this.scrollChecker);
 		App.on('app:keypress', this.focusIn);
 
@@ -438,8 +438,10 @@ App.Views.TattoosPage = Parse.View.extend({
 		App.off('app:keypress', this.focusIn);
 	},
 	events: {
-		'click .toggleBookFilters':	'showBookFilters',
-		'click .toggleBookFilters.active':	'hideBookFilters'
+		'click .toggleBookFilters': 'showBookFilters',
+		'click .toggleBookFilters.active': 'hideBookFilters',
+		'click .filterTitle': 'removeQuery',
+		'click .bookSuggestion': 'addBookSuggestion'
 	},
 	showBookFilters: function(){
 		this.$('.toggleBookFilters, .filterHeader, .bookFilterContainer').addClass('active');
@@ -451,6 +453,37 @@ App.Views.TattoosPage = Parse.View.extend({
 		this.$('.bookFilterContainer').slideUp();
 		this.$('.toggleBookFilters').html('Show Filters');
 	},
+	addQuery: function(query){
+		if($.inArray(query, this.query) > -1) {
+			this.$( "span.filterTitle:contains("+query+")" ).animate({
+				opacity: 0
+			}, 200).delay(400).animate({
+				opacity: 1
+			}, 600);
+		} else {
+			this.query.push(query);
+			this.collectionReset();
+			this.addQueryTitle(query);
+			this.loadMore();
+		}
+	},
+	addQueryTitle: function(title){
+		this.$('.tattoosTitle').html('');
+		this.$('.filterTitles').append('<span class="filterTitle">'+title+'</span>');
+	},
+	removeQuery: function(e){
+		this.query = _.without(this.query, e.currentTarget.textContent);
+		this.collectionReset();
+		this.loadMore();
+		e.currentTarget.remove();
+		if(this.query.length === 0){
+			this.$('.tattoosTitle').html('Tattoos');
+		}
+	},
+	addBookSuggestion: function(e){
+		e.currentTarget.remove();
+		this.addQuery($(e.currentTarget)[0].textContent);
+	},
 	focusIn: function(){
 		this.$('input.bookFilterInput').focus();
 	},
@@ -459,9 +492,7 @@ App.Views.TattoosPage = Parse.View.extend({
 		console.log(booksArray);///clear
 		// accepts an array and adds the book filter ///clear
 		var that = this;
-     	_.each(booksArray, function(book) {
-			that.$('input.bookFilterInput').tagsinput('add', book);
-        });
+     	// _.each(booksArray, that.addQueryTitle(book););
 	},
 	scrollChecker: function(){
 		if (this.moreToLoad && $('#tattoosPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
@@ -482,9 +513,8 @@ App.Views.TattoosPage = Parse.View.extend({
 				// suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
 			}
 		}).attr('placeholder','Enter any book').on('typeahead:selected', function (obj,datum) {
-			// TOODO ~ Wire this up
-			// input.tagsinput('add', datum.books);
-			// input.tagsinput('input').typeahead('val', '');
+			that.addQuery(datum.books);
+			input.typeahead('val', '');
 		}).on('focus', function () {
 			that.$('.tt-input').attr('placeholder','');
 		}).on('blur', function () {
@@ -493,11 +523,16 @@ App.Views.TattoosPage = Parse.View.extend({
 	},
 	queryReset: function(){
 		this.query = [];
+		this.collectionReset();
+		this.$('.reset').fadeOut();
+		this.$('.filterTitle').remove();
+		this.$('.tattoosTitle').html('Tattoos');
+		return this;
+	},
+	collectionReset: function(){
 		this.collection.reset();
 		this.collection.page = 0;
 		this.moreToLoad = true;
-		this.$('.reset').fadeOut();
-		return this;
 	},
 	loadMore: function(){
 		var that = this;
@@ -523,7 +558,6 @@ App.Views.TattoosPage = Parse.View.extend({
 		  				that.moreToLoad = false;
 			    		that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
 			    		that.$('.reset').on('click', function(){
-							$('input.bookFilterInput').tagsinput('removeAll');
 							that.queryReset().loadMore();
 							that.$('.reset').fadeOut();
 			    		}).fadeIn();
@@ -1368,7 +1402,7 @@ App.Views.Tattoos = Parse.View.extend({
 		this.renderTattoosByBooks(this.bookFilters);
 	},
 	removeBookFilter: function(book){
-		this.bookFilters = _.without(this.bookFilters, book)
+		this.bookFilters = _.without(this.bookFilters, book);
 		this.renderTattoosByBooks(this.bookFilters);
 	},
 	resetFilters: function(){

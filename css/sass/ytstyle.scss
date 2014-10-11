@@ -989,14 +989,31 @@ span.hover-content {
     }
     .filterTitles {
         padding: 20px 0px;
-        .filterTitle {
-            position: absolute;
-            color: white;
-
-            font-size: 36px;
+        .tattoosTitle, .filterTitle {
+            position: inline-block;
+            font-size: 28px;
             @media screen and (min-width: $screen-sm) {
-                font-size: 55px;
+                font-size: 45px;
             }
+        }
+        .tattoosTitle {
+            color: white;
+        }
+        .filterTitle {
+            color: white;
+            &:nth-child(n + 4) {
+                &:before { 
+                    content: " + ";
+                    color: $gray-dark;
+                }
+            }
+            @include transition(all 0.4s ease);
+            &:hover {
+                @include transition(all 0.8s ease);
+                text-decoration: line-through;
+                color: $brand-primary;
+            }
+
         }
     }
     .bookFilterContainer {
@@ -1071,6 +1088,9 @@ span.hover-content {
     //     }
     // }
 }
+.filterInputContainer {
+    margin: 40px 0px;
+}
 .filterInputContainer, .filterInputContainer > span.twitter-typeahead  {
     width: 100%;
     color: white;
@@ -1079,7 +1099,6 @@ span.hover-content {
         padding-left: 15px;
     }
     input {
-        margin: 40px 0px;
         padding: 20px;
         min-width: 100%;
         @media screen and (min-width: $screen-sm) {

@@ -4767,13 +4767,29 @@ span.hover-content {
   transition: all 0.8s ease; }
 #tattoosPage .filterTitles, #artistsPage .filterTitles {
   padding: 20px 0px; }
-  #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .filterTitle {
-    position: absolute;
-    color: white;
-    font-size: 36px; }
+  #tattoosPage .filterTitles .tattoosTitle, #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .tattoosTitle, #artistsPage .filterTitles .filterTitle {
+    position: inline-block;
+    font-size: 28px; }
     @media screen and (min-width: 768px) {
-      #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .filterTitle {
-        font-size: 55px; } }
+      #tattoosPage .filterTitles .tattoosTitle, #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .tattoosTitle, #artistsPage .filterTitles .filterTitle {
+        font-size: 45px; } }
+  #tattoosPage .filterTitles .tattoosTitle, #artistsPage .filterTitles .tattoosTitle {
+    color: white; }
+  #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .filterTitle {
+    color: white;
+    -webkit-transition: all 0.4s ease;
+    transition: all 0.4s ease; }
+    #tattoosPage .filterTitles .filterTitle:nth-child(n + 4):before, #artistsPage .filterTitles .filterTitle:nth-child(n + 4):before {
+      content: " + ";
+      color: #4d4d4d; }
+    #tattoosPage .filterTitles .filterTitle:hover, #artistsPage .filterTitles .filterTitle:hover {
+      -webkit-transition: all 0.8s ease;
+      transition: all 0.8s ease;
+      text-decoration: line-through;
+      color: #c42020; }
+
+.filterInputContainer {
+  margin: 40px 0px; }
 
 .filterInputContainer, .filterInputContainer > span.twitter-typeahead {
   width: 100%;
@@ -4782,7 +4798,6 @@ span.hover-content {
   .filterInputContainer i, .filterInputContainer > span.twitter-typeahead i {
     padding-left: 15px; }
   .filterInputContainer input, .filterInputContainer > span.twitter-typeahead input {
-    margin: 40px 0px;
     padding: 20px;
     min-width: 100%; }
     @media screen and (min-width: 768px) {
