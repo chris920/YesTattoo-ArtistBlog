@@ -407,7 +407,7 @@ App.Views.TattoosPage = Parse.View.extend({
 	initialize: function(books){
 		console.log('Tattos page init with = ');///clear
 		console.log(books);///clear
-		_.bindAll(this, 'showBookFilters', 'hideBookFilters', 'focusIn', 'scrollChecker', 'render', 'addBookSuggestion');
+		_.bindAll(this, 'shiftRight', 'shiftLeft', 'showBookFilters', 'hideBookFilters', 'focusIn', 'scrollChecker', 'render', 'addBookSuggestion');
 		App.on('app:scroll', this.scrollChecker);
 		App.on('app:keypress', this.focusIn);
 
@@ -438,10 +438,28 @@ App.Views.TattoosPage = Parse.View.extend({
 		App.off('app:keypress', this.focusIn);
 	},
 	events: {
+		'click .arrow.right': 'shiftRight',
+		'click .arrow.left': 'shiftLeft',
 		'click .toggleBookFilters': 'showBookFilters',
 		'click .toggleBookFilters.active': 'hideBookFilters',
 		'click .filterTitle': 'removeQuery',
 		'click .bookSuggestion': 'addBookSuggestion'
+	},
+	addPopularBooks: function(){
+		//TODO ~ Popular books should be dynamic from the server. It should continually add book suggestions as the user scrolls.
+		$('.bookSuggestionScroll').append(_.template($("#popularBookDemo").html()));
+	},
+	shiftRight: function(){
+		console.log('shiftRight triggered');///clear
+		this.$(".bookSuggestionScroll").animate({scrollLeft: '+='+$('.bookSuggestionScroll').width()}, 750);
+
+		//TODO ~ checks if there is enough books in the slider, adds popular ones if not.
+		this.addPopularBooks();
+	},
+	shiftLeft: function(){
+		console.log('shiftLeft triggered');///clear
+		this.$(".bookSuggestionScroll").animate({scrollRight: '+='+$('.bookSuggestionScroll').width()}, 750);
+		//TODO ~ checks if there is no room to scroll, hides the arrow.
 	},
 	showBookFilters: function(){
 		this.$('.toggleBookFilters, .filterHeader, .bookFilterContainer').addClass('active');
@@ -466,6 +484,7 @@ App.Views.TattoosPage = Parse.View.extend({
 			this.addQueryTitle(query);
 			this.loadMore();
 		}
+		//TODO ~ else if there is 4 total filters, remove the last one.
 	},
 	addQueryTitle: function(title){
 		this.$('.tattoosTitle').html('');

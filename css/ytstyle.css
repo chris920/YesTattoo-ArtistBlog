@@ -4786,7 +4786,8 @@ span.hover-content {
       -webkit-transition: all 0.8s ease;
       transition: all 0.8s ease;
       text-decoration: line-through;
-      color: #c42020; }
+      color: #c42020;
+      cursor: pointer; }
 
 .filterInputContainer {
   margin: 40px 0px; }
@@ -4810,6 +4811,37 @@ span.hover-content {
       .filterInputContainer .tt-dropdown-menu, .filterInputContainer > span.twitter-typeahead .tt-dropdown-menu {
         min-width: 50%;
         margin-left: 25%; } }
+
+.arrow {
+  position: absolute;
+  width: 10%;
+  top: 0px;
+  bottom: 0px; }
+  .arrow img {
+    position: absolute;
+    top: 45%;
+    z-index: 5;
+    display: inline-block; }
+  .arrow.right {
+    background-image: -webkit-linear-gradient(left, rgba(26, 26, 26, 0), rgba(26, 26, 26, 0.8) 50%, #1a1a1a);
+    background-image: linear-gradient(to right, rgba(26, 26, 26, 0), rgba(26, 26, 26, 0.8) 50%, #1a1a1a);
+    background-repeat: no-repeat;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#001A1A1A', endColorstr='#FF1A1A1A', GradientType=1);
+    background-repeat: repeat-x;
+    right: 0px;
+    left: auto; }
+    .arrow.right img {
+      right: 5px; }
+  .arrow.left {
+    background-image: -webkit-linear-gradient(left, #1a1a1a, rgba(26, 26, 26, 0.8) 50%, rgba(26, 26, 26, 0));
+    background-image: linear-gradient(to right, #1a1a1a, rgba(26, 26, 26, 0.8) 50%, rgba(26, 26, 26, 0));
+    background-repeat: no-repeat;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF1A1A1A', endColorstr='#001A1A1A', GradientType=1);
+    background-repeat: repeat-x;
+    left: 0px;
+    right: auto; }
+    .arrow.left img {
+      left: 5px; }
 
 .grayInput {
   box-shadow: none;
@@ -5560,23 +5592,25 @@ button.toggleBookFilters {
     float: left; }
 
 .bookSuggestionContainer {
-  overflow-x: hidden;
-  white-space: nowrap; }
-  .bookSuggestionContainer .bookSuggestion {
-    display: inline-block;
-    width: 225px;
-    margin: 10px 0px;
-    padding: 40px 20px 80px 20px; }
-    .bookSuggestionContainer .bookSuggestion span {
-      min-width: 225px;
-      -webkit-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
-      -moz-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
-      box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
-      background-color: rgba(0, 0, 0, 0.6);
-      color: white;
-      font-size: 26px;
-      float: none;
-      text-align: center; }
+  position: relative; }
+  .bookSuggestionContainer .bookSuggestionScroll {
+    overflow-x: hidden;
+    white-space: nowrap; }
+    .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion {
+      display: inline-block;
+      width: 225px;
+      margin: 10px 0px;
+      padding: 40px 20px 80px 20px; }
+      .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion span {
+        min-width: 225px;
+        -webkit-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
+        -moz-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
+        box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        font-size: 26px;
+        float: none;
+        text-align: center; }
 
 input.mainSearchInput {
   color: #c42020;
