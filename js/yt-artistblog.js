@@ -3194,7 +3194,7 @@ App.controller = (function () {
 		App.on('app:featured', function (page) { self.featured(page); });
 		App.on('app:artists', function (options) { self.artists(options); });
 		App.on('app:tattoos', function (books) { self.tattoos(books); });
-		App.on('app:tattoosByBook', function (books) { self.tattoosByBook(books); });
+		// App.on('app:tattoosByBook', function (books) { self.tattoosByBook(books); });
 		App.on('app:login', function () { self.login(); });
 		App.on('app:forgot', function () { self.forgot(); });
 		App.on('app:about', function () { self.about(); });
@@ -3225,7 +3225,7 @@ App.controller = (function () {
 		App.off('app:featured');
 		App.off('app:artists');
 		App.off('app:tattoos');
-		App.off('app:tattoosByBook');
+		// App.off('app:tattoosByBook');
 		App.off('app:login');
 		App.off('app:forgot');
 		App.off('app:about');
@@ -3296,24 +3296,27 @@ App.controller = (function () {
 		console.log('controller tattoos');
 		var tattoosPage = new App.Views.TattoosPage(books);
 		App.viewManager.show(tattoosPage);
-		if (books) {
-			console.log('tattoos by book from tattoos controller');///clear
-			controller.tattoosByBook(books);
-		} else {
-			Parse.history.navigate('tattoos', { trigger: false });
-		}
-	}
 
-	controller.tattoosByBook = function (books) {
-		console.log('controller tattoosByBook');///clear
+		var booksRoute;
 		if (books instanceof Array) {
-			var booksRoute = books.join('+').split(" ").join("-");
+			booksRoute = books.join('+').split(" ").join("-");
 		} 
 		else if (typeof(books) === 'string') {
-			var booksRoute = books;
+			booksRoute = books;
 		}
-		Parse.history.navigate('tattoos/' + booksRoute, { trigger: false });
+		Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
 	}
+
+	// controller.tattoosByBook = function (books) {
+	// 	console.log('controller tattoosByBook');///clear
+		// if (books instanceof Array) {
+		// 	var booksRoute = books.join('+').split(" ").join("-");
+		// } 
+		// else if (typeof(books) === 'string') {
+		// 	var booksRoute = books;
+		// }
+	// 	Parse.history.navigate('tattoos/' + booksRoute, { trigger: false });
+	// }
 
 	controller.login = function () {
 		console.log('controller login');
