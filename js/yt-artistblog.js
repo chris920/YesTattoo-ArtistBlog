@@ -1824,17 +1824,6 @@ App.Views.Landing = Parse.View.extend({
 		$('.navs').hide();
 		this.initiateArtists();
 
-		/// Workaround for getting a random artist. Will not scale over 1,000 due to query constraint....
-		// TODO Replace this with cloud code function, give all featured artists an incrementing id
-		// ... then you can query max fid by sorting in descending order and using .first()
-		// #20 Add auto-incrementing featured artists id [to better support random artists query]
-		// I would also embed this first into the randomFeaturedArtists query for reusability
-		var query = new Parse.Query(App.Models.ArtistProfile);
-		query.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
-		query.count().then(function(count){
-			that.count = count;
-		});
-
 		_.bindAll(this, 'getArtists', 'continue', 'continueToFeatured','initiateArtists', 'hideLanding');
 	    // $(window).bind('scroll',this.continueToFeatured);
 	    App.on('app:scroll', this.continueToFeatured);
@@ -1913,7 +1902,7 @@ App.Views.Landing = Parse.View.extend({
 			});
 	},
 	getArtists: function(){
-		this.count = this.count || 50; // total number of artist profiles
+		// this.count = this.count || 50; // total number of artist profiles
 		var that = this;
 		// var that = this,
 	 //    requestCount = 10, // number of random artists to query
@@ -1933,7 +1922,7 @@ App.Views.Landing = Parse.View.extend({
 		//     console.log(query2);
 		// }
 		// return Parse.Query.or.apply(this, queries).find()
-		App.query.randomFeaturedArtists({ limit: 10, count: this.count })
+		App.query.randomFeaturedArtists({ limit: 10 })
 			.then(function (artists) {
 				clearInterval(that.artistTimer);
 				that.collection.reset(artists);
@@ -3526,7 +3515,7 @@ App.query = (function QueryHandler() {
 	*/
 	this.featuredArtists = function (options) {
 		var query = new Parse.Query('ArtistProfile');
-		query.notEqualTo('featuremonth', '')
+		query.exists('featureId');
 		query.skip(options.skip || 0);
 		query.limit(options.limit || 1000);
 		query.descending("featuremonth,createdAt");
@@ -3537,11 +3526,15 @@ App.query = (function QueryHandler() {
 		Query random featured artists
 	*/
 	this.randomFeaturedArtists = function (options) {
-		var query = new Parse.Query(App.Models.ArtistProfile);
-		query.notEqualTo('featuremonth','');
-		query.skip(Math.floor(Math.random() * options.count)); // <- Replace options.count with pre-query once #20 implemented
-		query.limit(options.limit || 1000);
-		return query.find();
+		var query = new Parse.Query('ArtistProfile');
+		query.exists('featureId');
+		query.descending('featureId');
+		return query.first().then( function (result) {
+			query.skip(Math.floor(Math.random() * result.attributes.featureId));
+			query.limit(options.limit || 1000);
+			console.log('query test');
+			return query.find();
+		});
 	}
 
 	return this;
