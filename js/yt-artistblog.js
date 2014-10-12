@@ -2825,14 +2825,29 @@ App.Views.Feedback = Parse.View.extend({
 });
 
 ///////// Collections
-App.Collections.Artists = Parse.Collection.extend({
+
+// A temp fix for the duplicate id exception being thrown, until Parse.Collection 
+// is updated inline with Backbone.Collection, or a better solution is found
+App.Collection = Parse.Collection.extend({
+	// Override add method, catch duplicate id error to stop app from crashing
+	add: function (models, options) {
+		try {
+			Parse.Collection.prototype.add.call(this, models, options);
+		}
+		catch (e) {
+			console.error('Duplicate collection id : ' + e);
+		}
+	}
+});
+
+App.Collections.Artists = App.Collection.extend({
 	initialize: function(){
 		this.page = 0;
 	},
 	model: App.Models.User
 });
 
-App.Collections.Tattoos = Parse.Collection.extend({
+App.Collections.Tattoos = App.Collection.extend({
 	initialize: function(){
 		this.page = 0;
 	},
@@ -2851,7 +2866,7 @@ App.Collections.Tattoos = Parse.Collection.extend({
 	}
 });
 
-App.Collections.Adds = Parse.Collection.extend({
+App.Collections.Adds = App.Collection.extend({
 	model: App.Models.Add,
 	initialize: function(){
 
@@ -2878,14 +2893,14 @@ App.Collections.Adds = Parse.Collection.extend({
 	}
 });
 
-App.Collections.Books = Parse.Collection.extend({
+App.Collections.Books = App.Collection.extend({
 	model: App.Models.Book,
 	initialize: function(){
 
 	}
 });
 
-App.Collections.FeaturedArtists = Parse.Collection.extend({
+App.Collections.FeaturedArtists = App.Collection.extend({
 	model: App.Models.User,
 	page: 0
 });
