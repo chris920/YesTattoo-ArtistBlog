@@ -2359,9 +2359,10 @@ App.Views.Interview = Parse.View.extend({
 		this.profile = App.profile;
 	},
     events: {
-    	"submit form.interviewForm": 	"saveInterview"
+    	"submit form.interviewForm": 	"saveInterview",
+    	'submit form.featureForm': 'featureArtist'
     },
-    saveInterview: function(e){
+    saveInterview: function (e){
     	e.preventDefault();
     	this.profile.set("q1", this.$("#editQuestion1").val());
     	this.profile.set("a1", this.$("#editAnswer1").val());
@@ -2374,8 +2375,6 @@ App.Views.Interview = Parse.View.extend({
     	this.profile.set("q5", this.$("#editQuestion5").val());
     	this.profile.set("a5", this.$("#editAnswer5").val());
     	this.profile.set("author", this.$("#editAuthor").val());
-    	this.profile.set("featuremonth", this.$("#editFeatureMonth").val());
-    	this.profile.set("featureyear", this.$("#editFeatureYear").val());
 		this.profile.save(null,{
 			success: function(profile) {
 				// flash the success class
@@ -2389,9 +2388,21 @@ App.Views.Interview = Parse.View.extend({
 			}
 		});
     },
-
+    featureArtist: function (e) {
+    	e.preventDefault();
+    	var self = this;
+    	Parse.Cloud.run('featureArtist', { id: this.profile.id }, {
+    		success: function (result) {
+    			self.profile = result;
+    			self.render();
+    		},
+    		error: function (error) {
+    			$(".featureForm .error").html(error.message).show();
+    		}
+    	})
+    },
 	render: function(){
-		this.$el.html(this.template(this.profile.attributes));
+		this.$el.html(this.template({ model: this.profile.attributes }));
 		return this;
 	}
 });

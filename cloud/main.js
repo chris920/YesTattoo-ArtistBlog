@@ -39,103 +39,81 @@ Parse.Cloud.define("books", function(request, response) {
 });
 
 
-Parse.Cloud.beforeSave('ArtistProfile', function (request, response) {
+Parse.Cloud.define('featureArtist', function (request, response) {
 
-  var profile = request.object;
+  var artist;
 
-  var imageJob = new Parse.Promise();
-  var featuredJob = new Parse.Promise();
-  var jobs = [];
-  jobs.push(imageJob);
-  jobs.push(featuredJob);
+  var query = new Parse.Query('ArtistProfile');
+  query.get(request.params.id).then(function (profile) {
 
-  // Has profile image changed ?
-  if (profile.dirty("prof")) {
+    artist = profile;
 
-    // process image...
-    Parse.Cloud.httpRequest({
-      url: profile.get("prof").url()
-    })
-    .then(function(response) {
-      var image = new Image();
-      return image.setData(response.buffer);
-    })
-    .then(function(image) {
-      // Crop the image to the smaller of width or height.
-      var size = Math.min(image.width(), image.height());
-      return image.crop({
-        left: (image.width() - size) / 2,
-        top: (image.height() - size) / 2,
-        width: size,
-        height: size
-      });
-    })
-    .then(function(image) {
-      // Resize the image to 64x64.
-      return image.scale({
-        width: 188,
-        height: 188
-      });
-    })
-    .then(function(image) {
-      // Make sure it's a JPEG to save disk space and bandwidth.
-      return image.setFormat("JPEG");
-    })
-    .then(function(image) {
-      // Get the image data in a Buffer.
-      return image.data();
-    })
-    .then(function(buffer) {
-      // Save the image into a new file.
-      var base64 = buffer.toString("base64");
-      var cropped = new Parse.File("thumbnail.jpg", { base64: base64 });
-      return cropped.save();
-    })
-    .then(function(cropped) {
-      // Attach the image file to the original object.
-      profile.set("profThumb", cropped);
-    })
-    .then(function(result) {
-      imageJob.resolve('Processing complete');
-    }, function(error) {
-      imageJob.reject(error);
-    });
-  }
-  else {
-    imageJob.resolve('Nothing to process');
-  }
-
-  // If featuremonth changes, and has value assigned
-  if (profile.dirty('featuremonth') && profile.attributes.featuremonth) { 
-
-    // Newly featured artist, we need to set their order in the queue
-    // Query the last featured artist...
-    var query = new Parse.Query('ArtistProfile');
+    query = new Parse.Query('ArtistProfile');
     query.exists('featureId');
     query.descending('featureId');
-    query.first().then( function (result) {
-        // increment id, and set date artist will be featured
-        profile.set('featureId', result.attributes.featureId + 1);
-        profile.set('featureDate', new Date(result.attributes.featureDate.getTime() + 86400000));
-    })
-    .then(function(result) {
-      featuredJob.resolve('Processing complete');
-    }, function(error) {
-      featuredJob.reject(error);
-    });
+    return query.first();
+  })
+  .then( function (result) {
+
+    // increment id, and set date artist will be featured
+    artist.set('featureId', result.attributes.featureId + 1);
+    artist.set('featureDate', new Date(result.attributes.featureDate.getTime() + 86400000));
+    return artist.save();
+  })
+  .then(function(result) {
+    response.success(result);
+  }, function(error) {
+    response.error(error);
+  });
+});
+
+Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
+  var profile = request.object;
+
+  if (!profile.dirty("prof")) {
+    // The profile photo isn't being modified.
+    response.success();
+    return;
   }
-  else {
-    featuredJob.resolve('Nothing to process');
-  }
-  
-  // Wait for all jobs to finish first, then return response
-  Parse.Promise.when(jobs).then(function (result) {
-      console.log('complete success');
-      response.success();
-    }, function(error) {
-      console.log('error');
-      response.error(error);
+  Parse.Cloud.httpRequest({
+    url: profile.get("prof").url()
+  }).then(function(response) {
+    var image = new Image();
+    return image.setData(response.buffer);
+  }).then(function(image) {
+    // Crop the image to the smaller of width or height.
+    var size = Math.min(image.width(), image.height());
+    return image.crop({
+      left: (image.width() - size) / 2,
+      top: (image.height() - size) / 2,
+      width: size,
+      height: size
     });
+  }).then(function(image) {
+    // Resize the image to 64x64.
+    return image.scale({
+      width: 188,
+      height: 188
+    });
+  }).then(function(image) {
+    // Make sure it's a JPEG to save disk space and bandwidth.
+    return image.setFormat("JPEG");
+  }).then(function(image) {
+    // Get the image data in a Buffer.
+    return image.data();
+  }).then(function(buffer) {
+    // Save the image into a new file.
+    var base64 = buffer.toString("base64");
+    var cropped = new Parse.File("thumbnail.jpg", { base64: base64 });
+    return cropped.save();
+  }).then(function(cropped) {
+    // Attach the image file to the original object.
+    profile.set("profThumb", cropped);
+  }).then(function(result) {
+    response.success();
+  }, function(error) {
+    response.error(error);
+  });
 });
 
 
