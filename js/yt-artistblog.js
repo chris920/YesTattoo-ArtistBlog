@@ -754,6 +754,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	showMap: function(){
 		this.initializeLocationPicker();
 		this.$('.artistsResultContainer, .mapContainer, .toggleMap').addClass('active');
+		this.$('.artists').removeClass('lg8container');
 
 		if(Parse.User.current() && App.profile.attributes.locationName){
 			this.$('.byYou').html(App.profile.attributes.locationName.split(",").splice(0,1).join("")).fadeIn();
@@ -761,6 +762,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	},
 	hideMap: function(){
 		this.$('.artistsResultContainer, .mapContainer, .toggleMap').removeClass('active');
+		this.$('.artists').addClass('lg8container');
 	},
 	byYou: function(){
 		this.$('.byYou').attr('disabled', 'disabled');
