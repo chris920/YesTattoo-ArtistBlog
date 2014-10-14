@@ -115,7 +115,6 @@
     </script>
 
     <!-- Search Page-->
-  <!-- <i class="flaticon-magnifier10"></i> -->
     <script type="text/html" id="searchTemplate">
 
       <div class="lg8container">
@@ -270,46 +269,16 @@
 
     </script>
 
-    <!-- Artists page -->
-    <script type="text/html" id="artistsTemplate">
-      <div class="container">
-        <div class="searchFilterOptions">
-          <input type="text" class="typeahead bookFilterInput" placeholder="">
-          <button id="" class="btn-submit changeLocationButton">Set location </button>
-        </div>
-        <hr>
-      </div>
-
-      <div class="changeLocation" style="display: none">
-          <div class="changeLocationOptions">            
-            <div class="error text-center" style="display:none"></div>
-            <div class="input-group">
-              <span class="input-group-addon">Find Artists Near </span>
-              <input type="text" class="form-control" id="changeAddressInput" placeholder="Location">
-              <span class="input-group-btn">
-                <button class="btn-submit byYou" type="button" style="display:none"></button>
-                <button class="btn-submit worldwide" type="button">Worldwide</button>
-                <button class="btn-submit cancel" type="button">X</button>
-              </span>
-            </div>
-            
-          </div>
-          <div id="changeAddressMap" style="width: 100%; height: 540px;"></div>
-      </div>
-
-      <div class="container">
-        <div class="artists"></div>
-      </div>
-
-    </script>
 
     <!-- Book filter header -->
     <script type="text/html" id="bookFilterTemplate">
       <div class="filterHeader">
         <div class="container">
           <div class="row filterTitles">
+            <div class="filterOptions">
+              <button class="btn-submit toggleBookFilter">Book Filters</button>
+            </div>
             <span class="tattoosTitle">Tattoos</span>
-            <button class="btn-submit toggleBookFilter">Book Filters</button>
           </div>
 
           <div class="bookFilterContainer" style="display: none;">
@@ -349,14 +318,47 @@
       <div class="btn-tag bookSuggestion" style="background-image: url('img/book-animal.jpg');"><span>Animal</span></div>
     </script>
 
+
     <!-- Tattoos page -->
     <script type="text/html" id="tattoosPageTemplate">
       <div class="bookFilterHeader"></div>
-
       <div class="container">
         <div class="row tattoos"></div>
         <div class="reset" style="display:none"></div>
       </div>
+    </script>
+
+
+
+
+
+
+    <!-- Artists page -->
+    <script type="text/html" id="artistsTemplate">
+      <div class="artistsResultContainer active">
+        <div class="bookFilterHeader"></div>
+
+        <div class="mapContainer">
+          <div class="changeLocation">
+            <div class="changeLocationOptions">            
+              <div class="error text-center" style="display:none"></div>
+              <div class="input-group">
+                <input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">
+                <span class="input-group-btn">
+                  <button class="btn-submit byYou" type="button" style="display:none"></button>
+                  <button class="btn-submit worldwide" type="button" style="display:none">Worldwide</button>
+                  <button class="btn-submit cancel" type="button">X</button>
+                </span>
+              </div>
+            </div>
+            <div id="changeAddressMap" style="width: 100%; height: 540px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="artists"></div>
+      </div>
+
     </script>
 
 

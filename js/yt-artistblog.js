@@ -562,14 +562,13 @@ App.Views.BookFilter = Parse.View.extend({
 App.Views.TattoosPage = Parse.View.extend({
 	template: _.template($("#tattoosPageTemplate").html()),
 	id: 'tattoosPage',
-	initialize: function(books){
+	initialize: function(options){
 		console.log('TattoosPage init');///clear
 
-		if (books) {
+		if (options && options.books) {
 			console.log('tattoosPage init with books');///clear
 	    	var that = this;
-	    	this.initialBooks = books;
-	    	console.log(this.initialBooks);///clear
+	    	this.initialBooks = options.books;
 		}
 
 		_.bindAll(this, 'scrollChecker', 'render', 'bookUpdate');
@@ -663,93 +662,61 @@ App.Views.ArtistsPage = Parse.View.extend({
 	template: _.template($("#artistsTemplate").html()),
 	id: 'artistsPage',
 	initialize: function(options){
-		_.bindAll(this, 'initializeLocationPicker', 'queryReset', 'scrollChecker', 'showChangeLocation', 'render');
+		_.bindAll(this, 'initializeLocationPicker', 'queryReset', 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'render');
 
-		//Accepts the open location option and wraps the render function ///clear
+	    var that = this; 
 		if (options && options.show === 'location') {
 			console.log('ArtistsPage init with location');///clear
-	       var that = this; 
 	        this.render = _.wrap(this.render, function(render) { 
 	            render();
-	            that.showChangeLocation(); 
+	            that.showMap();
 	            return that;
 	        });
 		}
+		if (options && options.books) {
+			console.log('ArtistsPage init with books');///clear
+	    	this.initialBooks = options.books;
+		}
 
 		App.on('app:scroll', this.scrollChecker);
-		// App.on('app:keypress', this.focusIn);
+		App.on('app:book-update', this.bookUpdate);
 	},
 	disable: function () {
 		console.log('ArtistsPage disabled');///clear
-		this.off();
 		App.off('app:scroll', this.scrollChecker);
-		// App.off('app:keypress', this.focusIn);
+		App.off('app:book-update', this.bookUpdate);
 	},
 	events: {
-	    'click .changeLocationButton': 	'showChangeLocation',
+	    'click .toggleMap': 			'showMap',
+	    'click .toggleMap.active': 		'hideMap',
 	    'click .byYou': 				'byYou',
 	    'click .worldwide': 			'setWorldwide',
-	    'click .cancel': 				'hideChangeLocation',
-	    'focus #changeAddressInput': 	'initializeLocationPicker'
+	    'click .cancel': 				'hideMap',
+	    'focus #changeAddressInput': 	'initializeLocationPicker' //TODO ~ map will be activated with showMap
 	},
 	scrollChecker: function(){
 		if (this.moreToLoad && $('#artistsPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
 			this.moreToLoad = false;
 			this.collection.page++;
 			this.loadMore();
-		}
+		} 
 	},
-	typeaheadInitialize: function(){
-		var that = this;
-		var input = this.$('input.bookFilterInput');
-		input.tagsinput({
-			tagClass: 'btn-tag',
-			trimValue: true,
-			maxChars: 20,
-			maxTags: 5,
-			confirmKeys: [13, 9, 39, 40, 188],
-			onTagExists: function(item, $tag) {
-				$tag.addClass('blured');
-				window.setTimeout(function(){$tag.removeClass('blured');}, 1000);
-			}
-		});
-		input.tagsinput('input').typeahead(null, {
-			name: 'books',
-			displayKey: 'books',
-			source: App.booktt.ttAdapter(),
-			templates: {
-				// empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
-				// suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
-			}
-		}).attr('placeholder','Artists').on('typeahead:selected', function (obj,datum) {
-			input.tagsinput('add', datum.books);
-			input.tagsinput('input').typeahead('val', '');
-		}).on('focus', function () {
-			that.$('.tt-input').attr('placeholder','');
-		}).on('blur', function () {
-			if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
-			    that.$('.tt-input').attr('placeholder','').val('');
-			} else {
-				that.$('.tt-input').attr('placeholder','+').val('');
-			}
-		});
-		input.on('itemAdded', function(event) {
-			that.queryReset();
-			that.query = input.tagsinput('items');
-			that.loadMore();
-		}).on('itemRemoved', function(event){
-			that.queryReset();
-			that.query = input.tagsinput('items');
-			that.loadMore();
-		});
-		window.setTimeout(function(){
-			$('.bookSuggestion').on('click', function(e){
-				input.tagsinput('add', e.target.textContent);
-			});
-		}, 400);
+	bookUpdate: function(){
+		this.collection.reset();
+		this.collection.page = 0;
+		this.moreToLoad = true;
+		this.loadMore();
+
+		var booksRoute;
+		if (this.bookFilterView.query) {
+			booksRoute = this.bookFilterView.query.join('+').split(" ").join("-");
+		}
+		Parse.history.navigate('artists' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
 	},
 	initializeLocationPicker: function(){
 		var that = this;
+		console.log('init loc triggered');///clear
+		console.log(this.locationPickerCreated);///clear
 		if (!this.locationPickerCreated) {
 			if(Parse.User.current() && App.profile.attributes.location) {
 				var initialLocation = {latitude: App.profile.attributes.location.latitude, longitude: App.profile.attributes.location.longitude};
@@ -770,9 +737,9 @@ App.Views.ArtistsPage = Parse.View.extend({
 					that.locationReset();
 			    	that.locationQuery = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
 			    	that.loadMore();
-			    	that.$('.gm-style').fadeIn();
+			    	// that.$('.gm-style').fadeIn();
 			    	that.$('.changeLocationButton').html(currentLocationNameFormatted);
-			    	that.hideChangeLocation( 1200 );
+			    	// that.hideChangeLocation( 1200 );
 				},
 				onlocationnotfound: function(locationName) {
 					$("#changeAddressInput ~ .error").html("Couldn't find "+locationName+", Try another address?").show();				
@@ -784,18 +751,16 @@ App.Views.ArtistsPage = Parse.View.extend({
 			this.locationPickerCreated = true;
 		}
 	},
-	showChangeLocation: function(){
-		this.$('#changeAddressMap').height($( window ).height()-100);
-		this.$('.changeLocation').slideDown();
-		this.$('.changeLocationButton').addClass('active');
+	showMap: function(){
+		this.initializeLocationPicker();
+		this.$('.artistsResultContainer, .mapContainer, .toggleMap').addClass('active');
+
 		if(Parse.User.current() && App.profile.attributes.locationName){
 			this.$('.byYou').html(App.profile.attributes.locationName.split(",").splice(0,1).join("")).fadeIn();
 		}
-		setTimeout( function(){
-		    $('html, body').animate({
-		        scrollTop: this.$('#changeAddressMap').offset().top-100
-		    }, 1000);
-		}, 0);
+	},
+	hideMap: function(){
+		this.$('.artistsResultContainer, .mapContainer, .toggleMap').removeClass('active');
 	},
 	byYou: function(){
 		this.$('.byYou').attr('disabled', 'disabled');
@@ -821,20 +786,8 @@ App.Views.ArtistsPage = Parse.View.extend({
 		this.moreToLoad = true;
 		return this;
 	},
-	hideChangeLocation: function( delay ){
-		// App.search.bindSearch();
-		var that = this;
-		window.setTimeout(function(){
-			that.$('.changeLocation').animate({ height: 'toggle', opacity: 'toggle' }, 'slow', function(){
-				that.$('.input-group-btn > button').removeAttr('disabled');
-			});
-			that.$('.changeLocationButton').removeClass('active');
-		}, delay || 0);
-
-		return this;
-	},
 	queryReset: function(){
-		this.query = [];
+		this.bookFilterView.query = [];
 		this.collection.reset();
 		this.collection.page = 0;
 		this.moreToLoad = true;
@@ -852,14 +805,16 @@ App.Views.ArtistsPage = Parse.View.extend({
 		// query.skip(skip);
 		// query.limit(20);
 	 //  	query.find({
+	 	var per = 10;
 	 	var options = {
-	 		skip: this.collection.page * 20,
-	 		limit: 20
+	 		skip: this.collection.page * per,
+	 		limit: per,
+	 		books: this.bookFilterView.query
 	 	};
 	 	App.query.artists(this.locationQuery, options)
 	 		.then(function (artists) {
 	  			that.collection.add(artists);
-	  			if (artists.length < 20 ) {
+	  			if (artists.length < per ) {
 	  				that.moreToLoad = false;
 	  			} else {
 					that.moreToLoad = true;
@@ -877,19 +832,11 @@ App.Views.ArtistsPage = Parse.View.extend({
 		this.collection = new App.Collections.Artists();
 		this.artistsView = new App.Views.Artists({collection: this.collection, el: this.$('.artists')});
 		this.artistsView.render();
-		this.typeaheadInitialize();
 
-		this.queryReset();
-		this.loadMore();
-
-		window.setTimeout(function(){
-			$('.changeLocationButton').tooltip({
-			    title: "Change location",
-			    container: 'body',
-			    delay: { show: 200, hide: 200 },
-			    placement: 'auto'
-			});
-		},0);
+		this.bookFilterView = new App.Views.BookFilter({el: this.$('.bookFilterHeader'), initialBooks: this.initialBooks, title: 'Artists'});
+		console.log(this.initialBooks);///clear
+		this.bookFilterView.render().$('.toggleBookFilter')
+			.before('<button class="btn-submit toggleMap"> Map </button>');
 
 		return this;
 	}
@@ -1165,7 +1112,7 @@ App.Views.ArtistProfile = Parse.View.extend({
 		this.$('.profButtons').before(_.template('<button href="/myprofile/settings" class="btn-submit"><i class="flaticon-settings13"></i>Edit Profile</button><button href="/myprofile/upload" class="btn-submit"><i class="flaticon-camera4"></i>Upload Tattoo</button>'));
 	},
 	render: function(){
-		var attributes = this.model.attributes
+		var attributes = this.model.attributes;
 		this.$el.html(this.template(attributes));
 		if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
 			this.renderMyProfile();
@@ -3085,6 +3032,7 @@ App.Router = Parse.Router.extend({
 		"featured":	    				"featured",
 		"featured/p:page":	 		    "featured",
 		"artists": 						"artists",
+		"artists/:books": 				"artists",
 		"tattoos": 						"tattoos",
 		"tattoos/:books": 				"tattoos",
 		"about":   						"about",
@@ -3155,13 +3103,13 @@ App.Router = Parse.Router.extend({
 		console.log('route featured : ' + page);
 	    App.controller.featured(page);
 	},
-	artists: function(){
+	artists: function(books){
 		console.log('route artists');
-		App.controller.artists();
+		App.controller.artists({books: books});
 	},
 	tattoos: function(books){
 		console.log('route tattoos');
-		App.controller.tattoos(books);
+		App.controller.tattoos({books: books});
 	},
 	about: function(){
 		console.log('route about');
@@ -3247,7 +3195,7 @@ App.controller = (function () {
 		App.on('app:search', function () { self.search(); });
 		App.on('app:featured', function (page) { self.featured(page); });
 		App.on('app:artists', function (options) { self.artists(options); });
-		App.on('app:tattoos', function (books) { self.tattoos(books); });
+		App.on('app:tattoos', function (options) { self.tattoos(options); });
 		// App.on('app:tattoosByBook', function (books) { self.tattoosByBook(books); });
 		App.on('app:login', function () { self.login(); });
 		App.on('app:forgot', function () { self.forgot(); });
@@ -3346,17 +3294,17 @@ App.controller = (function () {
 		Parse.history.navigate('artists', { trigger: false });
 	}
 
-	controller.tattoos = function (books) {
+	controller.tattoos = function (options) {
 		console.log('controller tattoos');
-		var tattoosPage = new App.Views.TattoosPage(books);
+		var tattoosPage = new App.Views.TattoosPage(options);
 		App.viewManager.show(tattoosPage);
 
 		var booksRoute;
-		if (books instanceof Array) {
-			booksRoute = books.join('+').split(" ").join("-");
+		if (options.books instanceof Array) {
+			booksRoute = options.books.join('+').split(" ").join("-");
 		} 
-		else if (typeof(books) === 'string') {
-			booksRoute = books;
+		else if (typeof(options.books) === 'string') {
+			booksRoute = options.books;
 		}
 		Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
 	}

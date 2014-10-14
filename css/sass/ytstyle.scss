@@ -815,14 +815,13 @@ span.hover-content {
 
 ////// Artists page
 #artistsPage {
-	.artists {
-		margin-top: 40px;
-	}
+	// .artists {
+	// 	margin-top: 40px;
+	// }
 }
 
 .artistThumb { 
-	@extend .lg8container;
-	// min-height: 120px;
+	min-height: 120px;
 	background-color: $gray-lighter;
 	border-left: 40px solid $gray-light;
 	padding: 0px;
@@ -845,9 +844,9 @@ span.hover-content {
 		}    
 
 	}
-	.artistTitleBG, .tattooImg, [class|=col] {
-		padding: 0px;
-	}
+	// .artistTitleBG, .tattooImg, [class|=col] {
+	// 	padding: 0px;
+	// }
 	.tattoos {
 		display: flex;
 	}
@@ -874,68 +873,166 @@ span.hover-content {
 	}
 }
 
-.changeLocationButton {
-	&.active {
-		@include transition(all 0.6s ease);
-		position: relative;
-		background: #000000;
-		border: 4px solid #e6e6e6;
-		&:after, &:before {
-			top: 100%;
-			left: 50%;
-			border: solid transparent;
-			content: " ";
-			height: 0;
-			width: 0;
-			position: absolute;
-			pointer-events: none;
-		}
-		&:after {
-			border-color: rgba(0, 0, 0, 0);
-			border-top-color: #000000;
-			border-width: 24px;
-			margin-left: -24px;
-		}
-		&:before {
-			border-color: rgba(230, 230, 230, 0);
-			border-top-color: #e6e6e6;
-			border-width: 30px;
-			margin-left: -30px;
-		}
+// .artistThumb {
+// 	@extend .lg8container;
+// 	// min-height: 120px;
+// 	background-color: $gray-lighter;
+// 	border-left: 40px solid $gray-light;
+// 	padding: 0px;
+// 	margin-top: 20px;
+// 	@media screen and (max-width: $screen-sm) {
+// 		border-left: 20px solid $gray-light;
+// 		border-right: 20px solid $gray-light;
+// 	}
+// 	.prof {
+// 		position: absolute;
+// 		border: 4px solid $gray-light;
+// 		top: 12px;
+// 		left: -22px;
+// 		@media screen and (min-width: $screen-sm) {
+// 			top: 18px;
+// 			left: -50%;
+// 		}
+// 		@media screen and (min-width: $screen-md) {
+// 			top: 26px;
+// 		}    
+
+// 	}
+// 	.artistTitleBG, .tattooImg, [class|=col] {
+// 		padding: 0px;
+// 	}
+// 	.tattoos {
+// 		display: flex;
+// 	}
+// 	.artistName, .artistLoc {
+// 		text-align: left;
+// 		margin-top: 5px;
+// 		min-height: 30px;
+// 		@media screen and (min-width: $screen-sm) {
+// 			// margin-bottom: 4px;
+// 			margin-top: 7px;
+// 		}
+// 		@media screen and (min-width: $screen-md) {
+// 			// margin-bottom: 10px;
+// 			margin-top: 14px;
+// 		}    
+// 	}
+// 	&:hover {
+// 		background-color: white;
+// 		@include transition(all 0.4s ease);
+// 	}
+// 	&:hover .prof{
+// 		border: 4px solid white;
+// 		@include transition(all 0.4s ease);
+// 	}
+// }
+
+.mapContainer {
+	height: 100%;
+	position: absolute;
+	right: 0px;
+	display: inline-block;
+	&:after {
+		content: "";
+		position: absolute;
+		z-index: 3;
+		bottom: 0px;
+		left: 0px;
+		width: 10px;
+		height: 100%;
+		box-shadow: inset 7px 0 12px -6px rgba(0,0,0,0.4);
+		// transform: rotate(-3deg);
 	}
+
 }
+// arrow down selected button
+// .changeLocationButton {
+// 	&.active {
+// 		@include transition(all 0.6s ease);
+// 		position: relative;
+// 		background: #000000;
+// 		border: 4px solid #e6e6e6;
+// 		&:after, &:before {
+// 			top: 100%;
+// 			left: 50%;
+// 			border: solid transparent;
+// 			content: " ";
+// 			height: 0;
+// 			width: 0;
+// 			position: absolute;
+// 			pointer-events: none;
+// 		}
+// 		&:after {
+// 			border-color: rgba(0, 0, 0, 0);
+// 			border-top-color: #000000;
+// 			border-width: 24px;
+// 			margin-left: -24px;
+// 		}
+// 		&:before {
+// 			border-color: rgba(230, 230, 230, 0);
+// 			border-top-color: #e6e6e6;
+// 			border-width: 30px;
+// 			margin-left: -30px;
+// 		}
+// 	}
+// }
+// .changeLocationButton {
+// 	&.active {
+// 		@include transition(all 0.6s ease);
+// 		position: relative;
+// 		background: #000000;
+// 		border: 4px solid #e6e6e6;
+// 		&:after, &:before {
+// 			top: 100%;
+// 			left: 50%;
+// 			border: solid transparent;
+// 			content: " ";
+// 			height: 0;
+// 			width: 0;
+// 			position: absolute;
+// 			pointer-events: none;
+// 		}
+// 		&:after {
+// 			border-color: rgba(0, 0, 0, 0);
+// 			border-top-color: #000000;
+// 			border-width: 24px;
+// 			margin-left: -24px;
+// 		}
+// 		&:before {
+// 			border-color: rgba(230, 230, 230, 0);
+// 			border-top-color: #e6e6e6;
+// 			border-width: 30px;
+// 			margin-left: -30px;
+// 		}
+// 	}
+// }
 .changeLocation {
 	position: relative;
 	width: 100%;
-	margin-bottom: 60px;
+	// margin-top: 100px;
+	// margin-bottom: 60px;
 	.changeLocationOptions {
 		position: absolute;
 		top:0px;
 		z-index: 1000;
 		width: 100%;
-		background-color: $black-trans;
+		// background-color: $black-trans;
 		color: white;
 		padding: 30px 10px 20px 10px;
 		@media screen and (min-width: $screen-md) {
-			padding: 40px 60px;
-		}    
-
-		.input-group-addon{
-			display: none;
-			@media screen and (min-width: $screen-sm) {
-				display: table-cell;
-			}    
+			padding: 20px 30px;
 		}
 		.worldwide {
 			display: none;
 			@media screen and (min-width: $screen-sm) {
 				display: table-cell;
-			}    
+			}
 		}
 	}
 }
 .input-group-btn {
 	button {
+		background-color: $gray-darker;
 		border: 1px solid $gray-lighter;
 		@media screen and (min-width: $screen-md) {
 			
@@ -943,10 +1040,10 @@ span.hover-content {
 	}
 }
 #changeAddressMap {
-	background: url(../img/yestattoo-map.png) no-repeat center center;
-	border-top: 4px solid black;
-	border-bottom: 4px solid black;
-	box-shadow: 0 0 0 4px $gray-lighter;
+	// background: url(../img/yestattoo-map.png) no-repeat center center;
+	// border-top: 4px solid black;
+	// border-bottom: 4px solid black;
+	// box-shadow: 0 0 0 4px $gray-lighter;
 	background-size: 100% auto;
 	background-color: transparent !important;
 }
@@ -962,6 +1059,16 @@ span.hover-content {
 	color: $gray;
 	&:hover {
 		color: $brand-primary;
+	}
+}
+
+.artistsResultContainer {
+	width: 100%;
+	&.active {
+		.artists, .mapContainer {
+			width: 50%;	
+		}
+		
 	}
 }
 
@@ -1160,10 +1267,15 @@ span.hover-content {
 	}
 }
 
-button.toggleBookFilter {
-	margin-top: 30px;
+button.toggleBookFilter, button.toggleMap {
+	background-color: $brand-primary;
+	// background-color: $gray-darker;
 	float: right;
-	background-color: $gray-darker;
+
+	margin: 10px;
+	@media screen and (min-width: $screen-sm) {
+		margin: 20px 10px;
+	}
 }
 
 ////// User Profile & Artist Profile Page
@@ -1857,11 +1969,11 @@ button.toggleBookFilter {
 	}
 }
 
-#artistsPage, #settings {
-	.gm-style{
-		display: none;
-	}    
-}
+// #artistsPage, #settings {
+// 	.gm-style{
+// 		display: none;
+// 	}
+// }
 
 #settingsMap {
 	background: url(../img/yestattoo-map.png) no-repeat center center;
@@ -1927,7 +2039,7 @@ button.toggleBookFilter {
 	> .exploreTattoosContainer, > .findArtistsContainer, > .userContainer {
 		@extend .row;
 		padding-top: 80px;
-		padding-bottom: 80px;        
+		padding-bottom: 80px;
 	}
 	> .exploreTattoosContainer {
 		.popularBook {

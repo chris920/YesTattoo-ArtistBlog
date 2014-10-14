@@ -758,13 +758,13 @@ pre {
   .row:after, #explore > .exploreTattoosContainer:after, #explore > .findArtistsContainer:after, #explore > .userContainer:after {
     clear: both; }
 
-.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-sm-3, .tattooContainer, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .tattooContainer, .col-sm-6, .col-md-6, .md6container, .col-lg-6, .lg6container, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .artistThumb, .bookContainer, .md8container, .lightContainer, .lg6container, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .artistThumb, .bookContainer, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .artistThumb, .bookContainer, .lg6container, .col-sm-12, .col-md-12, .col-lg-12 {
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-sm-3, .tattooContainer, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .tattooContainer, .col-sm-6, .col-md-6, .md6container, .col-lg-6, .lg6container, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .bookContainer, .md8container, .lightContainer, .lg6container, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .bookContainer, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .bookContainer, .lg6container, .col-sm-12, .col-md-12, .col-lg-12 {
   position: relative;
   min-height: 1px;
   padding-left: 2.5px;
   padding-right: 2.5px; }
 
-.col-xs-1, .col-xs-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-xs-4, .col-xs-5, .col-xs-6, .tattooContainer, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-xs-11, .col-xs-12, .lg8container, .artistThumb, .bookContainer, .lg6container {
+.col-xs-1, .col-xs-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-xs-4, .col-xs-5, .col-xs-6, .tattooContainer, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-xs-11, .col-xs-12, .lg8container, .bookContainer, .lg6container {
   float: left; }
 
 .col-xs-1 {
@@ -800,7 +800,7 @@ pre {
 .col-xs-11 {
   width: 91.66667%; }
 
-.col-xs-12, .lg8container, .artistThumb, .bookContainer, .lg6container {
+.col-xs-12, .lg8container, .bookContainer, .lg6container {
   width: 100%; }
 
 .col-xs-pull-0 {
@@ -881,7 +881,7 @@ pre {
 .col-xs-push-12 {
   left: 100%; }
 
-.col-xs-offset-0, .lg8container, .artistThumb, .bookContainer, .lg6container {
+.col-xs-offset-0, .lg8container, .bookContainer, .lg6container {
   margin-left: 0%; }
 
 .col-xs-offset-1, .md8container, .lightContainer, .md6container {
@@ -921,7 +921,7 @@ pre {
   margin-left: 100%; }
 
 @media (min-width: 768px) {
-  .col-sm-1, .col-sm-2, .col-sm-3, .tattooContainer, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .lg8container, .artistThumb, .bookContainer, .col-sm-11, .col-sm-12 {
+  .col-sm-1, .col-sm-2, .col-sm-3, .tattooContainer, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .lg8container, .bookContainer, .col-sm-11, .col-sm-12 {
     float: left; }
 
   .col-sm-1 {
@@ -951,7 +951,7 @@ pre {
   .col-sm-9 {
     width: 75%; }
 
-  .col-sm-10, .lg8container, .artistThumb, .bookContainer {
+  .col-sm-10, .lg8container, .bookContainer {
     width: 83.33333%; }
 
   .col-sm-11 {
@@ -1041,7 +1041,7 @@ pre {
   .col-sm-offset-0 {
     margin-left: 0%; }
 
-  .col-sm-offset-1, .lg8container, .artistThumb, .bookContainer {
+  .col-sm-offset-1, .lg8container, .bookContainer {
     margin-left: 8.33333%; }
 
   .col-sm-offset-2 {
@@ -1077,7 +1077,7 @@ pre {
   .col-sm-offset-12 {
     margin-left: 100%; } }
 @media (min-width: 992px) {
-  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .md6container, .col-md-7, .col-md-8, .lg8container, .artistThumb, .bookContainer, .md8container, .lightContainer, .lg6container, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .md6container, .col-md-7, .col-md-8, .lg8container, .bookContainer, .md8container, .lightContainer, .lg6container, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
     float: left; }
 
   .col-md-1 {
@@ -1101,7 +1101,7 @@ pre {
   .col-md-7 {
     width: 58.33333%; }
 
-  .col-md-8, .lg8container, .artistThumb, .bookContainer, .md8container, .lightContainer, .lg6container {
+  .col-md-8, .lg8container, .bookContainer, .md8container, .lightContainer, .lg6container {
     width: 66.66667%; }
 
   .col-md-9 {
@@ -1200,7 +1200,7 @@ pre {
   .col-md-offset-1 {
     margin-left: 8.33333%; }
 
-  .col-md-offset-2, .lg8container, .artistThumb, .bookContainer, .md8container, .lightContainer, .lg6container {
+  .col-md-offset-2, .lg8container, .bookContainer, .md8container, .lightContainer, .lg6container {
     margin-left: 16.66667%; }
 
   .col-md-offset-3, .md6container {
@@ -4627,10 +4627,8 @@ span.hover-content {
   padding: 2.5px 5px;
   overflow: auto; }
 
-#artistsPage .artists {
-  margin-top: 40px; }
-
 .artistThumb {
+  min-height: 120px;
   background-color: #e6e6e6;
   border-left: 40px solid #d9d9d9;
   padding: 0px;
@@ -4651,8 +4649,6 @@ span.hover-content {
     @media screen and (min-width: 992px) {
       .artistThumb .prof {
         top: 26px; } }
-  .artistThumb .artistTitleBG, .artistThumb .tattooImg, .artistThumb [class|=col] {
-    padding: 0px; }
   .artistThumb .tattoos {
     display: flex; }
   .artistThumb .artistName, .artistThumb .artistLoc {
@@ -4674,52 +4670,34 @@ span.hover-content {
     -webkit-transition: all 0.4s ease;
     transition: all 0.4s ease; }
 
-.changeLocationButton.active {
-  -webkit-transition: all 0.6s ease;
-  transition: all 0.6s ease;
-  position: relative;
-  background: #000000;
-  border: 4px solid #e6e6e6; }
-  .changeLocationButton.active:after, .changeLocationButton.active:before {
-    top: 100%;
-    left: 50%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
+.mapContainer {
+  height: 100%;
+  position: absolute;
+  right: 0px;
+  display: inline-block; }
+  .mapContainer:after {
+    content: "";
     position: absolute;
-    pointer-events: none; }
-  .changeLocationButton.active:after {
-    border-color: transparent;
-    border-top-color: #000000;
-    border-width: 24px;
-    margin-left: -24px; }
-  .changeLocationButton.active:before {
-    border-color: rgba(230, 230, 230, 0);
-    border-top-color: #e6e6e6;
-    border-width: 30px;
-    margin-left: -30px; }
+    z-index: 3;
+    bottom: 0px;
+    left: 0px;
+    width: 10px;
+    height: 100%;
+    box-shadow: inset 7px 0 12px -6px rgba(0, 0, 0, 0.4); }
 
 .changeLocation {
   position: relative;
-  width: 100%;
-  margin-bottom: 60px; }
+  width: 100%; }
   .changeLocation .changeLocationOptions {
     position: absolute;
     top: 0px;
     z-index: 1000;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
     color: white;
     padding: 30px 10px 20px 10px; }
     @media screen and (min-width: 992px) {
       .changeLocation .changeLocationOptions {
-        padding: 40px 60px; } }
-    .changeLocation .changeLocationOptions .input-group-addon {
-      display: none; }
-      @media screen and (min-width: 768px) {
-        .changeLocation .changeLocationOptions .input-group-addon {
-          display: table-cell; } }
+        padding: 20px 30px; } }
     .changeLocation .changeLocationOptions .worldwide {
       display: none; }
       @media screen and (min-width: 768px) {
@@ -4727,13 +4705,10 @@ span.hover-content {
           display: table-cell; } }
 
 .input-group-btn button {
+  background-color: #1a1a1a;
   border: 1px solid #e6e6e6; }
 
 #changeAddressMap {
-  background: url(../img/yestattoo-map.png) no-repeat center center;
-  border-top: 4px solid black;
-  border-bottom: 4px solid black;
-  box-shadow: 0 0 0 4px #e6e6e6;
   background-size: 100% auto;
   background-color: transparent !important; }
 
@@ -4748,6 +4723,11 @@ span.hover-content {
   color: gray; }
   .resetArtistFilter:hover {
     color: #c42020; }
+
+.artistsResultContainer {
+  width: 100%; }
+  .artistsResultContainer.active .artists, .artistsResultContainer.active .mapContainer {
+    width: 50%; }
 
 #tattoosPage {
   background-color: black;
@@ -4856,10 +4836,13 @@ span.hover-content {
     border: solid 1px transparent;
     border-bottom: solid 4px transparent; }
 
-button.toggleBookFilter {
-  margin-top: 30px;
+button.toggleBookFilter, button.toggleMap {
+  background-color: #c42020;
   float: right;
-  background-color: #1a1a1a; }
+  margin: 10px; }
+  @media screen and (min-width: 768px) {
+    button.toggleBookFilter, button.toggleMap {
+      margin: 20px 10px; } }
 
 .profHead {
   min-height: 220px;
@@ -5462,9 +5445,6 @@ button.toggleBookFilter {
 
 .editLocation .input-group {
   width: 100%; }
-
-#artistsPage .gm-style, #settings .gm-style {
-  display: none; }
 
 #settingsMap {
   background: url(../img/yestattoo-map.png) no-repeat center center;
