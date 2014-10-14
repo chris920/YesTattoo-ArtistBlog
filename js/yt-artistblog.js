@@ -457,13 +457,13 @@ App.Views.BookFilter = Parse.View.extend({
 				// empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
 				// suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
 			}
-		}).attr('placeholder','Enter any book').on('typeahead:selected', function (obj,datum) {
+		}).attr('placeholder','Enter any book: style, flavor or placement.').on('typeahead:selected', function (obj,datum) {
 			that.addQuery(datum.books);
 			input.typeahead('val', '');
 		}).on('focus', function () {
 			that.$('.tt-input').attr('placeholder','');
 		}).on('blur', function () {
-			that.$('.tt-input').attr('placeholder','Enter any book').val('');
+			that.$('.tt-input').attr('placeholder','Enter any book: style, flavor or placement.').val('');
 		});
 	},
 	events: {
@@ -503,18 +503,28 @@ App.Views.BookFilter = Parse.View.extend({
 		this.$('.toggleBookFilter').html('Show Filters');
 	},
 	addQuery: function(query){
+		var that = this;
+		var addUniqueBook = function(query) {
+			that.query.push(query);
+			that.addQueryTitle(query);
+			App.trigger('app:book-update');
+		}
+		var limit = 4;
 		if($.inArray(query, this.query) > -1) {
 			this.$( "span.filterTitle:contains("+query+")" ).animate({
 				opacity: 0
 			}, 200).delay(400).animate({
 				opacity: 1
 			}, 600);
-		} else {
-			this.query.push(query);
-			this.addQueryTitle(query);
-			App.trigger('app:book-update');
+		} 
+		else if (this.query.length >= limit){
+			addUniqueBook(query);
+			this.query = this.query.slice(this.query.length-limit, this.query.length);
+			this.$('.filterTitle:eq('+(this.query.length-limit)+')').remove();
 		}
-		//TODO ~ else if there is 4 total filters, remove the last one.
+		else {
+			addUniqueBook(query);
+		}
 	},
 	addQueryTitle: function(title){
 		this.$('.tattoosTitle').html('');
@@ -525,7 +535,7 @@ App.Views.BookFilter = Parse.View.extend({
 		App.trigger('app:book-update');
 		e.currentTarget.remove();
 		if(this.query.length === 0){
-			this.$('.tattoosTitle').html('Tattoos');
+			this.$('.tattoosTitle').html(this.options.title);
 		}
 	},
 	addBookSuggestion: function(e){
@@ -536,8 +546,7 @@ App.Views.BookFilter = Parse.View.extend({
 		this.query = [];
 		$('.reset').fadeOut();
 		this.$('.filterTitle').remove();
-		//TODO ! dynamic title, artists or tattoos
-		// this.$('.tattoosTitle').html('Tattoos');
+		this.$('.tattoosTitle').html(this.options.title);
 		return this;
 	},
 	render: function(){
@@ -642,7 +651,7 @@ App.Views.TattoosPage = Parse.View.extend({
 		this.tattoosView = new App.Views.Tattoos({collection: this.collection, el: this.$('.tattoos')});
 		this.tattoosView.render();
 
-		this.bookFilterView = new App.Views.BookFilter({el: this.$('.bookFilterHeader'), initialBooks: this.initialBooks});
+		this.bookFilterView = new App.Views.BookFilter({el: this.$('.bookFilterHeader'), initialBooks: this.initialBooks, title: 'Tattoos'});
 		console.log(this.initialBooks);///clear
 		this.bookFilterView.render();
 
