@@ -302,15 +302,16 @@
       </div>
 
     </script>
+    bookFilterTemplate
 
-    <!-- Tattoos page -->
-    <script type="text/html" id="tattoosPageTemplate">
 
+    <!-- Book filter header -->
+    <script type="text/html" id="bookFilterTemplate">
       <div class="filterHeader">
         <div class="container">
           <div class="row filterTitles">
             <span class="tattoosTitle">Tattoos</span>
-            <button class="btn-submit toggleBookFilters">Book Filters</button>
+            <button class="btn-submit toggleBookFilter">Book Filters</button>
           </div>
 
           <div class="bookFilterContainer" style="display: none;">
@@ -336,11 +337,6 @@
           </div>  
         </div>
       </div>
-
-      <div class="container">
-        <div class="row tattoos"></div>
-        <div class="reset" style="display:none"></div>
-      </div>
     </script>
 
     <!-- Demo for popular books-->
@@ -353,6 +349,16 @@
       <div class="btn-tag bookSuggestion" style="background-image: url('img/book-portrait.jpg');"><span>Portrait</span></div>
       <div class="btn-tag bookSuggestion" style="background-image: url('img/book-j.jpg');"><span>Japanese</span></div>
       <div class="btn-tag bookSuggestion" style="background-image: url('img/book-animal.jpg');"><span>Animal</span></div>
+    </script>
+
+    <!-- Tattoos page -->
+    <script type="text/html" id="tattoosPageTemplate">
+      <div class="bookFilterHeader"></div>
+
+      <div class="container">
+        <div class="row tattoos"></div>
+        <div class="reset" style="display:none"></div>
+      </div>
     </script>
 
 

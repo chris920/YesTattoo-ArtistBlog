@@ -401,22 +401,21 @@ App.Views.Explore = Parse.View.extend({
 	}
 });
 
-App.Views.TattoosPage = Parse.View.extend({
-	template: _.template($("#tattoosPageTemplate").html()),
-	id: 'tattoosPage',
-	initialize: function(books){
+App.Views.BookFilter = Parse.View.extend({
+	template: _.template($("#bookFilterTemplate").html()),
+	el: '.bookFilterHeader',
+	initialize: function(options){
 		console.log('Tattos page init with = ');///clear
-		console.log(books);///clear
-		_.bindAll(this, 'shiftRight', 'shiftLeft', 'showBookFilters', 'hideBookFilters', 'focusIn', 'scrollChecker', 'render', 'addBookSuggestion');
-		App.on('app:scroll', this.scrollChecker);
+
+		_.bindAll(this, 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'render', 'addBookSuggestion');
 		App.on('app:keypress', this.focusIn);
 
-		if (books) {
-			console.log('tattoosPage init with books');///clear
+		if (this.options.initialBooks) {
+			console.log('bookFilter init with books');///clear
 	    	var that = this;
 
 	        this.render = _.wrap(this.render, function(render) { 
-	            var booksArray = books.split("-").join(" ").split('+');
+	            var booksArray = this.options.initialBooks.split("-").join(" ").split('+');
 	            render().setBooks(booksArray);
 	            return that;
 	        });
@@ -426,99 +425,26 @@ App.Views.TattoosPage = Parse.View.extend({
 	        this.render = _.wrap(this.render, function(render) { 
 	            render();
 				that.queryReset();
-				that.loadMore();
+				App.trigger('app:book-update');
 	            return that;
 	        });
 		}
 
 	},
 	disable: function () {
-		console.log('tattoos page disabled');///clear
-		App.off('app:scroll', this.scrollChecker);
+		console.log('filter header disabled');///clear
 		App.off('app:keypress', this.focusIn);
-	},
-	events: {
-		'click .arrow.right': 'shiftRight',
-		'click .arrow.left': 'shiftLeft',
-		'click .toggleBookFilters': 'showBookFilters',
-		'click .toggleBookFilters.active': 'hideBookFilters',
-		'click .filterTitle': 'removeQuery',
-		'click .bookSuggestion': 'addBookSuggestion'
-	},
-	addPopularBooks: function(){
-		//TODO ~ Popular books should be dynamic from the server. It should continually add book suggestions as the user scrolls.
-		$('.bookSuggestionScroll').append(_.template($("#popularBookDemo").html()));
-	},
-	shiftRight: function(){
-		console.log('shiftRight triggered');///clear
-		this.$(".bookSuggestionScroll").animate({scrollLeft: '+='+$('.bookSuggestionScroll').width()}, 750);
-
-		//TODO ~ checks if there is enough books in the slider, adds popular ones if not.
-		this.addPopularBooks();
-	},
-	shiftLeft: function(){
-		console.log('shiftLeft triggered');///clear
-		this.$(".bookSuggestionScroll").animate({scrollRight: '+='+$('.bookSuggestionScroll').width()}, 750);
-		//TODO ~ checks if there is no room to scroll, hides the arrow.
-	},
-	showBookFilters: function(){
-		this.$('.toggleBookFilters, .filterHeader, .bookFilterContainer').addClass('active');
-		this.$('.bookFilterContainer').slideDown();
-		this.$('.toggleBookFilters').html('Hide Filters');
-	},
-	hideBookFilters: function(){
-		this.$('.toggleBookFilters, .filterHeader, .bookFilterContainer').removeClass('active');
-		this.$('.bookFilterContainer').slideUp();
-		this.$('.toggleBookFilters').html('Show Filters');
-	},
-	addQuery: function(query){
-		if($.inArray(query, this.query) > -1) {
-			this.$( "span.filterTitle:contains("+query+")" ).animate({
-				opacity: 0
-			}, 200).delay(400).animate({
-				opacity: 1
-			}, 600);
-		} else {
-			this.query.push(query);
-			this.collectionReset();
-			this.addQueryTitle(query);
-			this.loadMore();
-		}
-		//TODO ~ else if there is 4 total filters, remove the last one.
-	},
-	addQueryTitle: function(title){
-		this.$('.tattoosTitle').html('');
-		this.$('.filterTitles').append('<span class="filterTitle">'+title+'</span>');
-	},
-	removeQuery: function(e){
-		this.query = _.without(this.query, e.currentTarget.textContent);
-		this.collectionReset();
-		this.loadMore();
-		e.currentTarget.remove();
-		if(this.query.length === 0){
-			this.$('.tattoosTitle').html('Tattoos');
-		}
-	},
-	addBookSuggestion: function(e){
-		e.currentTarget.remove();
-		this.addQuery($(e.currentTarget)[0].textContent);
 	},
 	focusIn: function(){
 		this.$('input.bookFilterInput').focus();
 	},
 	setBooks: function(booksArray){
-		console.log('set books called with');///clear
-		console.log(booksArray);///clear
-		// accepts an array and adds the book filter ///clear
 		var that = this;
-     	// _.each(booksArray, that.addQueryTitle(book););
-	},
-	scrollChecker: function(){
-		if (this.moreToLoad && $('#tattoosPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
-			this.moreToLoad = false;
-			this.collection.page++;
-			this.loadMore();
-		}
+     	_.each(booksArray, function(book){
+     		that.addQueryTitle(book);
+     	});
+     	this.query = booksArray;
+     	App.trigger('app:book-update');
 	},
 	typeaheadInitialize: function(){
 		var that = this;
@@ -540,18 +466,134 @@ App.Views.TattoosPage = Parse.View.extend({
 			that.$('.tt-input').attr('placeholder','Enter any book').val('');
 		});
 	},
+	events: {
+		'click .arrow.right': 'shiftRight',
+		'click .arrow.left': 'shiftLeft',
+		'click .toggleBookFilter': 'showBookFilter',
+		'click .toggleBookFilter.active': 'hideBookFilter',
+		'click .filterTitle': 'removeQuery',
+		'click .bookSuggestion': 'addBookSuggestion'
+	},
+	addPopularBooks: function(){
+		//TODO ~ Popular books should be dynamic from the server. It should continually add book suggestions as the user scrolls.
+		$('.bookSuggestionScroll').append(_.template($("#popularBookDemo").html()));
+	},
+	shiftRight: function(){
+		console.log('shiftRight triggered');///clear
+		this.$(".bookSuggestionScroll").animate({scrollLeft: '+='+$('.bookSuggestionScroll').width()}, 750);
+
+		//TODO ~ checks if there is enough books in the slider, adds popular ones if not.
+		this.addPopularBooks();
+	},
+	shiftLeft: function(){
+		console.log('shiftLeft triggered');///clear
+		this.$(".bookSuggestionScroll").animate({scrollRight: '+='+$('.bookSuggestionScroll').width()}, 750);
+		//TODO ~ checks if there is no room to scroll, hides the arrow.
+	},
+	showBookFilter: function(){
+		console.log('showBookFilter triggered');///clear
+		console.log(this);//clear
+		this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('active');
+		this.$('.bookFilterContainer').slideDown();
+		this.$('.toggleBookFilter').html('Hide Filters');
+	},
+	hideBookFilter: function(){
+		this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('active');
+		this.$('.bookFilterContainer').slideUp();
+		this.$('.toggleBookFilter').html('Show Filters');
+	},
+	addQuery: function(query){
+		if($.inArray(query, this.query) > -1) {
+			this.$( "span.filterTitle:contains("+query+")" ).animate({
+				opacity: 0
+			}, 200).delay(400).animate({
+				opacity: 1
+			}, 600);
+		} else {
+			this.query.push(query);
+			this.addQueryTitle(query);
+			App.trigger('app:book-update');
+		}
+		//TODO ~ else if there is 4 total filters, remove the last one.
+	},
+	addQueryTitle: function(title){
+		this.$('.tattoosTitle').html('');
+		this.$('.filterTitles').append('<span class="filterTitle">'+title+'</span>');
+	},
+	removeQuery: function(e){
+		this.query = _.without(this.query, e.currentTarget.textContent);
+		App.trigger('app:book-update');
+		e.currentTarget.remove();
+		if(this.query.length === 0){
+			this.$('.tattoosTitle').html('Tattoos');
+		}
+	},
+	addBookSuggestion: function(e){
+		e.currentTarget.remove();
+		this.addQuery($(e.currentTarget)[0].textContent);
+	},
 	queryReset: function(){
 		this.query = [];
-		this.collectionReset();
-		this.$('.reset').fadeOut();
+		$('.reset').fadeOut();
 		this.$('.filterTitle').remove();
-		this.$('.tattoosTitle').html('Tattoos');
+		//TODO ! dynamic title, artists or tattoos
+		// this.$('.tattoosTitle').html('Tattoos');
 		return this;
 	},
-	collectionReset: function(){
+	render: function(){
+		var html = this.template();
+		$(this.el).html(html);
+
+		this.typeaheadInitialize();
+
+		return this;
+	}
+});
+
+App.Views.TattoosPage = Parse.View.extend({
+	template: _.template($("#tattoosPageTemplate").html()),
+	id: 'tattoosPage',
+	initialize: function(books){
+		console.log('TattoosPage init');///clear
+
+		if (books) {
+			console.log('tattoosPage init with books');///clear
+	    	var that = this;
+	    	this.initialBooks = books;
+	    	console.log(this.initialBooks);///clear
+		}
+
+		_.bindAll(this, 'scrollChecker', 'render', 'bookUpdate');
+		App.on('app:scroll', this.scrollChecker);
+		App.on('app:book-update', this.bookUpdate);
+
+	},
+	disable: function () {
+		console.log('tattoos page disabled');///clear
+		App.off('app:scroll', this.scrollChecker);
+		App.off('app:book-update', this.bookUpdate);
+	},
+	events: {
+
+	},
+	scrollChecker: function(){
+		if (this.moreToLoad && $('#tattoosPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
+			this.moreToLoad = false;
+			this.collection.page++;
+			this.loadMore();
+		}
+	},
+	bookUpdate: function(){
 		this.collection.reset();
 		this.collection.page = 0;
 		this.moreToLoad = true;
+		this.loadMore();
+
+		var booksRoute;
+		if (this.bookFilterView.query) {
+			booksRoute = this.bookFilterView.query.join('+').split(" ").join("-");
+		} 
+		Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
 	},
 	loadMore: function(){
 		var that = this;
@@ -570,15 +612,15 @@ App.Views.TattoosPage = Parse.View.extend({
 	  		skip: this.collection.page * 40,
 	  		limit: 40
 	  	};
-	  	App.query.tattoos(this.query, options)
+	  	App.query.tattoos(this.bookFilterView.query, options)
 	  		.then(function (tats) {
 		  			that.collection.add(tats);
 		  			if ( tats.length === 0) {
 		  				that.moreToLoad = false;
 			    		that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
 			    		that.$('.reset').on('click', function(){
-							that.queryReset().loadMore();
-							that.$('.reset').fadeOut();
+							that.bookFilterView.queryReset();
+							App.trigger('app:book-update');
 			    		}).fadeIn();
 		  			} else if (tats.length < 40) {
 	 				// that.$el.append('<div class="end" style="display: none"><img src="img/yt-featuredend.png"></div>');
@@ -599,7 +641,10 @@ App.Views.TattoosPage = Parse.View.extend({
 		this.collection = new App.Collections.Tattoos();
 		this.tattoosView = new App.Views.Tattoos({collection: this.collection, el: this.$('.tattoos')});
 		this.tattoosView.render();
-		this.typeaheadInitialize();
+
+		this.bookFilterView = new App.Views.BookFilter({el: this.$('.bookFilterHeader'), initialBooks: this.initialBooks});
+		console.log(this.initialBooks);///clear
+		this.bookFilterView.render();
 
 		return this;
 	}
@@ -3306,17 +3351,6 @@ App.controller = (function () {
 		}
 		Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
 	}
-
-	// controller.tattoosByBook = function (books) {
-	// 	console.log('controller tattoosByBook');///clear
-		// if (books instanceof Array) {
-		// 	var booksRoute = books.join('+').split(" ").join("-");
-		// } 
-		// else if (typeof(books) === 'string') {
-		// 	var booksRoute = books;
-		// }
-	// 	Parse.history.navigate('tattoos/' + booksRoute, { trigger: false });
-	// }
 
 	controller.login = function () {
 		console.log('controller login');
