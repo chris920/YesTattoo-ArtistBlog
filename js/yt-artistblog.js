@@ -680,6 +680,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 		App.on('app:scroll', this.scrollChecker);
 		App.on('app:book-update', this.bookUpdate);
+		this.activateAffix();
 	},
 	disable: function () {
 		console.log('ArtistsPage disabled');///clear
@@ -751,6 +752,11 @@ App.Views.ArtistsPage = Parse.View.extend({
 			this.locationPickerCreated = true;
 		}
 	},
+	activateAffix: _.debounce(function(){
+		$('.mapContainer').affix({
+		      offset: { top: $('.bookFilterHeader').outerHeight(true) }
+		});
+	}, 1000),
 	showMap: function(){
 		this.initializeLocationPicker();
 		this.$('.artistsResultContainer, .mapContainer, .toggleMap').addClass('active');
