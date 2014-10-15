@@ -986,7 +986,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	initialize: function(){
 		console.log('tattoo profile init');
 		// Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
-		_.bindAll(this, 'focusIn');
+		_.bindAll(this, 'focusIn', 'saveBooks');
 
 		this.model.on('add:created', this.showYourBooks, this);
 		this.model.on('add:removed', this.showAddButton, this);
