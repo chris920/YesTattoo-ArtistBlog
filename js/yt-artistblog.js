@@ -3526,10 +3526,11 @@ App.query = (function QueryHandler() {
 	*/
 	this.featuredArtists = function (options) {
 		var query = new Parse.Query('ArtistProfile');
-		query.exists('featureId');
+		var today = new Date();
+		query.lessThan("featureDate", today);
+		query.descending("featureDate");
 		query.skip(options.skip || 0);
 		query.limit(options.limit || 1000);
-		query.descending("featuremonth,createdAt");
 		return query.find();
 	}
 
