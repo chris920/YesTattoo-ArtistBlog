@@ -338,24 +338,11 @@
       <div class="artistsResultContainer active clearfix">
         <div class="bookFilterHeader"></div>
 
-        <div class="mapContainer">
-          <div class="changeLocation">
-            <div class="changeLocationOptions">            
-              <div class="error text-center" style="display:none"></div>
-              <div class="input-group">
-                <input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">
-                <span class="input-group-btn">
-                  <button class="btn-submit byYou" type="button" style="display:none"></button>
-                  <button class="btn-submit worldwide" type="button" style="display:none">Worldwide</button>
-                  <button class="btn-submit cancel" type="button">X</button>
-                </span>
-              </div>
-            </div>
-            <div id="changeAddressMap" style="width: 100%; height: 540px;">
-            </div>
-          </div>
-        </div>
+        <!-- Map view -->
+        <input type="text" class="form-control grayInput" id="locationInput" placeholder="Enter your location">
+        <div id="map-container" class="mapContainer"></div>
 
+        <!-- Artists results -->
         <div class="artists"></div>
       </div>
 

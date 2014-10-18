@@ -273,6 +273,73 @@ App.Models.FeaturedArtist = Parse.User.extend({
 });
 
 
+///////// Collections
+App.Collections.Artists = Parse.Collection.extend({
+	initialize: function(){
+		this.page = 0;
+	},
+	model: App.Models.User
+});
+
+App.Collections.Tattoos = Parse.Collection.extend({
+	initialize: function(){
+		this.page = 0;
+	},
+	model: App.Models.Tattoo,
+	getBooksByCount: function(count){
+		this.artistBooks = _.flatten(this.pluck('artistBooks')).byCount();
+		this.popularBooks = _.flatten(this.pluck('books')).byCount();
+		this.allBooks = this.artistBooks.concat(this.popularBooks)
+		return this.allBooks.slice(0, count || 10);
+	},
+	byBooks: function(books){
+		//Takes an array of books, returns the tattoos where the books are inlcuded.
+
+		return this.filter(function(tat){ 
+			return _.intersection(tat.attributes.books, books).length >= books.length; });
+	}
+});
+
+App.Collections.Adds = Parse.Collection.extend({
+	model: App.Models.Add,
+	initialize: function(){
+
+	},
+	getBooksByCount: function(count){
+		this.popularBooks = _.flatten(this.pluck('books')).byCount().slice(0, count || 10);
+		return this.popularBooks;
+	},
+	getTattoo: function(tattooId){
+		return this.filter(function(add){ return add.get('tattooId') === tattooId; });
+	},
+	getTattoos: function(){
+		this.tattoos = _.map(this.models, function(add){
+			add.attributes.tattoo.attributes.artistProfile = add.attributes.artistProfile;
+			add.attributes.tattoo.attributes.books = add.attributes.books;
+			return add.attributes.tattoo;
+		});
+		return this.tattoos;
+	},
+	getArtists: function(){
+		var allArtists = _.uniq( _.map( this.models, function(add){ return add.attributes.artistProfile; }), function(artist){return JSON.stringify(artist)});
+		this.artists = _.sortBy(allArtists, function(artist){ return artist.get('collectorCount') * -1; });
+		return this.artists;
+	}
+});
+
+App.Collections.Books = Parse.Collection.extend({
+	model: App.Models.Book,
+	initialize: function(){
+
+	}
+});
+
+App.Collections.FeaturedArtists = Parse.Collection.extend({
+	model: App.Models.User,
+	page: 0
+});
+
+
 ///////// Views
 App.Views.Nav = Parse.View.extend({
 	el: '#navs',
@@ -425,7 +492,8 @@ App.Views.BookFilter = Parse.View.extend({
 	        this.render = _.wrap(this.render, function(render) { 
 	            render();
 				that.queryReset();
-				App.trigger('app:book-update');
+				// DON'T TRIGGER EVENT IN RENDER
+				// App.trigger('app:book-update');
 	            return that;
 	        });
 		}
@@ -659,54 +727,92 @@ App.Views.TattoosPage = Parse.View.extend({
 });
 
 App.Views.ArtistsPage = Parse.View.extend({
-	template: _.template($("#artistsTemplate").html()),
-	id: 'artistsPage',
-	initialize: function(options){
-		_.bindAll(this, 'initializeLocationPicker', 'queryReset', 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'render');
 
-	    var that = this; 
+	template: _.template($("#artistsTemplate").html()),
+
+	id: 'artistsPage',
+	
+	/*
+		TODO Proposed options 
+		Options:
+			- showMap: true/false 	
+			- location: geopoint 	// initial location, to override user location e.g. search by new york
+	*/
+	initialize: function (options) {
+		console.log('ArtistsPage init');
+
+		// _.bindAll(this, 'queryReset', 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'render');
+		_.bindAll(this, 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'render');
+
+		self = this;
+		self.requestLimit = 10;
+
+		self.collection = new App.Collections.Artists();
+		self.collection.on('add', self.addArtistMarker, self);
+		self.collection.on('reset', self.resetMarkers, self);
+
+		// Initialize based on options passed
 		if (options && options.show === 'location') {
-			console.log('ArtistsPage init with location');///clear
-	        this.render = _.wrap(this.render, function(render) { 
-	            render();
-	            that.showMap();
-	            return that;
-	        });
+			self.showMap();
 		}
 		if (options && options.books) {
 			console.log('ArtistsPage init with books');///clear
-	    	this.initialBooks = options.books;
+			self.initialBooks = options.books;
 		}
 
-		App.on('app:scroll', this.scrollChecker);
-		App.on('app:book-update', this.bookUpdate);
-		this.activateAffix();
+		// Initial map location, use user location is logged on
+		self.mapLocation = new google.maps.LatLng(34.0500, -118.2500); // default
+		if (App.session.loggedIn() && App.profile.attributes.location) {
+			self.usersLocation = new google.maps.LatLng(App.profile.attributes.location.latitude, App.profile.attributes.location.longitude);
+			self.mapLocation = self.usersLocation;
+		}
+		self.setMapLocation(self.mapLocation);
+
+		App.on('app:scroll', self.scrollChecker);
+		App.on('app:book-update', self.bookUpdate);
+
+		self.activateAffix();
 	},
+
 	disable: function () {
 		console.log('ArtistsPage disabled');///clear
 		App.off('app:scroll', this.scrollChecker);
 		App.off('app:book-update', this.bookUpdate);
 	},
+
 	events: {
 	    'click .toggleMap': 			'showMap',
 	    'click .toggleMap.active': 		'hideMap',
 	    'click .byYou': 				'byYou',
 	    'click .worldwide': 			'setWorldwide',
-	    'click .cancel': 				'hideMap',
-	    'focus #changeAddressInput': 	'initializeLocationPicker' //TODO ~ map will be activated with showMap
+	    'click .cancel': 				'hideMap'
 	},
-	scrollChecker: function(){
+
+	activateAffix: _.debounce(function () {
+		$('#map-container').affix({
+			offset: { top: $('.bookFilterHeader').outerHeight(true) }
+		});
+	}, 1000),
+
+	// TODO Triggers loadMore too soon, pretty much as soon as you start 
+	// 		to scroll instead of when you've reached the bottom
+	scrollChecker: function () {
 		if (this.moreToLoad && $('#artistsPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
-			this.moreToLoad = false;
-			this.collection.page++;
-			this.loadMore();
+			// this.moreToLoad = false;
+			// this.collection.page++;
+			// this.loadMore();
+			this.loadArtists(false);
 		} 
 	},
-	bookUpdate: function(){
-		this.collection.reset();
-		this.collection.page = 0;
-		this.moreToLoad = true;
-		this.loadMore();
+
+	bookUpdate: function () {
+		console.log('book update');
+		// this.collection.reset();
+		// this.collection.page = 0;
+		// this.moreToLoad = true;
+		// this.resetResults();
+		// this.loadMore();
+		this.loadArtists(true);
 
 		var booksRoute;
 		if (this.bookFilterView.query) {
@@ -714,194 +820,310 @@ App.Views.ArtistsPage = Parse.View.extend({
 		}
 		Parse.history.navigate('artists' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
 	},
-	initializeLocationPicker: function(){
-		var that = this;
-		console.log('init loc triggered');///clear
-		console.log(this.locationPickerCreated);///clear
-		if (!this.locationPickerCreated) {
-			if(Parse.User.current() && App.profile.attributes.location) {
-				var initialLocation = {latitude: App.profile.attributes.location.latitude, longitude: App.profile.attributes.location.longitude};
-			} else {
-				var initialLocation = {latitude: 34.0500, longitude: -118.2500};
-			}
-			$('#changeAddressMap').locationpicker({
-				location: initialLocation,
-				radius: 0,
-				zoom: 8,
-				styles: App.mapStyles,
-				enableAutocomplete: true,
-				enableReverseGeocode: true,
-				inputBinding: {
-					locationNameInput: $('#changeAddressInput')
-				},
-				onchanged: function(currentLocation, currentLocationNameFormatted) {
-					that.locationReset();
-			    	that.locationQuery = new Parse.GeoPoint({latitude: currentLocation.latitude, longitude: currentLocation.longitude});
-			    	that.loadMore();
-			    	// that.$('.gm-style').fadeIn();
-			    	that.$('.changeLocationButton').html(currentLocationNameFormatted);
-			    	// that.hideChangeLocation( 1200 );
-				},
-				onlocationnotfound: function(locationName) {
-					$("#changeAddressInput ~ .error").html("Couldn't find "+locationName+", Try another address?").show();				
-				},
-				oninitialized: function(component){
-					that.$('#changeAddressInput').val('');
-				}
-			});
-			this.locationPickerCreated = true;
-		}
-	},
-	activateAffix: _.debounce(function(){
-		$('.mapContainer').affix({
-		      offset: { top: $('.bookFilterHeader').outerHeight(true) }
-		});
-	}, 1000),
-	showMap: function(){
-		this.initializeLocationPicker();
+
+	showMap: function () {
+		console.log('show map');
 		this.$('.artistsResultContainer, .mapContainer, .toggleMap').addClass('active');
 		this.$('.artists').removeClass('lg8container');
 
-		if(Parse.User.current() && App.profile.attributes.locationName){
+		if (App.session.loggedIn() && App.profile.attributes.locationName){
 			this.$('.byYou').html(App.profile.attributes.locationName.split(",").splice(0,1).join("")).fadeIn();
 		}
 	},
-	hideMap: function(){
+
+	hideMap: function () {
+		console.log('hide map');
 		this.$('.artistsResultContainer, .mapContainer, .toggleMap').removeClass('active');
 		this.$('.artists').addClass('lg8container');
 	},
-	byYou: function(){
+
+	// TODO Not tested since map channges
+	byYou: function () {
 		this.$('.byYou').attr('disabled', 'disabled');
 		this.$('.changeLocationButton').html(this.$('.byYou').html());
 		this.locationReset().hideChangeLocation();
 		this.locationQuery = App.profile.get('location');
-		this.loadMore();
+		// this.loadMore();
+		this.loadArtists(true);
 	},
-	setWorldwide: function(){
+
+	// TODO Not tested since map channges
+	setWorldwide: function () {
 		this.$('.worldwide').attr('disabled', 'disabled');
 		this.$('.changeLocationButton').html('Worldwide');
 		this.$('.gm-style').fadeOut();
-		this.$('#changeAddressInput').val('');
+		this.$('#locationInput').val('');
 		this.locationReset();
-		this.loadMore();
+		// this.loadMore();
+		this.loadArtists(true);
 		this.hideChangeLocation( 1200 );
 	},
-	locationReset: function(){
+
+	// TODO Not tested since map channges
+	locationReset: function () {
 		this.locationPickerCreated = false;
 		this.locationQuery = undefined;
-		this.collection.reset();
-		this.collection.page = 0;
-		this.moreToLoad = true;
+		// this.collection.reset();
+		// this.collection.page = 0;
+		// this.moreToLoad = true;
+		this.resetResults();
 		return this;
 	},
-	queryReset: function(){
-		this.bookFilterView.query = [];
-		this.collection.reset();
-		this.collection.page = 0;
-		this.moreToLoad = true;
-		return this;
+
+	// Load artists
+	// - handle reset, to ensure control over collection state
+	loadArtists: function (reset) {
+		console.log('loading artists [' + reset + ']...');
+		var self = this;
+
+		if (reset) {
+			self.collection.reset();
+			self.collection.page = 0;
+			self.moreToload = true;
+		}
+		else {
+			self.collection.page++;
+		}
+
+		App.query.artists(self.locationQuery, {
+				skip: self.collection.page * self.requestLimit,
+				limit: self.requestLimit
+			})
+			.then(function (artists) {
+				console.log('loading more results!');
+				self.collection.add(artists);
+				if (artists.length < self.requestLimit) {
+					self.moreToLoad = false;
+				} else {
+					self.moreToLoad = true;
+				}
+			},
+			function (error) {
+				console.log(error);
+				self.moreToLoad = true;
+			});
 	},
-	loadMore: function(){
-		var that = this;
-		// var query = new Parse.Query('ArtistProfile');
-	 //  	if(this.locationQuery) {
-	 //  		query.near("location", this.locationQuery);
-	 //  	} else {
-	 //  		query.descending('createdAt');
-	 //  	}
-		// var skip = 	this.collection.page * 20;
-		// query.skip(skip);
-		// query.limit(20);
-	 //  	query.find({
-	 	var per = 10;
-	 	var options = {
-	 		skip: this.collection.page * per,
-	 		limit: per,
-	 		books: this.bookFilterView.query
-	 	};
-	 	App.query.artists(this.locationQuery, options)
-	 		.then(function (artists) {
-	  			that.collection.add(artists);
-	  			if (artists.length < per ) {
-	  				that.moreToLoad = false;
-	  			} else {
-					that.moreToLoad = true;
-	  			}
-	  		},
-	  		function (error) {
-	  			console.log(error);
-	  			that.moreToLoad = true;
-	  		});
+
+	addUserMarker: function () {
+		console.log('addUserMarker ');
+		if (this.usersLocation) {
+			new google.maps.Marker({
+				map: self.map,
+				icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+				title: 'You @ ' + App.profile.attributes.locationName || '',
+				position: self.usersLocation
+			});
+		}
 	},
-	render: function(){
+
+	addArtistMarker: function (artist) {
+		console.log('addArtistMarker : ' + artist.attributes.name);
+		if (artist.attributes.location) {
+			var artistLocation = new google.maps.LatLng(artist.attributes.location.latitude, artist.attributes.location.longitude);
+		
+			var label = artist.attributes.name;
+			if (artist.attributes.shop) {
+				label += ' @ ' + artist.attributes.shop;
+			}
+			if (artist.attributes.locationName) {
+				label += '\n' + artist.attributes.locationName;
+			}
+
+			var marker = new google.maps.Marker({
+				map: self.map,
+				icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+				title: label,
+				position: artistLocation,
+				// Custom attribute added for event handlers
+				artistId: artist.id
+			});
+			console.log(marker);
+
+			// Listen to events, trigger artist-selected event
+			google.maps.event.addListener(marker, 'mouseover', function () {
+				App.trigger('artists:artist-selected', marker.artistId);
+			});
+
+			self.markers.push(marker);
+			self.bounds.extend(artistLocation);
+		}
+
+		self.map.fitBounds(self.bounds);
+	},
+
+	findMarkerByArtistId: function (artistId) {
+		for (var i = 0; i < self.markers.length; i++) {
+			if (self.markers[i].artistId === artistId) {
+				return self.markers[i];
+			}
+		}
+	},
+
+	setSelectedArtistMarker: function (artistId) {
+		console.log('set selected artist marker : ' + artistId);
+
+		// Clear previous selection
+		if (self.selectedArtistMarker) {
+			self.selectedArtistMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+		}
+
+		// Set new selection
+		var marker = self.findMarkerByArtistId(artistId);
+		console.log(marker);
+		if (marker) {
+			marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+			self.selectedArtistMarker = marker;
+		}
+	},
+
+	clearMap: function () {
+		console.log('clear map');
+		if (self.markers) {
+			for (var i = 0, marker; marker = self.markers[i]; i++) {
+				marker.setMap(null);
+			}
+		}
+		self.markers = [];
+		self.selectedArtistMarker = null;
+		self.bounds = new google.maps.LatLngBounds();
+	},
+
+	setMapLocation: function (location) {
+		console.log('set map locaton');
+		self.clearMap();
+		self.mapLocation = location;
+		self.locationQuery = new Parse.GeoPoint({ latitude: location.k, longitude: location.B });
+		self.loadArtists(true);
+	},
+
+	initializeMap: function () {
+		console.log('initialize map');
+		var mapOptions = {
+			center: self.mapLocation,
+			radius: 0,
+			zoom: 8,
+			styles: App.mapStyles,
+			zoom: 10,
+			zoomControl: true,
+			zoomControlOptions: {
+				style: google.maps.ZoomControlStyle.LARGE,
+				position: google.maps.ControlPosition.LEFT_CENTER
+			},
+			streetViewControl: false,
+			mapTypeControl: false,
+			panControl: false,
+			scrollwheel: false
+		};
+
+		self.markers = [];
+		self.bounds = new google.maps.LatLngBounds();
+		self.mapEl = $('#map-container')[0];
+		self.map = new google.maps.Map(self.mapEl, mapOptions);
+
+		// Create the search box and link it to the UI element.
+		var input = (document.getElementById('locationInput'));
+		self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+		self.locationInput = new google.maps.places.SearchBox((input));
+
+		// Listen to location changes and update map
+		google.maps.event.addListener(self.locationInput, 'places_changed', function () {
+			var places = self.locationInput.getPlaces();
+			if (places.length == 0) {
+				return;
+			}
+			self.setMapLocation(places[0].geometry.location);
+		});
+
+		// Listen to artist-selected event, highlight marker in response
+		App.on('artists:artist-selected', self.setSelectedArtistMarker);
+
+		// Set user location
+		self.addUserMarker();
+	},
+
+	render: function () {
+		console.log('ArtistsPage render');
 		var html = this.template();
 		$(this.el).html(html);
 
-		this.collection = new App.Collections.Artists();
 		this.artistsView = new App.Views.Artists({collection: this.collection, el: this.$('.artists')});
 		this.artistsView.render();
 
-		this.bookFilterView = new App.Views.BookFilter({el: this.$('.bookFilterHeader'), initialBooks: this.initialBooks, title: 'Artists'});
+		this.bookFilterView = new App.Views.BookFilter({ el: this.$('.bookFilterHeader'), initialBooks: this.initialBooks, title: 'Artists' });
 		console.log(this.initialBooks);///clear
 		this.bookFilterView.render().$('.toggleBookFilter')
 			.before('<button class="btn-submit toggleMap"> Map </button>');
+
+		// Initialize map, but wait until current callstack has finished otherwise map will throw error.
+		_(self.initializeMap).defer();
 
 		return this;
 	}
 });
 
 App.Views.Artists = Parse.View.extend({
-	el: '.artists',
-	initialize: function(){
-		_.bindAll(this, 'render', 'renderArtists', 'renderArtist');
 
+	el: '.artists',
+
+	initialize: function () {
+		_.bindAll(this, 'render', 'renderArtist');
 		this.collection.on('add', this.renderArtist, this);
 		this.collection.on('reset', this.render, this);
 	},
-    render: function () {
-		this.renderArtists();
+
+	render: function () {
+		console.log('renderArtists');
+		this.$el.empty();
+		this.collection.forEach(this.renderArtist, this);
 		return this;
-    },
-	renderArtists: function(){
-    	this.$el.empty();
-    	this.collection.forEach(this.renderArtist, this);
 	},
-	renderArtist: function(artist){
-		var artist = new App.Views.Artist({model: artist});
+
+	renderArtist: function (artist) {
+		console.log('renderArtist');
+		var artist = new App.Views.Artist({ model: artist });
 		this.$el.append(artist.render().el);
 		return this;
 	}
 });
 
 App.Views.Artist = Parse.View.extend({
-	className: 'artist',
-	template: _.template($("#artistTemplate").html()),
-	initialize: function(){
 
+	className: 'artist',
+	
+	template: _.template($("#artistTemplate").html()),
+
+	events: {
+		'click': 'viewProfile',
+		'mouseover': 'highlightArtist'
 	},
-    events: {
-      'click': 'viewProfile'
-    },
-	viewProfile: function(){
-		// Parse.history.navigate(this.model.attributes.username, {trigger: true});
+	
+	initialize: function () {
+		_.bindAll(this, 'artistSelected', 'highlightArtist', 'viewProfile', 'render');
+
+		// Listen to artist-selected event and update highlight in results
+		App.on('artists:artist-selected', this.artistSelected);
+	},
+
+	highlightArtist: function () {
+		App.trigger('artists:artist-selected', this.model.id);
+	},
+
+	artistSelected: function (artistId) {
+		if (this.model.id === artistId) {
+			console.log('artists selected : ' + this.model.attributes.name);
+			// TODO highlight artist, not sure what css to update?
+		}
+	},
+
+	viewProfile: function () {
 		App.trigger('app:artist-profile', this.model.get('username'));
-		// $("html, body").animate({ scrollTop: 0 }, 200);
 	},
-	render: function(){
+
+	render: function () {
 		var that = this;
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
 
-		// console.log('artist');
-		// console.log(this.model);
-	 //  	var tattoos = this.model.relation('tattoos');
-	 //  	console.log(tattoos);
-	 //  	var query = tattoos.query();
-	 //  	if(App.search && App.search.searchingForView.query.length > 0) {
-	 //  		query.containsAll("books", App.search.searchingForView.query);
-	 //  	}
-	 //  	query.limit(4);
-	 //  	query.find().then(function(tats) {
 	 	var books = App.search ? App.search.searchingForView.query : [];
 	 	App.query.tattoosByProfile(this.model, books, { limit: 4 })
 	 		.then(function (tats) {
@@ -917,26 +1139,6 @@ App.Views.Artist = Parse.View.extend({
 						that.$('.artistTattoos').append(_.template('<a class="tattooContainer"><img src="img/empty-tattoo.png" class="tattooImg" style="border: 1px solid #d9d9d9;"></a>'));
 					}, that);
 	  			}
-	  			// TODO ~ Filter artists by book. Needs database restructure
-	  		// 	if ( tats.length === 0 && App.search && App.search.searchingForView.query.length > 0) {
-		   //  		that.$('.artistTattoos').append('<a class="resetArtistFilter">Reset</a>')
-		   //  		that.$('.tattooImg').css('border', 'none');
-		   //  		that.$('.resetArtistFilter').on('click', function(e){
-		   //  			e.stopPropagation();
-		   //  			e.preventDefault();
-					// 	$('.resetArtistFilter').tooltip('destroy');
-					// 	$('input.searchInput').tagsinput('removeAll');
-					// 	App.search.searchingForView.queryReset().loadMore();
-		   //  		});
-					// window.setTimeout(function(){
-					// 	that.$('.resetArtistFilter').tooltip({
-					// 	    title: "No tattoos with those books, click to reset filters.",
-					// 	    container: 'body',
-					// 	    delay: { show: 200, hide: 200 },
-					// 	    placement: 'auto'
-					// 	});
-					// },0);
-	  		// 	} else 
 	  			if (tats.length === 0 ) {
 		    		that.$('.artistTattoos').append('<span class="empty">No tattoos</span>')
 		    		that.$('.tattooImg').css('border', 'none');
@@ -2963,71 +3165,6 @@ App.Views.Feedback = Parse.View.extend({
 	}
 });
 
-///////// Collections
-App.Collections.Artists = Parse.Collection.extend({
-	initialize: function(){
-		this.page = 0;
-	},
-	model: App.Models.User
-});
-
-App.Collections.Tattoos = Parse.Collection.extend({
-	initialize: function(){
-		this.page = 0;
-	},
-	model: App.Models.Tattoo,
-	getBooksByCount: function(count){
-		this.artistBooks = _.flatten(this.pluck('artistBooks')).byCount();
-		this.popularBooks = _.flatten(this.pluck('books')).byCount();
-		this.allBooks = this.artistBooks.concat(this.popularBooks)
-		return this.allBooks.slice(0, count || 10);
-	},
-	byBooks: function(books){
-		//Takes an array of books, returns the tattoos where the books are inlcuded.
-
-		return this.filter(function(tat){ 
-			return _.intersection(tat.attributes.books, books).length >= books.length; });
-	}
-});
-
-App.Collections.Adds = Parse.Collection.extend({
-	model: App.Models.Add,
-	initialize: function(){
-
-	},
-	getBooksByCount: function(count){
-		this.popularBooks = _.flatten(this.pluck('books')).byCount().slice(0, count || 10);
-		return this.popularBooks;
-	},
-	getTattoo: function(tattooId){
-		return this.filter(function(add){ return add.get('tattooId') === tattooId; });
-	},
-	getTattoos: function(){
-		this.tattoos = _.map(this.models, function(add){
-			add.attributes.tattoo.attributes.artistProfile = add.attributes.artistProfile;
-			add.attributes.tattoo.attributes.books = add.attributes.books;
-			return add.attributes.tattoo;
-		});
-		return this.tattoos;
-	},
-	getArtists: function(){
-		var allArtists = _.uniq( _.map( this.models, function(add){ return add.attributes.artistProfile; }), function(artist){return JSON.stringify(artist)});
-		this.artists = _.sortBy(allArtists, function(artist){ return artist.get('collectorCount') * -1; });
-		return this.artists;
-	}
-});
-
-App.Collections.Books = Parse.Collection.extend({
-	model: App.Models.Book,
-	initialize: function(){
-
-	}
-});
-
-App.Collections.FeaturedArtists = Parse.Collection.extend({
-	model: App.Models.User,
-	page: 0
-});
 
 ///////// Routers
 App.Router = Parse.Router.extend({
