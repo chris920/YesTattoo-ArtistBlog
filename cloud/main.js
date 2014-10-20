@@ -2,30 +2,64 @@ var Image = require("parse-image");
 var _ = require('underscore');
  
 var editBooks = function(request, callback) {
+
+  console.log('editBooks called with the request:');///clear
+  console.log(request);///clear
+
   Parse.Cloud.useMasterKey(); 
   var query = new Parse.Query('Tattoo');
-  query.get(request.params.tattooId).then(function(tattoo){
-    _.each(request.params.added, function(book) {
-      tattoo.add('books', book);
+  query.get(request.params.tattooId)
+    .then(function (tattoo) {
+      console.log('editBooks tattoo add books');
+      _.each(request.params.added, function (book) {
+        tattoo.add('books', book);
+      });
+      return tattoo.save();
+    })
+    .then(function (tattoo) {
+      console.log('editBooks tattoo remove books');
+      var books = tattoo.attributes.books;
+      _.each(request.params.removed, function (book) {
+        var i = books.indexOf(book);
+        if(i != -1) {
+          books.splice(i, 1);
+        }
+      });
+      return tattoo.save();
+    })
+    .then(function (tattoo) {
+      console.log('editBooks tattoo fetch artist');
+      var artist = tattoo.get('artistProfile');
+      return artist.fetch();
+    })
+    .then(function (artist) {
+      console.log('editBooks artist add books');
+      console.log(artist);
+      _.each(request.params.added, function (book) {
+        artist.add('books', book);
+      });
+      return artist.save();
+    })
+    .then(function (artist) {
+      console.log('editBooks artist remove books');
+      var books = artist.attributes.books;
+      _.each(request.params.removed, function (book) {
+        var i = books.indexOf(book);
+        if(i != -1) {
+          books.splice(i, 1);
+        }
+      });
+      return artist.save();
+    })
+    .then(function(result){
+        console.log(result);
+        callback.success(result);
+      }, 
+      function(error){
+        console.log(error);
+        callback.error(error);
     });
-    return tattoo.save();
-  }).then(function(tattoo){     
-    var books = tattoo.attributes.books;
-    _.each(request.params.removed, function(book) {
-      var i = books.indexOf(book);
-      if(i != -1) {
-        books.splice(i, 1);
-      }
-    });
-    return tattoo.save();
-  }).then(function(result){
-    console.log(result);
-    callback.success(result);
-  }, function(error){
-    console.log(error);
-    callback.error(error);
-  });
-}
+};
 
 Parse.Cloud.define("books", function(request, response) {
   editBooks(request, {
@@ -230,16 +264,30 @@ Parse.Cloud.beforeSave("Tattoo", function(request, response) {
 });
 
 Parse.Cloud.beforeDelete("Tattoo", function(request, response) {
+  console.log('beforeDelete tattoo called with the request:');///clear
+  console.log(request);///clear
   var user = request.user;
   var tattoo = request.object;
 
   Parse.Cloud.useMasterKey();
-
-  var query = new Parse.Query('Add');
-  query.equalTo('tattoo', tattoo);
-  query.find().then(function(adds){
-    console.log(adds);
-
+  console.log('beforeDelete tattoo fetch artist');///clear
+  var artist = tattoo.get('artistProfile');
+  artist.fetch().then(function (artist) {
+    console.log('removing books from artist: ' + tattoo.get('books'));///clear
+    var books = artist.attributes.books;
+    _.each(tattoo.get('books'), function (book) {
+      var i = books.indexOf(book);
+      if(i != -1) {
+        books.splice(i, 1);
+      }
+    });
+    return artist.save();
+  }).then(function() {
+    var query = new Parse.Query('Add');
+    query.equalTo('tattoo', tattoo);
+    return query.find();
+  }).then(function(adds){
+    console.log(adds);///clear
     return Parse.Object.destroyAll(adds);
   }).then(function(result) {
     console.log(result);
@@ -319,6 +367,9 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
 });
 
 Parse.Cloud.beforeDelete("Add", function(request, response) {
+  console.log('beforeDelete Add called with the request:');///clear
+  console.log(request);///clear
+
   var add = request.object;
   Parse.Cloud.useMasterKey();
 
@@ -483,5 +534,26 @@ Parse.Cloud.job("emptyLocation", function(request, status) {
     status.success("location cleared.");
   }, function(error) {
     status.error("Uh oh, something went wrong.");
+  });
+});
+
+
+// Upgrade, one time only jobs
+
+Parse.Cloud.job('addBooksToArtistsProfile', function (request, status) {
+  Parse.Cloud.useMasterKey();
+  console.log('Running ArtistProfile upgrade');
+  var query = new Parse.Query('ArtistProfile');
+  query.each(function (artist) {
+    if (!artist.attributes.books) {
+      artist.set('books', []);
+    }
+    return artist.save();
+  })
+  .then(function () {
+    status.success('Books added to ArtistProfile');
+  },
+  function (error) {
+    status.error('Failed to update ArtistProfile');
   });
 });

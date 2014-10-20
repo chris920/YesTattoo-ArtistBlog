@@ -1340,7 +1340,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	initialize: function(){
 		console.log('tattoo profile init');
 		// Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
-		_.bindAll(this, 'focusIn');
+		_.bindAll(this, 'focusIn', 'createAdd');
 
 		this.model.on('add:created', this.showYourBooks, this);
 		this.model.on('add:removed', this.showAddButton, this);
@@ -3871,14 +3871,20 @@ App.query = (function () {
 		Query artists,
 		filter either by location or date created
 	*/
-	query.artists = function (location, options) {
+	query.artists = function (location, books, options) {
 		var query = new Parse.Query('ArtistProfile');
+		
+		if (books && books.length > 0) {
+			query.containsAll('books', books);
+		}
+		
 		if (location) {
 			query.near("location", location);
 		}
 		else {
 			query.descending('createdAt');
 		}
+		
 		query.skip(options.skip || 0);
 		query.limit(options.limit || 1000);
 		return query.find();
