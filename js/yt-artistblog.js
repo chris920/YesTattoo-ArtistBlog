@@ -493,7 +493,6 @@ App.Views.BookFilter = Parse.View.extend({
             this.render = _.wrap(this.render, function(render) { 
                 render();
                 that.queryReset();
-                App.trigger('app:book-update');
                 return that;
             });
         }
