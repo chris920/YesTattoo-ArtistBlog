@@ -742,36 +742,34 @@ App.Views.ArtistsPage = Parse.View.extend({
 		console.log('ArtistsPage init');
 
 		// _.bindAll(this, 'queryReset', 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'render');
-		_.bindAll(this, 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'render');
+		_.bindAll(this, 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'addUserMarker', 'addArtistMarker', 'initializeMap', 'render');
 
-		self = this;
-		self.requestLimit = 10;
+		this.requestLimit = 10;
 
-		self.collection = new App.Collections.Artists();
-		self.collection.on('add', self.addArtistMarker, self);
-		self.collection.on('reset', self.resetMarkers, self);
+		this.collection = new App.Collections.Artists();
+		this.collection.on('add', this.addArtistMarker, this);
+		this.collection.on('reset', this.resetMarkers, this);
 
 		// Initialize based on options passed
 		if (options && options.show === 'location') {
-			self.showMap();
+			this.showMap();
 		}
 		if (options && options.books) {
 			console.log('ArtistsPage init with books');///clear
-			self.initialBooks = options.books;
+			this.initialBooks = options.books;
 		}
 
 		// Initial map location, use user location is logged on
-		self.mapLocation = new google.maps.LatLng(34.0500, -118.2500); // default
+		this.mapLocation = new google.maps.LatLng(34.0500, -118.2500); // default
 		if (App.session.loggedIn() && App.profile.attributes.location) {
-			self.usersLocation = new google.maps.LatLng(App.profile.attributes.location.latitude, App.profile.attributes.location.longitude);
-			self.mapLocation = self.usersLocation;
+			this.usersLocation = new google.maps.LatLng(App.profile.attributes.location.latitude, App.profile.attributes.location.longitude);
+			this.mapLocation = this.usersLocation;
 		}
-		self.setMapLocation(self.mapLocation);
 
-		App.on('app:scroll', self.scrollChecker);
-		App.on('app:book-update', self.bookUpdate);
+		App.on('app:scroll', this.scrollChecker);
+		App.on('app:book-update', this.bookUpdate);
 
-		self.activateAffix();
+		this.activateAffix();
 	},
 
 	disable: function () {
@@ -874,18 +872,21 @@ App.Views.ArtistsPage = Parse.View.extend({
 	// - handle reset, to ensure control over collection state
 	loadArtists: function (reset) {
 		console.log('loading artists [' + reset + ']...');
-		var self = this;
 
 		if (reset) {
-			self.collection.reset();
-			self.collection.page = 0;
-			self.moreToload = true;
+			this.collection.reset();
+			this.collection.page = 0;
+			this.moreToload = true;
 		}
 		else {
-			self.collection.page++;
+			this.collection.page++;
 		}
 
-		App.query.artists(self.locationQuery, {
+		console.log(this.bookFilterView);
+		var self = this;
+		var location = self.locationQuery;
+		var books = self.bookFilterView ? self.bookFilterView.query : [];
+		App.query.artists(location, books, {
 				skip: self.collection.page * self.requestLimit,
 				limit: self.requestLimit
 			})
@@ -908,10 +909,10 @@ App.Views.ArtistsPage = Parse.View.extend({
 		console.log('addUserMarker ');
 		if (this.usersLocation) {
 			new google.maps.Marker({
-				map: self.map,
+				map: this.map,
 				icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
 				title: 'You @ ' + App.profile.attributes.locationName || '',
-				position: self.usersLocation
+				position: this.usersLocation
 			});
 		}
 	},
@@ -930,31 +931,31 @@ App.Views.ArtistsPage = Parse.View.extend({
 			}
 
 			var marker = new google.maps.Marker({
-				map: self.map,
+				map: this.map,
 				icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
 				title: label,
 				position: artistLocation,
 				// Custom attribute added for event handlers
 				artistId: artist.id
 			});
-			console.log(marker);
+			// console.log(marker);
 
 			// Listen to events, trigger artist-selected event
 			google.maps.event.addListener(marker, 'mouseover', function () {
 				App.trigger('artists:artist-selected', marker.artistId);
 			});
 
-			self.markers.push(marker);
-			self.bounds.extend(artistLocation);
+			this.markers.push(marker);
+			this.bounds.extend(artistLocation);
 		}
 
-		self.map.fitBounds(self.bounds);
+		this.map.fitBounds(this.bounds);
 	},
 
 	findMarkerByArtistId: function (artistId) {
-		for (var i = 0; i < self.markers.length; i++) {
-			if (self.markers[i].artistId === artistId) {
-				return self.markers[i];
+		for (var i = 0; i < this.markers.length; i++) {
+			if (this.markers[i].artistId === artistId) {
+				return this.markers[i];
 			}
 		}
 	},
@@ -963,43 +964,42 @@ App.Views.ArtistsPage = Parse.View.extend({
 		console.log('set selected artist marker : ' + artistId);
 
 		// Clear previous selection
-		if (self.selectedArtistMarker) {
-			self.selectedArtistMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+		if (this.selectedArtistMarker) {
+			this.selectedArtistMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
 		}
 
 		// Set new selection
-		var marker = self.findMarkerByArtistId(artistId);
+		var marker = this.findMarkerByArtistId(artistId);
 		console.log(marker);
 		if (marker) {
 			marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
-			self.selectedArtistMarker = marker;
+			this.selectedArtistMarker = marker;
 		}
 	},
 
 	clearMap: function () {
 		console.log('clear map');
-		if (self.markers) {
-			for (var i = 0, marker; marker = self.markers[i]; i++) {
+		if (this.markers) {
+			for (var i = 0, marker; marker = this.markers[i]; i++) {
 				marker.setMap(null);
 			}
 		}
-		self.markers = [];
-		self.selectedArtistMarker = null;
-		self.bounds = new google.maps.LatLngBounds();
+		this.markers = [];
+		this.selectedArtistMarker = null;
+		this.bounds = new google.maps.LatLngBounds();
 	},
 
 	setMapLocation: function (location) {
 		console.log('set map locaton');
-		self.clearMap();
-		self.mapLocation = location;
-		self.locationQuery = new Parse.GeoPoint({ latitude: location.k, longitude: location.B });
-		self.loadArtists(true);
+		this.clearMap();
+		this.mapLocation = location;
+		this.locationQuery = new Parse.GeoPoint({ latitude: location.k, longitude: location.B });
+		this.loadArtists(true);
 	},
 
 	initializeMap: function () {
-		console.log('initialize map');
 		var mapOptions = {
-			center: self.mapLocation,
+			center: this.mapLocation,
 			radius: 0,
 			zoom: 8,
 			styles: App.mapStyles,
@@ -1015,30 +1015,31 @@ App.Views.ArtistsPage = Parse.View.extend({
 			scrollwheel: false
 		};
 
-		self.markers = [];
-		self.bounds = new google.maps.LatLngBounds();
-		self.mapEl = $('#map-container')[0];
-		self.map = new google.maps.Map(self.mapEl, mapOptions);
+		this.markers = [];
+		this.bounds = new google.maps.LatLngBounds();
+		this.mapEl = $('#map-container')[0];
+		this.map = new google.maps.Map(this.mapEl, mapOptions);
 
 		// Create the search box and link it to the UI element.
 		var input = (document.getElementById('locationInput'));
-		self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-		self.locationInput = new google.maps.places.SearchBox((input));
+		this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+		this.locationInput = new google.maps.places.SearchBox((input));
 
 		// Listen to location changes and update map
-		google.maps.event.addListener(self.locationInput, 'places_changed', function () {
-			var places = self.locationInput.getPlaces();
+		google.maps.event.addListener(this.locationInput, 'places_changed', function () {
+			var places = this.locationInput.getPlaces();
 			if (places.length == 0) {
 				return;
 			}
-			self.setMapLocation(places[0].geometry.location);
+			this.setMapLocation(places[0].geometry.location);
 		});
 
 		// Listen to artist-selected event, highlight marker in response
-		App.on('artists:artist-selected', self.setSelectedArtistMarker);
+		App.on('artists:artist-selected', this.setSelectedArtistMarker, this);
 
 		// Set user location
-		self.addUserMarker();
+		this.setMapLocation(this.mapLocation);
+		this.addUserMarker();
 	},
 
 	render: function () {
@@ -1055,7 +1056,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			.before('<button class="btn-submit toggleMap"> Map </button>');
 
 		// Initialize map, but wait until current callstack has finished otherwise map will throw error.
-		_(self.initializeMap).defer();
+		_(this.initializeMap).defer();
 
 		return this;
 	}
@@ -3874,15 +3875,15 @@ App.query = (function () {
 	query.artists = function (location, books, options) {
 		var query = new Parse.Query('ArtistProfile');
 		
-		if (books && books.length > 0) {
-			query.containsAll('books', books);
-		}
-		
 		if (location) {
 			query.near("location", location);
 		}
 		else {
 			query.descending('createdAt');
+		}
+
+		if (books && books.length > 0) {
+			query.containsAll('books', books);
 		}
 		
 		query.skip(options.skip || 0);
