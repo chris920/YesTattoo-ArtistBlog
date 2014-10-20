@@ -1,3 +1,13 @@
+
+//http://stackoverflow.com/questions/5667888/counting-occurences-of-javascript-array-elements
+Array.prototype.byCountWithCount= function(){
+  var key, 
+      counts;
+  return _.reduce(this,function(counts,key){ counts[key]++; return counts },
+                _.object( _.map( _.uniq(this), function(key) { return [key, 0] })));
+}
+
+
 var Image = require("parse-image");
 var _ = require('underscore');
  
@@ -304,13 +314,11 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
   Parse.Cloud.useMasterKey();
 
   if (!add.existed()) {
-
     var userACL = new Parse.ACL(user);
     add.setACL(userACL);
     add.set('user', user);
     userACL.setRoleWriteAccess("Admin",true);
     userACL.setPublicReadAccess(true);
-
 
     var query = new Parse.Query('Add');
     query.equalTo('user', user);
@@ -414,7 +422,121 @@ Parse.Cloud.beforeDelete("Add", function(request, response) {
 });
 
 
-////// database update jobs
+////// daily jobs
+
+Parse.Cloud.job("updateGlobalBooks", function(request, status) {
+  Parse.Cloud.useMasterKey();
+
+  var that = this;
+  var bookSets = [];
+  var bookArray = [];
+  var newBooks = [];
+  // var allBooksByCount = [];
+  var allBooksByCountWithCount = [];
+  var query = new Parse.Query('ArtistProfile');
+  // TODO ~ Need to implement a query skip once over 1k artists
+  query.limit(1000);
+  query.find().then(function(artists){
+
+    //query all artists and get books///clear
+    _.each(artists, function(artist) {
+        bookSets.push(artist.get('books'));
+    });
+    console.log(bookSets);///clear
+
+    //removes the undefined values and flattens to one array///clear
+    bookArray = _.flatten(_.compact(bookSets));
+    console.log(bookArray);///clear
+
+    //converts the array into an object with the book name key and the count as the value///clear
+    // allBooksByCountWithCount = bookArray.byCountWithCount();///clear
+    var key,
+      counts;
+    allBooksByCountWithCount = _.reduce(bookArray,function(counts,key){ counts[key]++; return counts },
+                _.object( _.map( _.uniq(bookArray), function(key) { return [key, 0] })));
+
+    console.log('allBooksByCountWithCount = ');///clear
+    console.log(allBooksByCountWithCount);///clear
+
+    var globalBookQuery = new Parse.Query('GlobalBook');
+    globalBookQuery.limit(1000);
+    return globalBookQuery.find();
+  }).then(function(globalBooks) {
+    that.globalBooks = globalBooks;
+
+    //get the names of each book in an array ///clear
+    var globalBookNames= [];
+    _.each(globalBooks, function(globalBook) {
+      var name = globalBook.get('name');
+      globalBookNames.push(name);
+    });
+
+    //gets the GlobalBooks that have not been created yet ///clear
+    var newBooks = _.difference(bookArray, globalBookNames);
+    console.log('Making the new books: ');///clear
+    console.log(newBooks);///clear
+    //Creates new objects and assigns the name & picture URL ///clear
+    var GlobalBook = Parse.Object.extend("GlobalBook");
+    _.each(newBooks, function(book){
+      var newGlobalBook = new GlobalBook();
+      newGlobalBook.set('name', book);
+      newGlobalBook.set('pics', []);
+      newGlobalBook.set('assignedPics', []);
+      that.globalBooks.push(newGlobalBook);
+    });
+
+    //Update the pictures if there is no assigned and under 6
+    var picPromises = [];
+    _.each(that.globalBooks, function(globalBook){
+      var picsLength = globalBook.get('pics').length;
+      var assignedPicLength = globalBook.get('assignedPics').length;
+      if (picsLength < 6 && assignedPicLength < 1) {
+        var query = new Parse.Query("Tattoo");
+        query.equalTo('books', globalBook.get('name'));
+        query.limit(6 - picsLength);
+        var promise = query.find();
+
+        promise.then(function(tattoos){
+
+          console.log(tattoos);///clear
+          _.each(tattoos, function(tattoo){
+            var pic = tattoo.get('fileThumb');
+            globalBook.add('pics',pic);
+          });
+        });
+
+        picPromises.push(promise);
+      }
+    });
+    return Parse.Promise.when(picPromises);
+
+  }).then(function () {
+    var promises = [];
+    console.log('Setting book count and matches');///clear
+    console.log(that.globalBooks);///clear
+    //Sets the count from the all count object ///clear
+    //Filters down to the matching books sets and removes duplicates. ///clear
+    _.each(that.globalBooks, function(globalBook) {
+      var name = globalBook.get('name');
+      var count = allBooksByCountWithCount[name];
+      globalBook.set('count', count);
+      var matchingBookSets = _.filter(bookSets, function(bookSet){ 
+        return _.contains(bookSet, name);
+      });
+      var bookMatches = _.unique(_.flatten(matchingBookSets));
+      console.log(bookMatches);///clear
+      globalBook.set('bookMatches', bookMatches);
+      promises.push(globalBook.save());
+    });
+    return Parse.Promise.when(promises);
+  }).then(function() {
+    status.success("Books updated.");
+  }, function() {
+     status.error("Botched, something went wrong.");
+  });
+});
+
+
 
 //adds the emails to the artist profiles.
 Parse.Cloud.job("addEmail", function(request, status) {

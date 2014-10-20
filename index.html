@@ -306,16 +306,9 @@
       </div>
     </script>
 
-    <!-- Demo for popular books-->
+    <!-- Popular book-->
     <script type="text/html" id="popularBookDemo">
-      <div class="btn-tag bookSuggestion" style="background-image: url('img/book-color.jpg');"><span>Water Color</span></div>
-      <div class="btn-tag bookSuggestion" style="background-image: url('img/book-real.jpg');"><span>Color</span></div>
-      <div class="btn-tag bookSuggestion" style="background-image: url('img/book-b&g.jpg');"><span>Black And Gray</span></div>
-      <div class="btn-tag bookSuggestion" style="background-image: url('img/book-Traditional.jpg');"><span>Traditional</span></div>
-      <div class="btn-tag bookSuggestion" style="background-image: url('img/book-real.jpg');"><span>Realistic</span></div>
-      <div class="btn-tag bookSuggestion" style="background-image: url('img/book-portrait.jpg');"><span>Portrait</span></div>
-      <div class="btn-tag bookSuggestion" style="background-image: url('img/book-j.jpg');"><span>Japanese</span></div>
-      <div class="btn-tag bookSuggestion" style="background-image: url('img/book-animal.jpg');"><span>Animal</span></div>
+      <div class="btn-tag bookSuggestion" style="background-image: url('<%= imageSmall %>');"><span><%= name %></span></div>
     </script>
 
 
@@ -327,11 +320,6 @@
         <div class="reset" style="display:none"></div>
       </div>
     </script>
-
-
-
-
-
 
     <!-- Artists page -->
     <script type="text/html" id="artistsTemplate">
@@ -346,6 +334,36 @@
         <div class="artists"></div>
       </div>
 
+    </script>
+
+    <!-- User map point -->
+    <script type="text/html" id="artistsTemplate">
+      <div class="userMapPoint">
+          <div class='pin'></div>
+          <div class='pulse'></div>
+      </div>
+    </script>
+    
+    <!-- Artist map point -->
+    <script type="text/html" id="artistsTemplate">
+     <div class="artistMapPoint">
+        <div class='pin'></div>
+      </div>
+    </script>
+
+    <!-- Artist Thumbnail -->
+    <script type="text/html" id="artistTemplate">
+      <div class="artistThumb" href="/<%= username %>">
+        <div class="row">
+          <div class="artistTitles col-xs-12">
+            <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
+            <h4 class="artistName"><%= (name) ?  name : '' %></h4>
+            <h5 class="artistLoc"><%= (shop) ? shop : '' %><%= (locationName) ? locationName : '' %></h5>
+          </div>
+          <div class="artistTattoos col-xs-12"></div>
+        </div>
+        
+      </div>
     </script>
 
 
@@ -377,6 +395,7 @@
           <a><span class="flaticon-up49"></span></a>
         </div>
     </script>
+
 
     <!-- Featured Artists Page-->
     <script type="text/html" id="featuredContainerTemplate">
@@ -411,25 +430,6 @@
         </div>
         <div class="portfolioContainer">
         </div>
-    </script>
-
-    <!-- Artist Thumbnail -->
-    <script type="text/html" id="artistTemplate">
-      <div class="artistThumb" href="/<%= username %>">
-        <div class="artistTitleBG">
-          <div class="artistTitles">
-            <div class="col-sm-1">
-              <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
-            </div>
-            <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-              <h4 class="artistName"><%= (name) ?  name : '' %></h4>
-              <h5 class="artistLoc"><%= (shop) ?  shop : '' %><%= (locationName) ? '<br>'+locationName : '' %></h5>
-            </div>
-          </div>
-          <div class="artistTattoos col-sm-6 col-xs-12">
-          </div>
-        </div>
-      </div>
     </script>
 
 
@@ -740,7 +740,7 @@
       <div class="tab-content">
         <!-- Collection / Adds Tab-->
         <div class="tab-pane fade in active" id="collectionTab">
-          <div class="container">          
+          <div class="container">
             <div class="row adds">
 
             </div>
@@ -748,7 +748,7 @@
         </div> 
         <!-- Books Tab-->
         <div class="tab-pane fade in" id="booksTab">
-          <div class="container">          
+          <div class="container">
             <div class="row books">
 
             </div>
@@ -756,8 +756,8 @@
         </div> 
         <!-- Artists Tab-->
         <div class="tab-pane fade in" id="artistsTab">
-          <div class="container">          
-            <div class="row artists">
+          <div class="container">
+            <div class="row lg8container artists">
 
             </div>
           </div>
