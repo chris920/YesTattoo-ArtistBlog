@@ -358,7 +358,14 @@ App.Collections.FeaturedArtists = Parse.Collection.extend({
 App.Collections.GlobalBooks = Parse.Collection.extend({
 	model: App.Models.GlobalBook,
 	initialize: function(){
-
+		this.page = 0;
+	},
+	comparator: function(book){
+		return -book.get("count");
+	},
+	next: function(){
+		this.perPage = this.perPage || 5;
+		return this.slice(this.page*this.perPage,(this.page+1)*this.perPage);
 	}
 });
 
@@ -528,7 +535,7 @@ App.Views.BookFilter = Parse.View.extend({
     },
     setBooks: function(booksArray){
         var that = this;
-        _.each(booksArray, function(book){
+	    _.each(booksArray, function(book){
             that.addQueryTitle(book);
         });
         this.query = booksArray;
@@ -642,7 +649,44 @@ App.Views.BookFilter = Parse.View.extend({
         $(this.el).html(html);
 
         this.typeaheadInitialize();
+        this.globalBookView = new App.Views.GlobalBooks({el: this.$('.bookSuggestionScroll'), collection: App.Collections.globalBooks});
 
+        return this;
+    }
+});
+
+App.Views.GlobalBooks = Parse.View.extend({
+	initialize: function(){
+
+		console.log(this.collection);
+	},
+	filterBy: function(){
+		//TODO ~ Only show based on search results and second filter of current books
+	},
+	showNext: function(){
+		this.collection.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width())+1
+		this.colection.next();
+		this.collection.page++;
+	},
+	showFirst: function(){
+		//TODO ~ resets the suggestions and shows the most popular
+		_.each(this.collection.first(10), showOne(book));
+	},
+	showOne: function(book){
+        var book = new App.Views.GlobalBookThumbnail({model: book});
+        this.$el.append(book.render().el);
+	}
+});
+
+App.Views.GlobalBookThumbnail = Parse.View.extend({
+	template: _.template($("#globalBookThumbnail").html()),
+	className: 'globalBookThumbnail',
+	initialize: function(){
+
+	},
+    render: function(){
+        var attributes = this.model.toJSON();
+        $(this.el).append(this.template(attributes));
         return this;
     }
 });
