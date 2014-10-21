@@ -28,8 +28,7 @@ var App = new (Parse.View.extend({
         });
 
         this.initTypeahead();
-        this.setProfile(this.startRouter);
-        this.setGlobalBooks();
+        this.setProfile(this.setGlobalBooks(this.startRouter));
         this.initScrollToTop;
 
         // TODO Should be managed by region / view manager
@@ -67,7 +66,7 @@ var App = new (Parse.View.extend({
             	});
         }
     },
-    setGlobalBooks: function () {
+    setGlobalBooks: function (callBack) {
 	    Parse.Promise.when(App.query.allGlobalBooks())
 	        .then(function (globalBooks) {
 	                console.log('globalBooks set');
@@ -76,7 +75,11 @@ var App = new (Parse.View.extend({
 	            function (error) {
 	                console.log("Error: " + error.code + " " + error.message);
 	            }
-	        );
+                )
+            .always(function () {
+                if (callBack) { callBack(); }
+        	});
+
     },
     initTypeahead: function(){
         var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
@@ -649,7 +652,9 @@ App.Views.BookFilter = Parse.View.extend({
         $(this.el).html(html);
 
         this.typeaheadInitialize();
+        console.log(App.Collections.globalBooks);///clear
         this.globalBookView = new App.Views.GlobalBooks({el: this.$('.bookSuggestionScroll'), collection: App.Collections.globalBooks});
+        this.globalBookView.showFirst();
 
         return this;
     }
@@ -664,13 +669,15 @@ App.Views.GlobalBooks = Parse.View.extend({
 		//TODO ~ Only show based on search results and second filter of current books
 	},
 	showNext: function(){
-		this.collection.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width())+1
-		this.colection.next();
+		// is there a better way to determine the correct page count per slide?
+		this.collection.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width())+1;
+		
+		_.each(this.colection.next(), this.showOne(book));
 		this.collection.page++;
 	},
 	showFirst: function(){
 		//TODO ~ resets the suggestions and shows the most popular
-		_.each(this.collection.first(10), showOne(book));
+		_.each(this.collection.first(10), this.showOne(book));
 	},
 	showOne: function(book){
         var book = new App.Views.GlobalBookThumbnail({model: book});
