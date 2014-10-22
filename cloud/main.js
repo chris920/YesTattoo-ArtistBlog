@@ -472,7 +472,7 @@ Parse.Cloud.job("updateGlobalBooks", function(request, status) {
     });
 
     //gets the GlobalBooks that have not been created yet ///clear
-    var newBooks = _.difference(bookArray, globalBookNames);
+    var newBooks = _.unique(_.difference(bookArray, globalBookNames));
     console.log('Making the new books: ');///clear
     console.log(newBooks);///clear
     //Creates new objects and assigns the name & picture URL ///clear
