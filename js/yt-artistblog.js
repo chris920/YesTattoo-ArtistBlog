@@ -365,7 +365,7 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
 		return -book.get("count");
 	},
     byMatches: function(bookArray){
-        //return a new collection
+        // Gets the books that are in the second match of the active book filters and returns a new collection
         return new App.Collections.GlobalBooks(this.filter(function(globalBook){ 
             return _.intersection(globalBook.attributes.bookMatches, bookArray).length >= bookArray.length; }));
     },
@@ -541,6 +541,7 @@ App.Views.BookFilter = Parse.View.extend({
         }
     },
     setBooks: function(booksArray){
+        console.log(this.globalBookManagerView.collection.byBooks(booksArray));///clear
 	    _.each(this.globalBookManagerView.collection.byBooks(booksArray), function(book){
             this.activateBookFilter(book);
         }, this);
@@ -666,7 +667,6 @@ App.Views.BookFilter = Parse.View.extend({
 
 		//QUESTION ~ With out passing the el, the view does not select the right element. Use setElement?
         this.globalBookManagerView.setElement(this.$('.bookSuggestionScroll'));
-        this.globalBookManagerView.showAll();
         this.activeBookFilterManagerView.setElement(this.$('.filterTitles'));
         return this;
     }
@@ -717,12 +717,11 @@ App.Views.GlobalBookManager = Parse.View.extend({
 	initialize: function(){
 		this.collection = App.Collections.globalBooks;
 
-        _.bindAll(this,'showAll', 'showMore');
-		App.on('books:book-update', this.showAll, this);
-        this.collection.on('reset', this.showAll, this);
+        _.bindAll(this,'updateBooks', 'showMore');
+		App.on('books:book-update', this.updateBooks, this);
+        this.collection.on('reset', this.updateBooks, this);
 	},
 	disable: function(){
-		//TODO ~ disable listen window resize event ///clear
 
 	},
 	el: '.bookSuggestionScroll',
@@ -732,8 +731,7 @@ App.Views.GlobalBookManager = Parse.View.extend({
 		this.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width()) || 4;
         this.perPage++;
 	},
-    //rename to updateBooks
-    showAll: function(booksArray){
+    updateBooks: function(booksArray){
         this.$el.empty();
         console.log(booksArray);///clear
         this.page=0;
