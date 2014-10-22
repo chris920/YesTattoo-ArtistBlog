@@ -370,10 +370,10 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
 		var all = this.first(last);
 		return all.slice(all.length-this.perPage,all.length);
 	},
-	byBooks: function(books){
-		//Takes an array of books, returns the tattoos where the books are inlcuded.
-		return this.filter(function(book){
-			return _.intersection(book.attributes.books, books).length >= books.length; });
+	byBooks: function(bookArray){
+		//Takes an array of books, returns the globalBooks where the books are inlcuded.
+		return this.filter(function(globalBook){
+			return !$.inArray(globalBook.attributes.name, bookArray) });
 	}
 });
 
@@ -509,33 +509,45 @@ App.Views.BookFilter = Parse.View.extend({
     template: _.template($("#bookFilterTemplate").html()),
     el: '.bookFilterHeader',
     initialize: function(options){
-    	App.bookfilter = this;
+    	App.bookfilter = this;///clear
         console.log('Tattos page init with = ');///clear
-		// _.bindAll(this, 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'render', 'addBookSuggestion');
-        _.bindAll(this, 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'activateBookFilter', 'disableBookFilter', 'render');
+
+        this.globalBookManagerView = new App.Views.GlobalBookManager();
+        this.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager();
+
+        _.bindAll(this, 'setBooks', 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'activateBookFilter', 'disableBookFilter', 'render');
         App.on('app:keypress', this.focusIn);
         App.on('books:add-filter', this.activateBookFilter, this);
         App.on('books:remove-filter', this.disableBookFilter, this);
 
-        // if (this.options.initialBooks) {
-        //     console.log('bookFilter init with books');///clear
-        //     var that = this;
+        this.queryReset();
+        if (this.options.initialBooks) {
+            console.log('bookFilter init with books');///clear
+            var that = this;
 
-        //     this.render = _.wrap(this.render, function(render) { 
-        //         var booksArray = this.options.initialBooks.split("-").join(" ").split('+');
-        //         render().setBooks(booksArray);
-        //         return that;
-        //     });
-        // }
-        // else {
-        //     var that = this;
-        //     this.render = _.wrap(this.render, function(render) { 
-        //         render();
-        //         that.queryReset();
-        //         return that;
-        //     });
-        // }
-        this.query = [];
+            this.render = _.wrap(this.render, function(render) { 
+                var booksArray = this.options.initialBooks.split("-").join(" ").split('+');
+                render().setBooks(booksArray);
+                App.trigger('books:book-update');
+                return that;
+            });
+        }
+        else {
+            var that = this;
+            this.render = _.wrap(this.render, function(render) { 
+                render();
+				App.trigger('books:book-update');
+                return that;
+            });
+        }
+    },
+    setBooks: function(booksArray){
+	    _.each(this.globalBookManagerView.collection.byBooks(booksArray), function(book){
+            this.activateBookFilter(book);
+        }, this);
+
+        // this.activeBookFilterManagerView.collection.reset(this.globalBookManagerView.collection.byBooks(booksArray));
+        // this.query = booksArray;
     },
     disable: function () {
         console.log('filter header disabled');///clear
@@ -554,8 +566,8 @@ App.Views.BookFilter = Parse.View.extend({
         var bookName = book.get('name');
         var addUniqueBook = function(book) {
             that.query.push(bookName);
-            that.activeBookFilterView.collection.add(book);
-            App.trigger('app:book-update');
+            that.activeBookFilterManagerView.collection.add(book);
+            App.trigger('books:book-update');
         }
         var limit = 4;
         if($.inArray(bookName, this.query) > -1) {
@@ -570,10 +582,10 @@ App.Views.BookFilter = Parse.View.extend({
             // this.query = this.query.slice(this.query.length-limit, this.query.length);
 
             //Removes the first book filters in the collection;
-            this.activeBookFilterView.collection.remove(_.first(this.activeBookFilterView.collection));
+            this.activeBookFilterManagerView.collection.remove(_.first(this.activeBookFilterManagerView.collection));
             //Removes n first books. Necessary?
-            // _.each(_.first(this.activeBookFilterView.collection, this.query.length-limit), 
-            // 	this.activeBookFilterView.collection.remove(removedBook);
+            // _.each(_.first(this.activeBookFilterManagerView.collection, this.query.length-limit), 
+            // 	this.activeBookFilterManagerView.collection.remove(removedBook);
             // ), this);
             
 			addUniqueBook(book);
@@ -586,9 +598,9 @@ App.Views.BookFilter = Parse.View.extend({
     	console.log('disabling book: ');///clear
     	console.log(book);///clear
         this.query = _.without(this.query, book.get('name'));
-        App.trigger('app:book-update');
-        this.activeBookFilterView.collection.remove(book);
-        if(this.activeBookFilterView.collection.length === 0){
+        App.trigger('books:book-update');
+        this.activeBookFilterManagerView.collection.remove(book);
+        if(this.activeBookFilterManagerView.collection.length === 0){
             this.$('.tattoosTitle').html(this.options.title);
         }
     },
@@ -652,9 +664,10 @@ App.Views.BookFilter = Parse.View.extend({
 
         // this.typeaheadInitialize();
 
-        //QUESTION ~ With out passing the el, the view does not select the right element. Use setElement?
-        this.globalBookView = new App.Views.GlobalBookManager({el: this.$('.bookSuggestionScroll')});
-        this.activeBookFilterView = new App.Views.ActiveBookFilterManager({el: this.$('.filterTitles')});
+		//QUESTION ~ With out passing the el, the view does not select the right element. Use setElement?
+        this.globalBookManagerView.setElement(this.$('.bookSuggestionScroll'));
+        this.globalBookManagerView.showFirst();
+        this.activeBookFilterManagerView.setElement(this.$('.filterTitles'));
         return this;
     }
 });
@@ -665,17 +678,13 @@ App.Views.ActiveBookFilterManager = Parse.View.extend({
 		//TODO ~ Set intial books
 		this.collection = new App.Collections.GlobalBooks();
 		this.collection.on('add', this.renderBookTitle, this);
+        // this.collection.on('reset', this.renderAllBookTitles, this);
 	},
 	disable: function(){
 		//QUESTION ~ This disable will not be called, should they be moved to the parent view?
 	},
-    // setBooks: function(booksArray){
-    //     var that = this;
-	   //  _.each(booksArray, function(book){
-    //         that.addQueryTitle(book);
-    //     });
-    //     this.query = booksArray;
-    //     App.trigger('app:book-update');
+    // renderAllBookTitles: function(){
+    //     this.collection.forEach(this.renderBookTitle, this);
     // },
     renderBookTitle: function(book){
     	var bookTitle = new App.Views.ActiveBookFilter({model: book});
@@ -708,14 +717,15 @@ App.Views.GlobalBookManager = Parse.View.extend({
 	initialize: function(){
 		this.collection = App.Collections.globalBooks;
 		//TODO ~ listen to a window resize event to determine perPage ///clear
-		this.showFirst();
-		// App.on('app:book-update', this.filterBy);
+
+		// App.on('books:book-update', this.filterBy);
 		this.collection.on('reset', this.showFirst, this);
 		App.on('books:show-more', this.showMore, this);
+
 	},
 	disable: function(){
 		//TODO ~ disable listen window resize event ///clear
-		// App.off('app:book-update', this.filterBy);
+		// App.off('books:book-update', this.filterBy);
 	},
 	el: '.bookSuggestionScroll',
 	filterBy: function(books){
@@ -731,9 +741,6 @@ App.Views.GlobalBookManager = Parse.View.extend({
 		this.collection.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width())+1;
 	},
 	showMore: function(){
-		console.log(this);///clear
-		console.log(this.collection);///clear
-		
 		_.each(this.collection.more(), function(book){ 
 			this.showOne(book);
 		}, this);
@@ -741,8 +748,6 @@ App.Views.GlobalBookManager = Parse.View.extend({
 	},
 	showFirst: function(){
 		this.$el.empty();
-		console.log('loading first flobal books ~~ this.collection.first(10) ~~ ');///clear
-		console.log(this.collection.first(10));///clear
 		_.each(this.collection.first(10), function(book){
 			this.showOne(book);
 		}, this);
@@ -791,13 +796,13 @@ App.Views.TattoosPage = Parse.View.extend({
 
         _.bindAll(this, 'scrollChecker', 'render', 'bookUpdate');
         App.on('app:scroll', this.scrollChecker);
-        App.on('app:book-update', this.bookUpdate);
+        App.on('books:book-update', this.bookUpdate);
 
     },
     disable: function () {
         console.log('tattoos page disabled');///clear
         App.off('app:scroll', this.scrollChecker);
-        App.off('app:book-update', this.bookUpdate);
+        App.off('books:book-update', this.bookUpdate);
     },
     events: {
 
@@ -846,7 +851,7 @@ App.Views.TattoosPage = Parse.View.extend({
                         that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
                         that.$('.reset').on('click', function(){
                             that.bookFilterView.queryReset();
-                            App.trigger('app:book-update');
+                            App.trigger('books:book-update');
                         }).fadeIn();
                     } else if (tats.length < 40) {
                     // that.$el.append('<div class="end" style="display: none"><img src="img/yt-featuredend.png"></div>');
@@ -919,7 +924,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 		}
 
 		App.on('app:scroll', this.scrollChecker);
-		App.on('app:book-update', this.bookUpdate);
+		App.on('books:book-update', this.bookUpdate);
 
 		this.activateAffix();
 	},
@@ -927,7 +932,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	disable: function () {
 		console.log('ArtistsPage disabled');///clear
 		App.off('app:scroll', this.scrollChecker);
-		App.off('app:book-update', this.bookUpdate);
+		App.off('books:book-update', this.bookUpdate);
 	},
 
 	events: {
