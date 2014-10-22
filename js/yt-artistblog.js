@@ -359,21 +359,15 @@ App.Collections.FeaturedArtists = Parse.Collection.extend({
 App.Collections.GlobalBooks = Parse.Collection.extend({
 	model: App.Models.GlobalBook,
 	initialize: function(){
-		this.page = 0;
-        this.perPage = this.perPage || 5;
+
 	},
 	comparator: function(book){
 		return -book.get("count");
 	},
-    // NOT IN USE ~ Now in the globalbookfiltermanager view
-	// more: function(){
-	// 	var last = (this.page+1)*this.perPage;
-	// 	var all = this.first(last);
-	// 	return all.slice(all.length-this.perPage,all.length);
-	// },
     byMatches: function(bookArray){
-        return this.filter(function(globalBook){ 
-            return _.intersection(globalBook.attributes.bookMatches, bookArray).length >= bookArray.length; });
+        //return a new collection
+        return new App.Collections.GlobalBooks(this.filter(function(globalBook){ 
+            return _.intersection(globalBook.attributes.bookMatches, bookArray).length >= bookArray.length; }));
     },
 	byBooks: function(bookArray){
 		//Takes an array of books, returns the globalBooks where the books are inlcuded.
@@ -639,11 +633,11 @@ App.Views.BookFilter = Parse.View.extend({
     shiftRight: function(){
         console.log('shiftRight triggered');///clear
         this.$(".bookSuggestionScroll").animate({scrollLeft: '+='+$('.bookSuggestionScroll').width()}, 750);
-        App.trigger('books:show-more');
+        this.globalBookManagerView.showMore();
     },
     shiftLeft: function(){
         console.log('shiftLeft triggered');///clear
-        this.$(".bookSuggestionScroll").animate({scrollRight: '+='+$('.bookSuggestionScroll').width()}, 750);
+        this.$(".bookSuggestionScroll").animate({scrollLeft: '-='+$('.bookSuggestionScroll').width()}, 750);
         //TODO ~ checks if there is no room to scroll, hides the arrow.
     },
     showBookFilter: function(){
@@ -722,11 +716,10 @@ App.Views.ActiveBookFilter = Parse.View.extend({
 App.Views.GlobalBookManager = Parse.View.extend({
 	initialize: function(){
 		this.collection = App.Collections.globalBooks;
-		//TODO ~ listen to a window resize event to determine perPage ///clear
+
         _.bindAll(this,'showAll', 'showMore');
-        this.collection.on('reset', this.showAll, this);
 		App.on('books:book-update', this.showAll, this);
-		App.on('books:show-more', this.showMore, this);
+        this.collection.on('reset', this.showAll, this);
 	},
 	disable: function(){
 		//TODO ~ disable listen window resize event ///clear
@@ -736,12 +729,14 @@ App.Views.GlobalBookManager = Parse.View.extend({
 	updatePerPage: function(){
 		//TODO ~ make completely dynamic, do not +1 on the perPage in the frequency of 1 / the below modulus ///clear
 		//QUESTION ~ is there a better way to determine the correct page count per slide? ///clear
-		this.collection.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width())+1;
+		this.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width()) || 4;
+        this.perPage++;
 	},
+    //rename to updateBooks
     showAll: function(booksArray){
         this.$el.empty();
         console.log(booksArray);///clear
-        this.collection.page=0;
+        this.page=0;
         if(!booksArray){
             this.availableBooks = this.collection;
         } else {
@@ -752,11 +747,17 @@ App.Views.GlobalBookManager = Parse.View.extend({
         this.showMore();
     },
 	showMore: function(){
-        // this.updatePerPage();
+        //TODO ~ move to init and listen to window resize event to determine perPage. In init, the scroller is hidden and can not calc ///clear
+        this.updatePerPage();
+
         // Gets the available books and renders the next set from the scroll
-        this.collection.page++;
-        var showingAmount = (this.collection.page+1)*this.collection.perPage;
-        var toShow = this.availableBooks.slice(showingAmount-this.perPage,showingAmount);
+        this.page++;
+        var shownAmount = (this.page+1)*this.perPage;
+        console.log('this.page = ' + this.page);///clear
+        console.log('this.perPage = ' + this.perPage);///clear
+        console.log('shownAmount = ' + shownAmount);///clear
+        var shown = this.availableBooks.first(shownAmount);
+        var toShow = shown.slice(shown.length-this.perPage,shown.length);
         _.each(toShow, function(book){ 
             this.showOne(book);
         }, this);
