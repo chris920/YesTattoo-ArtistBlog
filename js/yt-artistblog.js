@@ -360,16 +360,21 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
 	model: App.Models.GlobalBook,
 	initialize: function(){
 		this.page = 0;
+        this.perPage = this.perPage || 5;
 	},
 	comparator: function(book){
 		return -book.get("count");
 	},
-	more: function(){
-		this.perPage = this.perPage || 5;
-		var last = (this.page+1)*this.perPage;
-		var all = this.first(last);
-		return all.slice(all.length-this.perPage,all.length);
-	},
+    // NOT IN USE ~ Now in the globalbookfiltermanager view
+	// more: function(){
+	// 	var last = (this.page+1)*this.perPage;
+	// 	var all = this.first(last);
+	// 	return all.slice(all.length-this.perPage,all.length);
+	// },
+    byMatches: function(bookArray){
+        return this.filter(function(globalBook){ 
+            return _.intersection(globalBook.attributes.bookMatches, bookArray).length >= bookArray.length; });
+    },
 	byBooks: function(bookArray){
 		//Takes an array of books, returns the globalBooks where the books are inlcuded.
 		return this.filter(function(globalBook){
@@ -528,7 +533,7 @@ App.Views.BookFilter = Parse.View.extend({
             this.render = _.wrap(this.render, function(render) { 
                 var booksArray = this.options.initialBooks.split("-").join(" ").split('+');
                 render().setBooks(booksArray);
-                App.trigger('books:book-update');
+                App.trigger('books:book-update', booksArray);
                 return that;
             });
         }
@@ -567,7 +572,7 @@ App.Views.BookFilter = Parse.View.extend({
         var addUniqueBook = function(book) {
             that.query.push(bookName);
             that.activeBookFilterManagerView.collection.add(book);
-            App.trigger('books:book-update');
+            App.trigger('books:book-update', that.query);
         }
         var limit = 4;
         if($.inArray(bookName, this.query) > -1) {
@@ -578,6 +583,7 @@ App.Views.BookFilter = Parse.View.extend({
             }, 600);
         } 
         else if (this.query.length >= limit){
+            //TODO
         	this.query.shift();
             // this.query = this.query.slice(this.query.length-limit, this.query.length);
 
@@ -598,7 +604,7 @@ App.Views.BookFilter = Parse.View.extend({
     	console.log('disabling book: ');///clear
     	console.log(book);///clear
         this.query = _.without(this.query, book.get('name'));
-        App.trigger('books:book-update');
+        App.trigger('books:book-update', this.query);
         this.activeBookFilterManagerView.collection.remove(book);
         if(this.activeBookFilterManagerView.collection.length === 0){
             this.$('.tattoosTitle').html(this.options.title);
@@ -666,7 +672,7 @@ App.Views.BookFilter = Parse.View.extend({
 
 		//QUESTION ~ With out passing the el, the view does not select the right element. Use setElement?
         this.globalBookManagerView.setElement(this.$('.bookSuggestionScroll'));
-        this.globalBookManagerView.showFirst();
+        this.globalBookManagerView.showAll();
         this.activeBookFilterManagerView.setElement(this.$('.filterTitles'));
         return this;
     }
@@ -717,40 +723,43 @@ App.Views.GlobalBookManager = Parse.View.extend({
 	initialize: function(){
 		this.collection = App.Collections.globalBooks;
 		//TODO ~ listen to a window resize event to determine perPage ///clear
-
-		// App.on('books:book-update', this.filterBy);
-		this.collection.on('reset', this.showFirst, this);
+        _.bindAll(this,'showAll', 'showMore');
+        this.collection.on('reset', this.showAll, this);
+		App.on('books:book-update', this.showAll, this);
 		App.on('books:show-more', this.showMore, this);
-
 	},
 	disable: function(){
 		//TODO ~ disable listen window resize event ///clear
-		// App.off('books:book-update', this.filterBy);
+
 	},
 	el: '.bookSuggestionScroll',
-	filterBy: function(books){
-		//TODO ~ Only show based on search results and second filter of current books ///clear
-		this.$el.empty();
-		_.each(this.collection.byBook(book), function(){
-			that.showOne(book);
-		}, this);
-	},
 	updatePerPage: function(){
 		//TODO ~ make completely dynamic, do not +1 on the perPage in the frequency of 1 / the below modulus ///clear
 		//QUESTION ~ is there a better way to determine the correct page count per slide? ///clear
 		this.collection.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width())+1;
 	},
+    showAll: function(booksArray){
+        this.$el.empty();
+        console.log(booksArray);///clear
+        this.collection.page=0;
+        if(!booksArray){
+            this.availableBooks = this.collection;
+        } else {
+            this.availableBooks = this.collection.byMatches(booksArray);
+        }
+        console.log(this.availableBooks);///clear
+        this.showMore();
+        this.showMore();
+    },
 	showMore: function(){
-		_.each(this.collection.more(), function(book){ 
-			this.showOne(book);
-		}, this);
-		this.collection.page++;
-	},
-	showFirst: function(){
-		this.$el.empty();
-		_.each(this.collection.first(10), function(book){
-			this.showOne(book);
-		}, this);
+        // this.updatePerPage();
+        // Gets the available books and renders the next set from the scroll
+        this.collection.page++;
+        var showingAmount = (this.collection.page+1)*this.collection.perPage;
+        var toShow = this.availableBooks.slice(showingAmount-this.perPage,showingAmount);
+        _.each(toShow, function(book){ 
+            this.showOne(book);
+        }, this);
 	},
 	showOne: function(book){
         var book = new App.Views.GlobalBookThumbnail({model: book});
