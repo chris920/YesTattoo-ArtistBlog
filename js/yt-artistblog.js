@@ -28,7 +28,9 @@ var App = new (Parse.View.extend({
         });
 
         this.initTypeahead();
-        this.setProfile(this.setGlobalBooks(this.startRouter));
+        App.Collections.globalBooks = new App.Collections.GlobalBooks();
+        this.setGlobalBooks();
+        this.setProfile(this.startRouter);
         this.initScrollToTop;
 
         // TODO Should be managed by region / view manager
@@ -70,15 +72,11 @@ var App = new (Parse.View.extend({
 	    Parse.Promise.when(App.query.allGlobalBooks())
 	        .then(function (globalBooks) {
 	                console.log('globalBooks set');
-	                App.Collections.globalBooks = new App.Collections.GlobalBooks(globalBooks);
+	                App.Collections.globalBooks.reset(globalBooks);
 	            },
 	            function (error) {
 	                console.log("Error: " + error.code + " " + error.message);
-	            }
-                )
-            .always(function () {
-                if (callBack) { callBack(); }
-        	});
+	            });
 
     },
     initTypeahead: function(){
@@ -366,9 +364,16 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
 	comparator: function(book){
 		return -book.get("count");
 	},
-	next: function(){
+	more: function(){
 		this.perPage = this.perPage || 5;
-		return this.slice(this.page*this.perPage,(this.page+1)*this.perPage);
+		var last = (this.page+1)*this.perPage;
+		var all = this.first(last);
+		return all.slice(all.length-this.perPage,all.length);
+	},
+	byBooks: function(books){
+		//Takes an array of books, returns the tattoos where the books are inlcuded.
+		return this.filter(function(book){
+			return _.intersection(book.attributes.books, books).length >= books.length; });
 	}
 });
 
@@ -504,84 +509,119 @@ App.Views.BookFilter = Parse.View.extend({
     template: _.template($("#bookFilterTemplate").html()),
     el: '.bookFilterHeader',
     initialize: function(options){
+    	App.bookfilter = this;
         console.log('Tattos page init with = ');///clear
-
-        _.bindAll(this, 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'render', 'addBookSuggestion');
+		// _.bindAll(this, 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'render', 'addBookSuggestion');
+        _.bindAll(this, 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'activateBookFilter', 'disableBookFilter', 'render');
         App.on('app:keypress', this.focusIn);
+        App.on('books:add-filter', this.activateBookFilter, this);
+        App.on('books:remove-filter', this.disableBookFilter, this);
 
-        if (this.options.initialBooks) {
-            console.log('bookFilter init with books');///clear
-            var that = this;
+        // if (this.options.initialBooks) {
+        //     console.log('bookFilter init with books');///clear
+        //     var that = this;
 
-            this.render = _.wrap(this.render, function(render) { 
-                var booksArray = this.options.initialBooks.split("-").join(" ").split('+');
-                render().setBooks(booksArray);
-                return that;
-            });
-        }
-        else {
-            var that = this;
-            this.render = _.wrap(this.render, function(render) { 
-                render();
-                that.queryReset();
-                return that;
-            });
-        }
-
+        //     this.render = _.wrap(this.render, function(render) { 
+        //         var booksArray = this.options.initialBooks.split("-").join(" ").split('+');
+        //         render().setBooks(booksArray);
+        //         return that;
+        //     });
+        // }
+        // else {
+        //     var that = this;
+        //     this.render = _.wrap(this.render, function(render) { 
+        //         render();
+        //         that.queryReset();
+        //         return that;
+        //     });
+        // }
+        this.query = [];
     },
     disable: function () {
         console.log('filter header disabled');///clear
         App.off('app:keypress', this.focusIn);
     },
     focusIn: function(){
+    	// TODO - if toggleBookFilter has class active, then focus, else show then focus
         this.$('input.bookFilterInput').focus();
     },
-    setBooks: function(booksArray){
+    activateBookFilter: function(book){
+    	console.log('adding the book: ');///clear
+    	console.log(book);///clear
+    	this.$('.tattoosTitle').html('');
+    	//TODO ~ Remove this.query, use _.pluck on the activeBookFilter collection in ArtistsPage/TattoosPage
         var that = this;
-	    _.each(booksArray, function(book){
-            that.addQueryTitle(book);
-        });
-        this.query = booksArray;
+        var bookName = book.get('name');
+        var addUniqueBook = function(book) {
+            that.query.push(bookName);
+            that.activeBookFilterView.collection.add(book);
+            App.trigger('app:book-update');
+        }
+        var limit = 4;
+        if($.inArray(bookName, this.query) > -1) {
+            this.$( "span.filterTitle:contains("+bookName+")" ).animate({
+                opacity: 0
+            }, 200).delay(400).animate({
+                opacity: 1
+            }, 600);
+        } 
+        else if (this.query.length >= limit){
+        	this.query.shift();
+            // this.query = this.query.slice(this.query.length-limit, this.query.length);
+
+            //Removes the first book filters in the collection;
+            this.activeBookFilterView.collection.remove(_.first(this.activeBookFilterView.collection));
+            //Removes n first books. Necessary?
+            // _.each(_.first(this.activeBookFilterView.collection, this.query.length-limit), 
+            // 	this.activeBookFilterView.collection.remove(removedBook);
+            // ), this);
+            
+			addUniqueBook(book);
+        }
+        else {
+            addUniqueBook(book);
+        }
+    },
+    disableBookFilter: function(book){
+    	console.log('disabling book: ');///clear
+    	console.log(book);///clear
+        this.query = _.without(this.query, book.get('name'));
         App.trigger('app:book-update');
+        this.activeBookFilterView.collection.remove(book);
+        if(this.activeBookFilterView.collection.length === 0){
+            this.$('.tattoosTitle').html(this.options.title);
+        }
     },
-    typeaheadInitialize: function(){
-        var that = this;
-        var input = this.$('input.bookFilterInput');
-        input.typeahead(null, {
-            name: 'books',
-            displayKey: 'books',
-            source: App.booktt.ttAdapter(),
-            templates: {
-                // empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
-                // suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
-            }
-        }).attr('placeholder','Enter any book: style, flavor or placement.').on('typeahead:selected', function (obj,datum) {
-            that.addQuery(datum.books);
-            input.typeahead('val', '');
-        }).on('focus', function () {
-            that.$('.tt-input').attr('placeholder','');
-        }).on('blur', function () {
-            that.$('.tt-input').attr('placeholder','Enter any book: style, flavor or placement.').val('');
-        });
-    },
+    // typeaheadInitialize: function(){
+    //     var that = this;
+    //     var input = this.$('input.bookFilterInput');
+    //     input.typeahead(null, {
+    //         name: 'books',
+    //         displayKey: 'books',
+    //         source: App.booktt.ttAdapter(),
+    //         templates: {
+    //             // empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
+    //             // suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
+    //         }
+    //     }).attr('placeholder','Enter any book: style, flavor or placement.').on('typeahead:selected', function (obj,datum) {
+    //         that.addQuery(datum.books);
+    //         input.typeahead('val', '');
+    //     }).on('focus', function () {
+    //         that.$('.tt-input').attr('placeholder','');
+    //     }).on('blur', function () {
+    //         that.$('.tt-input').attr('placeholder','Enter any book: style, flavor or placement.').val('');
+    //     });
+    // },
     events: {
         'click .arrow.right': 'shiftRight',
         'click .arrow.left': 'shiftLeft',
         'click .toggleBookFilter': 'showBookFilter',
-        'click .toggleBookFilter.active': 'hideBookFilter',
-        'click .filterTitle': 'removeQuery',
-        'click .bookSuggestion': 'addBookSuggestion'
-    },
-    addPopularBooks: function(){
-        //TODO ~ Popular books should be dynamic from the server. It should continually add book suggestions as the user scrolls.
-        $('.bookSuggestionScroll').append(_.template($("#popularBookDemo").html()));
+        'click .toggleBookFilter.active': 'hideBookFilter'
     },
     shiftRight: function(){
         console.log('shiftRight triggered');///clear
         this.$(".bookSuggestionScroll").animate({scrollLeft: '+='+$('.bookSuggestionScroll').width()}, 750);
-
-        //TODO ~ checks if there is enough books in the slider, adds popular ones if not.
-        this.addPopularBooks();
+        App.trigger('books:show-more');
     },
     shiftLeft: function(){
         console.log('shiftLeft triggered');///clear
@@ -590,7 +630,6 @@ App.Views.BookFilter = Parse.View.extend({
     },
     showBookFilter: function(){
         console.log('showBookFilter triggered');///clear
-        console.log(this);//clear
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('active');
         this.$('.bookFilterContainer').slideDown();
         this.$('.toggleBookFilter').html('Hide Filters');
@@ -599,46 +638,6 @@ App.Views.BookFilter = Parse.View.extend({
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('active');
         this.$('.bookFilterContainer').slideUp();
         this.$('.toggleBookFilter').html('Show Filters');
-    },
-    addQuery: function(query){
-        var that = this;
-        var addUniqueBook = function(query) {
-            that.query.push(query);
-            that.addQueryTitle(query);
-            App.trigger('app:book-update');
-        }
-        var limit = 4;
-        if($.inArray(query, this.query) > -1) {
-            this.$( "span.filterTitle:contains("+query+")" ).animate({
-                opacity: 0
-            }, 200).delay(400).animate({
-                opacity: 1
-            }, 600);
-        } 
-        else if (this.query.length >= limit){
-            addUniqueBook(query);
-            this.query = this.query.slice(this.query.length-limit, this.query.length);
-            this.$('.filterTitle:eq('+(this.query.length-limit)+')').remove();
-        }
-        else {
-            addUniqueBook(query);
-        }
-    },
-    addQueryTitle: function(title){
-        this.$('.tattoosTitle').html('');
-        this.$('.filterTitles').append('<span class="filterTitle">'+title+'</span>');
-    },
-    removeQuery: function(e){
-        this.query = _.without(this.query, e.currentTarget.textContent);
-        App.trigger('app:book-update');
-        e.currentTarget.remove();
-        if(this.query.length === 0){
-            this.$('.tattoosTitle').html(this.options.title);
-        }
-    },
-    addBookSuggestion: function(e){
-        e.currentTarget.remove();
-        this.addQuery($(e.currentTarget)[0].textContent);
     },
     queryReset: function(){
         this.query = [];
@@ -651,33 +650,102 @@ App.Views.BookFilter = Parse.View.extend({
         var html = this.template();
         $(this.el).html(html);
 
-        this.typeaheadInitialize();
-        console.log(App.Collections.globalBooks);///clear
-        this.globalBookView = new App.Views.GlobalBooks({el: this.$('.bookSuggestionScroll'), collection: App.Collections.globalBooks});
-        this.globalBookView.showFirst();
+        // this.typeaheadInitialize();
 
+        //QUESTION ~ With out passing the el, the view does not select the right element. Use setElement?
+        this.globalBookView = new App.Views.GlobalBookManager({el: this.$('.bookSuggestionScroll')});
+        this.activeBookFilterView = new App.Views.ActiveBookFilterManager({el: this.$('.filterTitles')});
         return this;
     }
 });
 
-App.Views.GlobalBooks = Parse.View.extend({
+App.Views.ActiveBookFilterManager = Parse.View.extend({
+	el: '.filterTitles',
 	initialize: function(){
+		//TODO ~ Set intial books
+		this.collection = new App.Collections.GlobalBooks();
+		this.collection.on('add', this.renderBookTitle, this);
+	},
+	disable: function(){
+		//QUESTION ~ This disable will not be called, should they be moved to the parent view?
+	},
+    // setBooks: function(booksArray){
+    //     var that = this;
+	   //  _.each(booksArray, function(book){
+    //         that.addQueryTitle(book);
+    //     });
+    //     this.query = booksArray;
+    //     App.trigger('app:book-update');
+    // },
+    renderBookTitle: function(book){
+    	var bookTitle = new App.Views.ActiveBookFilter({model: book});
+    	this.$el.append(bookTitle.render().el);
+    }
+});
 
-		console.log(this.collection);
+App.Views.ActiveBookFilter = Parse.View.extend({
+	template: _.template('<%= name %>'),
+	className: 'filterTitle',
+	tagName: 'span',
+	initialize: function(){
+		_.bindAll(this, 'removeBookTitle')
 	},
-	filterBy: function(){
-		//TODO ~ Only show based on search results and second filter of current books
+	events: {
+        'click': 'removeBookTitle',
 	},
-	showNext: function(){
-		// is there a better way to determine the correct page count per slide?
+    removeBookTitle: function(){
+		App.trigger('books:remove-filter', this.model);
+		this.remove();
+    },
+    render: function(){
+        var attributes = this.model.toJSON();
+        $(this.el).append(this.template(attributes));
+        return this;
+    }
+});
+
+App.Views.GlobalBookManager = Parse.View.extend({
+	initialize: function(){
+		this.collection = App.Collections.globalBooks;
+		//TODO ~ listen to a window resize event to determine perPage ///clear
+		this.showFirst();
+		// App.on('app:book-update', this.filterBy);
+		this.collection.on('reset', this.showFirst, this);
+		App.on('books:show-more', this.showMore, this);
+	},
+	disable: function(){
+		//TODO ~ disable listen window resize event ///clear
+		// App.off('app:book-update', this.filterBy);
+	},
+	el: '.bookSuggestionScroll',
+	filterBy: function(books){
+		//TODO ~ Only show based on search results and second filter of current books ///clear
+		this.$el.empty();
+		_.each(this.collection.byBook(book), function(){
+			that.showOne(book);
+		}, this);
+	},
+	updatePerPage: function(){
+		//TODO ~ make completely dynamic, do not +1 on the perPage in the frequency of 1 / the below modulus ///clear
+		//QUESTION ~ is there a better way to determine the correct page count per slide? ///clear
 		this.collection.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width())+1;
+	},
+	showMore: function(){
+		console.log(this);///clear
+		console.log(this.collection);///clear
 		
-		_.each(this.colection.next(), this.showOne(book));
+		_.each(this.collection.more(), function(book){ 
+			this.showOne(book);
+		}, this);
 		this.collection.page++;
 	},
 	showFirst: function(){
-		//TODO ~ resets the suggestions and shows the most popular
-		_.each(this.collection.first(10), this.showOne(book));
+		this.$el.empty();
+		console.log('loading first flobal books ~~ this.collection.first(10) ~~ ');///clear
+		console.log(this.collection.first(10));///clear
+		_.each(this.collection.first(10), function(book){
+			this.showOne(book);
+		}, this);
 	},
 	showOne: function(book){
         var book = new App.Views.GlobalBookThumbnail({model: book});
@@ -686,10 +754,21 @@ App.Views.GlobalBooks = Parse.View.extend({
 });
 
 App.Views.GlobalBookThumbnail = Parse.View.extend({
-	template: _.template($("#globalBookThumbnail").html()),
-	className: 'globalBookThumbnail',
+	template: _.template('<span><%= name %></span>'),
+	className: 'btn-tag bookSuggestion',
 	initialize: function(){
 
+	},
+	events: {
+		'click': 'addBookFilter'
+	},
+	hideBookFilter: function(){
+		//TODO ~ Hide the book being activated and render another book.
+	},
+	addBookFilter: function(){
+		console.log('addBookFilter triggered from the GlobalBookThumbnail View');///clear
+		App.trigger('books:add-filter', this.model);
+		//fade the book title
 	},
     render: function(){
         var attributes = this.model.toJSON();
@@ -785,6 +864,8 @@ App.Views.TattoosPage = Parse.View.extend({
         var html = this.template();
         $(this.el).html(html);
 
+        //TODO - this.collection should be in initialization, or controller and create on an if(passed colleciton);
+        //Try not passing EL and putting in init.
         this.collection = new App.Collections.Tattoos();
         this.tattoosView = new App.Views.Tattoos({collection: this.collection, el: this.$('.tattoos')});
         this.tattoosView.render();
