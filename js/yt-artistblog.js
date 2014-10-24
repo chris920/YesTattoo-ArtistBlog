@@ -73,6 +73,7 @@ var App = new (Parse.View.extend({
 	        .then(function (globalBooks) {
 	                console.log('globalBooks set');
 	                App.Collections.globalBooks.reset(globalBooks);
+                    //TODO ~ Assign typeahead suggestions to the _.pluck() of the globalBooks results
 	            },
 	            function (error) {
 	                console.log("Error: " + error.code + " " + error.message);
@@ -279,7 +280,7 @@ App.Models.Add = Parse.Object.extend({
 });
 
 App.Models.Book = Parse.Object.extend({
-    className: "Book",
+    className: "Book"
 });
 
 App.Models.FeaturedArtist = Parse.User.extend({
@@ -287,7 +288,12 @@ App.Models.FeaturedArtist = Parse.User.extend({
 });
 
 App.Models.GlobalBook = Parse.Object.extend({
-    className: "GlobalBook",
+    // QUESTION ~ This doesn't work?... Added extra && in the available() of the globalbooks collection
+    // initialize: function(){
+    //     this.attributes.active = false;
+    //     this.attributes.shown = false;
+    // },
+    className: "GlobalBook"
 });
 
 ///////// Collections
@@ -364,16 +370,41 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
 	comparator: function(book){
 		return -book.get("count");
 	},
+    resetState: function(){
+        //TODO? ~ Reset the active and shown of all the global books
+    },
+    getNext: function(booksArray, perPage){
+        if(booksArray){
+            var next = this.byMatches(booksArray);
+        } else {
+            var next = this;
+        }
+        return next.first(perPage || 10);
+    },
+    available: function(){
+        //Returns the global books that have not been shown and are not active filters.
+        return this.filter(function(globalBook){
+            return !globalBook.attributes.active && !globalBook.attributes.shown || globalBook.get("active") === false && globalBook.get("shown") === false;
+        });
+    },
     byMatches: function(bookArray){
-        // Gets the books that are in the second match of the active book filters and returns a new collection
-        return new App.Collections.GlobalBooks(this.filter(function(globalBook){ 
-            return _.intersection(globalBook.attributes.bookMatches, bookArray).length >= bookArray.length; }));
+        //TODO ~ This needs to return multiple books matching fragments as well.
+        // Gets the available books that are in the second match (similar tattoos) of the active book filters and returns a new collection
+        return new App.Collections.GlobalBooks(this.available().filter(function(globalBook){ 
+            return _.intersection(globalBook.attributes.bookMatches, bookArray).length >= bookArray.length;
+        }));
     },
 	byBooks: function(bookArray){
+        //TODO ~ This needs to return multiple books based on the array, right now only returns 1.
 		//Takes an array of books, returns the globalBooks where the books are inlcuded.
 		return this.filter(function(globalBook){
 			return !$.inArray(globalBook.attributes.name, bookArray) });
-	}
+	},
+    getActiveBooks: function(){
+        this.filter(function(globalBook) {
+            return globalBook.get("active") === true;
+        });
+    }
 });
 
 ///////// Views
@@ -511,13 +542,17 @@ App.Views.BookFilter = Parse.View.extend({
     	App.bookfilter = this;///clear
         console.log('Tattos page init with = ');///clear
 
-        this.globalBookManagerView = new App.Views.GlobalBookManager();
-        this.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager();
+        this.collection = App.Collections.globalBooks;
+        this.globalBookManagerView = new App.Views.GlobalBookManager({collection: this.collection});
+        this.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({collection: this.collection});
 
         _.bindAll(this, 'setBooks', 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'activateBookFilter', 'disableBookFilter', 'render');
         App.on('app:keypress', this.focusIn);
-        App.on('books:add-filter', this.activateBookFilter, this);
-        App.on('books:remove-filter', this.disableBookFilter, this);
+
+        //NOTE-QUESTION -  still need these custom triggers now that the collection 
+        // App.on('books:add-filter', this.activateBookFilter, this);
+        // App.on('books:remove-filter', this.disableBookFilter, this);
+        this.collection.on('change:active', this.updateBookFilter, this);
 
         this.queryReset();
         if (this.options.initialBooks) {
@@ -552,55 +587,51 @@ App.Views.BookFilter = Parse.View.extend({
     disable: function () {
         console.log('filter header disabled');///clear
         App.off('app:keypress', this.focusIn);
+
+        this.globalBookManagerView.disable();
+        this.activeBookFilterManagerView.disable();
     },
     focusIn: function(){
     	// TODO - if toggleBookFilter has class active, then focus, else show then focus
         this.$('input.bookFilterInput').focus();
     },
+    updateBookFilter: function(book){
+        if (book.get('active') === true) {
+            this.activateBookFilter(book);
+        } else {
+            this.disableBookFilter(book);
+        }
+    },
     activateBookFilter: function(book){
-    	console.log('adding the book: ');///clear
-    	console.log(book);///clear
+        //TODO ~ Remove this.query, use _.pluck on the activeBookFilter collection in ArtistsPage/TattoosPage
     	this.$('.tattoosTitle').html('');
-    	//TODO ~ Remove this.query, use _.pluck on the activeBookFilter collection in ArtistsPage/TattoosPage
         var that = this;
         var bookName = book.get('name');
         var addUniqueBook = function(book) {
             that.query.push(bookName);
-            that.activeBookFilterManagerView.collection.add(book);
             App.trigger('books:book-update', that.query);
         }
         var limit = 4;
+        //Prevents duplicate books from being added
+        //TODO ~ There should be no duplicates... Delete?
         if($.inArray(bookName, this.query) > -1) {
             this.$( "span.filterTitle:contains("+bookName+")" ).animate({
                 opacity: 0
             }, 200).delay(400).animate({
                 opacity: 1
             }, 600);
-        } 
-        else if (this.query.length >= limit){
-            //TODO
+        // Limits the number of books that can be added
+        } else if (this.query.length >= limit){
         	this.query.shift();
-            // this.query = this.query.slice(this.query.length-limit, this.query.length);
-
-            //Removes the first book filters in the collection;
-            this.activeBookFilterManagerView.collection.remove(_.first(this.activeBookFilterManagerView.collection));
-            //Removes n first books. Necessary?
-            // _.each(_.first(this.activeBookFilterManagerView.collection, this.query.length-limit), 
-            // 	this.activeBookFilterManagerView.collection.remove(removedBook);
-            // ), this);
-            
+            this.collection.first(1).set('active', false);
 			addUniqueBook(book);
-        }
-        else {
+        } else {
             addUniqueBook(book);
         }
     },
     disableBookFilter: function(book){
-    	console.log('disabling book: ');///clear
-    	console.log(book);///clear
         this.query = _.without(this.query, book.get('name'));
         App.trigger('books:book-update', this.query);
-        this.activeBookFilterManagerView.collection.remove(book);
         if(this.activeBookFilterManagerView.collection.length === 0){
             this.$('.tattoosTitle').html(this.options.title);
         }
@@ -665,7 +696,7 @@ App.Views.BookFilter = Parse.View.extend({
 
         // this.typeaheadInitialize();
 
-		//QUESTION ~ With out passing the el, the view does not select the right element. Use setElement?
+		//QUESTION ~ With out passing the el, the view does not select the right element. Does this create timing issues?
         this.globalBookManagerView.setElement(this.$('.bookSuggestionScroll'));
         this.activeBookFilterManagerView.setElement(this.$('.filterTitles'));
         return this;
@@ -675,20 +706,20 @@ App.Views.BookFilter = Parse.View.extend({
 App.Views.ActiveBookFilterManager = Parse.View.extend({
 	el: '.filterTitles',
 	initialize: function(){
-		//TODO ~ Set intial books
-		this.collection = new App.Collections.GlobalBooks();
-		this.collection.on('add', this.renderBookTitle, this);
+		this.collection.on('change:active', this.renderBookTitle, this);
         // this.collection.on('reset', this.renderAllBookTitles, this);
 	},
 	disable: function(){
-		//QUESTION ~ This disable will not be called, should they be moved to the parent view?
+		
 	},
     // renderAllBookTitles: function(){
     //     this.collection.forEach(this.renderBookTitle, this);
     // },
     renderBookTitle: function(book){
-    	var bookTitle = new App.Views.ActiveBookFilter({model: book});
-    	this.$el.append(bookTitle.render().el);
+        if(book.attributes.active === true){
+            var bookTitle = new App.Views.ActiveBookFilter({model: book});
+            this.$el.append(bookTitle.render().el);            
+        }
     }
 });
 
@@ -697,13 +728,14 @@ App.Views.ActiveBookFilter = Parse.View.extend({
 	className: 'filterTitle',
 	tagName: 'span',
 	initialize: function(){
-		_.bindAll(this, 'removeBookTitle')
+		_.bindAll(this, 'removeBookTitle');
 	},
 	events: {
         'click': 'removeBookTitle',
 	},
     removeBookTitle: function(){
-		App.trigger('books:remove-filter', this.model);
+        this.model.set('active', false);
+        this.model.set('shown', false);
 		this.remove();
     },
     render: function(){
@@ -714,53 +746,41 @@ App.Views.ActiveBookFilter = Parse.View.extend({
 });
 
 App.Views.GlobalBookManager = Parse.View.extend({
+    el: '.bookSuggestionScroll',
 	initialize: function(){
-		this.collection = App.Collections.globalBooks;
 
         _.bindAll(this,'updateBooks', 'showMore');
-		App.on('books:book-update', this.updateBooks, this);
+        //TODO / QUESTION ~ if this collection has models, then start, otherwise listen to to the reset for the query to complete?
         this.collection.on('reset', this.updateBooks, this);
+        this.collection.on('change:active', this.updateBooks, this);
+
+        // App.on('books:book-update', this.updateBooks, this);
 	},
 	disable: function(){
 
 	},
-	el: '.bookSuggestionScroll',
 	updatePerPage: function(){
 		//TODO ~ make completely dynamic, do not +1 on the perPage in the frequency of 1 / the below modulus ///clear
 		//QUESTION ~ is there a better way to determine the correct page count per slide? ///clear
+
+        // Determines the number of books per screen width + 1 for partials. Defaults to 5.
 		this.perPage = ~~($('.bookSuggestionScroll').width() / $('.bookSuggestion').width()) || 4;
         this.perPage++;
 	},
     updateBooks: function(booksArray){
         this.$el.empty();
-        console.log(booksArray);///clear
-        this.page=0;
-        if(!booksArray){
-            this.availableBooks = this.collection;
-        } else {
-            this.availableBooks = this.collection.byMatches(booksArray);
-        }
-        console.log(this.availableBooks);///clear
-        this.showMore();
-        this.showMore();
-    },
-	showMore: function(){
-        //TODO ~ move to init and listen to window resize event to determine perPage. In init, the scroller is hidden and can not calc ///clear
-        this.updatePerPage();
+        this.showMore(booksArray);
 
-        // Gets the available books and renders the next set from the scroll
-        this.page++;
-        var shownAmount = (this.page+1)*this.perPage;
-        console.log('this.page = ' + this.page);///clear
-        console.log('this.perPage = ' + this.perPage);///clear
-        console.log('shownAmount = ' + shownAmount);///clear
-        var shown = this.availableBooks.first(shownAmount);
-        var toShow = shown.slice(shown.length-this.perPage,shown.length);
-        _.each(toShow, function(book){ 
+        // TODO ~ move to init and listen to window resize event to determine perPage. In init, the scroller is hidden and can not calc ///clear
+        this.updatePerPage();
+    },
+	showMore: function(booksArray){
+        _.each(this.collection.getNext(booksArray, this.perPage), function(book){
             this.showOne(book);
         }, this);
 	},
 	showOne: function(book){
+        book.set('shown', true);
         var book = new App.Views.GlobalBookThumbnail({model: book});
         this.$el.append(book.render().el);
 	}
@@ -770,7 +790,7 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
 	template: _.template('<span><%= name %></span>'),
 	className: 'btn-tag bookSuggestion',
 	initialize: function(){
-
+        _.bindAll(this,'addBookFilter');
 	},
 	events: {
 		'click': 'addBookFilter'
@@ -780,8 +800,11 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
 	},
 	addBookFilter: function(){
 		console.log('addBookFilter triggered from the GlobalBookThumbnail View');///clear
-		App.trigger('books:add-filter', this.model);
-		//fade the book title
+        this.model.set('active', true);
+        // this.fadeOut();
+        console.log(this);///clear
+
+		// App.trigger('books:add-filter', this.model);
 	},
     render: function(){
         var attributes = this.model.toJSON();
