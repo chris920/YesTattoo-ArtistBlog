@@ -455,7 +455,7 @@ App.Views.Explore = Parse.View.extend({
         "click .popularBook":   "tattoosByBook"
     },
     findArtists: function(){
-        App.trigger('app:artists', {show: 'location'});
+        App.trigger('app:artists', { showMap: true });
     },
     tattoosByBook: function(e){
         var book = e.currentTarget.children[0].textContent;
@@ -730,28 +730,32 @@ App.Views.ArtistsPage = Parse.View.extend({
 	template: _.template($("#artistsTemplate").html()),
 
 	id: 'artistsPage',
+
+	events: {
+	    'click .toggleMap:not(.active)': 'showMap',
+	    'click .toggleMap.active':		'hideMap',
+	    'click .byYou': 				'byYou',
+	    'click .worldwide': 			'setWorldwide',
+	    'click .cancel': 				'hideMap'
+	},
 	
 	/*
 		TODO Proposed options 
 		Options:
-			- showMap: true/false 	
-			- location: geopoint 	// initial location, to override user location e.g. search by new york
+			- showMap: true/false
+			- location: geopoint 	// TODO initial location, to override user location e.g. search by new york
 	*/
 	initialize: function (options) {
 		console.log('ArtistsPage init');
 
 		// _.bindAll(this, 'queryReset', 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'render');
 		// _.bindAll(this, 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'addUserMarker', 'addArtistMarker', 'initializeMap', 'render');
-		_.bindAll(this, 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'render');
+		_.bindAll(this, 'scrollChecker', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render');
 
 		this.requestLimit = 10;
+
 		this.collection = new App.Collections.Artists();
 
-
-		// Initialize based on options passed
-		if (options && options.show === 'location') {
-			this.showMap();
-		}
 		if (options && options.books) {
 			console.log('ArtistsPage init with books');///clear
 			this.initialBooks = options.books;
@@ -769,14 +773,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 		App.off('app:scroll', this.scrollChecker);
 		App.off('app:book-update', this.bookUpdate);
 		App.off('artists:location-update', this.locationUpdate);
-	},
-
-	events: {
-	    'click .toggleMap': 			'showMap',
-	    'click .toggleMap.active': 		'hideMap',
-	    'click .byYou': 				'byYou',
-	    'click .worldwide': 			'setWorldwide',
-	    'click .cancel': 				'hideMap'
 	},
 
 	activateAffix: _.debounce(function () {
@@ -826,12 +822,24 @@ App.Views.ArtistsPage = Parse.View.extend({
 		if (App.session.loggedIn() && App.profile.attributes.locationName){
 			this.$('.byYou').html(App.profile.attributes.locationName.split(",").splice(0,1).join("")).fadeIn();
 		}
+
+		if (this.artistsMapView) {
+			this.artistsMapView.initialize();
+		}
+		else {
+			this.artistsMapView = new App.Views.ArtistsMapView({ collection: this.collection, el: this.$('#map-container') });
+			this.artistsMapView.render();
+		}
 	},
 
 	hideMap: function () {
 		console.log('hide map');
 		this.$('.artistsResultContainer, .mapContainer, .toggleMap').removeClass('active');
 		this.$('.artists').addClass('lg8container');
+
+		if (this.artistsMapView) {
+			this.artistsMapView.disable();
+		}
 	},
 
 	// TODO Not tested since map channges
@@ -908,18 +916,21 @@ App.Views.ArtistsPage = Parse.View.extend({
 		console.log('ArtistsPage render');
 		var self = this;
 		$(this.el).html(this.template()).promise().done(function () { 
-			console.log('test done');
-
-			self.artistsView = new App.Views.Artists({ collection: self.collection, el: self.$('.artists') });
-			self.artistsView.render();
 
 			self.bookFilterView = new App.Views.BookFilter({ el: self.$('.bookFilterHeader'), initialBooks: self.initialBooks, title: 'Artists' });
 			console.log(self.initialBooks);///clear
 			self.bookFilterView.render().$('.toggleBookFilter')
 				.before('<button class="btn-submit toggleMap"> Map </button>');
 
-			self.artistsMapView = new App.Views.ArtistsMapView({ collection: self.collection, el: self.$('#map-container') });
-			self.artistsMapView.render();
+			self.artistsView = new App.Views.Artists({ collection: self.collection, el: self.$('.artists') });
+			self.artistsView.render();
+
+			if (self.options.showMap) {
+				self.showMap();
+			}
+			else {
+				self.loadArtists(true);
+			}
 		});
 
 		return this;
@@ -931,7 +942,6 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	el: '#map-container',
 
 	mapOptions: {
-		// center: this.mapLocation,
 		radius: 0,
 		zoom: 8,
 		styles: App.mapStyles,
@@ -949,36 +959,38 @@ App.Views.ArtistsMapView = Parse.View.extend({
 
 	initialize: function () {
 		var self = this;
-		_.bindAll(self, 'requestUsersLocation', 'addUserMarker', 'addArtistMarker', 'initializeMap', 'setMapLocation', 'render');
+		_.bindAll(self, 'initializeMap', 'setMapLocation', 'requestUsersLocation', 'addUserMarker', 'addArtistMarker', 'render');
 
-		self.collection.on('add', self.addArtistMarker, self);
-		self.collection.on('reset', self.resetMarkers, self);
+		$.when([self.getMapLocation(), self.initializeMap()])
+		.then(function () {
+			self.setMapLocation(self.mapLocation);
+			self.addUserMarker();	
 
-		// self.getMapLocation().done(_(self.initializeMap).defer());
-		self.getMapLocation().done(self.initializeMap);
+			self.collection.on('add', self.addArtistMarker, self);
+			self.collection.on('reset', self.resetMarkers, self);
 
-		// Listen to artist-selected event, highlight marker in response
-		App.on('artists:artist-selected', this.setSelectedArtistMarker, this);
+			App.on('artists:artist-selected', this.setSelectedArtistMarker, this);
+		});
 	},
 
 	disable: function () {
-		this.collection.off('add', this.addArtistMarker);
-		this.collection.off('reset', this.resetMarkers);
-		App.off('artists:artist-selected', this.setSelectedArtistMarker);
+		this.collection.off('add', this.addArtistMarker, this);
+		this.collection.off('reset', this.resetMarkers, this);
+		App.off('artists:artist-selected', this.setSelectedArtistMarker, this);
 	},
 
 	initializeMap: function () {
+		var deferred = $.Deferred();
+
 		var self = this;
 		self.markers = [];
 		self.bounds = new google.maps.LatLngBounds();
-
-		// Initialize map
 		self.map = new google.maps.Map(self.$el[0], self.mapOptions);
 		google.maps.event.addListenerOnce(self.map, 'idle', function () {
 			console.log('map ready');
 
 			// Create the search box and link it to the UI element.
-			var input = (document.getElementById('locationInput'));
+			var input = $('<input type="text" class="form-control grayInput" id="locationInput" placeholder="Enter your location">')[0];
 			var locationInput = new google.maps.places.SearchBox((input));
 			self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
@@ -991,9 +1003,10 @@ App.Views.ArtistsMapView = Parse.View.extend({
 				self.setMapLocation(places[0].geometry.location);
 			});
 
-			self.setMapLocation(self.mapLocation);
-			self.addUserMarker();
+			deferred.resolve();
 		});
+
+		return deferred.promise();
 	},
 
 	setMapLocation: function (location) {
