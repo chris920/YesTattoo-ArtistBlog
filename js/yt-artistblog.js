@@ -969,7 +969,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 			self.collection.on('add', self.addArtistMarker, self);
 			self.collection.on('reset', self.resetMarkers, self);
 
-			App.on('artists:artist-selected', this.setSelectedArtistMarker, this);
+			App.on('artists:artist-selected', self.setSelectedArtistMarker, self);
 		});
 	},
 
