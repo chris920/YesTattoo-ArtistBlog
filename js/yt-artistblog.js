@@ -288,11 +288,6 @@ App.Models.FeaturedArtist = Parse.User.extend({
 });
 
 App.Models.GlobalBook = Parse.Object.extend({
-    // QUESTION ~ This doesn't work?... Added extra && in the available() of the globalbooks collection
-    // initialize: function(){
-    //     this.attributes.active = false;
-    //     this.attributes.shown = false;
-    // },
     className: "GlobalBook"
 });
 
@@ -312,7 +307,7 @@ App.Collections.Tattoos = Parse.Collection.extend({
 	getBooksByCount: function(count){
 		this.artistBooks = _.flatten(this.pluck('artistBooks')).byCount();
 		this.popularBooks = _.flatten(this.pluck('books')).byCount();
-		this.allBooks = this.artistBooks.concat(this.popularBooks)
+		this.allBooks = this.artistBooks.concat(this.popularBooks);
 		return this.allBooks.slice(0, count || 10);
 	},
 	byBooks: function(books){
@@ -371,14 +366,10 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
 		return -book.get("count");
 	},
     resetShown: function(){
-        _.each(this, function(globalBook){
-            globalBook.set('shown', false);
-        });
+        this.invoke('set', {shown: false});
     },
     resetActive: function(){
-        _.each(this, function(globalBook){
-            globalBook.set('active', false);
-        });
+        this.invoke('set', {active: false});
     },
     getNext: function(booksArray, perPage){
         if(booksArray){
@@ -557,7 +548,7 @@ App.Views.BookFilter = Parse.View.extend({
         App.on('app:keypress', this.focusIn);
         this.collection.on('change:active', this.updateBookFilter, this);
 
-        this.queryReset();
+        this.query = [];
         if (this.options.initialBooks) {
             console.log('bookFilter init with books');///clear
             var that = this;
@@ -766,7 +757,6 @@ App.Views.GlobalBookManager = Parse.View.extend({
         _.bindAll(this,'updateBooks', 'showMore');
         this.collection.on('reset', this.updateBooks);
         App.on('books:book-update', this.updateBooks, this);
-
 	},
 	disable: function(){
 
@@ -812,9 +802,6 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
 	events: {
 		'click': 'addBookFilter'
 	},
-	hideBookFilter: function(){
-		//TODO ~ Hide the book being activated and render another book.
-	},
 	addBookFilter: function(){
 		console.log('addBookFilter triggered from the GlobalBookThumbnail View');///clear
         this.model.set('active', true);
@@ -822,7 +809,6 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
     render: function(){
         var attributes = this.model.toJSON();
         $(this.el).append(this.template(attributes));
-        console.log(this.model);
         var picCount = this.model.attributes.pics.length;
         var randomPicIndex = Math.floor(Math.random() * picCount);
         $(this.el).css('background-image', 'url(' + this.model.attributes.pics[randomPicIndex]._url + ')');
@@ -846,6 +832,10 @@ App.Views.TattoosPage = Parse.View.extend({
         App.on('app:scroll', this.scrollChecker);
         App.on('books:book-update', this.bookUpdate);
 
+        this.collection = new App.Collections.Tattoos();
+        this.tattoosView = new App.Views.Tattoos({collection: this.collection});
+
+        this.bookFilterView = new App.Views.BookFilter({initialBooks: options.books, title: 'Tattoos'});
     },
     disable: function () {
         console.log('tattoos page disabled');///clear
@@ -917,14 +907,10 @@ App.Views.TattoosPage = Parse.View.extend({
         var html = this.template();
         $(this.el).html(html);
 
-        //TODO - this.collection should be in initialization, or controller and create on an if(passed colleciton);
-        //Try not passing EL and putting in init.
-        this.collection = new App.Collections.Tattoos();
-        this.tattoosView = new App.Views.Tattoos({collection: this.collection, el: this.$('.tattoos')});
+        this.tattoosView.setElement(this.$('.tattoos'));
         this.tattoosView.render();
 
-        this.bookFilterView = new App.Views.BookFilter({el: this.$('.bookFilterHeader'), initialBooks: this.initialBooks, title: 'Tattoos'});
-        console.log(this.initialBooks);///clear
+        this.bookFilterView.setElement(this.$('.bookFilterHeader'));
         this.bookFilterView.render();
 
         return this;
