@@ -399,7 +399,7 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
 			return !$.inArray(globalBook.attributes.name, bookArray) });
 	},
     getActiveBooks: function(){
-        this.filter(function(globalBook) {
+        return this.filter(function(globalBook) {
             return globalBook.get("active") === true;
         });
     }
@@ -619,11 +619,17 @@ App.Views.BookFilter = Parse.View.extend({
             }, 600);
         // Limits the number of books that can be added
         } else if (this.query.length >= limit){
-            //TODO ~ filter limiter, QUESTION ~ should this be here?
+            //QUESTION ~ What is a better way to limit the number of book filters
         	// this.query.shift();
-         //    this.collection.first(1).set({active: false, shown: false});
-         //    console.log('query limit reached, removed: ');///clear
-         //    console.log(this.collection.first(1));///clear
+            
+         //    var activeBooks = this.collection.getActiveBooks();
+         //    var activeBookCount = activeBooks.length;
+         //    for (var i = 0; i < activeBookCount - limit; i++) {
+         //        activeBooks[i].set({active: false, shown: false});                
+         //        this.$('.filterTitle')[i].remove();                
+         //    }
+            
+            //remove each extra before the length of the active books.
 			addUniqueBook(book);
         } else {
             console.log('Adding UNIQUE BOOK from activeBookFilter of the book filter view');///clear
@@ -738,6 +744,7 @@ App.Views.ActiveBookFilter = Parse.View.extend({
         'click': 'removeBookTitle',
 	},
     removeBookTitle: function(){
+        //QUESTION ~ How should we reset the active and shown attributes? This creates an infinite loop...
         this.model.set('active', false);
         this.model.set('shown', false);
 		this.remove();
@@ -782,6 +789,7 @@ App.Views.GlobalBookManager = Parse.View.extend({
 	showMore: function(booksArray){
         console.log('Show more called with the collection: ');///clear
         console.log(this.collection.getNext(booksArray, this.perPage));///clear
+        // TODO / QUESTION ~ How can we make blank / holder books with a reset button
         _.each(this.collection.getNext(booksArray, this.perPage), function(book){
             this.showOne(book);
         }, this);
