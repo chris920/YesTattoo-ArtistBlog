@@ -822,6 +822,10 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
     render: function(){
         var attributes = this.model.toJSON();
         $(this.el).append(this.template(attributes));
+        console.log(this.model);
+        var picCount = this.model.attributes.pics.length;
+        var randomPicIndex = Math.floor(Math.random() * picCount);
+        $(this.el).css('background-image', 'url(' + this.model.attributes.pics[randomPicIndex]._url + ')');
         return this;
     }
 });
