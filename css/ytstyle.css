@@ -5925,9 +5925,9 @@ button.toggleBookFilter, button.toggleMap {
     white-space: nowrap; }
     .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion {
       display: inline-block;
-      width: 225px;
-      margin: 10px 0px;
-      padding: 40px 20px 80px 20px; }
+      width: 125px;
+      margin: 10px 5px;
+      padding: 40px 20px 40px 20px; }
       .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion span {
         min-width: 225px;
         -webkit-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
@@ -5935,9 +5935,20 @@ button.toggleBookFilter, button.toggleMap {
         box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
         background-color: rgba(0, 0, 0, 0.6);
         color: white;
-        font-size: 26px;
+        font-size: 18px;
         float: none;
         text-align: center; }
+      @media screen and (min-width: 768px) {
+        .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion {
+          display: inline-block;
+          width: 225px;
+          padding: 40px 20px 80px 20px; }
+          .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion span {
+            min-width: 225px;
+            -webkit-box-shadow: 0px 0px 10px 20px rgba(0, 0, 0, 0.6);
+            -moz-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0px 0px 10px 20px rgba(0, 0, 0, 0.6);
+            font-size: 26px; } }
 
 input.mainSearchInput {
   color: #c42020;
