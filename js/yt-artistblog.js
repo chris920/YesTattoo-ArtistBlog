@@ -666,7 +666,7 @@ App.Views.BookFilter = Parse.View.extend({
     events: {
         'click .arrow.right': 'shiftRight',
         'click .arrow.left': 'shiftLeft',
-        'click .toggleBookFilter': 'showBookFilter',
+        'click .toggleBookFilter.inactive': 'showBookFilter',
         'click .toggleBookFilter.active': 'hideBookFilter'
     },
     shiftRight: function(){
@@ -682,11 +682,16 @@ App.Views.BookFilter = Parse.View.extend({
     showBookFilter: function(){
         console.log('showBookFilter triggered');///clear
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('active');
+        this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('inactive');
         this.$('.bookFilterContainer').slideDown();
         this.$('.toggleBookFilter').html('Hide Filters');
+
+        var initializeGlobalBooks = _.once(this.globalBookManagerView.updateBooks);
+        initializeGlobalBooks();
     },
     hideBookFilter: function(){
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('active');
+        this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('inactive');
         this.$('.bookFilterContainer').slideUp();
         this.$('.toggleBookFilter').html('Show Filters');
     },
@@ -707,7 +712,6 @@ App.Views.BookFilter = Parse.View.extend({
 
 		//QUESTION ~ With out passing the el, the view does not select the right element. Does this create timing issues?
         this.globalBookManagerView.setElement(this.$('.bookSuggestionScroll'));
-        this.globalBookManagerView.showMore();
         this.activeBookFilterManagerView.setElement(this.$('.filterTitles'));
         return this;
     }
@@ -761,8 +765,8 @@ App.Views.GlobalBookManager = Parse.View.extend({
 	initialize: function(){
         console.log('GlobalBookManager collection length is '+ this.collection.length);///clear
 
-        _.bindAll(this,'updateBooks', 'showMore');
-        this.collection.on('reset', this.updateBooks);
+        _.bindAll(this,'updateBooks', 'showMore', 'showOne');
+        // this.collection.on('reset', this.updateBooks, this);
         App.on('books:book-update', this.updateBooks, this);
 	},
 	disable: function(){
