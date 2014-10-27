@@ -1060,8 +1060,10 @@ App.Views.ArtistsMapView = Parse.View.extend({
 			new google.maps.Marker({
 				map: this.map,
 				icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                // _.template('#userMarkerTemplate').html()
 				title: 'You @ ' + App.profile.attributes.locationName || '',
-				position: this.usersLocation
+				position: this.usersLocation,
+                zIndex: 1000
 			});
 		}
 	},

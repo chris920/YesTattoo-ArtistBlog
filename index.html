@@ -330,13 +330,13 @@
         <div id="map-container" class="mapContainer"></div>
 
         <!-- Artists results -->
-        <div class="artists"></div>
+        <div class="artists lg8container"></div>
       </div>
 
     </script>
 
     <!-- User map point -->
-    <script type="text/html" id="artistsTemplate">
+    <script type="text/html" id="userMarkerTemplate">
       <div class="userMapPoint">
           <div class='pin'></div>
           <div class='pulse'></div>
@@ -344,7 +344,7 @@
     </script>
     
     <!-- Artist map point -->
-    <script type="text/html" id="artistsTemplate">
+    <script type="text/html" id="artistMarkerTemplate">
      <div class="artistMapPoint">
         <div class='pin'></div>
       </div>
@@ -357,7 +357,7 @@
           <div class="artistTitles col-xs-12">
             <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
             <h4 class="artistName"><%= (name) ?  name : '' %></h4>
-            <h5 class="artistLoc"><%= (shop) ? shop : '' %><%= (locationName) ? locationName : '' %></h5>
+            <h5 class="artistLoc"><%= (shop) ? shop : '' %><%= (locationName) ? '&nbsp;&nbsp;&nbsp;'+locationName : '' %></h5>
           </div>
           <div class="artistTattoos col-xs-12"></div>
         </div>
