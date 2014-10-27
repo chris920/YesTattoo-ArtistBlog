@@ -386,6 +386,9 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
         });
     },
     byMatches: function(bookArray){
+        //TODO ~ This works for the second match, but subsequent matches do not restrict to inlcude all. Need to store sets of matches and only return if a single set of the tattoo has all the booksQuery.
+        //QUESTION ~ Should we switch the book matches to save all the book sets / arrays and then Wrap the _.intersection with each match set of book matches. This would return only books that have tattoos that match all of the querries. 
+
         //TODO ~ This needs to return multiple books matching fragments as well.
         // Gets the available books that are in the second match (similar tattoos) of the active book filters and returns a new collection
         return new App.Collections.GlobalBooks(this.available().filter(function(globalBook){ 
@@ -793,6 +796,8 @@ App.Views.GlobalBookManager = Parse.View.extend({
 	showMore: function(booksArray){
         console.log('Show more called with the collection: ');///clear
         console.log(this.collection.getNext(booksArray, this.perPage));///clear
+        console.log('Show more ALSO called with the booksArray: ');///clear
+        console.log(booksArray);///clear
         // TODO / QUESTION ~ How can we make blank / holder books with a reset button
         _.each(this.collection.getNext(booksArray, this.perPage), function(book){
             this.showOne(book);
@@ -837,17 +842,17 @@ App.Views.TattoosPage = Parse.View.extend({
         if (options && options.books) {
             console.log('tattoosPage init with books');///clear
             var that = this;
-            this.initialBooks = options.books;
+            var initialBooks = options.books;
         }
 
-        _.bindAll(this, 'scrollChecker', 'render', 'bookUpdate');
+        _.bindAll(this, 'scrollChecker', 'render', 'bookUpdate', 'loadMore');
         App.on('app:scroll', this.scrollChecker);
         App.on('books:book-update', this.bookUpdate);
 
         this.collection = new App.Collections.Tattoos();
         this.tattoosView = new App.Views.Tattoos({collection: this.collection});
 
-        this.bookFilterView = new App.Views.BookFilter({initialBooks: options.books, title: 'Tattoos'});
+        this.bookFilterView = new App.Views.BookFilter({initialBooks: initialBooks, title: 'Tattoos'});
     },
     disable: function () {
         console.log('tattoos page disabled');///clear
@@ -865,6 +870,8 @@ App.Views.TattoosPage = Parse.View.extend({
         }
     },
     bookUpdate: function(){
+        console.log('TattoosPage view called bookUpdate with this:');///clear
+        console.log(this);///clear
         this.collection.reset();
         this.collection.page = 0;
         this.moreToLoad = true;
@@ -878,21 +885,13 @@ App.Views.TattoosPage = Parse.View.extend({
     },
     loadMore: function(){
         var that = this;
-        // var query = new Parse.Query('Tattoo');
-        // if(this.query.length > 0) {
-        //  query.containsAll("books", this.query);
-        // }
-        // var skip = this.collection.page * 40;
-        // query.skip(skip);
-        // query.limit(40);
-        // query.include('artistProfile');
-     //     query.descending('updatedAt');
-        // query.find({
-        // var filters = [{ name: 'books', data: this.query }];
         var options = {
             skip: this.collection.page * 40,
             limit: 40
         };
+        console.log('Loadmore triggered with: ');///clear
+        console.log(this.collection);///clear
+        console.log(options);///clear
         App.query.tattoos(this.bookFilterView.query, options)
             .then(function (tats) {
                     that.collection.add(tats);
