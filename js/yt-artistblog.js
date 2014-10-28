@@ -550,7 +550,7 @@ App.Views.BookFilter = Parse.View.extend({
         this.globalBookManagerView = new App.Views.GlobalBookManager({collection: this.collection});
         this.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({collection: this.collection});
 
-        _.bindAll(this, 'setBooks', 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'render');
+        _.bindAll(this, 'setBooks', 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'render');
         App.on('app:keypress', this.focusIn);
         this.collection.on('change:active', this.updateBookFilter, this);
 
@@ -652,14 +652,19 @@ App.Views.BookFilter = Parse.View.extend({
     typeaheadInitialize: function(){
         var that = this;
         var input = this.$('input.bookFilterInput');
-        input.typeahead(null, {
-            name: 'books',
-            displayKey: 'books',
-            source: App.booktt.ttAdapter(),
-            templates: {
-                // empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
-                // suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
-            }
+        input.typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, 
+            {
+                name: 'books',
+                displayKey: 'books',
+                source: App.booktt.ttAdapter(),
+                templates: {
+                    // empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
+                    // suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
+                }
         }).attr('placeholder','Enter any book: style, flavor or placement.').on('typeahead:selected', function (obj,datum) {
             that.addQuery(datum.books);
             input.typeahead('val', '');
@@ -673,11 +678,26 @@ App.Views.BookFilter = Parse.View.extend({
         'click .arrow.right': 'shiftRight',
         'click .arrow.left': 'shiftLeft',
         'click .toggleBookFilter.inactive': 'showBookFilter',
-        'click .toggleBookFilter.active': 'hideBookFilter'
+        'click .toggleBookFilter.active': 'hideBookFilter',
+        'keypress': 'keypressFilterTimer'
+    },
+    keypressFilterTimer: function(e){
+        if ( e.which === 13 ) {
+            this.filterBooks();
+        } else {
+            this.initSearchTimer(this);
+        }
+    },
+    initSearchTimer: _.debounce(function(){ this.filterBooks(); }, 750),
+    filterBooks: function(){
+        //QUESTION ~ How to pass the updateBooks the correct book
+        this.globalBookManagerView.updateBooks(this.$('input.bookFilterInput').typeahead('val'));
+        console.log(this.$('input.bookFilterInput').typeahead('val'));///clear
     },
     shiftRight: function(){
         console.log('shiftRight triggered');///clear
         this.$(".bookSuggestionScroll").animate({scrollLeft: '+='+$('.bookSuggestionScroll').width()}, 750);
+        //QUESTION ~ when shifting right then left, then right again, the scroller still loads more. Should we add a left scroll counter? How else to mitigate this issue?
         this.globalBookManagerView.showMore();
     },
     shiftLeft: function(){
@@ -694,6 +714,9 @@ App.Views.BookFilter = Parse.View.extend({
 
         var initializeGlobalBooks = _.once(this.globalBookManagerView.updateBooks);
         initializeGlobalBooks();
+
+        var initializeTypeahead = _.once(this.typeaheadInitialize);
+        initializeTypeahead();
     },
     hideBookFilter: function(){
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('active');
@@ -713,8 +736,6 @@ App.Views.BookFilter = Parse.View.extend({
     render: function(){
         var html = this.template();
         $(this.el).html(html);
-
-        this.typeaheadInitialize();
 
 		//QUESTION ~ With out passing the el, the view does not select the right element. Does this create timing issues?
         this.globalBookManagerView.setElement(this.$('.bookSuggestionScroll'));
