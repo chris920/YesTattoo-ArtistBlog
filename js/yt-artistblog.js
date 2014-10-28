@@ -73,16 +73,19 @@ var App = new (Parse.View.extend({
 	        .then(function (globalBooks) {
 	                console.log('globalBooks set');
 	                App.Collections.globalBooks.reset(globalBooks);
-                    //TODO ~ Assign typeahead suggestions to the _.pluck() of the globalBooks results
+                    //Gets the names of the globalBooks and re-init typeahead
+                    var bookNames = App.Collections.globalBooks.pluck('name');
+                    App.initTypeahead(bookNames);
 	            },
 	            function (error) {
 	                console.log("Error: " + error.code + " " + error.message);
 	            });
 
     },
-    initTypeahead: function(){
-        var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
-        ///initial books local. needs to pull the user's books.
+    initTypeahead: function(books){
+        if (!books) {
+            var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
+        }        
         this.booktt = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('books'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -646,26 +649,26 @@ App.Views.BookFilter = Parse.View.extend({
             this.$('.tattoosTitle').html(this.options.title);
         }
     },
-    // typeaheadInitialize: function(){
-    //     var that = this;
-    //     var input = this.$('input.bookFilterInput');
-    //     input.typeahead(null, {
-    //         name: 'books',
-    //         displayKey: 'books',
-    //         source: App.booktt.ttAdapter(),
-    //         templates: {
-    //             // empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
-    //             // suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
-    //         }
-    //     }).attr('placeholder','Enter any book: style, flavor or placement.').on('typeahead:selected', function (obj,datum) {
-    //         that.addQuery(datum.books);
-    //         input.typeahead('val', '');
-    //     }).on('focus', function () {
-    //         that.$('.tt-input').attr('placeholder','');
-    //     }).on('blur', function () {
-    //         that.$('.tt-input').attr('placeholder','Enter any book: style, flavor or placement.').val('');
-    //     });
-    // },
+    typeaheadInitialize: function(){
+        var that = this;
+        var input = this.$('input.bookFilterInput');
+        input.typeahead(null, {
+            name: 'books',
+            displayKey: 'books',
+            source: App.booktt.ttAdapter(),
+            templates: {
+                // empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
+                // suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
+            }
+        }).attr('placeholder','Enter any book: style, flavor or placement.').on('typeahead:selected', function (obj,datum) {
+            that.addQuery(datum.books);
+            input.typeahead('val', '');
+        }).on('focus', function () {
+            that.$('.tt-input').attr('placeholder','');
+        }).on('blur', function () {
+            that.$('.tt-input').attr('placeholder','Enter any book: style, flavor or placement.').val('');
+        });
+    },
     events: {
         'click .arrow.right': 'shiftRight',
         'click .arrow.left': 'shiftLeft',
@@ -711,7 +714,7 @@ App.Views.BookFilter = Parse.View.extend({
         var html = this.template();
         $(this.el).html(html);
 
-        // this.typeaheadInitialize();
+        this.typeaheadInitialize();
 
 		//QUESTION ~ With out passing the el, the view does not select the right element. Does this create timing issues?
         this.globalBookManagerView.setElement(this.$('.bookSuggestionScroll'));
