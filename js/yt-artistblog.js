@@ -784,12 +784,12 @@ App.Views.ArtistsPage = Parse.View.extend({
 	// TODO Triggers loadMore too soon, pretty much as soon as you start 
 	// 		to scroll instead of when you've reached the bottom
 	scrollChecker: function () {
-		if (this.moreToLoad && $('#artistsPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
-			// this.moreToLoad = false;
-			// this.collection.page++;
-			// this.loadMore();
-			this.loadArtists(false);
-		} 
+		// if (this.moreToLoad && $('#artistsPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
+		// 	// this.moreToLoad = false;
+		// 	// this.collection.page++;
+		// 	// this.loadMore();
+		// 	this.loadArtists(false);
+		// } 
 	},
 
 	bookUpdate: function () {
@@ -969,14 +969,16 @@ App.Views.ArtistsMapView = Parse.View.extend({
 			self.collection.on('add', self.addArtistMarker, self);
 			self.collection.on('reset', self.resetMarkers, self);
 
-			App.on('artists:artist-selected', self.setSelectedArtistMarker, self);
+			App.on('artists-list:artist-selected', self.setSelectedArtistMarker, self);
+            App.on('artists-map:artist-selected', self.setSelectedArtistMarker, self);
 		});
 	},
 
 	disable: function () {
 		this.collection.off('add', this.addArtistMarker, this);
 		this.collection.off('reset', this.resetMarkers, this);
-		App.off('artists:artist-selected', this.setSelectedArtistMarker, this);
+		App.off('artists-list:artist-selected', this.setSelectedArtistMarker, this);
+        App.off('artists-map:artist-selected', self.setSelectedArtistMarker, self);
 	},
 
 	initializeMap: function () {
@@ -1091,7 +1093,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 
 			// Listen to events, trigger artist-selected event
 			google.maps.event.addListener(marker, 'mouseover', function () {
-				App.trigger('artists:artist-selected', marker.artistId);
+				App.trigger('artists-map:artist-selected', marker.artistId);
 			});
 
 			this.markers.push(marker);
@@ -1149,14 +1151,14 @@ App.Views.Artists = Parse.View.extend({
 	},
 
 	render: function () {
-		// console.log('renderArtists');
+		console.log('renderArtists');
 		this.$el.empty();
 		this.collection.forEach(this.renderArtist, this);
 		return this;
 	},
 
 	renderArtist: function (artist) {
-		// console.log('renderArtist');
+		console.log('renderArtist');
 		var artist = new App.Views.Artist({ model: artist });
 		this.$el.append(artist.render().el);
 		return this;
@@ -1171,36 +1173,55 @@ App.Views.Artist = Parse.View.extend({
 
 	events: {
 		'click': 'viewProfile',
-		'mouseover': 'highlightArtist'
+		'mouseover': 'activate'
 	},
 	
 	initialize: function () {
-		_.bindAll(this, 'artistSelected', 'highlightArtist', 'viewProfile', 'render');
+		_.bindAll(this, 'activate', 'highlight', 'scrollIntoView', 'viewProfile', 'render');
 
 		// Listen to artist-selected event and update highlight in results
-		App.on('artists:artist-selected', this.artistSelected);
+        App.on('artists-list:artist-selected', this.highlight);
+		App.on('artists-map:artist-selected', this.highlight);
+        App.on('artists-map:artist-selected', this.scrollIntoView);
 	},
 
-	highlightArtist: function () {
-		App.trigger('artists:artist-selected', this.model.id);
+    disable: function () {
+        App.off('artists-list:artist-selected', this.highlight);
+        App.off('artists-map:artist-selected', this.highlight);
+        App.off('artists-map:artist-selected', this.scrollIntoView);
+    },
+
+	activate: function () {
+        // this.highlight(this.model.id);
+		App.trigger('artists-list:artist-selected', this.model.id);
 	},
 
-	artistSelected: function (artistId) {
-        $(this.el).removeClass('active');
-		if (this.model.id === artistId) {
-			console.log('artists selected : ' + this.model.attributes.name);
+    highlight: function (artistId) {
+        if ((this.model.id === artistId ) && (false === $(this.el).hasClass('active'))) {
+            console.log($(this.el).hasClass('active'));
+            console.log('artists selected : ' + this.model.attributes.name);
             $(this.el).addClass('active');
+        }
+        else if (this.model.id !== artistId )
+        {
+            $(this.el).removeClass('active');
+        }
+    },
 
-            // Needs testing with pagination
-            console.log($(this.el));
-            console.log('Scrolling into view...');
+    scrollIntoView: function (artistId) {
+        console.log('(' + this.model.id + ' === ' + artistId + ') && (' + $(this.el).hasClass('active') + ')');
+        if ((this.model.id === artistId ) && (false === $(this.el).hasClass('inview'))) {
+            console.log('Scrolling into view... ' + $(this.el).offset().top);
             $('html, body').animate({
-                scrollTop: $(this.el).offset().top
-            }, 3000);
-            // $(this.el)[0].scrollIntoView(true);
-            // _.debounce($(this.el)[0].scrollIntoView(true), 500);
-		}
-	},
+                scrollTop: $(this.el).offset().top - 100
+            }, 600);
+            $(this.el).addClass('inview');
+        }
+        else
+        {
+            $(this.el).removeClass('inview');
+        }
+    },
 
 	viewProfile: function () {
 		App.trigger('app:artist-profile', this.model.get('username'));
