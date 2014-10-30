@@ -1186,9 +1186,19 @@ App.Views.Artist = Parse.View.extend({
 	},
 
 	artistSelected: function (artistId) {
+        $(this.el).removeClass('active');
 		if (this.model.id === artistId) {
 			console.log('artists selected : ' + this.model.attributes.name);
-			// TODO highlight artist, not sure what css to update?
+            $(this.el).addClass('active');
+
+            // Needs testing with pagination
+            console.log($(this.el));
+            console.log('Scrolling into view...');
+            $('html, body').animate({
+                scrollTop: $(this.el).offset().top
+            }, 3000);
+            // $(this.el)[0].scrollIntoView(true);
+            // _.debounce($(this.el)[0].scrollIntoView(true), 500);
 		}
 	},
 
