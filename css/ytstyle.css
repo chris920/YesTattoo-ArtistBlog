@@ -5071,7 +5071,7 @@ span.hover-content {
 
 .artistsResultContainer {
   width: 100%; }
-  .artistsResultContainer.active .artists, .artistsResultContainer.active .mapContainer {
+  .artistsResultContainer.active .artists, .artistsResultContainer.active .mapContainer, .artistsResultContainer.active #artists-paginator {
     width: 50%; }
 
 #tattoosPage {

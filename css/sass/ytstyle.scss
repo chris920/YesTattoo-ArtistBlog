@@ -1388,7 +1388,7 @@ span.hover-content {
 .artistsResultContainer {
 	width: 100%;
 	&.active {
-		.artists, .mapContainer {
+		.artists, .mapContainer, #artists-paginator {
 			width: 50%;	
 		}
 		
