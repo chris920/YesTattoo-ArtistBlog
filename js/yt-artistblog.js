@@ -725,6 +725,98 @@ App.Views.TattoosPage = Parse.View.extend({
     }
 });
 
+App.Views.Paginator = Parse.View.extend({
+
+    el: '#paginator',
+
+    events: {
+        'click .page-select': 'selectPage',
+        'click .page-prev': 'prevPage',
+        'click .page-next': 'nextPage'
+    },
+
+    initialize: function (options) {
+        console.log('Paginator init');
+        this.pageIndex = options.index || 0;
+        this.pageCount = options.count || 5;
+        this.render();
+    },
+
+    reset: function (options) {
+        console.log('Paginator reset');
+        this.initialize(options || {});
+    },
+
+    triggerPageEvent: function () {
+        this.trigger('paginator:paged', this.pageIndex);
+    },
+
+    prevPage: function (e) {
+        e.preventDefault();
+        if (this.pageIndex > 0) {
+            this.pageIndex--;
+            this.triggerPageEvent();
+            this.render();
+        }
+    },
+
+    nextPage: function (e) {
+        e.preventDefault();
+        if (this.pageIndex < 100) { // TODO Max count
+            this.pageIndex++;
+            this.triggerPageEvent();
+            this.render();
+        }
+    },
+
+    selectPage: function (e) {
+        e.preventDefault();
+        var index = $(e.currentTarget).attr('data-page');
+        if (this.pageIndex !== index) {
+            this.pageIndex = +index;
+            this.triggerPageEvent();
+            this.render();
+        }
+    },
+
+    render: function () {
+        console.log('Paginator render');
+        var self = this;
+
+        var startIndex = 0;
+        if (self.pageIndex > (self.pageCount - 1)) {
+            startIndex = (self.pageIndex - (self.pageCount - 1));
+        }
+
+        var paginator = $('<ul class="pagination"></ul>');
+        paginator.append($('<li></li>')
+                .append($('<a href="" class="page-prev"></a>')
+                    .append('&laquo;')
+                )
+            );
+
+        for (var i = startIndex; i < startIndex + self.pageCount; i++) {
+            var isActive = (i === self.pageIndex) ? 'active' : '';
+            paginator.append($('<li class="' + isActive + '"></li>')
+                .append($('<a href="" class="page-select" data-page="' + i + '"></a>')
+                    .append(i+1)
+                )
+            );
+        }
+        
+        paginator.append($('<li></li>')
+                .append($('<a href="" class="page-next"></a>')
+                    .append('&raquo;')
+                )
+            );
+
+        self.$el.empty();
+        self.$el.append(paginator);        
+        return self;
+    }
+
+});
+
 App.Views.ArtistsPage = Parse.View.extend({
 
 	template: _.template($("#artistsTemplate").html()),
@@ -736,10 +828,7 @@ App.Views.ArtistsPage = Parse.View.extend({
         'click .toggleMap.active':		'hideMap',
         'click .byYou': 				'byYou',
         'click .worldwide': 			'setWorldwide',
-        'click .cancel': 				'hideMap',
-        'click #artists-paginator li a.page-select': 'selectPage',
-        'click #artists-paginator li a.page-prev': 'prevPage',
-        'click #artists-paginator li a.page-next': 'nextPage'
+        'click .cancel': 				'hideMap'
     },
 	
 	/*
@@ -827,41 +916,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 	// 	this.affixActive = false;
 	// },
-
-    prevPage: function (e) {
-        e.preventDefault();
-        if (this.pageIndex > 0) {
-            this.pageIndex--;
-            this.pageResults();
-        }
-    },
-
-    nextPage: function (e) {
-        e.preventDefault();
-        if (this.pageIndex < 100) { // TODO Max count
-            this.pageIndex++;
-            this.pageResults();  
-        }
-    },
-
-    selectPage: function (e) {
-        e.preventDefault();
-        var index = $(e.currentTarget).attr('data-page');
-        if (this.pageIndex !== index) {
-            this.pageIndex = index;
-            this.pageResults();
-        }
-    },
-
-    setActivePage: function () {
-        $('#artists-paginator li').removeClass('active');
-        $('#artists-paginator li a[data-page=' + this.pageIndex +'] ').closest('li').addClass('active');
-    },
-
-    pageResults: function () {
-        this.setActivePage();
-        this.loadArtists(false);
-    },
 
 	bookUpdate: function () {
 		console.log('book update');
@@ -955,7 +1009,9 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 		if (reset) {
 			self.pageIndex = 0;
-			self.setActivePage();
+            if (self.paginator) {
+                self.paginator.reset();
+            }
 		}
 
 		self.collection.reset();
@@ -994,6 +1050,13 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 			self.artistsView = new App.Views.Artists({ collection: self.collection, el: self.$('.artists') });
 			self.artistsView.render();
+
+            self.paginator = new App.Views.Paginator({ el: self.$('#artists-paginator') });
+            self.paginator.render();
+            self.paginator.on('paginator:paged', function (pageIndex) {
+                self.pageIndex = pageIndex;
+                self.loadArtists(false);
+            });
 
 			if (self.options.showMap) {
 				self.showMap();
