@@ -826,9 +826,9 @@ App.Views.ArtistsPage = Parse.View.extend({
     events: {
         'click .toggleMap:not(.active)': 'showMap',
         'click .toggleMap.active':		'hideMap',
-        'click .byYou': 				'byYou',
-        'click .worldwide': 			'setWorldwide',
-        'click .cancel': 				'hideMap'
+        // 'click .byYou': 				'byYou',
+        // 'click .worldwide': 			'setWorldwide',
+        // 'click .cancel': 				'hideMap'
     },
 	
 	/*
@@ -934,7 +934,13 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 	locationUpdate: function (location) {
 		console.log('location update');
-		this.locationQuery = new Parse.GeoPoint({ latitude: location.k, longitude: location.B });
+        if (location) {
+            this.locationQuery = new Parse.GeoPoint({ latitude: location.k, longitude: location.B });    
+        }
+        else {
+            this.locationQuery = null;
+        }
+		
 		this.loadArtists(true);
 	},
 
@@ -965,41 +971,43 @@ App.Views.ArtistsPage = Parse.View.extend({
 			this.artistsMapView.disable();
 		}
 
+        this.locationUpdate(null);
+
 		// this.disableAffix();
 	},
 
 	// TODO Not tested since map channges
-	byYou: function () {
-		this.$('.byYou').attr('disabled', 'disabled');
-		this.$('.changeLocationButton').html(this.$('.byYou').html());
-		this.locationReset().hideChangeLocation();
-		this.locationQuery = App.profile.get('location');
-		// this.loadMore();
-		this.loadArtists(true);
-	},
+	// byYou: function () {
+	// 	this.$('.byYou').attr('disabled', 'disabled');
+	// 	this.$('.changeLocationButton').html(this.$('.byYou').html());
+	// 	this.locationReset().hideChangeLocation();
+	// 	this.locationQuery = App.profile.get('location');
+	// 	// this.loadMore();
+	// 	this.loadArtists(true);
+	// },
 
-	// TODO Not tested since map channges
-	setWorldwide: function () {
-		this.$('.worldwide').attr('disabled', 'disabled');
-		this.$('.changeLocationButton').html('Worldwide');
-		this.$('.gm-style').fadeOut();
-		this.$('#locationInput').val('');
-		this.locationReset();
-		// this.loadMore();
-		this.loadArtists(true);
-		this.hideChangeLocation( 1200 );
-	},
+	// // TODO Not tested since map channges
+	// setWorldwide: function () {
+	// 	this.$('.worldwide').attr('disabled', 'disabled');
+	// 	this.$('.changeLocationButton').html('Worldwide');
+	// 	this.$('.gm-style').fadeOut();
+	// 	this.$('#locationInput').val('');
+	// 	this.locationReset();
+	// 	// this.loadMore();
+	// 	this.loadArtists(true);
+	// 	this.hideChangeLocation( 1200 );
+	// },
 
-	// TODO Not tested since map channges
-	locationReset: function () {
-		this.locationPickerCreated = false;
-		this.locationQuery = undefined;
-		// this.collection.reset();
-		// this.collection.page = 0;
-		// this.moreToLoad = true;
-		this.resetResults();
-		return this;
-	},
+	// // TODO Not tested since map channges
+	// locationReset: function () {
+	// 	this.locationPickerCreated = false;
+	// 	this.locationQuery = undefined;
+	// 	// this.collection.reset();
+	// 	// this.collection.page = 0;
+	// 	// this.moreToLoad = true;
+	// 	this.resetResults();
+	// 	return this;
+	// },
 
 	loadArtists: function (reset) {
         console.log('loading artists [' + reset + ']...');
