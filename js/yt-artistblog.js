@@ -849,7 +849,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 			this.initialBooks = options.books;
 		}
 
-        this.pageIndex = 0;
 		this.requestLimit = 10;
 
 		this.collection = new App.Collections.Artists();
@@ -1007,12 +1006,9 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 		var self = this;
 
-		if (reset) {
-			self.pageIndex = 0;
-            if (self.paginator) {
-                self.paginator.reset();
-            }
-		}
+		if (reset && self.paginator) {
+            self.paginator.reset();
+        }
 
 		self.collection.reset();
 		self.moreToload = true;
@@ -1020,7 +1016,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 		var location = self.locationQuery;
 		var books = self.bookFilterView ? self.bookFilterView.query : [];
 		App.query.artists(location, books, {
-				skip: self.pageIndex * self.requestLimit,
+				skip: self.paginator.pageIndex * self.requestLimit,
 				limit: self.requestLimit
 			})
 			.then(function (artists) {
@@ -1054,7 +1050,6 @@ App.Views.ArtistsPage = Parse.View.extend({
             self.paginator = new App.Views.Paginator({ el: self.$('#artists-paginator') });
             self.paginator.render();
             self.paginator.on('paginator:paged', function (pageIndex) {
-                self.pageIndex = pageIndex;
                 self.loadArtists(false);
             });
 
