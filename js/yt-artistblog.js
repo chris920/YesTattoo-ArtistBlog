@@ -840,8 +840,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 	initialize: function (options) {
 		console.log('ArtistsPage init');
 
-		// _.bindAll(this, 'queryReset', 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'render');
-		// _.bindAll(this, 'scrollChecker', 'bookUpdate', 'hideMap', 'showMap', 'addUserMarker', 'addArtistMarker', 'initializeMap', 'render');
 		_.bindAll(this, 'scrollToTop', 'scrollChecker', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render');
 
 		if (options && options.books) {
@@ -998,7 +996,8 @@ App.Views.ArtistsPage = Parse.View.extend({
 	// 	this.hideChangeLocation( 1200 );
 	// },
 
-	// // TODO Not tested since map channges
+	// // TODO No
+                    // self.moreToLoad = true;t tested since map channges
 	// locationReset: function () {
 	// 	this.locationPickerCreated = false;
 	// 	this.locationQuery = undefined;
@@ -1345,12 +1344,23 @@ App.Views.Artist = Parse.View.extend({
     },
 
     scrollIntoView: function (artistId) {
-        console.log('(' + this.model.id + ' === ' + artistId + ') && (' + $(this.el).hasClass('active') + ')');
         if ((this.model.id === artistId ) && (false === $(this.el).hasClass('visible'))) {
             console.log('Scrolling into view... ' + $(this.el).offset().top);
-            $('html, body').animate({
-                scrollTop: $(this.el).offset().top - 100
-            }, 600);
+
+            // Calculate scroll require to render artists within window
+            // ... maxScroll ensure we don't scroll to far when selecting the last artist on the page
+            var scrollTo = ($(this.el).offset().top - 100);
+            var maxScroll = ($(document).height() - ($(window).height() + $('#footer').height() + 100));
+            if (scrollTo > maxScroll) {
+                scrollTo = maxScroll;
+            }
+            
+            // Animate to scroll to artists, stopping any previous animates first
+            $('html, body')
+                .stop()
+                .animate({
+                    scrollTop: scrollTo
+                }, 1200);
             $(this.el).addClass('visible');
         }
         else
