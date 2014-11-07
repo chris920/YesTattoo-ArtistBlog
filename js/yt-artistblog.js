@@ -737,14 +737,16 @@ App.Views.Paginator = Parse.View.extend({
 
     initialize: function (options) {
         console.log('Paginator init');
+        this.options = options;
         this.pageIndex = options.index || 0;
-        this.pageCount = options.count || 5;
+        this.pageCount = options.count || 10;
+        this.maxPages = options.max || 100;
         this.render();
     },
 
     reset: function (options) {
         console.log('Paginator reset');
-        this.initialize(options || {});
+        this.initialize(options || this.options);
     },
 
     triggerPageEvent: function () {
@@ -762,7 +764,7 @@ App.Views.Paginator = Parse.View.extend({
 
     nextPage: function (e) {
         e.preventDefault();
-        if (this.pageIndex < 100) { // TODO Max count
+        if (this.pageIndex < (this.maxPages - 1)) {
             this.pageIndex++;
             this.triggerPageEvent();
             this.render();
@@ -788,6 +790,11 @@ App.Views.Paginator = Parse.View.extend({
             startIndex = (self.pageIndex - (self.pageCount - 1));
         }
 
+        var endIndex = startIndex + self.pageCount;
+        if (endIndex > self.maxPages) {
+            endIndex = self.maxPages;
+        }
+
         var paginator = $('<ul class="pagination"></ul>');
         paginator.append($('<li></li>')
                 .append($('<a href="" class="page-prev"></a>')
@@ -795,7 +802,7 @@ App.Views.Paginator = Parse.View.extend({
                 )
             );
 
-        for (var i = startIndex; i < startIndex + self.pageCount; i++) {
+        for (var i = startIndex; i < endIndex; i++) {
             var isActive = (i === self.pageIndex) ? 'active' : '';
             paginator.append($('<li class="' + isActive + '"></li>')
                 .append($('<a href="" class="page-select" data-page="' + i + '"></a>')
@@ -811,10 +818,9 @@ App.Views.Paginator = Parse.View.extend({
             );
 
         self.$el.empty();
-        self.$el.append(paginator);        
+        self.$el.append(paginator);
         return self;
     }
-
 });
 
 App.Views.ArtistsPage = Parse.View.extend({
