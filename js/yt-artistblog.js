@@ -735,18 +735,40 @@ App.Views.Paginator = Parse.View.extend({
         'click .page-next': 'nextPage'
     },
 
+    /*
+        Options:
+            pageIndex:      current page index
+            pageCount:      number of pages to display
+            pageResult:     results per page
+            pageMax:        max pages (based on result count)
+
+    */
     initialize: function (options) {
         console.log('Paginator init');
         this.options = options;
-        this.pageIndex = options.index || 0;
-        this.pageCount = options.count || 10;
-        this.maxPages = options.max || 100;
+        this.pageIndex = options.pageIndex || 0;
+        this.pageCount = options.pageCount || 10;
+        this.pageResults = options.pageResults || 10;
+        this.pageMax = options.pageMax || 100;
         this.render();
     },
 
     reset: function (options) {
         console.log('Paginator reset');
         this.initialize(options || this.options);
+    },
+
+    setCount: function (query) {
+        console.log('Paginator setCount');
+        var self = this;
+        query.then(function (count) {
+                self.pageMax = (count / self.pageResults);
+                self.render();
+            },
+            function (error) {
+                self.pageMax = 100;
+                self.render();
+            });
     },
 
     triggerPageEvent: function () {
@@ -764,7 +786,7 @@ App.Views.Paginator = Parse.View.extend({
 
     nextPage: function (e) {
         e.preventDefault();
-        if (this.pageIndex < (this.maxPages - 1)) {
+        if (this.pageIndex < (this.pageMax - 1)) {
             this.pageIndex++;
             this.triggerPageEvent();
             this.render();
@@ -791,8 +813,8 @@ App.Views.Paginator = Parse.View.extend({
         }
 
         var endIndex = startIndex + self.pageCount;
-        if (endIndex > self.maxPages) {
-            endIndex = self.maxPages;
+        if (endIndex > self.pageMax) {
+            endIndex = self.pageMax;
         }
 
         var paginator = $('<ul class="pagination"></ul>');
@@ -1018,16 +1040,17 @@ App.Views.ArtistsPage = Parse.View.extend({
         console.log('loading artists [' + reset + ']...');
 
 		var self = this;
+        self.collection.reset();
+        self.moreToload = true;
+
+        var location = self.locationQuery;
+        var books = self.bookFilterView ? self.bookFilterView.query : [];
 
 		if (reset && self.paginator) {
             self.paginator.reset();
+            self.paginator.setCount(App.query.artistsCount(location, books));
         }
 
-		self.collection.reset();
-		self.moreToload = true;
-
-		var location = self.locationQuery;
-		var books = self.bookFilterView ? self.bookFilterView.query : [];
 		App.query.artists(location, books, {
 				skip: self.paginator.pageIndex * self.requestLimit,
 				limit: self.requestLimit
@@ -1060,7 +1083,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			self.artistsView = new App.Views.Artists({ collection: self.collection, el: self.$('.artists') });
 			self.artistsView.render();
 
-            self.paginator = new App.Views.Paginator({ el: self.$('#artists-paginator') });
+            self.paginator = new App.Views.Paginator({ el: self.$('#artists-paginator'), pageResults: self.requestLimit });
             self.paginator.render();
             self.paginator.on('paginator:paged', function (pageIndex) {
                 self.loadArtists(false);
@@ -4149,6 +4172,27 @@ App.query = (function () {
 		query.limit(options.limit || 1000);
 		return query.find();
 	}
+
+    /*
+        Query artists count, 
+        expect to handle timeouts with results above 1000
+    */
+    query.artistsCount = function (location, books) {
+        var query = new Parse.Query('ArtistProfile');
+
+        if (location) {
+            query.near("location", location);
+        }
+        else {
+            query.descending('createdAt');
+        }
+
+        if (books && books.length > 0) {
+            query.containsAll('books', books);
+        }
+
+        return query.count();
+    }
 
 	/*
 		Query featured artists
