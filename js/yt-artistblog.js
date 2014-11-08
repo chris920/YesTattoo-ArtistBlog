@@ -1159,12 +1159,23 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		google.maps.event.addListenerOnce(self.map, 'idle', function () {
 			console.log('map ready');
 
-			// Create the search box and link it to the UI element.
-			var input = $('<input type="text" class="form-control grayInput" id="locationInput" placeholder="Enter your location">')[0];
-			var locationInput = new google.maps.places.SearchBox((input));
-			self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+			// Construct location search input
+			var input = $('<input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">');
+			var cancel = $('<span class="input-group-addon btn-submit cancel grayInput" title="Clear location">X</span>')
+				.on('click', function (e) {
+					e.preventDefault();
+					input.val('');
+					self.setMapLocation(null);
+				});
+			var div = $('<div class="input-group" id="mapLocation"></div>')
+				.append(input)
+				.append(cancel);
 
-			// Listen to location changes and update map
+			// Wire location input to map controls
+			var locationInput = new google.maps.places.SearchBox((input[0]));
+			self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(div[0]);
+
+			// Listen to location changes, trigger map update on change
 			google.maps.event.addListener(locationInput, 'places_changed', function () {
 				var places = locationInput.getPlaces();
 				if (places.length == 0) {
