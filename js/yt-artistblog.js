@@ -868,7 +868,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	initialize: function (options) {
 		console.log('ArtistsPage init');
 
-		_.bindAll(this, 'scrollToTop', 'scrollChecker', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render');
+		_.bindAll(this, 'scrollToTop', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render');
 
 		if (options && options.books) {
 			console.log('ArtistsPage init with books');///clear
@@ -899,15 +899,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			scrollTop: 0
 		}, 600);
 	},
-
-	scrollChecker: function () {
-		console.log('scrolling...');
-		if (!this.affixActive) {
-			this.activateAffix();
-			this.affixActive = true;
-		}
-	},
-
+	
 	activateAffix: function () {
 		console.log('&&&&&&&');
 		$('#map-container').affix({
@@ -986,6 +978,8 @@ App.Views.ArtistsPage = Parse.View.extend({
 			this.artistsMapView = new App.Views.ArtistsMapView({ collection: this.collection, el: this.$('#map-container') });
 			this.artistsMapView.render();
 		}
+
+		this.activateAffix();
 	},
 
 	hideMap: function () {
