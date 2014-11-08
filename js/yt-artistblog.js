@@ -758,8 +758,8 @@ App.Views.Paginator = Parse.View.extend({
         this.initialize(options || this.options);
     },
 
-    setCount: function (query) {
-        console.log('Paginator setCount');
+    setMaxPages: function (query) {
+        console.log('Paginator setMaxPages');
         var self = this;
         query.then(function (count) {
                 self.pageMax = (count / self.pageResults);
@@ -1048,7 +1048,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 		if (reset && self.paginator) {
             self.paginator.reset();
-            self.paginator.setCount(App.query.artistsCount(location, books));
+            self.paginator.setMaxPages(App.query.artistsCount(location, books));
         }
 
 		App.query.artists(location, books, {
