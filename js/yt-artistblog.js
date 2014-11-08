@@ -997,8 +997,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 			this.artistsMapView.disable();
 		}
 
-        this.locationUpdate(null);
-
 		// this.disableAffix();
 	},
 
@@ -1092,9 +1090,8 @@ App.Views.ArtistsPage = Parse.View.extend({
 			if (self.options.showMap) {
 				self.showMap();
 			}
-			else {
-				self.loadArtists(true);
-			}
+
+            self.loadArtists(true);
 		});
 
 		return this;
@@ -1126,16 +1123,23 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		_.bindAll(self, 'initializeMap', 'setMapLocation', 'requestUsersLocation', 'addUserMarker', 'addArtistMarker', 'render');
 
 		$.when([self.getMapLocation(), self.initializeMap()])
-		.then(function () {
-			self.setMapLocation(self.mapLocation);
-			self.addUserMarker();	
+    		.then(function _initialize() {
 
-			self.collection.on('add', self.addArtistMarker, self);
-			self.collection.on('reset', self.clearMap, self);
-
-			App.on('artists-list:artist-selected', self.setSelectedArtistMarker, self);
-			App.on('artists-map:artist-selected', self.setSelectedArtistMarker, self);
-		});
+    			// Load initial artists from existing collection
+                self.clearMap();
+                self.collection.each(function (model) {
+                    self.addArtistMarker(model);
+                });
+                
+                // Add users marker, if available
+    			self.addUserMarker();
+    			
+    			// Setup event listeners
+    			self.collection.on('add', self.addArtistMarker, self);
+    			self.collection.on('reset', self.clearMap, self);
+    			App.on('artists-list:artist-selected', self.setSelectedArtistMarker, self);
+    			App.on('artists-map:artist-selected', self.setSelectedArtistMarker, self);
+    		});
 	},
 
 	disable: function () {
@@ -1186,7 +1190,6 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		var deferred = $.Deferred();
 		if (App.session.loggedIn() && App.profile.attributes.location) {
 			this.usersLocation = new google.maps.LatLng(App.profile.attributes.location.latitude, App.profile.attributes.location.longitude);
-			this.mapLocation = this.usersLocation;
 			deferred.resolve();
 		}
 		else {
@@ -1200,23 +1203,15 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	requestUsersLocation: function (deferred) {
 		var self = this;
 		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(_yesLocation, _noLocation());
+			navigator.geolocation.getCurrentPosition(function (location) {
+				console.log('yes location : ' + location);
+				self.usersLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+				deferred.resolve();
+			}, 
+			deferred.resolve);
 		}
 		else {
-			_noLocation();
-		}
-
-		function _yesLocation(location) {
-			console.log('yes location : ' + location);
-			// self.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-			self.mapLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 			deferred.resolve();
-		}
-
-		function _noLocation(error) {
-			console.log('no location : ' + error);
-			self.mapLocation = new google.maps.LatLng(34.0500, -118.2500);
-			deferred.resolve();	
 		}
 	},
 
@@ -1226,10 +1221,9 @@ App.Views.ArtistsMapView = Parse.View.extend({
 			new google.maps.Marker({
 				map: this.map,
 				icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                // _.template('#userMarkerTemplate').html()
 				title: 'You @ ' + App.profile.attributes.locationName || '',
 				position: this.usersLocation,
-                zIndex: 1000
+				zIndex: 1000
 			});
 		}
 	},
