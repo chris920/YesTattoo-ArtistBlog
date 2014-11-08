@@ -744,7 +744,6 @@ App.Views.Paginator = Parse.View.extend({
 
     */
     initialize: function (options) {
-        console.log('Paginator init');
         this.options = options;
         this.pageIndex = options.pageIndex || 0;
         this.pageCount = options.pageCount || 10;
@@ -754,12 +753,10 @@ App.Views.Paginator = Parse.View.extend({
     },
 
     reset: function (options) {
-        console.log('Paginator reset');
         this.initialize(options || this.options);
     },
 
     setMaxPages: function (query) {
-        console.log('Paginator setMaxPages');
         var self = this;
         query.then(function (count) {
                 self.pageMax = (count / self.pageResults);
@@ -804,7 +801,6 @@ App.Views.Paginator = Parse.View.extend({
     },
 
     render: function () {
-        console.log('Paginator render');
         var self = this;
 
         var startIndex = 0;
@@ -854,9 +850,6 @@ App.Views.ArtistsPage = Parse.View.extend({
     events: {
         'click .toggleMap:not(.active)': 'showMap',
         'click .toggleMap.active':		'hideMap',
-        // 'click .byYou': 				'byYou',
-        // 'click .worldwide': 			'setWorldwide',
-        // 'click .cancel': 				'hideMap'
     },
 	
 	/*
@@ -883,12 +876,10 @@ App.Views.ArtistsPage = Parse.View.extend({
 		App.on('app:scroll', this.scrollChecker, this);
 		App.on('app:book-update', this.bookUpdate, this);
 		App.on('artists:location-update', this.locationUpdate, this);
-
-		// this.activateAffix();
 	},
 
 	disable: function () {
-		console.log('ArtistsPage disabled');///clear
+		// console.log('ArtistsPage disabled');///clear
 		App.off('app:scroll', this.scrollChecker);
 		App.off('app:book-update', this.bookUpdate);
 		App.off('artists:location-update', this.locationUpdate);
@@ -901,7 +892,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 	},
 	
 	activateAffix: function () {
-		console.log('&&&&&&&');
 		$('#map-container').affix({
 			offset: { 
 				top: $('.bookFilterHeader').outerHeight(true),
@@ -909,38 +899,18 @@ App.Views.ArtistsPage = Parse.View.extend({
 			}
 		})
 		.on('affix.bs.affix', function () {
-			console.log('before affix top');
 			// Fixed map flickering when scroll down from top
 			// http://stackoverflow.com/questions/15228224/twitter-bootstrap-affix-how-to-stick-to-bottom
 			$(this).width();
 		})
 		.on('affix-bottom.bs.affix', function () {
-			console.log('before affix bottom');
 			// Fixes map flickering when scroll back up from bottom
 			// http://stackoverflow.com/questions/15228224/twitter-bootstrap-affix-how-to-stick-to-bottom
 			$(this).css('bottom', 'auto');
 		});
 	},
 
-	// disableAffix: function () {
-	// 	$('#map-container').affix({
-	// 		offset: { 
-	// 			top: $('.bookFilterHeader').outerHeight(true)
-	// 		}
-	// 	})
-	// 	.off('affix.bs.affix')
-	// 	.off('affix-bottom.bs.affix');
-
-	// 	this.affixActive = false;
-	// },
-
 	bookUpdate: function () {
-		console.log('book update');
-		// this.collection.reset();
-		// this.collection.page = 0;
-		// this.moreToLoad = true;
-		// this.resetResults();
-		// this.loadMore();
 		this.loadArtists(true);
 
 		var booksRoute;
@@ -951,7 +921,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 	},
 
 	locationUpdate: function (location) {
-		console.log('location update');
         if (location) {
             this.locationQuery = new Parse.GeoPoint({ latitude: location.k, longitude: location.B });    
         }
@@ -963,7 +932,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 	},
 
 	showMap: function () {
-		console.log('show map');
 		this.$('.artistsResultContainer, .mapContainer, .toggleMap').addClass('active');
 		this.$('.artists').removeClass('lg8container');
 
@@ -983,54 +951,15 @@ App.Views.ArtistsPage = Parse.View.extend({
 	},
 
 	hideMap: function () {
-		console.log('hide map');
 		this.$('.artistsResultContainer, .mapContainer, .toggleMap').removeClass('active');
 		this.$('.artists').addClass('lg8container');
 
 		if (this.artistsMapView) {
 			this.artistsMapView.disable();
 		}
-
-		// this.disableAffix();
 	},
 
-	// TODO Not tested since map channges
-	// byYou: function () {
-	// 	this.$('.byYou').attr('disabled', 'disabled');
-	// 	this.$('.changeLocationButton').html(this.$('.byYou').html());
-	// 	this.locationReset().hideChangeLocation();
-	// 	this.locationQuery = App.profile.get('location');
-	// 	// this.loadMore();
-	// 	this.loadArtists(true);
-	// },
-
-	// // TODO Not tested since map channges
-	// setWorldwide: function () {
-	// 	this.$('.worldwide').attr('disabled', 'disabled');
-	// 	this.$('.changeLocationButton').html('Worldwide');
-	// 	this.$('.gm-style').fadeOut();
-	// 	this.$('#locationInput').val('');
-	// 	this.locationReset();
-	// 	// this.loadMore();
-	// 	this.loadArtists(true);
-	// 	this.hideChangeLocation( 1200 );
-	// },
-
-	// // TODO No
-                    // self.moreToLoad = true;t tested since map channges
-	// locationReset: function () {
-	// 	this.locationPickerCreated = false;
-	// 	this.locationQuery = undefined;
-	// 	// this.collection.reset();
-	// 	// this.collection.page = 0;
-	// 	// this.moreToLoad = true;
-	// 	this.resetResults();
-	// 	return this;
-	// },
-
 	loadArtists: function (reset) {
-        console.log('loading artists [' + reset + ']...');
-
 		var self = this;
         self.collection.reset();
         self.moreToload = true;
@@ -1048,7 +977,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 				limit: self.requestLimit
 			})
 			.then(function (artists) {
-				console.log('loading more results!');
 				self.collection.add(artists);
 				if (artists.length < self.requestLimit) {
 					self.moreToLoad = false;
@@ -1066,7 +994,6 @@ App.Views.ArtistsPage = Parse.View.extend({
 	},
 
 	render: function () {
-		console.log('ArtistsPage render');
 		var self = this;
 		$(this.el).html(this.template()).promise().done(function () { 
 
@@ -1154,7 +1081,6 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		self.bounds = new google.maps.LatLngBounds();
 		self.map = new google.maps.Map(self.$el[0], self.mapOptions);
 		google.maps.event.addListenerOnce(self.map, 'idle', function () {
-			console.log('map ready');
 
 			// Construct location search input
 			var input = $('<input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">');
@@ -1188,7 +1114,6 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	},
 
 	setMapLocation: function (location) {
-		console.log('set map locaton');
 		this.clearMap();
 		this.mapLocation = location;
 		App.trigger('artists:location-update', location);
@@ -1212,7 +1137,6 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		var self = this;
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (location) {
-				console.log('yes location : ' + location);
 				self.usersLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 				deferred.resolve();
 			}, 
@@ -1224,7 +1148,6 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	},
 
 	addUserMarker: function () {
-		console.log('addUserMarker ');
 		if (this.usersLocation) {
 			new google.maps.Marker({
 				map: this.map,
@@ -1278,8 +1201,6 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	},
 
 	setSelectedArtistMarker: function (artistId) {
-		console.log('set selected artist marker : ' + artistId);
-
 		// Clear previous selection
 		if (this.selectedArtistMarker) {
 			this.selectedArtistMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
@@ -1294,7 +1215,6 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	},
 
 	clearMap: function () {
-		console.log('clear map');
 		if (this.markers) {
 			for (var i = 0, marker; marker = this.markers[i]; i++) {
 				marker.setMap(null);
@@ -1326,12 +1246,10 @@ App.Views.Artists = Parse.View.extend({
 	},
 
 	resetArtists: function () {
-		console.log('Artists reset');
 		this.$el.empty();
 	},
 
 	renderArtist: function (artist) {
-		console.log('Artist render');
 		var artist = new App.Views.Artist({ model: artist });
 		this.$el.append(artist.render().el);
 		return this;
@@ -1365,14 +1283,11 @@ App.Views.Artist = Parse.View.extend({
     },
 
 	activate: function () {
-        // this.highlight(this.model.id);
 		App.trigger('artists-list:artist-selected', this.model.id);
 	},
 
     highlight: function (artistId) {
         if ((this.model.id === artistId ) && (false === $(this.el).hasClass('active'))) {
-            console.log($(this.el).hasClass('active'));
-            console.log('artists selected : ' + this.model.attributes.name);
             $(this.el).addClass('active');
         }
         else if (this.model.id !== artistId )
@@ -1383,7 +1298,6 @@ App.Views.Artist = Parse.View.extend({
 
     scrollIntoView: function (artistId) {
         if ((this.model.id === artistId ) && (false === $(this.el).hasClass('visible'))) {
-            console.log('Scrolling into view... ' + $(this.el).offset().top);
 
             // Calculate scroll require to render artists within window
             // ... maxScroll ensure we don't scroll to far when selecting the last artist on the page
