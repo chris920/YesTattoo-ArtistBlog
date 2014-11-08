@@ -1059,6 +1059,9 @@ App.Views.ArtistsPage = Parse.View.extend({
 			function (error) {
 				console.log(error);
 				self.moreToLoad = true;
+			})
+			.then(function () {
+				self.collection.trigger('finito');
 			});
 	},
 
@@ -1308,20 +1311,27 @@ App.Views.Artists = Parse.View.extend({
 	el: '.artists',
 
 	initialize: function () {
-		_.bindAll(this, 'render', 'renderArtist');
+		_.bindAll(this, 'resetArtists', 'renderArtist', 'setMinHeight');
+
 		this.collection.on('add', this.renderArtist, this);
-		this.collection.on('reset', this.render, this);
+		this.collection.on('reset', this.resetArtists, this);
+		this.collection.on('finito', this.setMinHeight, this);
 	},
 
-	render: function () {
-		console.log('renderArtists');
+	// Hack: smoothes transition between result sets/pages by setting the min-height 
+	// to the current height of results.
+	// Also resolves occassional map activating the bottom affix due to load sequencing
+	setMinHeight: function () {
+		this.$el.css('min-height', this.$el.height());
+	},
+
+	resetArtists: function () {
+		console.log('Artists reset');
 		this.$el.empty();
-		this.collection.forEach(this.renderArtist, this);
-		return this;
 	},
 
 	renderArtist: function (artist) {
-		console.log('renderArtist');
+		console.log('Artist render');
 		var artist = new App.Views.Artist({ model: artist });
 		this.$el.append(artist.render().el);
 		return this;
