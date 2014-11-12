@@ -1046,15 +1046,15 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		var self = this;
 		_.bindAll(self, 'initializeMap', 'setMapLocation', 'requestUsersLocation', 'addUserMarker', 'addArtistMarker', 'render');
 
-		$.when([self.getMapLocation(), self.initializeMap()])
-    		.then(function _initialize() {
+        $.when(self.getMapLocation(), self.initializeMap())
+    		.done(function _initialize() {
 
     			// Load initial artists from existing collection
                 self.clearMap();
                 self.collection.each(function (model) {
                     self.addArtistMarker(model);
                 });
-                
+
                 // Add users marker, if available
     			self.addUserMarker();
     			
@@ -1120,7 +1120,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	},
 
 	getMapLocation: function () {
-		var deferred = $.Deferred();
+		var deferred = new $.Deferred();
 		if (App.session.loggedIn() && App.profile.attributes.location) {
 			this.usersLocation = new google.maps.LatLng(App.profile.attributes.location.latitude, App.profile.attributes.location.longitude);
 			deferred.resolve();
@@ -1136,7 +1136,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	requestUsersLocation: function (deferred) {
 		var self = this;
 		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function (location) {
+			navigator.geolocation.getCurrentPosition(function (position) {
 				self.usersLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 				deferred.resolve();
 			}, 
@@ -1152,7 +1152,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 			new google.maps.Marker({
 				map: this.map,
 				icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-				title: 'You @ ' + App.profile.attributes.locationName || '',
+				title: 'You',
 				position: this.usersLocation,
 				zIndex: 1000
 			});
