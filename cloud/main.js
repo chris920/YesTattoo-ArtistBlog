@@ -514,11 +514,11 @@ Parse.Cloud.job("updateGlobalBooks", function(request, status) {
       var name = globalBook.get('name');
       var count = allBooksByCountWithCount[name];
       globalBook.set('count', count);
-      var matchingBookSets = _.filter(bookSets, function(bookSet){ 
-        return _.contains(bookSet, name);
-      });
-      var bookMatches = _.unique(_.flatten(matchingBookSets));
-      globalBook.set('bookMatches', bookMatches);
+      // var matchingBookSets = _.filter(bookSets, function(bookSet){ 
+      //   return _.contains(bookSet, name);
+      // });
+      // var bookMatches = _.unique(_.flatten(matchingBookSets));
+      // globalBook.set('bookMatches', bookMatches);
       promises.push(globalBook.save());
     });
     return Parse.Promise.when(promises);
