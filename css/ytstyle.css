@@ -5138,9 +5138,10 @@ span.hover-content {
 
 .arrow {
   position: absolute;
-  width: 10%;
+  width: 8%;
   top: 0px;
-  bottom: 0px; }
+  bottom: 0px;
+  z-index: 1000; }
   .arrow img {
     position: absolute;
     top: 45%;
@@ -5927,17 +5928,47 @@ button.toggleBookFilter, button.toggleMap {
       display: inline-block;
       width: 125px;
       margin: 10px 5px;
-      padding: 40px 20px 40px 20px; }
+      padding: 40px 20px 40px 20px;
+      position: relative; }
+      .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion img {
+        width: 100%;
+        height: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        width: 100%;
+        min-height: 100%; }
       .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion span {
-        min-width: 225px;
-        -webkit-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
-        -moz-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
-        box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
+        padding: 40px 20px 40px 20px;
+        z-index: 1000;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        min-width: 100%;
+        min-height: 100%;
         background-color: rgba(0, 0, 0, 0.6);
         color: white;
         font-size: 18px;
         float: none;
         text-align: center; }
+      .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion.resetSearch a {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 5px;
+        margin: auto; }
+      .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion.active {
+        border: 1px solid #c42020;
+        -webkit-transition: all 0.3s ease;
+        transition: all 0.3s ease; }
+        .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion.active span {
+          background-color: transparent; }
       @media screen and (min-width: 768px) {
         .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion {
           display: inline-block;
