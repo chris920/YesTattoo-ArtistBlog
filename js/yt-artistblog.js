@@ -665,7 +665,6 @@ App.Views.BookFilter = Parse.View.extend({
         var that = this;
         var input = this.$('input.bookFilterInput');
         input.typeahead({
-                hint: false,
                 highlight: false,
                 minLength: 1
             },
@@ -702,7 +701,8 @@ App.Views.BookFilter = Parse.View.extend({
     initSearchTimer: _.debounce(function(){ this.filterBooks(); }, 250),
     filterBooks: function(e){
         var that = this;
-        var query = that.$('input.bookFilterInput.tt-input').val().toLowerCase();
+        var query = that.$('input.bookFilterInput').val().toLowerCase();
+        // var query = that.$('input.bookFilterInput.tt-input').val().toLowerCase(); // needs to specify .tt-input when typeahead is activated ///clear 
         if (query.length > 0) {
             // Filters down the book suggestions that match the search fragment
             this.$('.bookSuggestionScroll').slickFilter(function( index ) {
@@ -717,9 +717,9 @@ App.Views.BookFilter = Parse.View.extend({
             } else {
                 var s = ''
             };
-            this.$('.slick-track').prepend(_.template('<div class="btn-tag bookSuggestion resetSearch"><span>'+resultCount+' Result'+s+':</span><a>Restart search</a></div>'));
+            this.$('.bookSuggestion:first').before(_.template('<div class="btn-tag bookSuggestion resetSearch"><span>'+resultCount+' Result'+s+':</span><a>Restart search</a></div>'));
             // Unused full set of blank book suggestions ///clear
-            // this.$('.slick-track').append(_.template('<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>')); ///clear 
+            // this.$('.slick-track').append(_.template('<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>')); ///clear
         } else {
             this.unfilterBooks();
         }
@@ -738,8 +738,8 @@ App.Views.BookFilter = Parse.View.extend({
         // var initializeGlobalBooks = _.once(this.globalBookManagerView.updateBooks);
         // initializeGlobalBooks();
 
-        var initializeTypeahead = _.once(this.typeaheadInitialize);
-        initializeTypeahead();
+        // var initializeTypeahead = _.once(this.typeaheadInitialize);
+        // initializeTypeahead();
     },
     hideBookFilter: function(){
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('active');
@@ -853,21 +853,26 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
         'click': 'toggleBookFilter',
     },
     updateBookFilterClass: function(){
+        //TODO / QUESTION ~ Initial click does not always add active glass.
+        console.log(this.model);///clear
+        console.log('updateBookFilterClass triggered from the GlobalBookThumbnail View');///clear
         if (this.model.get('active') === false) {
             this.$el.removeClass('active');
         } else if (this.model.get('active') === true){
             this.$el.addClass('active');
-        }        
+        }
     },
     toggleBookFilter: function(){
-        if (this.model.get('active') === false) {
+        console.log('toggleBookFilter triggered from the GlobalBookThumbnail View');///clear
+        console.log(this.model)///clear
+        if (this.model.get('active') === true) {
             console.log('addBookFilter triggered from the GlobalBookThumbnail View');///clear
-            this.$el.addClass('active');
-            this.model.set('active', true);
-        } else if (this.model.get('active') === true){
-            console.log('removeBookFilter triggered from the GlobalBookThumbnail View');///clear
-            this.$el.removeClass('active');
+            // this.$el.addClass('active'); //Removed because model listener should update
             this.model.set('active', false);
+        } else {
+            console.log('removeBookFilter triggered from the GlobalBookThumbnail View');///clear
+            // this.$el.removeClass('active'); //Removed because model listener should update
+            this.model.set('active', true);
         }
     },
     render: function(){
