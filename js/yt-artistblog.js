@@ -1336,7 +1336,7 @@ App.Views.Artist = Parse.View.extend({
 		  		
 		  		// console.log(tats);
 	  			_.each(tats, function(tat) {
-	  				var thumb = tat.get('fileThumbSmall').url();
+	  				var thumb = tat.get('fileThumb').url();
 	  				that.$('.artistTattoos').append(_.template('<a class="tattooContainer open"><img src='+thumb+' class="tattooImg" href="/tattoo/' + tat.id + '"></a>'));
 	  			}, that);
 

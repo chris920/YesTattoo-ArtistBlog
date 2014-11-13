@@ -4674,6 +4674,16 @@ span.hover-content {
   .artist.active .artistThumb .prof {
     border: 2px solid gold; }
 
+#mapLocation {
+  margin: 20px; }
+
+#mapLocation input {
+  border-bottom: solid 1px black; }
+
+#mapLocation span.grayInput {
+  border-bottom: solid 1px black;
+  display: table-cell; }
+
 .mapContainer {
   height: 100%;
   position: absolute;
@@ -6270,20 +6280,3 @@ input.tt-input {
   text-decoration: none;
   outline: 0;
   background-color: whitesmoke; }
-
-
-
-/* TODO Jon edits, sass needs updating */
-
-#mapLocation {
-  margin: 20px;
-}
-
-#mapLocation input {
-  border-bottom: solid 1px black;
-}
-
-#mapLocation span.grayInput {
-  border-bottom: solid 1px black;
-  display: table-cell;
-}
