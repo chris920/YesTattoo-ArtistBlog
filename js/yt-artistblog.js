@@ -542,7 +542,10 @@ App.Views.BookFilter = Parse.View.extend({
         App.bookfilter = this;///clear
         console.log('Tattos page init');///clear
 
+        this.query = [];
         this.collection = App.Collections.globalBooks;
+        this.collection.resetActive();  // Need to reset active otherwise can't re-select previous book once re-initialized
+        
         this.globalBookManagerView = new App.Views.GlobalBookManager({collection: this.collection});
         this.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({collection: this.collection});
         this.bookFilterShown = false;
@@ -553,7 +556,7 @@ App.Views.BookFilter = Parse.View.extend({
         App.on('app:keypress', this.focusIn);
         this.collection.on('change:active', this.updateBookFilter, this);
 
-        this.query = [];
+        // this.query = [];
         if (this.options.initialBooks) {
             console.log('bookFilter init with books');///clear
             var that = this;
