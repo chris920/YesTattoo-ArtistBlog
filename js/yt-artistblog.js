@@ -1152,10 +1152,10 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		if (this.usersLocation) {
 			new google.maps.Marker({
 				map: this.map,
-				icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+				icon: 'img/mapmarker-user.png',
 				title: 'You',
 				position: this.usersLocation,
-				zIndex: 1000
+				zIndex: 1049
 			});
 		}
 	},
@@ -1174,13 +1174,13 @@ App.Views.ArtistsMapView = Parse.View.extend({
 
 			var marker = new google.maps.Marker({
 				map: this.map,
-				icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+				icon: 'img/mapmarker-artist.png',
 				title: label,
 				position: artistLocation,
 				// Custom attribute added for event handlers
 				artistId: artist.id
 			});
-
+            App.marker = marker;
 			// Listen to events, trigger artist-selected event
 			google.maps.event.addListener(marker, 'mouseover', function () {
 				App.trigger('artists-map:artist-selected', marker.artistId);
@@ -1204,13 +1204,14 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	setSelectedArtistMarker: function (artistId) {
 		// Clear previous selection
 		if (this.selectedArtistMarker) {
-			this.selectedArtistMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+			this.selectedArtistMarker.setIcon('img/mapmarker-artist.png');
 		}
 
 		// Set new selection
 		var marker = this.findMarkerByArtistId(artistId);
 		if (marker) {
-			marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+			marker.setIcon('img/mapmarker-artist-active.png');
+            marker.setZIndex(1050);
 			this.selectedArtistMarker = marker;
 		}
 	},
