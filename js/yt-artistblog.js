@@ -580,6 +580,7 @@ App.Views.BookFilter = Parse.View.extend({
     disable: function () {
         console.log('filter header disabled');///clear
         App.off('app:keypress', this.focusIn);
+        this.collection.off('change:active', this.updateBookFilter, this);
 
         this.globalBookManagerView.disable();
         this.activeBookFilterManagerView.disable();
@@ -635,7 +636,7 @@ App.Views.BookFilter = Parse.View.extend({
     disableBookFilter: function(book){
         this.query = _.without(this.query, book.get('name'));
         App.trigger('books:book-update', this.query);
-        if(this.activeBookFilterManagerView.collection.length === 0){
+        if(this.activeBookFilterManagerView.collection.getActiveBooks().length === 0){
             this.$('.tattoosTitle').html(this.options.title);
         }
     },
@@ -734,7 +735,7 @@ App.Views.BookFilter = Parse.View.extend({
         }
     },
     unfilterBooks: function(){
-        this.$('.tt-input').val('');
+        this.$('input.bookFilterInput').val('');
         this.$('.bookSuggestionScroll').slickUnfilter();
     },
     showBookFilter: function(){
@@ -827,6 +828,7 @@ App.Views.ActiveBookFilter = Parse.View.extend({
         console.log('removeBookTitle triggered');///clear
         if(this.model.get('active') === false){
             this.remove();    
+            this.model.off('change:active', this.removeBookTitle, this);
         }
     },
     render: function(){
@@ -841,7 +843,7 @@ App.Views.GlobalBookManager = Parse.View.extend({
     initialize: function(){
         console.log('GlobalBookManager collection length is '+ this.collection.length);///clear
 
-        _.bindAll(this, 'showAll', 'showMore', 'showOne');
+        _.bindAll(this, 'showAll','showOne');
         this.childViews = [];
     },
     disable: function(){
@@ -853,12 +855,6 @@ App.Views.GlobalBookManager = Parse.View.extend({
     showAll: function(){
         this.disable();
         this.collection.each(function(book){
-            this.showOne(book);
-        }, this);
-    },
-    // chris removed
-    showMore: function(booksArray){
-        _.each(this.collection.getNext(booksArray, this.perPage), function(book){
             this.showOne(book);
         }, this);
     },
@@ -897,11 +893,9 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
         console.log(this.model)///clear
         if (this.model.get('active') === true) {
             console.log('addBookFilter triggered from the GlobalBookThumbnail View');///clear
-            // this.$el.addClass('active'); //Removed because model listener should update
             this.model.set('active', false);
         } else {
             console.log('removeBookFilter triggered from the GlobalBookThumbnail View');///clear
-            // this.$el.removeClass('active'); //Removed because model listener should update
             this.model.set('active', true);
         }
     },
