@@ -842,9 +842,7 @@ App.Views.GlobalBookManager = Parse.View.extend({
         this.childViews = [];
     },
     disable: function(){
-        console.log('disable');
-        for (var i = 0; i < this.childViews.ength; i++) {
-            console.log('disable ' + i);
+        for (var i = 0; i < this.childViews.length; i++) {
             this.childViews[i].disable();
         }
         this.childViews = [];
@@ -939,6 +937,7 @@ App.Views.TattoosPage = Parse.View.extend({
     },
     disable: function () {
         console.log('tattoos page disabled');///clear
+        this.bookFilterView.disable();
         App.off('app:scroll', this.scrollChecker);
         App.off('books:book-update', this.bookUpdate);
     },
@@ -980,25 +979,25 @@ App.Views.TattoosPage = Parse.View.extend({
         console.log(options);///clear
         App.query.tattoos(this.bookFilterView.query, options)
             .then(function (tats) {
-                    that.collection.add(tats);
-                    if ( tats.length === 0) {
-                        that.moreToLoad = false;
-                        that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
-                        that.$('.reset').on('click', function(){
-                            that.bookFilterView.queryReset();
-                            // App.trigger('books:book-update');
-                        }).fadeIn();
-                    } else if (tats.length < 40) {
-                    // that.$el.append('<div class="end" style="display: none"><img src="img/yt-featuredend.png"></div>');
-                        that.moreToLoad = false;
-                    } else {
-                        that.moreToLoad = true;
-                    }
-                },
-                function (error) {
-                    console.log(error);
+                that.collection.add(tats);
+                if ( tats.length === 0) {
+                    that.moreToLoad = false;
+                    that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
+                    that.$('.reset').on('click', function(){
+                        that.bookFilterView.queryReset();
+                        // App.trigger('books:book-update');
+                    }).fadeIn();
+                } else if (tats.length < 40) {
+                // that.$el.append('<div class="end" style="display: none"><img src="img/yt-featuredend.png"></div>');
+                    that.moreToLoad = false;
+                } else {
                     that.moreToLoad = true;
-            });
+                }
+            },
+            function (error) {
+                console.log(error);
+                that.moreToLoad = true;
+        });
     },
     render: function(){
         var html = this.template();
