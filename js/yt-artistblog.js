@@ -547,7 +547,7 @@ App.Views.BookFilter = Parse.View.extend({
         this.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({collection: this.collection});
         this.bookFilterShown = false;
 
-        this.collection.on('all', function(name){console.log(name)});///clear
+        // this.collection.on('all', function(name){console.log(name)});///clear
 
         _.bindAll(this, 'typeaheadInitialize', 'setBooks', 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'scrollerInitialize', 'render');
         App.on('app:keypress', this.focusIn);
@@ -574,18 +574,19 @@ App.Views.BookFilter = Parse.View.extend({
             });
         }
     },
-    setBooks: function(booksArray){
-        console.log(this.globalBookManagerView.collection.byBooks(booksArray));///clear
-        _.each(this.globalBookManagerView.collection.byBooks(booksArray), function(book){
-            this.activateBookFilter(book);
-        }, this);
-    },
     disable: function () {
         console.log('filter header disabled');///clear
         App.off('app:keypress', this.focusIn);
 
         this.globalBookManagerView.disable();
         this.activeBookFilterManagerView.disable();
+        this.collection.off('change:active', this.updateBookFilter);
+    },
+    setBooks: function(booksArray){
+        console.log(this.globalBookManagerView.collection.byBooks(booksArray));///clear
+        _.each(this.globalBookManagerView.collection.byBooks(booksArray), function(book){
+            this.activateBookFilter(book);
+        }, this);
     },
     focusIn: function(){
         if (this.bookFilterShown) {
@@ -778,10 +779,15 @@ App.Views.ActiveBookFilterManager = Parse.View.extend({
     el: '.filterTitles',
     initialize: function(){
         _.bindAll(this, 'renderBookTitle');
+        this.childViews = [];
         this.collection.on('change:active', this.renderBookTitle, this);
         // this.collection.on('reset', this.renderAllBookTitles, this);
     },
     disable: function(){
+        for (var i = 0; i < this.childViews.ength; i++) {
+            this.childViews[i].disable();
+        }
+        this.childViews = [];
         this.collection.off('change:active', this.renderBookTitle, this);
     },
     // renderAllBookTitles: function(){
@@ -790,8 +796,9 @@ App.Views.ActiveBookFilterManager = Parse.View.extend({
     renderBookTitle: function(book){
         if(book.attributes.active === true){
             var bookTitle = new App.Views.ActiveBookFilter({model: book});
-            this.$el.append(bookTitle.render().el);            
+            this.$el.append(bookTitle.render().el);
         }
+        // TOOD How are books removed?  They should be removed in this view + handle disabling the child view
     }
 });
 
@@ -802,6 +809,9 @@ App.Views.ActiveBookFilter = Parse.View.extend({
     initialize: function(){
         _.bindAll(this, 'disableBookFilter','removeBookTitle');
         this.model.on('change:active', this.removeBookTitle, this);
+    },
+    disable: function () {
+        this.model.off('change:active', this.removeBookTitle);
     },
     events: {
         'click': 'disableBookFilter',
@@ -829,15 +839,23 @@ App.Views.GlobalBookManager = Parse.View.extend({
         console.log('GlobalBookManager collection length is '+ this.collection.length);///clear
 
         _.bindAll(this, 'showAll', 'showMore', 'showOne');
+        this.childViews = [];
     },
     disable: function(){
-
+        console.log('disable');
+        for (var i = 0; i < this.childViews.ength; i++) {
+            console.log('disable ' + i);
+            this.childViews[i].disable();
+        }
+        this.childViews = [];
     },
     showAll: function(){
+        this.disable();
         this.collection.each(function(book){
             this.showOne(book);
         }, this);
     },
+    // chris removed
     showMore: function(booksArray){
         _.each(this.collection.getNext(booksArray, this.perPage), function(book){
             this.showOne(book);
@@ -846,6 +864,7 @@ App.Views.GlobalBookManager = Parse.View.extend({
     showOne: function(book){
         var book = new App.Views.GlobalBookThumbnail({model: book});
         this.$el.append(book.render().el);
+        this.childViews.push(book);
     }
 });
 
@@ -855,6 +874,9 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
     initialize: function(){
         _.bindAll(this,'updateBookFilterClass','toggleBookFilter', 'render');
         this.model.on('change:active', this.updateBookFilterClass, this);
+    },
+    disable: function () {
+        this.model.off('change:active', this.updateBookFilterClass);
     },
     events: {
         'click': 'toggleBookFilter',
