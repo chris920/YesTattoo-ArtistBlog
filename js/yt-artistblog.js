@@ -880,6 +880,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 	disable: function () {
 		// console.log('ArtistsPage disabled');///clear
+        this.collection.off('reset', this.scrollToTop, this);
 		App.off('app:scroll', this.scrollChecker);
 		App.off('app:book-update', this.bookUpdate);
 		App.off('artists:location-update', this.locationUpdate);
