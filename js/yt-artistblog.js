@@ -949,16 +949,13 @@ App.Views.TattoosPage = Parse.View.extend({
         if (this.moreToLoad && $('#tattoosPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
             this.moreToLoad = false;
             this.collection.page++;
-            this.loadMore();
+            this.loadMore(false);
         }
     },
     bookUpdate: function(){
         console.log('TattoosPage view called bookUpdate with this:');///clear
         console.log(this);///clear
-        this.collection.reset();
-        this.collection.page = 0;
-        this.moreToLoad = true;
-        this.loadMore();
+        this.loadMore(true);
 
         var booksRoute;
         if (this.bookFilterView.query) {
@@ -966,14 +963,19 @@ App.Views.TattoosPage = Parse.View.extend({
         } 
         Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
     },
-    loadMore: function(){
-        //TODO ~ Change to artists load pattern
+    loadMore: function(reset){
         var that = this;
+        console.log('Loadmore triggered with: ' + reset);///clear
+        if (reset) {
+            this.collection.reset();
+            this.collection.page = 0;
+            this.moreToload = true;
+        }
+
         var options = {
             skip: this.collection.page * 40,
             limit: 40
         };
-        console.log('Loadmore triggered with: ');///clear
         console.log(this.collection);///clear
         console.log(options);///clear
         App.query.tattoos(this.bookFilterView.query, options)
