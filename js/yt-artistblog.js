@@ -545,6 +545,7 @@ App.Views.BookFilter = Parse.View.extend({
         this.collection = App.Collections.globalBooks;
         this.globalBookManagerView = new App.Views.GlobalBookManager({collection: this.collection});
         this.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({collection: this.collection});
+        this.bookFilterShown = false;
 
         this.collection.on('all', function(name){console.log(name)});///clear
 
@@ -587,8 +588,12 @@ App.Views.BookFilter = Parse.View.extend({
         this.activeBookFilterManagerView.disable();
     },
     focusIn: function(){
-        // TODO - if toggleBookFilter has class active, then focus, else show then focus
-        this.$('input.bookFilterInput').focus();
+        if (this.bookFilterShown) {
+            this.$('input.bookFilterInput').focus();
+        } else if (!this.bookFilterShown){
+            this.showBookFilter();
+            this.$('input.bookFilterInput').focus();
+        }
     },
     updateBookFilter: function(book){
         console.log('updateBookFilter called from the bookFilter view');///clear
@@ -633,7 +638,7 @@ App.Views.BookFilter = Parse.View.extend({
     scrollerInitialize: function(){
         this.$('.bookSuggestionScroll').slick({
           lazyLoad: 'ondemand',
-          infinite: true,
+          infinite: false,
           slidesToShow: 5,
           slidesToScroll: 4,
           centerMode: false,
@@ -717,7 +722,7 @@ App.Views.BookFilter = Parse.View.extend({
             } else {
                 var s = ''
             };
-            this.$('.bookSuggestion:first').before(_.template('<div class="btn-tag bookSuggestion resetSearch"><span>'+resultCount+' Result'+s+':</span><a>Restart search</a></div>'));
+            this.$('.slick-track').prepend(_.template('<div class="btn-tag bookSuggestion resetSearch"><span>'+resultCount+' Result'+s+':</span><a>Restart search</a></div>'));
             // Unused full set of blank book suggestions ///clear
             // this.$('.slick-track').append(_.template('<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>')); ///clear
         } else {
@@ -734,6 +739,7 @@ App.Views.BookFilter = Parse.View.extend({
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('inactive');
         this.$('.bookFilterContainer').slideDown();
         this.$('.toggleBookFilter').html('Hide Filters');
+        this.bookFilterShown = true;
 
         // var initializeGlobalBooks = _.once(this.globalBookManagerView.updateBooks);
         // initializeGlobalBooks();
@@ -746,6 +752,7 @@ App.Views.BookFilter = Parse.View.extend({
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('inactive');
         this.$('.bookFilterContainer').slideUp();
         this.$('.toggleBookFilter').html('Show Filters');
+        this.bookFilterShown = false;
     },
     queryReset: function(){
         this.query = [];
