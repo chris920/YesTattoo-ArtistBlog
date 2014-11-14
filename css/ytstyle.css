@@ -4023,10 +4023,10 @@ a:focus {
     border-top: 4px solid #c42020;
     border-bottom: 0px solid transparent !important; }
 
-.navs .dropdown-menu {
+#navs .dropdown-menu {
   padding: 20px;
   min-width: 200px; }
-  .navs .dropdown-menu .btn-submit {
+  #navs .dropdown-menu .btn-submit {
     width: 100%;
     margin-bottom: 10px; }
 
