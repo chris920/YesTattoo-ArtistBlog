@@ -1591,13 +1591,26 @@ span.hover-content {
 }
 
 button.toggleBookFilter, button.toggleMap {
-	background-color: $brand-primary;
-	// background-color: $gray-darker;
+	border-color: $brand-primary;
+	color: $brand-primary;
+	border-width: 2px;
 	float: right;
 
+	padding: 5px 10px;
 	margin: 10px;
 	@media screen and (min-width: $screen-sm) {
+		padding: 10px 20px;
 		margin: 20px 10px;
+	}
+	// .caret {
+	//     margin-left: auto;
+	//     margin-right: auto;
+	// 	display: block;
+	// }
+	&.active {
+		border-color: $gray-darker;
+		background-color: $gray-darker;
+		color: $brand-secondary;
 	}
 }
 

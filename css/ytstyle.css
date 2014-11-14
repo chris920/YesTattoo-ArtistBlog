@@ -5180,12 +5180,20 @@ span.hover-content {
     border-bottom: solid 4px transparent; }
 
 button.toggleBookFilter, button.toggleMap {
-  background-color: #c42020;
+  border-color: #c42020;
+  color: #c42020;
+  border-width: 2px;
   float: right;
+  padding: 5px 10px;
   margin: 10px; }
   @media screen and (min-width: 768px) {
     button.toggleBookFilter, button.toggleMap {
+      padding: 10px 20px;
       margin: 20px 10px; } }
+  button.toggleBookFilter.active, button.toggleMap.active {
+    border-color: #1a1a1a;
+    background-color: #1a1a1a;
+    color: gold; }
 
 .profHead {
   min-height: 220px;
