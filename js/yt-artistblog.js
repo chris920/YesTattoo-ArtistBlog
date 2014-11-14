@@ -985,7 +985,7 @@ App.Views.TattoosPage = Parse.View.extend({
         this.loadMore(true);
 
         var booksRoute;
-        if (this.bookFilterView.query) {
+        if (this.bookFilterView && this.bookFilterView.query) {
             booksRoute = this.bookFilterView.query.join('+').split(" ").join("-");
         } 
         Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
@@ -1133,7 +1133,7 @@ App.Views.ArtistsPage = Parse.View.extend({
         this.loadArtists(true);
 
         var booksRoute;
-        if (this.bookFilterView.query) {
+        if (this.bookFilterView && this.bookFilterView.query) {
             booksRoute = this.bookFilterView.query.join('+').split(" ").join("-");
         }
         Parse.history.navigate('artists' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
