@@ -475,7 +475,7 @@ App.Views.BookFilter = Parse.View.extend({
     initialize: function(options){
         console.log('Tattos page init with = ');///clear
 
-        _.bindAll(this, 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'render', 'addBookSuggestion');
+        _.bindAll(this, 'disable', 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'render', 'addBookSuggestion');
         App.on('app:keypress', this.focusIn);
 
         if (this.options.initialBooks) {
@@ -638,7 +638,7 @@ App.Views.TattoosPage = Parse.View.extend({
             this.initialBooks = options.books;
         }
 
-        _.bindAll(this, 'scrollChecker', 'render', 'bookUpdate');
+        _.bindAll(this, 'disable', 'scrollChecker', 'render', 'bookUpdate');
         App.on('app:scroll', this.scrollChecker);
         App.on('app:book-update', this.bookUpdate);
 
@@ -861,7 +861,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	initialize: function (options) {
 		console.log('ArtistsPage init');
 
-		_.bindAll(this, 'scrollToTop', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render');
+		_.bindAll(this, 'disable', 'scrollToTop', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render');
 
 		if (options && options.books) {
 			console.log('ArtistsPage init with books');///clear
@@ -875,12 +875,25 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 		App.on('app:book-update', this.bookUpdate, this);
 		App.on('artists:location-update', this.locationUpdate, this);
+
+		this.initialized = true;
 	},
 
 	disable: function () {
-        this.collection.off('reset', this.scrollToTop);
-		App.off('app:book-update', this.bookUpdate);
-		App.off('artists:location-update', this.locationUpdate);
+		if (this.initialized) {
+			
+			// Disable child views
+			if (this.bookFilterView) { this.bookFilterView.disable(); }
+			if (this.artistsView) { this.artistsView.disable(); }
+			if (this.artistsMapView) { this.artistsMapView.disable(); }
+
+			// Disable our own events
+			this.collection.off('reset', this.scrollToTop);
+			App.off('app:book-update', this.bookUpdate);
+			App.off('artists:location-update', this.locationUpdate);
+
+			this.initialized = false;
+		}
 	},
 
 	scrollToTop: function () {
@@ -1042,7 +1055,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 
 	initialize: function () {
 		var self = this;
-		_.bindAll(self, 'initializeMap', 'setMapLocation', 'requestUsersLocation', 'addUserMarker', 'addArtistMarker', 'render');
+		_.bindAll(self, 'disable', 'initializeMap', 'setMapLocation', 'requestUsersLocation', 'addUserMarker', 'addArtistMarker', 'render');
 
         $.when(self.getMapLocation(), self.initializeMap())
     		.done(function _initialize() {
@@ -1061,14 +1074,19 @@ App.Views.ArtistsMapView = Parse.View.extend({
     			self.collection.on('reset', self.clearMap, self);
     			App.on('artists-list:artist-selected', self.setSelectedArtistMarker, self);
     			App.on('artists-map:artist-selected', self.setSelectedArtistMarker, self);
+
+    			this.initialized = true;
     		});
 	},
 
 	disable: function () {
-		this.collection.off('add', this.addArtistMarker, this);
-		this.collection.off('reset', this.clearMap, this);
-		App.off('artists-list:artist-selected', this.setSelectedArtistMarker, this);
-        App.off('artists-map:artist-selected', self.setSelectedArtistMarker, self);
+		if (this.initialized) { 
+			this.collection.off('add', this.addArtistMarker);
+			this.collection.off('reset', this.clearMap);
+			App.off('artists-list:artist-selected', this.setSelectedArtistMarker);
+			App.off('artists-map:artist-selected', this.setSelectedArtistMarker);
+			this.initialized = false;
+		}
 	},
 
 	initializeMap: function () {
@@ -1230,11 +1248,34 @@ App.Views.Artists = Parse.View.extend({
 	el: '.artists',
 
 	initialize: function () {
-		_.bindAll(this, 'resetArtists', 'renderArtist', 'setMinHeight');
+		_.bindAll(this, 'disable', 'disableChildViews', 'resetArtists', 'renderArtist', 'setMinHeight');
+
+		this.childViews = [];
 
 		this.collection.on('add', this.renderArtist, this);
 		this.collection.on('reset', this.resetArtists, this);
 		this.collection.on('finito', this.setMinHeight, this);
+
+		this.initialized = true;
+	},
+
+	disable: function () {
+		if (this.initialized) {
+			this.disableChildViews();
+
+			this.collection.off('add', this.renderArtist);
+			this.collection.off('reset', this.resetArtists);
+			this.collection.off('finito', this.setMinHeight);
+			
+			this.initialized = false;
+		}
+	},
+
+	disableChildViews: function () {
+		for (var i = 0; i < this.childViews.length; i++) {
+		    this.childViews[i].disable();
+		}
+		this.childViews = [];
 	},
 
 	// Hack: smoothes transition between result sets/pages by setting the min-height 
@@ -1245,12 +1286,14 @@ App.Views.Artists = Parse.View.extend({
 	},
 
 	resetArtists: function () {
+		this.disableChildViews();
 		this.$el.empty();
 	},
 
 	renderArtist: function (artist) {
 		var artist = new App.Views.Artist({ model: artist });
 		this.$el.append(artist.render().el);
+		this.childViews.push(artist);
 		return this;
 	}
 });
@@ -1267,18 +1310,23 @@ App.Views.Artist = Parse.View.extend({
 	},
 	
 	initialize: function () {
-		_.bindAll(this, 'activate', 'highlight', 'scrollIntoView', 'viewProfile', 'render');
+		_.bindAll(this, 'disable', 'activate', 'highlight', 'scrollIntoView', 'viewProfile', 'render');
 
 		// Listen to artist-selected event and update highlight in results
         App.on('artists-list:artist-selected', this.highlight);
 		App.on('artists-map:artist-selected', this.highlight);
         App.on('artists-map:artist-selected', this.scrollIntoView);
+
+        this.initialized = true;
 	},
 
     disable: function () {
-        App.off('artists-list:artist-selected', this.highlight);
-        App.off('artists-map:artist-selected', this.highlight);
-        App.off('artists-map:artist-selected', this.scrollIntoView);
+    	if (this.initialized) {
+    		App.off('artists-list:artist-selected', this.highlight);
+	        App.off('artists-map:artist-selected', this.highlight);
+	        App.off('artists-map:artist-selected', this.scrollIntoView);
+	        this.initialized = false;
+    	}
     },
 
 	activate: function () {
