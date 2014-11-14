@@ -873,15 +873,12 @@ App.Views.ArtistsPage = Parse.View.extend({
 		this.collection = new App.Collections.Artists();
 		this.collection.on('reset', this.scrollToTop, this);
 
-		App.on('app:scroll', this.scrollChecker, this);
 		App.on('app:book-update', this.bookUpdate, this);
 		App.on('artists:location-update', this.locationUpdate, this);
 	},
 
 	disable: function () {
-		// console.log('ArtistsPage disabled');///clear
-        this.collection.off('reset', this.scrollToTop, this);
-		App.off('app:scroll', this.scrollChecker);
+        this.collection.off('reset', this.scrollToTop);
 		App.off('app:book-update', this.bookUpdate);
 		App.off('artists:location-update', this.locationUpdate);
 	},
