@@ -1195,7 +1195,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 				// Custom attribute added for event handlers
 				artistId: artist.id
 			});
-            App.marker = marker;
+
 			// Listen to events, trigger artist-selected event
 			google.maps.event.addListener(marker, 'mouseover', function () {
 				App.trigger('artists-map:artist-selected', marker.artistId);
