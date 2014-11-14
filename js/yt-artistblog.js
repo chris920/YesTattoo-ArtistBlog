@@ -552,7 +552,7 @@ App.Views.BookFilter = Parse.View.extend({
 
         // this.collection.on('all', function(name){console.log(name)});///clear
 
-        _.bindAll(this, 'typeaheadInitialize', 'setBooks', 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'scrollerInitialize', 'render');
+        _.bindAll(this, 'disable', 'typeaheadInitialize', 'setBooks', 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'scrollerInitialize', 'render');
         App.on('app:keypress', this.focusIn);
         this.collection.on('change:active', this.updateBookFilter, this);
 
@@ -576,15 +576,20 @@ App.Views.BookFilter = Parse.View.extend({
                 return that;
             });
         }
+
+        this.initialized = true;
     },
     disable: function () {
-        console.log('filter header disabled');///clear
-        App.off('app:keypress', this.focusIn);
-        this.collection.off('change:active', this.updateBookFilter, this);
+    	if (this.initialized) {
+	        console.log('filter header disabled');///clear
+	        if (this.globalBookManagerView) { this.globalBookManagerView.disable(); }
+	        if (this.activeBookFilterManagerView) { this.activeBookFilterManagerView.disable(); }
 
-        this.globalBookManagerView.disable();
-        this.activeBookFilterManagerView.disable();
-        this.collection.off('change:active', this.updateBookFilter);
+	        App.off('app:keypress', this.focusIn);
+	        this.collection.off('change:active', this.updateBookFilter);
+
+	        this.initialized = false;
+	    }
     },
     setBooks: function(booksArray){
         console.log(this.globalBookManagerView.collection.byBooks(booksArray));///clear
@@ -782,17 +787,23 @@ App.Views.BookFilter = Parse.View.extend({
 App.Views.ActiveBookFilterManager = Parse.View.extend({
     el: '.filterTitles',
     initialize: function(){
-        _.bindAll(this, 'renderBookTitle');
+        _.bindAll(this, 'disable', 'disableChildViews', 'renderBookTitle');
         this.childViews = [];
         this.collection.on('change:active', this.renderBookTitle, this);
-        // this.collection.on('reset', this.renderAllBookTitles, this);
+        this.initialized = true;
     },
-    disable: function(){
-        for (var i = 0; i < this.childViews.ength; i++) {
+    disable: function() {
+    	if (this.initialized) {
+    		this.disableChildViews();
+	        this.collection.off('change:active', this.renderBookTitle);
+	        this.initialized = false;
+	    }
+    },
+    disableChildViews: function () {
+    	for (var i = 0; i < this.childViews.length; i++) {
             this.childViews[i].disable();
         }
         this.childViews = [];
-        this.collection.off('change:active', this.renderBookTitle, this);
     },
     // renderAllBookTitles: function(){
     //     this.collection.forEach(this.renderBookTitle, this);
@@ -801,6 +812,7 @@ App.Views.ActiveBookFilterManager = Parse.View.extend({
         if(book.attributes.active === true){
             var bookTitle = new App.Views.ActiveBookFilter({model: book});
             this.$el.append(bookTitle.render().el);
+            this.childViews.push(bookTitle);
         }
         // TOOD How are books removed?  They should be removed in this view + handle disabling the child view
     }
@@ -811,11 +823,15 @@ App.Views.ActiveBookFilter = Parse.View.extend({
     className: 'filterTitle',
     tagName: 'span',
     initialize: function(){
-        _.bindAll(this, 'disableBookFilter','removeBookTitle');
+        _.bindAll(this, 'disable', 'disableBookFilter','removeBookTitle');
         this.model.on('change:active', this.removeBookTitle, this);
+        this.initialized = true;
     },
     disable: function () {
-        this.model.off('change:active', this.removeBookTitle);
+    	if (this.initialized) {
+        	this.model.off('change:active', this.removeBookTitle);
+        	this.initialized = false;
+        }
     },
     events: {
         'click': 'disableBookFilter',
@@ -843,17 +859,24 @@ App.Views.GlobalBookManager = Parse.View.extend({
     initialize: function(){
         console.log('GlobalBookManager collection length is '+ this.collection.length);///clear
 
-        _.bindAll(this, 'showAll','showOne');
+        _.bindAll(this, 'disable', 'disableChildViews', 'showAll', 'showOne');
         this.childViews = [];
+        this.initialized = true;
     },
     disable: function(){
-        for (var i = 0; i < this.childViews.length; i++) {
+    	if (this.initialized) {
+    		this.disableChildViews();
+    		this.initialized = false;
+    	}
+    },
+    disableChildViews: function () {
+    	for (var i = 0; i < this.childViews.length; i++) {
             this.childViews[i].disable();
         }
         this.childViews = [];
     },
     showAll: function(){
-        this.disable();
+        this.disableChildViews();
         this.collection.each(function(book){
             this.showOne(book);
         }, this);
@@ -869,11 +892,15 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
     template: _.template('<span><%= name %></span>'+'<img data-lazy=""/>'),
     className: 'btn-tag bookSuggestion',
     initialize: function(){
-        _.bindAll(this,'updateBookFilterClass','toggleBookFilter', 'render');
+        _.bindAll(this, 'disable', 'updateBookFilterClass', 'toggleBookFilter', 'render');
         this.model.on('change:active', this.updateBookFilterClass, this);
+        this.initialized = true;
     },
     disable: function () {
-        this.model.off('change:active', this.updateBookFilterClass);
+    	if (this.initialized) {
+    		this.model.off('change:active', this.updateBookFilterClass);
+    		this.initialized = false;	
+    	}
     },
     events: {
         'click': 'toggleBookFilter',
@@ -923,17 +950,24 @@ App.Views.TattoosPage = Parse.View.extend({
             this.initialBooks = options.books;
         }
 
-        _.bindAll(this, 'scrollChecker', 'render', 'bookUpdate', 'loadMore');
+        _.bindAll(this, 'disable', 'scrollChecker', 'render', 'bookUpdate', 'loadMore');
+        this.collection = new App.Collections.Tattoos();
+
         App.on('app:scroll', this.scrollChecker);
         App.on('books:book-update', this.bookUpdate);
 
-        this.collection = new App.Collections.Tattoos();
+        this.initialized = true;
     },
     disable: function () {
-        console.log('tattoos page disabled');///clear
-        this.bookFilterView.disable();
-        App.off('app:scroll', this.scrollChecker);
-        App.off('books:book-update', this.bookUpdate);
+    	if (this.initialized) {
+			console.log('tattoos page disabled');///clear
+			if (this.bookFilterView) { this.bookFilterView.disable(); }
+
+			App.off('app:scroll', this.scrollChecker);
+			App.off('books:book-update', this.bookUpdate);
+
+			this.initialized = false;
+		}
     },
     events: {
 
