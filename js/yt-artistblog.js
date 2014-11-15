@@ -1593,7 +1593,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
     initialize: function(){
         console.log('tattoo profile init');
         // Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
-        _.bindAll(this, 'focusIn');
+        _.bindAll(this, 'focusIn', 'saveBooks');
 
         this.model.on('add:created', this.showYourBooks, this);
         this.model.on('add:removed', this.showAddButton, this);
@@ -2439,10 +2439,8 @@ App.Views.Landing = Parse.View.extend({
             that.count = count;
         });
 
-        _.bindAll(this, 'getArtists', 'continue', 'continueExplore','initiateArtists', 'hideLanding');
-        // $(window).bind('scroll',this.continueToFeatured);
+        _.bindAll(this, 'getArtists', 'continue', 'continueExplore', /*'continueToFeatured',*/ 'initiateArtists', 'hideLanding');
         App.on('app:scroll', this.continueExplore);
-
     },
     events: {
         "click a":  "continue"
@@ -2549,6 +2547,12 @@ App.Views.Landing = Parse.View.extend({
     continue:function(){
         this.hideLanding();
     },
+	// continueToFeatured:function(){
+	// 	// Parse.history.navigate('featured', {trigger: true});
+	// 	console.log('landing continueToFeatured');
+	// 	App.trigger('app:featured');
+	// 	this.hideLanding();
+	// },
     continueExplore:function(){
         console.log('landing continueExplore');
         App.trigger('app:explore');
@@ -2972,41 +2976,52 @@ App.Views.Interview = Parse.View.extend({
         this.profile = App.profile;
     },
     events: {
-        "submit form.interviewForm":    "saveInterview"
+    	"submit form.interviewForm": 	"saveInterview",
+    	'submit form.featureForm': 'featureArtist'
     },
-    saveInterview: function(e){
-        e.preventDefault();
-        this.profile.set("q1", this.$("#editQuestion1").val());
-        this.profile.set("a1", this.$("#editAnswer1").val());
-        this.profile.set("q2", this.$("#editQuestion2").val());
-        this.profile.set("a2", this.$("#editAnswer2").val());
-        this.profile.set("q3", this.$("#editQuestion3").val());
-        this.profile.set("a3", this.$("#editAnswer3").val());
-        this.profile.set("q4", this.$("#editQuestion4").val());
-        this.profile.set("a4", this.$("#editAnswer4").val());
-        this.profile.set("q5", this.$("#editQuestion5").val());
-        this.profile.set("a5", this.$("#editAnswer5").val());
-        this.profile.set("author", this.$("#editAuthor").val());
-        this.profile.set("featuremonth", this.$("#editFeatureMonth").val());
-        this.profile.set("featureyear", this.$("#editFeatureYear").val());
-        this.profile.save(null,{
-            success: function(profile) {
-                // flash the success class
-                $(".interviewForm").each(function(){
-                    $(".input-group").addClass("has-success").fadeIn("slow");
-                    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
-                });
-            },
-            error: function(user, error) {
-                $(".interviewForm .error").html(error.message).show();
-            }
-        });
+    saveInterview: function (e){
+    	e.preventDefault();
+    	this.profile.set("q1", this.$("#editQuestion1").val());
+    	this.profile.set("a1", this.$("#editAnswer1").val());
+    	this.profile.set("q2", this.$("#editQuestion2").val());
+    	this.profile.set("a2", this.$("#editAnswer2").val());
+    	this.profile.set("q3", this.$("#editQuestion3").val());
+    	this.profile.set("a3", this.$("#editAnswer3").val());
+    	this.profile.set("q4", this.$("#editQuestion4").val());
+    	this.profile.set("a4", this.$("#editAnswer4").val());
+    	this.profile.set("q5", this.$("#editQuestion5").val());
+    	this.profile.set("a5", this.$("#editAnswer5").val());
+    	this.profile.set("author", this.$("#editAuthor").val());
+		this.profile.save(null,{
+			success: function(profile) {
+				// flash the success class
+				$(".interviewForm").each(function(){
+				    $(".input-group").addClass("has-success").fadeIn("slow");
+				    setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
+				});
+			},
+			error: function(user, error) {
+				$(".interviewForm .error").html(error.message).show();
+			}
+		});
     },
-
-    render: function(){
-        this.$el.html(this.template(this.profile.attributes));
-        return this;
-    }
+    featureArtist: function (e) {
+    	e.preventDefault();
+    	var self = this;
+    	Parse.Cloud.run('featureArtist', { id: this.profile.id }, {
+    		success: function (result) {
+    			self.profile = result;
+    			self.render();
+    		},
+    		error: function (error) {
+    			$(".featureForm .error").html(error.message).show();
+    		}
+    	})
+    },
+	render: function(){
+		this.$el.html(this.template({ model: this.profile.attributes }));
+		return this;
+	}
 });
 
 App.Views.Join = Parse.View.extend({
@@ -3342,6 +3357,7 @@ App.Views.ArtistTour = Backbone.Modal.extend({
     template: _.template($('#tourTemplate').html()),
     id: 'tour',
     initialize: function(){
+
 
     },
     viewContainer: '.clearContainer',
@@ -4169,30 +4185,27 @@ App.query = (function () {
 	*/
 	query.featuredArtists = function (options) {
 		var query = new Parse.Query('ArtistProfile');
-		query.notEqualTo('featuremonth', '')
+		var today = new Date();
+		query.lessThan("featureDate", today);
+		query.descending("featureDate");
 		query.skip(options.skip || 0);
 		query.limit(options.limit || 1000);
-		query.descending("featuremonth,createdAt");
 		return query.find();
 	}
 
 	/*
 		Query random featured artists
 	*/
-	query.randomFeaturedArtists = function (options) {
-		var queries = [];
-		for (var i = 0; i < options.limit; i++) {
-
-			var q = new Parse.Query(App.Models.ArtistProfile);
-			q.notEqualTo('featuremonth','');
-			q.skip(Math.floor(Math.random() * options.count)); // <- Replace options.count with pre-query once #20 implemented
-			q.limit(1);
-		    
-		    var query = new Parse.Query(App.Models.ArtistProfile);
-		    query.matchesKeyInQuery("objectId", "objectId", q);
-			queries.push(query);
-		}
-		return Parse.Query.or.apply(this, queries).find();
+	this.randomFeaturedArtists = function (options) {
+		var query = new Parse.Query('ArtistProfile');
+		query.exists('featureId');
+		query.descending('featureId');
+		return query.first().then( function (result) {
+			query.skip(Math.floor(Math.random() * result.attributes.featureId));
+			query.limit(options.limit || 1000);
+			console.log('query test');
+			return query.find();
+		});
 	}
 
 	return query;
@@ -4201,4 +4214,3 @@ App.query = (function () {
 $(function() {
     App.start();
 });
-

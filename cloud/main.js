@@ -83,6 +83,34 @@ Parse.Cloud.define("books", function(request, response) {
 });
 
 
+Parse.Cloud.define('featureArtist', function (request, response) {
+
+  var artist;
+
+  var query = new Parse.Query('ArtistProfile');
+  query.get(request.params.id).then(function (profile) {
+
+    artist = profile;
+
+    query = new Parse.Query('ArtistProfile');
+    query.exists('featureId');
+    query.descending('featureId');
+    return query.first();
+  })
+  .then( function (result) {
+
+    // increment id, and set date artist will be featured
+    artist.set('featureId', result.attributes.featureId + 1);
+    artist.set('featureDate', new Date(result.attributes.featureDate.getTime() + 86400000));
+    return artist.save();
+  })
+  .then(function(result) {
+    response.success(result);
+  }, function(error) {
+    response.error(error);
+  });
+});
+
 Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
   var profile = request.object;
 
@@ -677,5 +705,45 @@ Parse.Cloud.job('addBooksToArtistsProfile', function (request, status) {
   },
   function (error) {
     status.error('Failed to update ArtistProfile');
+  });
+});
+
+Parse.Cloud.job('setArtistFeatureId', function (request, status) {
+  Parse.Cloud.useMasterKey();
+  console.log('Running featured artist update ...');
+
+  var today = new Date()
+  today.setHours(0);
+  today.setMinutes(0);
+  today.setSeconds(0);
+  today.setMilliseconds(0);
+  var count = 0;
+
+  var query = new Parse.Query('ArtistProfile');
+  query.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
+  query.ascending('createdAt');
+  query.find().then(function (artists) {
+
+    today = new Date(today.getTime() - (artists.length * 86400000));
+
+    var updates = [];
+    for (var i = 0; i < artists.length; i++) {
+      var artist = artists[i];
+
+      count += 1;
+      artist.set('featureId', count);
+      
+      today = new Date(today.getTime() + 86400000);
+      artist.set('featureDate', today);
+      
+      updates.push(artist.save());
+    }
+    return Parse.Promise.when(updates);
+  })
+  .then(function () {
+      status.success('Artists featured id updated');
+    },
+    function (error) {
+      status.error('Failed to update featured id');
   });
 });
