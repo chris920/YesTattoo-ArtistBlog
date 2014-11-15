@@ -826,70 +826,77 @@
     <script type="text/html" id="artistInterviewTemplate">
       <div class="container">
         <div class="lightContainer">
-          <h3 id=""><%= (name) ?  name : '' %> Interview</h3>
+          <h3 id=""><%= (model.name) ?  model.name : '' %> Interview</h3>
 
           <form class="interviewForm" role="form">
             <div class="error" style="display:none"></div>
             <div class="input-group">
               <span class="input-group-addon">Question 1 </span>
-              <input type="text" class="form-control" id="editQuestion1" placeholder="" value="<%= (q1) ?  q1 : '' %>">
+              <input type="text" class="form-control" id="editQuestion1" placeholder="" value="<%= (model.q1) ?  model.q1 : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Answer 1 </span>
-              <textarea class="form-control" id="editAnswer1" rows="6" placeholder="" ><%= (a1) ?  a1 : '' %></textarea>
+              <textarea class="form-control" id="editAnswer1" rows="6" placeholder="" ><%= (model.a1) ?  model.a1 : '' %></textarea>
             </div>
             <br>
             <div class="input-group">
               <span class="input-group-addon">Question 2 </span>
-              <input type="text" class="form-control" id="editQuestion2" placeholder="" value="<%= (q2) ?  q2 : '' %>">
+              <input type="text" class="form-control" id="editQuestion2" placeholder="" value="<%= (model.q2) ?  model.q2 : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Answer 2 </span>
-              <textarea class="form-control" id="editAnswer2" rows="6" placeholder="" ><%= (a2) ?  a2 : '' %></textarea>
+              <textarea class="form-control" id="editAnswer2" rows="6" placeholder="" ><%= (model.a2) ?  model.a2 : '' %></textarea>
             </div>
             <br>
             <div class="input-group">
               <span class="input-group-addon">Question 3 </span>
-              <input type="text" class="form-control" id="editQuestion3" placeholder="" value="<%= (q3) ?  q3 : '' %>">
+              <input type="text" class="form-control" id="editQuestion3" placeholder="" value="<%= (model.q3) ?  model.q3 : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Answer 3 </span>
-              <textarea class="form-control" id="editAnswer3" rows="6" placeholder="" ><%= (a3) ?  a3 : '' %></textarea>
+              <textarea class="form-control" id="editAnswer3" rows="6" placeholder="" ><%= (model.a3) ?  model.a3 : '' %></textarea>
             </div>
             <br>
             <div class="input-group">
               <span class="input-group-addon">Question 4 </span>
-              <input type="text" class="form-control" id="editQuestion4" placeholder="" value="<%= (q4) ?  q4 : '' %>">
+              <input type="text" class="form-control" id="editQuestion4" placeholder="" value="<%= (model.q4) ?  model.q4 : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Answer 4 </span>
-              <textarea class="form-control" id="editAnswer4" rows="6" placeholder="" ><%= (a4) ?  a4 : '' %></textarea>
+              <textarea class="form-control" id="editAnswer4" rows="6" placeholder="" ><%= (model.a4) ?  model.a4 : '' %></textarea>
             </div>
             <br>
             <div class="input-group">
               <span class="input-group-addon">Question 5 </span>
-              <input type="text" class="form-control" id="editQuestion5" placeholder="" value="<%= (q5) ?  q5 : '' %>">
+              <input type="text" class="form-control" id="editQuestion5" placeholder="" value="<%= (model.q5) ?  model.q5 : '' %>">
             </div>
             <div class="input-group">
               <span class="input-group-addon">Answer 5 </span>
-              <textarea class="form-control" id="editAnswer5" rows="6" placeholder="" ><%= (a5) ?  a5 : '' %></textarea>
-            </div><br><br>
-            <div class="input-group">
-              <span class="input-group-addon">Feature Month </span>
-              <input type="number" class="form-control" id="editFeatureMonth" placeholder="Month Number" value="<%= (featuremonth) ?  featuremonth : '' %>">
-            </div>
-            <h5> Leave blank if the artist is not ready to be featured</h5>
-            <div class="input-group">
-              <span class="input-group-addon">Feature Year </span>
-              <input type="number" class="form-control" id="editFeatureYear" placeholder="Year" value="<%= (featureyear) ?  featureyear : '' %>">
-            </div>
+              <textarea class="form-control" id="editAnswer5" rows="6" placeholder="" ><%= (model.a5) ?  model.a5 : '' %></textarea>
+            </div><br>
             <div class="input-group">
               <span class="input-group-addon">Author </span>
-              <input type="text" class="form-control" id="editAuthor" placeholder="Your Name" value="<%= (author) ?  author : '' %>">
+              <input type="text" class="form-control" id="editAuthor" placeholder="Your Name" value="<%= (model.author) ?  model.author : '' %>">
             </div>
+            <br>
             <button type="submit" class="btn-submit">Save Interview</button>
+            <br>
           </form>
-
+          <br>
+          <form class="featureForm" role="form">
+            <h3>Featured Artist</h3>
+            <div class="input-group">
+              <span class="input-group-addon">Feature Id</span>
+              <input type="text" class="form-control" id="editFeatureId" disabled value="<%= (model.featureId) ?  model.featureId : '' %>">
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">Feature Date</span>
+              <input type="text" class="form-control" id="editFeatureDate" disabled value="<%= (model.featureDate) ?  model.featureDate.toLocaleDateString() : '' %>">
+            </div>
+            <br>
+            <div class="error" style="display:none"></div>
+            <button type="" class="btn-submit" <%= (model.featureId) ? 'disabled' : '' %>>Feature Artist</button>
+          </form>
         </div>
       </div>
 

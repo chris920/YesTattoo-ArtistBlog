@@ -986,7 +986,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 	initialize: function(){
 		console.log('tattoo profile init');
 		// Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
-		_.bindAll(this, 'focusIn');
+		_.bindAll(this, 'focusIn', 'saveBooks');
 
 		this.model.on('add:created', this.showYourBooks, this);
 		this.model.on('add:removed', this.showAddButton, this);
@@ -1824,17 +1824,6 @@ App.Views.Landing = Parse.View.extend({
 		$('.navs').hide();
 		this.initiateArtists();
 
-		/// Workaround for getting a random artist. Will not scale over 1,000 due to query constraint....
-		// TODO Replace this with cloud code function, give all featured artists an incrementing id
-		// ... then you can query max fid by sorting in descending order and using .first()
-		// #20 Add auto-incrementing featured artists id [to better support random artists query]
-		// I would also embed this first into the randomFeaturedArtists query for reusability
-		var query = new Parse.Query(App.Models.ArtistProfile);
-		query.containedIn("featuremonth", ["1","2","3","4","5","6","7","8","9","10","11","12"]);
-		query.count().then(function(count){
-			that.count = count;
-		});
-
 		_.bindAll(this, 'getArtists', 'continue', 'continueToFeatured','initiateArtists', 'hideLanding');
 	    // $(window).bind('scroll',this.continueToFeatured);
 	    App.on('app:scroll', this.continueToFeatured);
@@ -1913,7 +1902,7 @@ App.Views.Landing = Parse.View.extend({
 			});
 	},
 	getArtists: function(){
-		this.count = this.count || 50; // total number of artist profiles
+		// this.count = this.count || 50; // total number of artist profiles
 		var that = this;
 		// var that = this,
 	 //    requestCount = 10, // number of random artists to query
@@ -1933,7 +1922,7 @@ App.Views.Landing = Parse.View.extend({
 		//     console.log(query2);
 		// }
 		// return Parse.Query.or.apply(this, queries).find()
-		App.query.randomFeaturedArtists({ limit: 10, count: this.count })
+		App.query.randomFeaturedArtists({ limit: 10 })
 			.then(function (artists) {
 				clearInterval(that.artistTimer);
 				that.collection.reset(artists);
@@ -2370,9 +2359,10 @@ App.Views.Interview = Parse.View.extend({
 		this.profile = App.profile;
 	},
     events: {
-    	"submit form.interviewForm": 	"saveInterview"
+    	"submit form.interviewForm": 	"saveInterview",
+    	'submit form.featureForm': 'featureArtist'
     },
-    saveInterview: function(e){
+    saveInterview: function (e){
     	e.preventDefault();
     	this.profile.set("q1", this.$("#editQuestion1").val());
     	this.profile.set("a1", this.$("#editAnswer1").val());
@@ -2385,8 +2375,6 @@ App.Views.Interview = Parse.View.extend({
     	this.profile.set("q5", this.$("#editQuestion5").val());
     	this.profile.set("a5", this.$("#editAnswer5").val());
     	this.profile.set("author", this.$("#editAuthor").val());
-    	this.profile.set("featuremonth", this.$("#editFeatureMonth").val());
-    	this.profile.set("featureyear", this.$("#editFeatureYear").val());
 		this.profile.save(null,{
 			success: function(profile) {
 				// flash the success class
@@ -2400,9 +2388,21 @@ App.Views.Interview = Parse.View.extend({
 			}
 		});
     },
-
+    featureArtist: function (e) {
+    	e.preventDefault();
+    	var self = this;
+    	Parse.Cloud.run('featureArtist', { id: this.profile.id }, {
+    		success: function (result) {
+    			self.profile = result;
+    			self.render();
+    		},
+    		error: function (error) {
+    			$(".featureForm .error").html(error.message).show();
+    		}
+    	})
+    },
 	render: function(){
-		this.$el.html(this.template(this.profile.attributes));
+		this.$el.html(this.template({ model: this.profile.attributes }));
 		return this;
 	}
 });
@@ -3541,10 +3541,11 @@ App.query = (function QueryHandler() {
 	*/
 	this.featuredArtists = function (options) {
 		var query = new Parse.Query('ArtistProfile');
-		query.notEqualTo('featuremonth', '')
+		var today = new Date();
+		query.lessThan("featureDate", today);
+		query.descending("featureDate");
 		query.skip(options.skip || 0);
 		query.limit(options.limit || 1000);
-		query.descending("featuremonth,createdAt");
 		return query.find();
 	}
 
@@ -3552,19 +3553,15 @@ App.query = (function QueryHandler() {
 		Query random featured artists
 	*/
 	this.randomFeaturedArtists = function (options) {
-		var queries = [];
-		for (var i = 0; i < options.limit; i++) {
-
-			var q = new Parse.Query(App.Models.ArtistProfile);
-			q.notEqualTo('featuremonth','');
-			q.skip(Math.floor(Math.random() * options.count)); // <- Replace options.count with pre-query once #20 implemented
-			q.limit(1);
-		    
-		    var query = new Parse.Query(App.Models.ArtistProfile);
-		    query.matchesKeyInQuery("objectId", "objectId", q);
-			queries.push(query);
-		}
-		return Parse.Query.or.apply(this, queries).find();
+		var query = new Parse.Query('ArtistProfile');
+		query.exists('featureId');
+		query.descending('featureId');
+		return query.first().then( function (result) {
+			query.skip(Math.floor(Math.random() * result.attributes.featureId));
+			query.limit(options.limit || 1000);
+			console.log('query test');
+			return query.find();
+		});
 	}
 
 	return this;
