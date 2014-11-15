@@ -14,254 +14,273 @@
 
 ////////// Body & Footer
 body, html {
-    height: 100%;
+	height: 100%;
 }
 h5 {   //used for location and other muted text
-    color: $gray;
+	color: $gray;
 }
 input, input.span,.input-group {
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 a {
-    color: inherit;
-    text-decoration: none; 
-    cursor: pointer;}
+	color: inherit;
+	text-decoration: none; 
+	cursor: pointer;}
   a:hover, a:focus {
-    color: $brand-primary;
-    text-decoration: none;
-    @include slowtofast(0.65,.2s); }
+	color: $brand-primary;
+	text-decoration: none;
+	@include slowtofast(0.65,.2s); }
   a:focus {
-    outline: thin dotted;
-    outline: 5px auto -webkit-focus-ring-color;
-    outline-offset: -2px; }
+	outline: thin dotted;
+	outline: 5px auto -webkit-focus-ring-color;
+	outline-offset: -2px; }
 
 //Sticky footer
 $footer-height: 300px;
 $footer-height-lg: $footer-height + 120px;
 #body {
-    min-height: 100%;
-    margin-bottom: -$footer-height-lg;
-    @media screen and (min-width: $screen-sm) {
-        margin-bottom: -$footer-height;
-    }
+	min-height: 100%;
+	margin-bottom: -$footer-height-lg;
+	@media screen and (min-width: $screen-sm) {
+		margin-bottom: -$footer-height;
+	}
 }
 #app {
-    padding-bottom: 100px;
+	padding-bottom: 100px;
 }
 #footer {
-    // background-color: black;
+	// background-color: black;
+	// background: url('../img/scribble_dark_@2X.png') repeat;
+	background-color: $gray-darker;
+	height: $footer-height-lg;
+	@media screen and (min-width: $screen-sm) {
+		height: $footer-height;
+	}
+	> div > div:last-child {
+		text-align: center;
+		span {
+			color: white;
+			display: block;
+			width: 100%;
+		}
+	}
+	.facebook, .twitter, .instagram {
+		color: $brand-primary;
+		font-size: 49px;
+		width: 66px;
+		height: 66px;
+		&:hover {
+			@include transition(2s ease);
+		   text-shadow:
+			-1px -1px 0 #000,
+			1px -1px 0 #000,
+			-1px 1px 0 #000,
+			1px 1px 0 #000;  
+		}
 
-    background: url('../img/scribble_dark_@2X.png') repeat;
-    height: $footer-height-lg;
-    @media screen and (min-width: $screen-sm) {
-        height: $footer-height;
-    }
-    > div > div:last-child {
-        text-align: center;
-        span {
-            color: white;
-            display: block;
-            width: 100%;
-        }
-    }
-    .facebook, .twitter, .instagram {
-        color: $brand-primary;
-        font-size: 49px;
-        width: 66px;
-        height: 66px;
-        &:hover {
-            @include transition(2s ease);
-           text-shadow:
-            -1px -1px 0 #000,
-            1px -1px 0 #000,
-            -1px 1px 0 #000,
-            1px 1px 0 #000;  
-        }
-
-    }
+	}
 }
 .footerlinks {
-    margin: 40px 0px;
-    padding: 20px;
-    border-top: solid 1px $gray-dark;
-    border-bottom: solid 1px $gray-dark;
-    > div:first-child {
-        text-align: left;
-    }
-    > div:nth-child(2) {
-       text-align: center;
-    }
-    > div:last-child {
-        text-align: right;
-    }
-    > div > a, > div > p {
-        display: block;
-        color: #c9c9c9;
-        &:hover {
-            color: #fff;
-            opacity: 1;
-            text-decoration:none; }
-        @media screen and (max-width: $screen-sm) {
-            text-align: center !important;
-        }
-    }    
+	margin: 40px 0px;
+	padding: 20px;
+	border-top: solid 1px black;
+	border-bottom: solid 1px black;
+	> div:first-child {
+		text-align: left;
+	}
+	> div:nth-child(2) {
+	   text-align: center;
+	}
+	> div:last-child {
+		text-align: right;
+	}
+	> div > a, > div > p {
+		display: block;
+		color: #c9c9c9;
+		&:hover {
+			color: #fff;
+			opacity: 1;
+			text-decoration:none; }
+		@media screen and (max-width: $screen-sm) {
+			text-align: center !important;
+		}
+	}    
 }
 
 *[href] { 
-    cursor: pointer; 
+	cursor: pointer; 
 }
 
 .lg8container {
-    @extend .col-md-8;
-    @extend .col-md-offset-2;
-    @extend .col-sm-10;
-    @extend .col-sm-offset-1;
-    @extend .col-xs-12;
-    @extend .col-xs-offset-0;
+	@extend .col-md-8;
+	@extend .col-md-offset-2;
+	@extend .col-sm-10;
+	@extend .col-sm-offset-1;
+	@extend .col-xs-12;
+	@extend .col-xs-offset-0;
 }
 .md8container {
-    @extend .col-md-8;
-    @extend .col-md-offset-2;
-    @extend .col-xs-10;
-    @extend .col-xs-offset-1;
+	@extend .col-md-8;
+	@extend .col-md-offset-2;
+	@extend .col-xs-10;
+	@extend .col-xs-offset-1;
 }
 .lg6container {
-    @extend .col-lg-6;
-    @extend .col-lg-offset-3;
-    @extend .col-md-8;
-    @extend .col-md-offset-2;
-    @extend .col-xs-12;
-    @extend .col-xs-offset-0;
+	@extend .col-lg-6;
+	@extend .col-lg-offset-3;
+	@extend .col-md-8;
+	@extend .col-md-offset-2;
+	@extend .col-xs-12;
+	@extend .col-xs-offset-0;
 }
 .md6container {
-    @extend .col-md-6;
-    @extend .col-md-offset-3;
-    @extend .col-xs-10;
-    @extend .col-xs-offset-1;
+	@extend .col-md-6;
+	@extend .col-md-offset-3;
+	@extend .col-xs-10;
+	@extend .col-xs-offset-1;
 }
 .menu-bg {
-    position: fixed;
-    height: 100px;
-    z-index: -10;
-    top: 0px;
-    background-color: black;
-    width: 100%;
+	position: fixed;
+	height: 100px;
+	z-index: -10;
+	top: 0px;
+	background-color: black;
+	width: 100%;
 }
 .load-fader { //lord vador?
-    @include gradient-vertical-three-colors($start-color: $gray-light, $mid-color: rgba(217, 217, 217, 0.1), $color-stop: 60%, $end-color: rgba(217, 217, 217, 0));
-    height: 200px;
+	@include gradient-vertical-three-colors($start-color: $gray-light, $mid-color: rgba(217, 217, 217, 0.1), $color-stop: 60%, $end-color: rgba(217, 217, 217, 0));
+	height: 200px;
 }
 .load {
-    z-index: -1;
-    width: 100%;
-    position: fixed;
-    bottom: 115px;
-    text-align: center;
-    @media screen and (max-width: $screen-sm) {
-        bottom: 180px;
-    }
-    img {
-        margin-right: auto;
-        margin-left: auto;
-    }
+	z-index: -1;
+	width: 100%;
+	position: fixed;
+	bottom: 115px;
+	text-align: center;
+	@media screen and (max-width: $screen-sm) {
+		bottom: 180px;
+	}
+	img {
+		margin-right: auto;
+		margin-left: auto;
+	}
 }
 .end {
-    text-align: center;
-    img {
-        height: 200px;
-    }
+	text-align: center;
+	img {
+		height: 200px;
+	}
 }
 
 .main-nav-item {
-  @include transition(0.2s ease);
-  border-top: 0px solid $gray-light;
-  border-bottom: 4px solid transparent;
-  padding-left: 40px;
-  &:hover, &:active {
-      border-top: 4px solid $brand-primary;
-      border-bottom: 0px solid transparent !important; 
-  }
+	@include transition(0.2s ease);
+	border-top: 0px solid $gray-light;
+	border-bottom: 4px solid transparent;
+	
+	text-align: left;
+	padding: 10px 20px !important;
+	i:before {
+		font-size: inherit;
+		right: 4px;
+		top: 2px;
+		display: inline;
+	}
+	@media screen and (min-width: $screen-md) {
+		padding: 22px 25px !important;
+		text-align: center;
+		i:before {
+			font-size: 24px;
+			right: 0px;
+			top: 0px;
+			display: block;
+		}
+	}
+
+	&:hover, &:active {
+		border-top: 4px solid $brand-primary;
+		border-bottom: 0px solid transparent !important; 
+	}
 }
 
 .navs .dropdown-menu {
-    padding: 20px;
-    min-width: 200px;
-    .btn-submit {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+	padding: 20px;
+	min-width: 200px;
+	.btn-submit {
+		width: 100%;
+		margin-bottom: 10px;
+	}
 }
 
 /////// home page
 #gutter {
-    text-align:center;
-    background: black;
-    height:100%;
-    border-bottom: 100px solid black;
+	text-align:center;
+	background: black;
+	height:100%;
+	border-bottom: 100px solid black;
 }
 
 /////// landing page
 .artistslide {
-        overflow: hidden;
-        height: 100vh;
-    .artistName {
-        display: inline-block;
-        color: white;
-        margin: 0px;
-    }
-    .artistLoc {
-        display: block;
-    }
-    .flaticon-up49 {
-        color: white;
-        padding: 0 40px 20px 40px;
-        left: calc(50% - 45px);
-        position: absolute;
-        bottom: 0;
-        @include transition(1.3s ease);
-        @include rotate(180deg);
-        &:hover {
-            @include transition(1.3s ease);
-            padding: 10px 40px 20px 40px;
-            color: $brand-primary;
-            font-size: 36px;
-        }
-    }
+		overflow: hidden;
+		height: 100vh;
+	.artistName {
+		display: inline-block;
+		color: white;
+		margin: 0px;
+	}
+	.artistLoc {
+		display: block;
+	}
+	.flaticon-up49 {
+		color: white;
+		padding: 0 40px 20px 40px;
+		left: calc(50% - 45px);
+		position: absolute;
+		bottom: 0;
+		@include transition(1.3s ease);
+		@include rotate(180deg);
+		&:hover {
+			@include transition(1.3s ease);
+			padding: 10px 40px 20px 40px;
+			color: $brand-primary;
+			font-size: 36px;
+		}
+	}
 }
 .landingText {
   margin-top: 10vh;
   width: 100%;
   color: $gray;
   .welcome{
-    margin-top: 30vh;
+	margin-top: 30vh;
   }
 }
 .landingTattooContainer {
-    width: 100%;
-    position: absolute;
-    bottom: 20px;
-    height: 45vh;
-    white-space: nowrap;
-    overflow: hidden;
-    > img {
-        display: inline-block;
-        height:100%;
-        width: auto;
-    }
+	width: 100%;
+	position: absolute;
+	bottom: 20px;
+	height: 45vh;
+	white-space: nowrap;
+	overflow: hidden;
+	> img {
+		display: inline-block;
+		height:100%;
+		width: auto;
+	}
 }
 .landingLinks {
-    position: absolute;
-    bottom: 0px;
-    width:100%;
-    height: 120px;
-    text-align: center;
-    color:white;
-    overflow:hidden;
-    @include gradient-vertical-three-colors($start-color: rgba(0, 0, 0, 0), $mid-color: rgba(0, 0, 0, 0.7), $color-stop: 40%, $end-color: black );
-    > ul > li {
-        display: inline-block;
-        padding: 35px;
-    }
+	position: absolute;
+	bottom: 0px;
+	width:100%;
+	height: 120px;
+	text-align: center;
+	color:white;
+	overflow:hidden;
+	@include gradient-vertical-three-colors($start-color: rgba(0, 0, 0, 0), $mid-color: rgba(0, 0, 0, 0.7), $color-stop: 40%, $end-color: black );
+	> ul > li {
+		display: inline-block;
+		padding: 35px;
+	}
 }
 
 
@@ -269,463 +288,463 @@ $footer-height-lg: $footer-height + 120px;
 ////////// Logos & Icons
 
 .main-logo {
-    height: 96px;
-    width: 180px;
-    background: url('../img/yestattoologo.png') no-repeat left center;
-    background-size: 100%;
-    @include transition(3s ease);
-    &:active,&.active,&:hover {
-        @include transition(1.3s ease);
-        background: url('../img/yestattoologo2.png') no-repeat left center;
-        background-size: 100%;
-    }
-    @media screen and (max-width: $screen-sm) {
-        margin-left: 10px;
-    }
-    &.large {
-        display: block;
-        position: relative;
-        width: 300px;
-        margin-left: auto;
-        margin-right: auto; 
-        @media screen and (max-width: $screen-sm) {
-            width: 200px;
-        }
-    }
+	height: 96px;
+	width: 180px;
+	background: url('../img/yestattoologo.png') no-repeat left center;
+	background-size: 100%;
+	@include transition(3s ease);
+	&:active,&.active,&:hover {
+		@include transition(1.3s ease);
+		background: url('../img/yestattoologo2.png') no-repeat left center;
+		background-size: 100%;
+	}
+	@media screen and (max-width: $screen-sm) {
+		margin-left: 10px;
+	}
+	&.large {
+		display: block;
+		position: relative;
+		width: 300px;
+		margin-left: auto;
+		margin-right: auto; 
+		@media screen and (max-width: $screen-sm) {
+			width: 200px;
+		}
+	}
 }
 
 //flat icons from flaticon.com
 @font-face {
-    font-family: "Flaticon";
-    src: url("../fonts/flaticon.eot");
-    src: url("../fonts/flaticon.eot#iefix") format("embedded-opentype"),
-    url("../fonts/flaticon.woff") format("woff"),
-    url("../fonts/flaticon.ttf") format("truetype"),
-    url("../fonts/flaticon.svg") format("svg");
-    font-weight: normal;
-    font-style: normal;
+	font-family: "Flaticon";
+	src: url("../fonts/flaticon.eot");
+	src: url("../fonts/flaticon.eot#iefix") format("embedded-opentype"),
+	url("../fonts/flaticon.woff") format("woff"),
+	url("../fonts/flaticon.ttf") format("truetype"),
+	url("../fonts/flaticon.svg") format("svg");
+	font-weight: normal;
+	font-style: normal;
 }
 [class^="flaticon-"]:before, [class*=" flaticon-"]:before,
 [class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
-    font-family: Flaticon;
-    font-size: 20px;
-    position: relative;
-    top: 2px;
-    right: 4px;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+	font-family: Flaticon;
+	font-size: 20px;
+	position: relative;
+	top: 2px;
+	right: 4px;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 
 }.flaticon-add85:before {
-    content: "\e000";
+	content: "\e000";
 }
 .flaticon-arrow-back:before {
-    content: "\e001";
+	content: "\e001";
 }
 .flaticon-arrow-next:before {
-    content: "\e001";
-    @include rotate(180deg);
+	content: "\e001";
+	@include rotate(180deg);
 }
 .flaticon-black373:before {
-    content: "\e002";
+	content: "\e002";
 }
 .flaticon-book104:before {
-    content: "\e003";
+	content: "\e003";
 }
 .flaticon-books8:before {
-    content: "\e004";
+	content: "\e004";
 }
 .flaticon-camera4:before {
-    content: "\e005";
+	content: "\e005";
 }
 .flaticon-cellphone5:before {
-    content: "\e006";
+	content: "\e006";
 }
 .flaticon-close20:before {
-    content: "\e007";
+	content: "\e007";
 }
 .flaticon-earth39:before {
-    content: "\e008";
+	content: "\e008";
 }
 .flaticon-external2:before {
-    content: "\e009";
+	content: "\e009";
 }
 .flaticon-home73:before {
-    content: "\e00a";
+	content: "\e00a";
 }
 .flaticon-information:before {
-    content: "\e00b";
+	content: "\e00b";
 }
 .flaticon-left65:before {
-    content: "\e00c";
+	content: "\e00c";
 }
 .flaticon-link35:before {
-    content: "\e00d";
+	content: "\e00d";
 }
 .flaticon-magnifier10:before {
-    content: "\e00e";
+	content: "\e00e";
 }
 .flaticon-message7:before {
-    content: "\e00f";
+	content: "\e00f";
 }
 .flaticon-phone13:before {
-    content: "\e010";
+	content: "\e010";
 }
 .flaticon-pin31:before {
-    content: "\e011";
+	content: "\e011";
 }
 .flaticon-placeholder8:before {
-    content: "\e012";
+	content: "\e012";
 }
 .flaticon-right44:before {
-    content: "\e013";
+	content: "\e013";
 }
 .flaticon-right52:before {
-    content: "\e014";
+	content: "\e014";
 }
 .flaticon-screen14:before {
-    content: "\e015";
+	content: "\e015";
 }
 .flaticon-send5:before {
-    content: "\e016";
+	content: "\e016";
 }
 .flaticon-settings13:before {
-    content: "\e017";
+	content: "\e017";
 }
 .flaticon-sketched20:before {
-    content: "\e018";
+	content: "\e018";
 }
 .flaticon-tattoo1:before {
-    content: "\e019";
+	content: "\e019";
 }
 .flaticon-trophy4:before {
-    content: "\e01a";
+	content: "\e01a";
 }
 .flaticon-up49:before {
-    content: "\e01b";
-    right: 0px;
+	content: "\e01b";
+	right: 0px;
 }
 .flaticon-user56:before {
-    content: "\e01c";
+	content: "\e01c";
 }
 .flaticon-user91:before {
-    content: "\e01d";
+	content: "\e01d";
 }
 
 
 //profile social icons
 .facebook, .twitter, .instagram, .tumblr, .message, .link {
-    display: inline-block; 
-    font-family: 'SocialGlyphs';
-    text-align: center;
-    color: white;
-    width:44px;
-    height:44px;
-    font-size:32px;
-    border-radius: $border-radius-base;
-    line-height:1.2;
-    font-weight:light;
-    @include transition(all 0.3s ease);
-    &:hover {
-        text-decoration: none;
-        color: white; }
-    &:after {
-        text-decoration: none; }
-    &:active {
-        color: $brand-primary; }
+	display: inline-block; 
+	font-family: 'SocialGlyphs';
+	text-align: center;
+	color: white;
+	width:44px;
+	height:44px;
+	font-size:32px;
+	border-radius: $border-radius-base;
+	line-height:1.2;
+	font-weight:light;
+	@include transition(all 0.3s ease);
+	&:hover {
+		text-decoration: none;
+		color: white; }
+	&:after {
+		text-decoration: none; }
+	&:active {
+		color: $brand-primary; }
 }
 .facebook {
-    &:hover {
-        background-color: #4f78b4; }
-    &:after {
-        content: "A"; }
+	&:hover {
+		background-color: #4f78b4; }
+	&:after {
+		content: "A"; }
 }
 .twitter {
-    &:hover {
-        background-color: #4e9edc; }
-    &:after {
-        content: "B"; }
+	&:hover {
+		background-color: #4e9edc; }
+	&:after {
+		content: "B"; }
 }
 .instagram {
-    &:hover {
-        background-color: #49709b; }
-    &:after {
-        content: "E"; }
+	&:hover {
+		background-color: #49709b; }
+	&:after {
+		content: "E"; }
 }
 .tumblr {
-    &:hover {
-        background-color: #466484; }
-    &:after {
-        content: "T"; }
+	&:hover {
+		background-color: #466484; }
+	&:after {
+		content: "T"; }
 }
 .message {
-    &:hover {
-        background-color: $brand-primary; }
-    &:after {
-        content: "W"; 
-        font-size:34px; }
+	&:hover {
+		background-color: $brand-primary; }
+	&:after {
+		content: "W"; 
+		font-size:34px; }
 }
 .link {
-    &:hover {
-        background-color: $brand-primary; }
-    &:after {
-        font-family: Flaticon;
-        font-size:24px;
-        @extend .flaticon-link35:before; }
+	&:hover {
+		background-color: $brand-primary; }
+	&:after {
+		font-family: Flaticon;
+		font-size:24px;
+		@extend .flaticon-link35:before; }
 }
 
 
 @font-face {
-    font-family: 'SocialGlyphs';
-    src: url('../fonts/socialglyphs-webfont.eot');
-    src: url('../fonts/socialglyphs-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/socialglyphs-webfont.woff') format('woff'),
-         url('../fonts/socialglyphs-webfont.ttf') format('truetype'),
-         url('../fonts/socialglyphs-webfont.svg#SocialGlyphsRegular') format('svg');
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'SocialGlyphs';
+	src: url('../fonts/socialglyphs-webfont.eot');
+	src: url('../fonts/socialglyphs-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/socialglyphs-webfont.woff') format('woff'),
+		 url('../fonts/socialglyphs-webfont.ttf') format('truetype'),
+		 url('../fonts/socialglyphs-webfont.svg#SocialGlyphsRegular') format('svg');
+	font-weight: normal;
+	font-style: normal;
 }
 
 
 
 ////////// image content 
 .tattooContainer{
-    overflow: hidden;
-    @extend .col-sm-3;
-    @extend .col-xs-6;
-    padding: 2.5px;
+	overflow: hidden;
+	@extend .col-sm-3;
+	@extend .col-xs-6;
+	padding: 2.5px;
 }
 #artistsPage .tattooContainer, #featured .tattooContainer{
-    @extend .col-xs-3;
+	@extend .col-xs-3;
 }
 #portfolioTab .tattooContainer, #tattoosPage .tattooContainer, #shopProfile .tattooContainer  {
-    padding-bottom: 5px;
+	padding-bottom: 5px;
 }
 .tattooImg {
-    display: block;
-    width: 100%;
-    height: auto;
+	display: block;
+	width: 100%;
+	height: auto;
 }
 
 span.text-content {
-        bottom: 5px;
-        color: white;
-        cursor: pointer;
-        display: table;
-        position: absolute;
-        padding: 10px;
-        width: 100%;
-        background-color: $black-trans;
-    &:span {
-        display: table-cell; }
-    .artistName {
-        margin: 0px; }
-    .artistLoc {
-        margin: 5px 0 0 0; 
-        color: $gray-light; }
-    .prof {
-        right: 10px;
-        bottom: 10px;
-        display: table;
-        float: right; }
+		bottom: 5px;
+		color: white;
+		cursor: pointer;
+		display: table;
+		position: absolute;
+		padding: 10px;
+		width: 100%;
+		background-color: $black-trans;
+	&:span {
+		display: table-cell; }
+	.artistName {
+		margin: 0px; }
+	.artistLoc {
+		margin: 5px 0 0 0; 
+		color: $gray-light; }
+	.prof {
+		right: 10px;
+		bottom: 10px;
+		display: table;
+		float: right; }
 }
 
 span.hover-text-content {
-        bottom: -30px;
-        color: white;
-        cursor: pointer;
-        display: table;
-        position: absolute;
-        padding: 10px;
-        width: 100%;
-        background-color: rgba(0,0,0,0);
-          -webkit-opacity: 0;
-          -moz-opacity: 0;
-          opacity: 0;
-        @include transition(all .2s ease);
-    &:span {
-        display: table-cell; }
-    .artistName {
-        margin: 0px; }
-    .artistLoc {
-        margin: 5px 0 0 0; 
-        color: $gray-light; }
-    .prof {
-        margin-left: 5px;
-        right: 10px;
-        bottom: 10px;
-        display: table;
-        float: right; }
+		bottom: -30px;
+		color: white;
+		cursor: pointer;
+		display: table;
+		position: absolute;
+		padding: 10px;
+		width: 100%;
+		background-color: rgba(0,0,0,0);
+		  -webkit-opacity: 0;
+		  -moz-opacity: 0;
+		  opacity: 0;
+		@include transition(all .2s ease);
+	&:span {
+		display: table-cell; }
+	.artistName {
+		margin: 0px; }
+	.artistLoc {
+		margin: 5px 0 0 0; 
+		color: $gray-light; }
+	.prof {
+		margin-left: 5px;
+		right: 10px;
+		bottom: 10px;
+		display: table;
+		float: right; }
 }
 
 .tattooContainer:hover span.hover-text-content {
-    background-color: $black-trans;
-    bottom: 2.5px;
-    -webkit-opacity: 1;
-    -moz-opacity: 1;
-    opacity: 1;
+	background-color: $black-trans;
+	bottom: 2.5px;
+	-webkit-opacity: 1;
+	-moz-opacity: 1;
+	opacity: 1;
 }
 
 span.hover-content {
-        text-align: center;
-        display: table;
-        color: white;
-        cursor: pointer;
-        position: absolute;
-        padding: 10px;
-        width: 100%;
-        top: 30px;
-        -webkit-opacity: 0;
-        -moz-opacity: 0;
-        opacity: 0;
-        @include transition(all .2s ease);
-    &:span {
-        display: table-cell;
-    }
+		text-align: center;
+		display: table;
+		color: white;
+		cursor: pointer;
+		position: absolute;
+		padding: 10px;
+		width: 100%;
+		top: 30px;
+		-webkit-opacity: 0;
+		-moz-opacity: 0;
+		opacity: 0;
+		@include transition(all .2s ease);
+	&:span {
+		display: table-cell;
+	}
 }
 .tattooContainer:hover span.hover-content {
-    top: 0px;
-    -webkit-opacity: 1;
-    -moz-opacity: 1;
-    opacity: 1;
+	top: 0px;
+	-webkit-opacity: 1;
+	-moz-opacity: 1;
+	opacity: 1;
 }
 
 ////////// Buttons 
 
 .btn-lg {
-    @extend .btn;
-    @extend .btn-primary;
-    border-radius: 8px / 12px;
-    min-width: 140px;
-    border: 5px solid $gray-light;
-    outline:0 solid transparent;
-    outline-offset:-5px;
-    @include transition(all .5s ease);
-    &:hover { 
-        border: 5px solid $gray-lighter;
-        outline: 3px solid $gray-light;
-        outline-offset:3px;
-        background-color: $brand-primary;
-        @include transition(all 0.3s ease); }
-    &:active {
-        outline: 5px solid transparent;
-        outline-offset:10px;
-        @include transition(all 0.2s ease); } 
+	@extend .btn;
+	@extend .btn-primary;
+	border-radius: 8px / 12px;
+	min-width: 140px;
+	border: 5px solid $gray-light;
+	outline:0 solid transparent;
+	outline-offset:-5px;
+	@include transition(all .5s ease);
+	&:hover { 
+		border: 5px solid $gray-lighter;
+		outline: 3px solid $gray-light;
+		outline-offset:3px;
+		background-color: $brand-primary;
+		@include transition(all 0.3s ease); }
+	&:active {
+		outline: 5px solid transparent;
+		outline-offset:10px;
+		@include transition(all 0.2s ease); } 
 }
 
 .btn-submit {
-    @extend .btn;
-    border-radius: 4px / 6px;
-    background-color: $brand-primary;
-    color: $gray-lighter;
-    outline:0 solid transparent;
-    outline-offset:-4px;
-    @include transition(all .5s ease);
-    &:hover { 
-        outline: 2px solid rgba(255,255,255,.3);
-        color: white;
-        outline-offset:3px;
-        background-color: $brand-primary;
-        @include transition(all 0.3s ease); }
-    &:active {
-        outline: 5px solid transparent;
-        outline-offset:10px;
-        @include transition(all 0.2s ease); } 
+	@extend .btn;
+	border-radius: 4px / 6px;
+	background-color: $brand-primary;
+	color: $gray-lighter;
+	outline:0 solid transparent;
+	outline-offset:-4px;
+	@include transition(all .5s ease);
+	&:hover { 
+		outline: 2px solid rgba(255,255,255,.3);
+		color: white;
+		outline-offset:3px;
+		background-color: $brand-primary;
+		@include transition(all 0.3s ease); }
+	&:active {
+		outline: 5px solid transparent;
+		outline-offset:10px;
+		@include transition(all 0.2s ease); } 
 }
 
 .btn-link {
-    @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
-    background-color: rgba(0,0,0,0);
-    border-radius: 4px / 6px;
-    border: 0px;
-    color: $gray;
-    outline:0 solid transparent;
-    outline-offset:-4px;
-    text-decoration: none;
-    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.1); 
-    @include transition(all .5s ease);
-    &:hover { 
-        outline: 2px solid rgba(255,255,255,.3);
-        outline-offset:3px;
-        color: white;
-        background-color: rgba(0,0,0,0);
-        text-decoration: none;
-        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1); 
-        @include transition(all 0.3s ease); }
-    &:active,  &:visited, &:focus {
-        outline: 1px solid transparent;
-        outline-offset:3px;
-        background-color: $brand-primary;
-        text-decoration: none;
-        @include transition(all 0.2s ease); } 
+	@include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
+	background-color: rgba(0,0,0,0);
+	border-radius: 4px / 6px;
+	border: 0px;
+	color: $gray;
+	outline:0 solid transparent;
+	outline-offset:-4px;
+	text-decoration: none;
+	box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.1); 
+	@include transition(all .5s ease);
+	&:hover { 
+		outline: 2px solid rgba(255,255,255,.3);
+		outline-offset:3px;
+		color: white;
+		background-color: rgba(0,0,0,0);
+		text-decoration: none;
+		box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1); 
+		@include transition(all 0.3s ease); }
+	&:active,  &:visited, &:focus {
+		outline: 1px solid transparent;
+		outline-offset:3px;
+		background-color: $brand-primary;
+		text-decoration: none;
+		@include transition(all 0.2s ease); } 
 }
 
 .btn-tag {
-    @extend .btn;
-    @include button-size(5px, 10px, inherit, $line-height-small, $border-radius-small);
-    
-    border-radius: 4px / 6px;
-    margin: 5px 2px;
-    color: $gray;
-    background-color: transparent;
-    border-color: $gray-lightish;
-    @include transition(all 0.5s ease);
-    &:hover, &.active { 
-        border: inherit $btn-default-border;
-        background-color: rgba(0,0,0,1);
-        color: white;
-        @include transition(all 0.3s ease); }
-    &:active {
-        background-color: $brand-primary;
-        color: white;
-        @include transition(all 0.2s ease); } 
+	@extend .btn;
+	@include button-size(5px, 10px, inherit, $line-height-small, $border-radius-small);
+	
+	border-radius: 4px / 6px;
+	margin: 5px 2px;
+	color: $gray;
+	background-color: transparent;
+	border-color: $gray-lightish;
+	@include transition(all 0.5s ease);
+	&:hover, &.active { 
+		border: inherit $btn-default-border;
+		background-color: rgba(0,0,0,1);
+		color: white;
+		@include transition(all 0.3s ease); }
+	&:active {
+		background-color: $brand-primary;
+		color: white;
+		@include transition(all 0.2s ease); } 
 }
 
 .hover-content .btn-tag {
-    @include button-variant($gray-light, $gray-trans, $gray-trans);
-    outline:0 solid transparent;
-    outline-offset:-4px;
-    @include transition(all .5s ease);
-    &:hover { 
-        outline: 2px solid rgba(255,255,255,.3);
-        outline-offset:3px;
-        background-color: rgba(0,0,0,1);
-        color: white;
-        @include transition(all 0.3s ease); }
-    &:active {
-        outline: 1px solid transparent;
-        outline-offset:3px;
-        background-color: $brand-primary;
-        @include transition(all 0.2s ease); } 
-    &.active {
-        background-color: rgba(0,0,0,1);
-        color: white;
-    }
+	@include button-variant($gray-light, $gray-trans, $gray-trans);
+	outline:0 solid transparent;
+	outline-offset:-4px;
+	@include transition(all .5s ease);
+	&:hover { 
+		outline: 2px solid rgba(255,255,255,.3);
+		outline-offset:3px;
+		background-color: rgba(0,0,0,1);
+		color: white;
+		@include transition(all 0.3s ease); }
+	&:active {
+		outline: 1px solid transparent;
+		outline-offset:3px;
+		background-color: $brand-primary;
+		@include transition(all 0.2s ease); } 
+	&.active {
+		background-color: rgba(0,0,0,1);
+		color: white;
+	}
 }
 
 .tagFilters {
-    margin: 0 auto;
-    padding: 30px 0;
-    text-align: center;
-    @media screen and (max-width: $screen-sm) {
-        padding: 10px 0 20px 0;
-    }
-    .more {
-        color: $gray;
-        padding: 5px;
-        &:hover {
-            color: $brand-primary;
-        }
-    }
+	margin: 0 auto;
+	padding: 30px 0;
+	text-align: center;
+	@media screen and (max-width: $screen-sm) {
+		padding: 10px 0 20px 0;
+	}
+	.more {
+		color: $gray;
+		padding: 5px;
+		&:hover {
+			color: $brand-primary;
+		}
+	}
 }
 
 #back-to-top {
-    z-index: 1050;
-    cursor: pointer;
-    position: fixed;
-    top: 120px;
-    right: 30px;
-    display:none;
+	z-index: 1050;
+	cursor: pointer;
+	position: fixed;
+	top: 120px;
+	right: 30px;
+	display:none;
 }
 
 
@@ -733,581 +752,801 @@ span.hover-content {
 
 ////// Home page
 .intro {
-    padding: 40px;
-    color: inherit;
-    background-color: $gray-lighter;
-    text-align: center;
+	padding: 40px;
+	color: inherit;
+	background-color: $gray-lighter;
+	text-align: center;
 }
 .page-header i {
-    color: $gray;
-    position: relative;
+	color: $gray;
+	position: relative;
 
-    left: 5px;
-    bottom: 3px;
+	left: 5px;
+	bottom: 3px;
 }
 .featuredArtists {
-    .answer {
-        background-color: $gray-dark;
-        padding: 0px;
-        color: white;
-        text-align: justify; }
-    .artistName {
-        margin-bottom: 0px; }
-    .artistLoc {
-        color: $gray; }
-    background-color: $gray-light; //for load fader
-    span {
-        color: $gray; //for username
-        &:before {
-            content: "\00a0\00a0/\00a0"
-        }
-    }
+	.answer {
+		background-color: $gray-dark;
+		padding: 0px;
+		color: white;
+		text-align: justify; }
+	.artistName {
+		margin-bottom: 0px; }
+	.artistLoc {
+		color: $gray; }
+	background-color: $gray-light; //for load fader
+	span {
+		color: $gray; //for username
+		&:before {
+			content: "\00a0\00a0/\00a0"
+		}
+	}
 }
 .featuredArtist {
-    margin-bottom: 100px;
+	margin-bottom: 100px;
 }
 .artistTitleBG {
-    width: 100%;
-    padding: 10px;
-    background-color: $gray-lighter;
-    @media screen and (max-width: $screen-sm) {
-        float: none;
-        text-align: center; }
-    &:hover {
-        background-color: white;
-        @include transition(all 0.4s ease); }
-    &:hover .prof{
-        border: 2px solid $gray;
-        @include transition(all 0.4s ease); }
+	width: 100%;
+	padding: 10px;
+	background-color: $gray-lighter;
+	@media screen and (max-width: $screen-sm) {
+		float: none;
+		text-align: center; }
+	&:hover {
+		background-color: white;
+		@include transition(all 0.4s ease); }
+	&:hover .prof{
+		border: 2px solid $gray;
+		@include transition(all 0.4s ease); }
 }
 
 .questionContainer {
-    background-color: $gray-dark;
-    padding: 80px;
-    margin: 0px -80px;
-    p {
-        color: $gray; }
+	background-color: $gray-dark;
+	padding: 80px;
+	margin: 0px -80px;
+	p {
+		color: $gray; }
 }
 .portfolioContainer {
-    background-color: $gray-lighter;
-    padding: 2.5px 5px;
-    overflow: auto;
+	background-color: $gray-lighter;
+	padding: 2.5px 5px;
+	overflow: auto;
 }
 
 ////// Artists page
+#artistsPage {
+	// .artists {
+	// 	margin-top: 40px;
+	// }
+}
+
 .artistThumb { 
-    @extend .lg8container;
-    // min-height: 120px;
-    background-color: $gray-lighter;
-    border-left: 40px solid $gray-light;
-    padding: 0px;
-    margin-top: 20px;
-    @media screen and (max-width: $screen-sm) {
-        border-left: 20px solid $gray-light;
-        border-right: 20px solid $gray-light;
-    }
-    .prof {
-        position: absolute;
-        border: 4px solid $gray-light;
-        top: 12px;
-        left: -22px;
-        @media screen and (min-width: $screen-sm) {
-            top: 18px;
-            left: -50%;
-        }
-        @media screen and (min-width: $screen-md) {
-            top: 26px;
-        }    
+	padding: 0px;
+	margin-top: 20px;
 
-    }
-    .artistTitleBG, .tattooImg, [class|=col] {
-        padding: 0px;
-    }
-    .tattoos {
-        display: flex;
-    }
-    .artistName, .artistLoc {
-        text-align: left;
-        margin-top: 5px;
-        min-height: 30px;
-        @media screen and (min-width: $screen-sm) {
-            // margin-bottom: 4px;
-            margin-top: 7px;
-        }
-        @media screen and (min-width: $screen-md) {
-            // margin-bottom: 10px;
-            margin-top: 14px;
-        }    
-    }
-    &:hover {
-        background-color: white;
-        @include transition(all 0.4s ease);
-    }
-    &:hover .prof{
-        border: 4px solid white;
-        @include transition(all 0.4s ease);
-    }
+	background-color: $gray-lighter;
+	.prof {
+		position: inherit;
+		display: block;
+		margin: 10px auto 10px auto;
+		float: none;
+		@media screen and (min-width: $screen-md) {
+			display: inline-block;
+			margin: 15px;
+			float: left;
+		}
+	}
+	.artistTitles {
+		display: block;
+	}
+	.artistName {
+		text-align: center;
+		margin: 10px;
+		@media screen and (min-width: $screen-md) {
+			margin-top: 20px;
+			margin-bottom: 10px;
+			text-align: left;
+		}
+	}
+	.artistLoc {
+		margin: 15px;
+		text-align: center;
+		@media screen and (min-width: $screen-md) {
+			margin: 0px;
+			text-align: left;
+		}
+	}
+	&:hover {
+		background-color: white;
+		@include transition(all 0.4s ease);
+	}
+	&:hover .prof {
+		border: 2px solid white;
+		@include transition(all 0.4s ease);
+	}
+}
+.artist.active {
+	.artistThumb {
+		background-color: white;
+		.prof {
+			border: 2px solid $brand-secondary;
+		}
+		@include transition(all 0.4s ease);
+	}
 }
 
-.changeLocationButton {
-    &.active {
-        @include transition(all 0.6s ease);
-        position: relative;
-        background: #000000;
-        border: 4px solid #e6e6e6;
-        &:after, &:before {
-            top: 100%;
-            left: 50%;
-            border: solid transparent;
-            content: " ";
-            height: 0;
-            width: 0;
-            position: absolute;
-            pointer-events: none;
-        }
-        &:after {
-            border-color: rgba(0, 0, 0, 0);
-            border-top-color: #000000;
-            border-width: 24px;
-            margin-left: -24px;
-        }
-        &:before {
-            border-color: rgba(230, 230, 230, 0);
-            border-top-color: #e6e6e6;
-            border-width: 30px;
-            margin-left: -30px;
-        }
-    }
+#mapLocation {
+  margin: 20px;
 }
+#mapLocation input {
+  border-bottom: solid 1px black;
+}
+#mapLocation span.grayInput {
+  border-bottom: solid 1px black;
+  display: table-cell;
+}
+
+.mapContainer {
+	height: 100%;
+	position: absolute;
+	right: 0px;
+	display: inline-block;
+	&:after {
+		content: "";
+		position: absolute;
+		z-index: 3;
+		bottom: 0px;
+		left: 0px;
+		width: 10px;
+		height: 100%;
+		box-shadow: inset 7px 0 12px -6px rgba(0,0,0,0.4);
+		// transform: rotate(-3deg);
+	}
+}
+
 .changeLocation {
-    position: relative;
-    width: 100%;
-    margin-bottom: 60px;
-    .changeLocationOptions {
-        position: absolute;
-        top:0px;
-        z-index: 1000;
-        width: 100%;
-        background-color: $black-trans;
-        color: white;
-        padding: 30px 10px 20px 10px;
-        @media screen and (min-width: $screen-md) {
-            padding: 40px 60px;
-        }    
-
-        .input-group-addon{
-            display: none;
-            @media screen and (min-width: $screen-sm) {
-                display: table-cell;
-            }    
-        }
-        .worldwide {
-            display: none;
-            @media screen and (min-width: $screen-sm) {
-                display: table-cell;
-            }    
-        }
-    }
+	position: relative;
+	width: 100%;
+	// margin-top: 100px;
+	// margin-bottom: 60px;
+	.changeLocationOptions {
+		position: absolute;
+		top:0px;
+		z-index: 1000;
+		width: 100%;
+		// background-color: $black-trans;
+		color: white;
+		padding: 30px 10px 20px 10px;
+		@media screen and (min-width: $screen-md) {
+			padding: 20px 30px;
+		}
+		.worldwide {
+			display: none;
+			@media screen and (min-width: $screen-sm) {
+				display: table-cell;
+			}
+		}
+	}
 }
 .input-group-btn {
-    button {
-        border: 1px solid $gray-lighter;
-        @media screen and (min-width: $screen-md) {
-            
-        }    
-    }
+	button {
+		background-color: $gray-darker;
+		border: 1px solid $gray-lighter;
+		@media screen and (min-width: $screen-md) {
+			
+		}    
+	}
 }
 #changeAddressMap {
-    background: url(../img/yestattoo-map.png) no-repeat center center;
-    border-top: 4px solid black;
-    border-bottom: 4px solid black;
-    box-shadow: 0 0 0 4px $gray-lighter;
-    background-size: 100% auto;
-    background-color: transparent !important;
+	// background: url(../img/yestattoo-map.png) no-repeat center center;
+	// border-top: 4px solid black;
+	// border-bottom: 4px solid black;
+	// box-shadow: 0 0 0 4px $gray-lighter;
+	background-size: 100% auto;
+	background-color: transparent !important;
 }
 .empty {
-    position: absolute;
-    text-align: right;
-    right: 10px;
-    bottom: 0px;
-    color: $gray-light;
+	position: absolute;
+	text-align: right;
+	right: 10px;
+	bottom: 0px;
+	color: $gray-light;
 }
 .resetArtistFilter {
-    @extend .empty;
-    color: $gray;
-    &:hover {
-        color: $brand-primary;
-    }
+	@extend .empty;
+	color: $gray;
+	&:hover {
+		color: $brand-primary;
+	}
+}
+
+.artistsResultContainer {
+	width: 100%;
+	&.active {
+		.artists, .mapContainer, #artists-paginator {
+			width: 50%;	
+		}
+		
+	}
 }
 
 
 ////// Tattoos page
-.tattoosContainer {
-    margin-top: 20px;
+#tattoosPage {
+	background-color: black;
+	min-height: 100vh;
+	margin-bottom: -99px;
+	padding-bottom: 100px;
+	.tattoos {
+		margin-top: 40px;
+	}
 }
 
+//// large book search & typahead hint
+#tattoosPage, #artistsPage {
+	.filterHeader {
+		background-color: #000;
+		@include transition(all 0.8s ease);
+	}
+	.filterHeader.active {
+		background-color: $gray-darker;
+		@include transition(all 0.8s ease);
+	}
+	.filterTitles {
+		padding: 20px 0px;
+		.tattoosTitle, .filterTitle {
+			position: inline-block;
+			font-size: 28px;
+			@media screen and (min-width: $screen-sm) {
+				font-size: 45px;
+			}
+		}
+		.tattoosTitle {
+			color: white;
+		}
+		.filterTitle {
+			color: white;
+			&:nth-child(n + 4) {
+				&:before { 
+					content: " + ";
+					color: $gray-dark;
+				}
+			}
+			@include transition(all 0.4s ease);
+			&:hover {
+				@include transition(all 0.8s ease);
+				text-decoration: line-through;
+				color: $brand-primary;
+				cursor: pointer;
+			}
+
+		}
+	}
+	.bookFilterContainer {
+	 
+	}
+	// input.tt-input {
+	//     // position: relative !important;
+	//     // left: 0px;
+
+	//     // box-shadow: none;
+	//     // outline: none;
+	//     // display: inline-block;
+
+	//     // width:100%;
+
+	//     border: none;
+	//     color: $brand-primary;
+	//     line-height: 80px;
+	//     font-weight: 700;
+
+	//     font-size: 36px;
+	//     // margin: 10px;
+	//     @media screen and (min-width: $screen-sm) {
+	//         font-size: 65px;
+	//         // margin: 20px;
+	//     }
+	//     &:focus {outline: none}
+	//     &:before {
+	//         font-family: Flaticon;
+	//         @extend .flaticon-magnifier10:before;
+	//         color: $gray-light;             
+	//         padding: 8px;
+	//         font-size: 30px;
+	//         top: 5px;
+	//         position: relative;
+	//         color: $gray-light; 
+	//     }
+
+	// }
+
+	// .bootstrap-tagsinput {
+	//     // display: inline-block;
+	//     // @media screen and (min-width: $screen-sm) {
+	//     //     display: inline;
+	//     // }
+	//     &:before {
+	//         display: none;
+	//         @media screen and (min-width: $screen-sm) {
+	//             display: inline;
+	//             font-size: 50px;
+	//             padding: 15px;
+	//             top: 40px;
+	//             position: relative;
+	//             color: white; 
+	//         }
+	//     }
+	//     // .tag {
+	//     //     position: relative;
+	//     //     top: 22px;
+	//     // }
+	// }
+	// .twitter-typeahead .tt-hint {
+	//     color: $gray-darker;
+	//     line-height: 80px;
+	//     font-weight: 700;
+
+	//     font-size: 36px;
+	//     margin-top: 40px;
+	//     @media screen and (min-width: $screen-sm) {
+	//         font-size: 65px;
+	//         margin-top: 0px;
+	//     }
+	// }
+}
+.filterInputContainer {
+	margin: 40px 0px;
+}
+.filterInputContainer, .filterInputContainer > span.twitter-typeahead  {
+	width: 100%;
+	color: white;
+	text-align: center;
+	i {
+		padding-left: 15px;
+	}
+	input {
+		padding: 20px;
+		min-width: 100%;
+		@media screen and (min-width: $screen-sm) {
+			min-width: 50%;            
+		}
+	}
+	.tt-dropdown-menu {
+		min-width: 100%;
+		margin-left: 0%;
+		@media screen and (min-width: $screen-sm) {
+			min-width: 50%;
+			margin-left: 25%;            
+		}   
+	}
+}
+.arrow {
+	position: absolute;
+	width: 10%;
+	top: 0px;
+	bottom: 0px;
+	img {
+		position: absolute;
+		top: 45%;
+		z-index: 5;
+		display: inline-block;
+	}
+	&.right {
+		@include gradient-horizontal-three-colors($start-color: rgba(26, 26, 26, 0), $mid-color: rgba(26, 26, 26, 0.8), $color-stop: 50%, $end-color: $gray-darker);
+		background-repeat: repeat-x;
+		right: 0px;
+		left: auto;
+		img {
+			right: 5px;
+		}
+	}
+	&.left {
+		@include gradient-horizontal-three-colors($start-color: $gray-darker, $mid-color: rgba(26, 26, 26, 0.8), $color-stop: 50%, $end-color: rgba(26, 26, 26, 0));
+		background-repeat: repeat-x;
+		left: 0px;
+		right: auto;
+		img {
+			left: 5px;
+		}
+	}
+}
+.grayInput {
+	box-shadow: none;
+	outline: none;
+	background-color: $gray-darker;
+	display: inline-block;
+	border: solid 1px black;
+	border-bottom: solid 4px black;
+	&:focus {
+		box-shadow: inset 0 0 2px $brand-primary;
+		outline: none;
+		border: solid 1px transparent;
+		border-bottom: solid 4px transparent;
+	}
+}
+
+button.toggleBookFilter, button.toggleMap {
+	background-color: $brand-primary;
+	// background-color: $gray-darker;
+	float: right;
+
+	margin: 10px;
+	@media screen and (min-width: $screen-sm) {
+		margin: 20px 10px;
+	}
+}
 
 ////// User Profile & Artist Profile Page
 .profHead {
-    min-height:220px;
-    padding: 20px 0;
-    background-color:$gray-darker;
-    color:white;
-    h3 {
-        margin-top: 14px;
-    }
-    @media screen and (max-width: $screen-sm) {
-        float: none;
-        text-align: center;
-    }
-    span { // username
-        color: $gray;
-        &:before {
-            content: "\00a0\00a0/\00a0"
-        }
-    }
-    .btn-submit {
-        float: none;
-    }
-    @media screen and (min-width: $screen-sm) {
-        .btn-submit {
-            margin-right: 40px;
-            float: right;
-        }
-    }
+	min-height:220px;
+	padding: 20px 0;
+	background-color:$gray-darker;
+	color:white;
+	h3 {
+		margin-top: 14px;
+	}
+	@media screen and (max-width: $screen-sm) {
+		float: none;
+		text-align: center;
+	}
+	span { // username
+		color: $gray;
+		&:before {
+			content: "\00a0\00a0/\00a0"
+		}
+	}
+	.btn-submit {
+		float: none;
+	}
+	@media screen and (min-width: $screen-sm) {
+		.btn-submit {
+			margin-right: 40px;
+			float: right;
+		}
+	}
 }
 
 .userHead {
-    padding: 20px 10px;
-    background-color:$gray-lighter;
-    @media screen and (max-width: $screen-sm) {
-        float: none;
-        text-align: center; 
-    }
-    h3 {
-        display: block;
-    }
-    span {
-        margin-right: 10px;
-        color: $gray-light-opaque; 
-    }
-    .btn-submit {
-        float: none;
-    }
-    @media screen and (min-width: $screen-sm) {
-        padding: 0px 0px;
-        h3 {
-            margin-left: 10px;
-            margin-top: 0;
-            display: inline; 
-        }
-        > div {
-            padding: 25px;
-        }
-        > div:nth-child(2) {
-            min-height: 114px; //64 prof & 25+25 padding
-            border-right: 1px solid $gray-light;
-            border-left: 1px solid $gray-light;
-        }
-        .btn-submit {
-            float: right;
-        }
-    }
+	padding: 20px 10px;
+	background-color:$gray-lighter;
+	@media screen and (max-width: $screen-sm) {
+		float: none;
+		text-align: center; 
+	}
+	h3 {
+		display: block;
+	}
+	span {
+		margin-right: 10px;
+		color: $gray-light-opaque; 
+	}
+	.btn-submit {
+		float: none;
+	}
+	@media screen and (min-width: $screen-sm) {
+		padding: 0px 0px;
+		h3 {
+			margin-left: 10px;
+			margin-top: 0;
+			display: inline; 
+		}
+		> div {
+			padding: 25px;
+		}
+		> div:nth-child(2) {
+			min-height: 114px; //64 prof & 25+25 padding
+			border-right: 1px solid $gray-light;
+			border-left: 1px solid $gray-light;
+		}
+		.btn-submit {
+			float: right;
+		}
+	}
 
 }
 .bookContainer {
-    background-color: black;
-    padding: 20px 20px 20px 20px;
-    margin-top: 40px;
-    border-radius: 4px / 6px;
-    @extend .lg8container;
-    .tattooContainer {
-        padding: 0px;
-        img {
-            padding: 0px;
-        }
-    }
-    h3 {
-        left: 0px;
-        bottom: 0px;
-        width: 100%;
-        padding: 35px 20px 0px 20px;
-        color: white;
-        position: absolute;
-        cursor: pointer;
-        @include gradient-vertical-three-colors($start-color: rgba(0, 0, 0, 0), $mid-color: rgba(0, 0, 0, 0.7), $color-stop: 60%, $end-color: black );
-        @include transition(all 0.4s ease);
-        &:hover {
-            padding: 55px 20px 0px 20px;
-            @include gradient-vertical-three-colors($start-color: rgba(0, 0, 0, 0), $mid-color: rgba(0, 0, 0, 0.7), $color-stop: 60%, $end-color: black );
-            a.more {
-                color: $brand-primary;
-                margin-right: 20px;
-                font-size: 20px;
-            }
+	background-color: black;
+	padding: 20px 20px 20px 20px;
+	margin-top: 40px;
+	border-radius: 4px / 6px;
+	@extend .lg8container;
+	.tattooContainer {
+		padding: 0px;
+		img {
+			padding: 0px;
+		}
+	}
+	h3 {
+		left: 0px;
+		bottom: 0px;
+		width: 100%;
+		padding: 35px 20px 0px 20px;
+		color: white;
+		position: absolute;
+		cursor: pointer;
+		@include gradient-vertical-three-colors($start-color: rgba(0, 0, 0, 0), $mid-color: rgba(0, 0, 0, 0.7), $color-stop: 60%, $end-color: black );
+		@include transition(all 0.4s ease);
+		&:hover {
+			padding: 55px 20px 0px 20px;
+			@include gradient-vertical-three-colors($start-color: rgba(0, 0, 0, 0), $mid-color: rgba(0, 0, 0, 0.7), $color-stop: 60%, $end-color: black );
+			a.more {
+				color: $brand-primary;
+				margin-right: 20px;
+				font-size: 20px;
+			}
 
-        }
-        a.more {
-            color: $gray;
-            margin-right: 20px;
-            font-size: 18px;
-            right: 0px;
-            bottom: 0px;
-            position: absolute;
-            @include transition(all 0.4s ease);
-        }
-    }
+		}
+		a.more {
+			color: $gray;
+			margin-right: 20px;
+			font-size: 18px;
+			right: 0px;
+			bottom: 0px;
+			position: absolute;
+			@include transition(all 0.4s ease);
+		}
+	}
 
 }
 
 // artist profile picture thumbnail shown at affix of submenu
 .affix-top > div > ul> li:first-child{
-    left: -64px;
-    opacity: 0;
-    width: 0;
-    @include transition(all 0.2s ease);
+	left: -64px;
+	opacity: 0;
+	width: 0;
+	@include transition(all 0.2s ease);
 }
 .subMenuThumb img {
-    margin: 7px 7px 0 0;
+	margin: 7px 7px 0 0;
 }
 .affix > div > ul > li:first-child{
-    left: -32px;
-    opacity: 1;
-    width: 60px;
-    @include transition(all 0.2s ease);
+	left: -32px;
+	opacity: 1;
+	width: 60px;
+	@include transition(all 0.2s ease);
 }
 @media screen and (max-width: $screen-sm) {
-    #profMenu > li:first-child {
-        display: none;
-    }
+	#profMenu > li:first-child {
+		display: none;
+	}
 }
 
 // profile picture
 .largeprofpic {
-    width: 140px;
-    height: 140px;
-    -webkit-border-radius: 99em;
-    -moz-border-radius: 99em;
-    border-radius: 99em;
-    border: 5px solid $gray-dark;
-    box-shadow: 2px 5px 3px rgba(0, 0, 0, 0.1); 
+	width: 140px;
+	height: 140px;
+	-webkit-border-radius: 99em;
+	-moz-border-radius: 99em;
+	border-radius: 99em;
+	border: 5px solid $gray-dark;
+	box-shadow: 2px 5px 3px rgba(0, 0, 0, 0.1); 
+}
+
+.smallprof {
+	float: left;
+	background-color: $gray-lighter;
+	-webkit-border-radius: 99em;
+	-moz-border-radius: 99em;
+	border-radius: 99em;
+	border: 1px solid $gray-light;
+	width: 30px;
+	height: auto;
 }
 
 .prof {
-    background-color: $gray-lighter;
-    -webkit-border-radius: 99em;
-    -moz-border-radius: 99em;
-    border-radius: 99em;
-    border: 2px solid $gray-light;
-    width: 64px;
-    height: auto;
-    &:hover { 
-        background-color: $gray-light;
-        border: 2px solid white;
-        @include transition(all 0.3s ease); }
-    &:active, &.active, &:visited, &:focus {
-        border: 2px solid $brand-primary;
-        @include transition(all 0.2s ease); } 
+	background-color: $gray-lighter;
+	-webkit-border-radius: 99em;
+	-moz-border-radius: 99em;
+	border-radius: 99em;
+	border: 2px solid $gray-light;
+	width: 64px;
+	height: auto;
+	&:hover { 
+		background-color: $gray-light;
+		border: 2px solid white;
+		@include transition(all 0.3s ease); }
+	&:active, &.active, &:visited, &:focus {
+		border: 2px solid $brand-primary;
+		@include transition(all 0.2s ease); } 
 }
 .profButtons {
-    margin: 20px;
-    float: none;
-    text-align: center;
-    @media screen and (min-width: $screen-sm) {
-        float: right;
-        margin: 40px;
-    }
+	margin: 20px;
+	float: none;
+	text-align: center;
+	@media screen and (min-width: $screen-sm) {
+		float: right;
+		margin: 40px;
+	}
 }
 .collectorsBadge {  
-    display: inline-block;
-    text-align: center;
-    color: white;
+	display: inline-block;
+	text-align: center;
+	color: white;
 
-    padding: 0px;
-    background: url(../img/collectors-badge-180.png) no-repeat center center; 
-    width: 60px;
-    height: 60px;
-    float: none;
-    text-align: center;
-    @media screen and (min-width: $screen-sm) {
-        float: right;
-        width: 140px;
-        height: 140px;
-        padding: 10px;
-        // background: $gray;
-        background: url(../img/collectors-badge-180.png) no-repeat center center; 
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
-    }
-    .collectorCount {
-        text-align: center;
-        h1 {
-            display: inline-block;
-            margin-bottom: 0px;
-            text-align: center;
-            font-weight: bold;
-            // color: $brand-primary;
-        }
+	padding: 0px;
+	background: url(../img/collectors-badge-180.png) no-repeat center center; 
+	width: 60px;
+	height: 60px;
+	float: none;
+	text-align: center;
+	@media screen and (min-width: $screen-sm) {
+		float: right;
+		width: 140px;
+		height: 140px;
+		padding: 10px;
+		// background: $gray;
+		background: url(../img/collectors-badge-180.png) no-repeat center center; 
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+	}
+	.collectorCount {
+		text-align: center;
+		h1 {
+			display: inline-block;
+			margin-bottom: 0px;
+			text-align: center;
+			font-weight: bold;
+			// color: $brand-primary;
+		}
 
-    }
+	}
 }
 
 
 //Profile nav
 .profNavBG {
-    position: relative;
-    height: 80px;  //prevents content from jumping when affix is active
-    margin: 40px 0 20px 0;
+	position: relative;
+	height: 80px;  //prevents content from jumping when affix is active
+	margin: 40px 0 20px 0;
 }
 
 .profNavContainer {
-    margin: -2px;
-    z-index: 10;
-    background-color: $gray-light;
-    padding: 0px 0 0px 0;
-    width: 100%;
+	margin: -2px;
+	z-index: 10;
+	background-color: $gray-light;
+	padding: 0px 0 0px 0;
+	width: 100%;
 }
 .affix {
-    position: fixed;
-    top: 100px;
-    background-color: $gray-light-opaque;
-    @include box-shadow(0px 1px 3px 2px rgba(0,0,0,0.4));
-    @include transition(all 0.3s ease);
+	position: fixed;
+	top: 100px;
+	background-color: $gray-light-opaque;
+	@include box-shadow(0px 1px 3px 2px rgba(0,0,0,0.4));
+	@include transition(all 0.3s ease);
 }
 
 
 .nav-tabs {
-    border-bottom: 1px solid $nav-tabs-border-color;
-    > li {
-        float: left;
-        margin-bottom: -1px;
-        > a {
-            color: $gray;
-            margin-right: 2px;
-            line-height: $line-height-base;
-            border: 1px solid transparent;
-            border-radius: $border-radius-base $border-radius-base 0 0;
-            &:hover {
-                border-color: $nav-tabs-link-hover-border-color $nav-tabs-link-hover-border-color $nav-tabs-border-color;
-                @include transition(all 0.4s ease);
-            }
-            &:active {
-                color: $brand-primary;
-                @include transition(all 0.2s ease); } 
-        }
-    }
-    &.active > a {
-      &,
-      &:hover,
-      &:focus {
-        color: $nav-tabs-active-link-hover-color;
-        background-color: $nav-tabs-active-link-hover-bg;
-        border: 1px solid $nav-tabs-active-link-hover-border-color;
-        border-bottom-color: transparent;
-        cursor: default;
-        @include transition(all 0.3s ease);
-      }
+	border-bottom: 1px solid $nav-tabs-border-color;
+	> li {
+		float: left;
+		margin-bottom: -1px;
+		> a {
+			color: $gray;
+			margin-right: 2px;
+			line-height: $line-height-base;
+			border: 1px solid transparent;
+			border-radius: $border-radius-base $border-radius-base 0 0;
+			&:hover {
+				border-color: $nav-tabs-link-hover-border-color $nav-tabs-link-hover-border-color $nav-tabs-border-color;
+				@include transition(all 0.4s ease);
+			}
+			&:active {
+				color: $brand-primary;
+				@include transition(all 0.2s ease); } 
+		}
+	}
+	&.active > a {
+	  &,
+	  &:hover,
+	  &:focus {
+		color: $nav-tabs-active-link-hover-color;
+		background-color: $nav-tabs-active-link-hover-bg;
+		border: 1px solid $nav-tabs-active-link-hover-border-color;
+		border-bottom-color: transparent;
+		cursor: default;
+		@include transition(all 0.3s ease);
+	  }
   }
-    @media screen and (max-width: $screen-sm-min) {
-        width: 100%;
-        > li {
-            float: none;
-            display: table-cell;
-            width: 1%;
-              > a {
-                padding-left: 0px;
-                padding-right: 0px;
-                text-align: center;
-                margin-bottom: 0;
-              }
-        }
-    }
+	@media screen and (max-width: $screen-sm-min) {
+		width: 100%;
+		> li {
+			float: none;
+			display: table-cell;
+			width: 1%;
+			  > a {
+				padding-left: 0px;
+				padding-right: 0px;
+				text-align: center;
+				margin-bottom: 0;
+			  }
+		}
+	}
 }
 
 /*About artist & Featured artist interview questions*/
 .answer {
-    color: #707070;
-    background-color: $gray-lighter;
-    padding: 40px;
-    text-align: justify;
-    @media screen and (max-width: $screen-sm) {
-        padding: 10px;
-    }
-    &:before {
-        font-family: Flaticon;
-        font-style: normal;
-        @extend .flaticon-left65:before;
-        color: $gray-light; }
-    &:after {
-        font-family: Flaticon;
-        font-style: normal;
-        @extend .flaticon-right52:before;
-        color: $gray-light; }
+	color: #707070;
+	background-color: $gray-lighter;
+	padding: 40px;
+	text-align: justify;
+	@media screen and (max-width: $screen-sm) {
+		padding: 10px;
+	}
+	&:before {
+		font-family: Flaticon;
+		font-style: normal;
+		@extend .flaticon-left65:before;
+		color: $gray-light; }
+	&:after {
+		font-family: Flaticon;
+		font-style: normal;
+		@extend .flaticon-right52:before;
+		color: $gray-light; }
 }
 #aboutTab p {
-    text-align: justify;
+	text-align: justify;
 }
 
 /*Google maps*/
 #map {
-    margin-top: 20px;
-    width: 100%;
-    height: 500px;
-    border: 1px solid $gray-lighter
+	margin-top: 20px;
+	width: 100%;
+	height: 500px;
+	border: 1px solid $gray-lighter
 }
-
 
 ////// Upload post tattoo
 #upload {
-    .btn-link {
-        margin-right: 20px;
-    }
-    .uploadOptions {
-        margin-top: 80px;
-    }
+	.btn-link {
+		margin-right: 20px;
+	}
+	.uploadOptions {
+		margin-top: 80px;
+	}
 }
 
 .btn-file {
-    overflow: hidden;
-    position: relative;
-    vertical-align: middle;
-    > input {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 0;
-        opacity: 0;
-        filter: alpha(opacity=0);
-        font-size: 23px;
-        height: auto;
-        width: 100%;
-        direction: ltr;
-        cursor: pointer;
-    }
+	overflow: hidden;
+	position: relative;
+	vertical-align: middle;
+	> input {
+		position: absolute;
+		top: 0;
+		right: 0;
+		margin: 0;
+		opacity: 0;
+		filter: alpha(opacity=0);
+		font-size: 23px;
+		height: auto;
+		width: 100%;
+		direction: ltr;
+		cursor: pointer;
+	}
 }
 
 .fileinput {
-    display: inline-block;
-    .form-control {
-      cursor: text;
-    }
-    .thumbnail {
-        max-width: 300px;
-        overflow: hidden;
-        display: inline-block;
-        margin-bottom: 5px;
-        vertical-align: middle;
-        text-align: center;
-    }
-    .thumbnail > img {
-        max-height: 100%;
-        max-width: 100%;
-    }
-    .btn {
-      vertical-align: middle;
-    }
+	display: inline-block;
+	.form-control {
+	  cursor: text;
+	}
+	.thumbnail {
+		max-width: 300px;
+		overflow: hidden;
+		display: inline-block;
+		margin-bottom: 5px;
+		vertical-align: middle;
+		text-align: center;
+	}
+	.thumbnail > img {
+		max-height: 100%;
+		max-width: 100%;
+	}
+	.btn {
+	  vertical-align: middle;
+	}
 }
 
 .fileinput-exists .fileinput-new,
@@ -1374,62 +1613,62 @@ span.hover-content {
 
 ////// Join ~ register page
 .lightContainer {
-    @extend .md8container;
-    color: #707070;
-    background-color: $gray-lighter;
-    padding: 40px;
-    margin-top: 40px;
-    text-align: center;
-    @media screen and (min-width: $screen-sm) {
-        padding: 80px;
-        margin-top: 80px;
-    }
-    @media screen and (min-width: $screen-md) {
-        padding: 80px 120px;
-    }
+	@extend .md8container;
+	color: #707070;
+	background-color: $gray-lighter;
+	padding: 40px;
+	margin-top: 40px;
+	text-align: center;
+	@media screen and (min-width: $screen-sm) {
+		padding: 80px;
+		margin-top: 80px;
+	}
+	@media screen and (min-width: $screen-md) {
+		padding: 80px 120px;
+	}
 }
 
 .roleSelection, .signUpSelection {
-    margin: 20px 0px;
+	margin: 20px 0px;
 }
 #inputEmail {
-    @include transition(all 1.6s ease);
+	@include transition(all 1.6s ease);
 }
 #facebookLogin {
-    background-color: #4f78b4;
-    width: 100%;
-    .facebook {
-        height:inherit;
-        font-size:28px;
-    }
+	background-color: #4f78b4;
+	width: 100%;
+	.facebook {
+		height:inherit;
+		font-size:28px;
+	}
 }
 .inputSuccess, .inputError, .inputChecking {
-    @include transition(all 1.6s ease);
+	@include transition(all 1.6s ease);
 }
 #inputUsername {
-    background-position: center center; 
+	background-position: center center; 
 }
 .inputSuccess {
-    background: white url('../img/inputsuccess.png') no-repeat;
-    background-position: 97% center !important;
+	background: white url('../img/inputsuccess.png') no-repeat;
+	background-position: 97% center !important;
 }
 .inputError {
-    background: white url('../img/inputerror.png') no-repeat;
-    background-position: 97% center !important;
+	background: white url('../img/inputerror.png') no-repeat;
+	background-position: 97% center !important;
 }
 .inputChecking {
-    background: white url('../img/spinner.gif') no-repeat;
-    background-position: 97% center !important;
+	background: white url('../img/spinner.gif') no-repeat;
+	background-position: 97% center !important;
 }
 
 @-webkit-keyframes pulse {
-     50% {color: $gray-darker;}
+	 50% {color: $gray-darker;}
 }
 .error {
-    color: $brand-primary;
-    font-size: 1.2em;
-    padding: 5px;
-    -webkit-animation: pulse 5s infinite alternate;
+	color: $brand-primary;
+	font-size: 1.2em;
+	padding: 5px;
+	-webkit-animation: pulse 5s infinite alternate;
 }
 
 
@@ -1438,161 +1677,161 @@ span.hover-content {
 ////// author page
 
 #authorsPage {
-    .aboutContainer {
-        color: white;
-        margin-bottom: 40px;
-        text-align: justify;
-        padding: 40px 20px;
-        @media screen and (min-width: $screen-sm) {
-            margin-bottom: 80px;
-        }
-    }
-    .aboutContainer h3, .aboutContainer a {
-        text-align: center;
-        font-weight: bold;
-    }
-    .aboutContainer a {
-        float: right;
-    }
-    .tattooImg {
-        padding:0;
-    }
+	.aboutContainer {
+		color: white;
+		margin-bottom: 40px;
+		text-align: justify;
+		padding: 40px 20px;
+		@media screen and (min-width: $screen-sm) {
+			margin-bottom: 80px;
+		}
+	}
+	.aboutContainer h3, .aboutContainer a {
+		text-align: center;
+		font-weight: bold;
+	}
+	.aboutContainer a {
+		float: right;
+	}
+	.tattooImg {
+		padding:0;
+	}
 }
 .authorContainer {
-    color: white;
-    margin-bottom: 20px;
-    background-color: $gray-dark;
-    @media screen and (min-width: $screen-sm) {
-        margin-bottom: 40px;
-    }
+	color: white;
+	margin-bottom: 20px;
+	background-color: $gray-dark;
+	@media screen and (min-width: $screen-sm) {
+		margin-bottom: 40px;
+	}
 }
 .authorContainer {
-    h3 {
-        margin: 0;
-    }
-    span {
-        margin-right: 10px;
-        color: $gray;
-    }
-    p {
-        position: relative;
-    }
+	h3 {
+		margin: 0;
+	}
+	span {
+		margin-right: 10px;
+		color: $gray;
+	}
+	p {
+		position: relative;
+	}
 }
 .authorImgContainer {
-    height: 300px;
-    overflow: hidden;
-    position: relative; 
-    img {
-        position: absolute; 
-        top: 0; 
-        left: -40%;
-        height: 300px;
-        @media screen and (min-width: $screen-sm) {
-            left: -20%; }
-        @media screen and (min-width: $screen-md) {
-            left: 0; }
-    }
+	height: 300px;
+	overflow: hidden;
+	position: relative; 
+	img {
+		position: absolute; 
+		top: 0; 
+		left: -40%;
+		height: 300px;
+		@media screen and (min-width: $screen-sm) {
+			left: -20%; }
+		@media screen and (min-width: $screen-md) {
+			left: 0; }
+	}
 }
 .authorBio {
-    position: relative;
-    text-align: justify;
-    overflow: hidden;
-    margin: 20px 20px 60px 20px;
-    height: 220px;
-    @media screen and (min-width: $screen-sm) {
-        margin: 40px 40px 70px 40px;
-        height: 180px;
-    }
+	position: relative;
+	text-align: justify;
+	overflow: hidden;
+	margin: 20px 20px 60px 20px;
+	height: 220px;
+	@media screen and (min-width: $screen-sm) {
+		margin: 40px 40px 70px 40px;
+		height: 180px;
+	}
 }
 .authorLinks {
-    position: absolute;
-    bottom: 10px;  //link buttons have a 10px bottom margin
-    right: 20px;
-    @media screen and (min-width: $screen-sm) {
-        bottom: 10px;  //link buttons have a 10px bottom margin
-        right: 30px;
-    }
+	position: absolute;
+	bottom: 10px;  //link buttons have a 10px bottom margin
+	right: 20px;
+	@media screen and (min-width: $screen-sm) {
+		bottom: 10px;  //link buttons have a 10px bottom margin
+		right: 30px;
+	}
 }
 .fadeout {
-    position: absolute; 
-    bottom: 0em;
-    width:100%;
-    height: 2.8em;
-    background: -webkit-linear-gradient(
-        rgba(255, 255, 255, 0) 0%,
-        $gray-dark 100% ); 
-    background-image: -moz-linear-gradient(
-        rgba(255, 255, 255, 0) 0%,
-        $gray-dark 100% );
-    background-image: -o-linear-gradient(
-        rgba(255, 255, 255, 0) 0%,
-        $gray-dark 100% );
-    background-image: linear-gradient(
-        rgba(255, 255, 255, 0) 0%,
-        $gray-dark 100% );
-    background-image: -ms-linear-gradient(
-        rgba(255, 255, 255, 0) 0%,
-        $gray-dark 100% );
+	position: absolute; 
+	bottom: 0em;
+	width:100%;
+	height: 2.8em;
+	background: -webkit-linear-gradient(
+		rgba(255, 255, 255, 0) 0%,
+		$gray-dark 100% ); 
+	background-image: -moz-linear-gradient(
+		rgba(255, 255, 255, 0) 0%,
+		$gray-dark 100% );
+	background-image: -o-linear-gradient(
+		rgba(255, 255, 255, 0) 0%,
+		$gray-dark 100% );
+	background-image: linear-gradient(
+		rgba(255, 255, 255, 0) 0%,
+		$gray-dark 100% );
+	background-image: -ms-linear-gradient(
+		rgba(255, 255, 255, 0) 0%,
+		$gray-dark 100% );
 } 
 
 
 ////// about page
 
 #aboutPage {
-    color: white;
-    .instagram,.facebook,.twitter {
-        font-size: 72px;
-        width: 88px;
-        height: 88px;
-        margin: 20px;
-    }
+	color: white;
+	.instagram,.facebook,.twitter {
+		font-size: 72px;
+		width: 88px;
+		height: 88px;
+		margin: 20px;
+	}
 }
 
 .aboutIntro {
-    text-align: center;
-    background: $gray;
-    background: url(../img/aboutbg.png) no-repeat center center scroll; 
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    h3 {
-        color: $brand-primary;
-        font-weight: bold; }
-    h2 {
-        color: white;
-        font-weight: bold; }
-    > div {
-        padding-top: 120px;
-        padding-bottom: 120px; }
+	text-align: center;
+	background: $gray;
+	background: url(../img/aboutbg.png) no-repeat center center scroll; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	h3 {
+		color: $brand-primary;
+		font-weight: bold; }
+	h2 {
+		color: white;
+		font-weight: bold; }
+	> div {
+		padding-top: 120px;
+		padding-bottom: 120px; }
 }
 .aboutContainer {
-    text-align: justify;
-    padding: 80px 0;
-    background-color: $gray-darker;
-    @media screen and (max-width: $screen-sm) {
-        padding: 40px 0; }
+	text-align: justify;
+	padding: 80px 0;
+	background-color: $gray-darker;
+	@media screen and (max-width: $screen-sm) {
+		padding: 40px 0; }
 }
 .contactContainer {
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 80px 80px 0 80px;
-    color: $gray-darker; 
-    background-color: $gray-light;
-    @media screen and (max-width: $screen-sm) {
-        padding: 40px; }
+	text-align: center;
+	max-width: 600px;
+	margin: 0 auto;
+	padding: 80px 80px 0 80px;
+	color: $gray-darker; 
+	background-color: $gray-light;
+	@media screen and (max-width: $screen-sm) {
+		padding: 40px; }
 }
 .darkContainer {
-    padding: 80px 0;
-    background-color: $gray-dark;
-    & p {
-        padding-right: 20px; }
-    @media screen and (max-width: $screen-sm) {
-        padding: 40px 0;
-        & p {
-            padding-right: 0px; }
-    }
+	padding: 80px 0;
+	background-color: $gray-dark;
+	& p {
+		padding-right: 20px; }
+	@media screen and (max-width: $screen-sm) {
+		padding: 40px 0;
+		& p {
+			padding-right: 0px; }
+	}
 
 }
 
@@ -1600,216 +1839,410 @@ span.hover-content {
 //////  settings edit profile page
 
 #settings {
-    h3 {
-        border-bottom: 1px solid $gray;
-        margin-top: 40px;
-    }
-    p {
-        padding: 5px;
-        display: block;
-    }
-    .btn-group {
-        padding-bottom: 20px;
-    }
-    .prof {
-        margin: 10px;
-    }
-    .editProfileContainer {
-        padding: 20px;
-    }
-    #facebookLogin {
-        margin-bottom: 20px;
-    }
+	h3 {
+		border-bottom: 1px solid $gray;
+		margin-top: 40px;
+	}
+	p {
+		padding: 5px;
+		display: block;
+	}
+	.btn-group {
+		padding-bottom: 20px;
+	}
+	.prof {
+		margin: 10px;
+	}
+	.editProfileContainer {
+		padding: 20px;
+	}
+	#facebookLogin {
+		margin-bottom: 20px;
+	}
 }
 .editLocation {
-    .input-group {
-        width: 100%;
-    }
+	.input-group {
+		width: 100%;
+	}
 }
 
-#artistsPage, #settings {
-    .gm-style{
-        display: none;
-    }    
+// #artistsPage, setttings
+
+#settings {
+	.gm-style{
+		display: none;
+	}
 }
 
 #settingsMap {
-    background: url(../img/yestattoo-map.png) no-repeat center center;
-    background-size: auto 100%;
-    background-color: $gray-light !important;
+	background: url(../img/yestattoo-map.png) no-repeat center center;
+	background-size: auto 100%;
+	background-color: $gray-light !important;
 }
 
 .nav-pills {
-    padding: 20px 20px;
-    background-color: $gray-darkest;
-    text-align: center;
-    > li > a:hover {
-        background-color: $gray-darker;
-        color: white;
-    }
-    > li > a {
-        color: $gray;
-    }
-    > a:last-child {
-        float: right;
-        margin-left: 40px;
-        margin-top: 20px;
-    }
-    @media screen and (max-width: $screen-sm) {
-        > li {
-        width: 100%;
-        }
-        > a:last-child {
-            float: none;
-            margin-left: 0px;
-        }
-    }
+	padding: 20px 20px;
+	background-color: $gray-darkest;
+	text-align: center;
+	> li > a:hover {
+		background-color: $gray-darker;
+		color: white;
+	}
+	> li > a {
+		color: $gray;
+	}
+	> a:last-child {
+		float: right;
+		margin-left: 40px;
+		margin-top: 20px;
+	}
+	@media screen and (max-width: $screen-sm) {
+		> li {
+		width: 100%;
+		}
+		> a:last-child {
+			float: none;
+			margin-left: 0px;
+		}
+	}
 }
 
 ////// tattoo profile page
 .otherBooks {
-    span {
-        overflow: hidden;        
-    }
+	span {
+		overflow: hidden;        
+	}
 }
 .add {
-    
+	
 }
 .save {
-    float: right;
+	float: right;
 }
 .remove {
-    float: left;
+	float: left;
 }
 .clear {
-    float: left;
+	float: left;
 }
 
+
+//////// explore page
+
+#explore {
+	background-color: black;
+	color: white;
+	text-align: center;
+	min-height: 100vh;
+	margin-bottom: -99px;
+	> .exploreTattoosContainer, > .findArtistsContainer, > .userContainer {
+		@extend .row;
+		padding-top: 80px;
+		padding-bottom: 80px;
+	}
+	> .exploreTattoosContainer {
+		.popularBook {
+			border: 2.5px solid black;
+			height:360px;
+			display:block; 
+			position:relative;
+			overflow:hidden;
+			@include transition(all 0.4s ease);
+			&:hover {
+				text-shadow:1px 2px 5px #000;
+				@include transition(all 0.4s ease);
+			}
+			h2, h5 {
+				font-weight: 900;
+				z-index: 1;
+				position:absolute;
+				width: 100%;
+			}
+			h2 {
+				top:150px;
+			}
+			h5 {
+				bottom:0px;
+			}
+			img {
+				position:absolute;
+				top:-5%;
+				left:0; 
+				width:100%;
+				min-height:105%;
+				@include transition(all 0.4s ease);
+				&:hover {
+					top:0;
+					@include transition(all 0.4s ease);
+				}
+			}
+		}
+	}
+	> .findArtistsContainer {
+		background-image: url(../img/linemap.svg);
+	}
+	> .userContainer {
+		background-color: #000;
+	}
+}
+
+//////// search page
+
+#search {
+	color: white;
+	margin-top: 100px;
+	.results {
+		h3 {
+			margin-top: 60px;
+		}
+		.resultsMessage {
+			text-align: center;
+		}
+		.userResult {
+			padding: 10px;
+			h4 {
+				margin: 5px 10px 5px 45px;
+			}
+			span {
+				margin-left: 15px;
+				display: inline;
+				color: $gray;
+			}
+
+			border-radius: 4px / 6px;
+			@include transition(all 0.3s ease);
+			&:hover {
+				background-color: $gray-darker;
+			}
+		}
+	}
+}
+.bookSuggestion {
+	overflow: hidden;
+	height: 80px;
+	width: 100%;
+	border-radius: 4px / 6px;
+	margin: 10px 0px;
+	padding: 60px 40px 100px 40px;
+
+	border: 1px solid $gray-dark;
+	background-size: cover;
+	background-position: 40% 50%;
+	background-repeat: no-repeat;
+	span {
+		-webkit-box-shadow: -40px 0px 40px 80px $black-trans;
+		-moz-box-shadow: -40px 0px 40px 80px $black-trans;
+		box-shadow: -40px 0px 40px 80px $black-trans;
+		background-color: $black-trans;
+		color: white;
+		font-size: 35px;
+		float: left;
+	}
+
+
+	//previous simple gray button
+	// margin: 2px;
+	// padding: 10px;
+	// border: 1px solid $gray-darker;
+	// color: white;
+	// background-color: $gray-darker !important;
+	// border-radius: 4px / 6px;
+	// background-color: rgba(0,0,0,0);
+	// @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
+}
+.bookSuggestionContainer {
+	position: relative;
+	.bookSuggestionScroll {
+		overflow-x: hidden;
+		white-space: nowrap;	
+		.bookSuggestion {
+			display: inline-block;
+			width: 225px;
+			margin: 10px 0px;
+			padding: 40px 20px 80px 20px;
+			span {
+				min-width: 225px;
+				-webkit-box-shadow: 0px 0px 20px 40px $black-trans;
+				-moz-box-shadow: 0px 0px 20px 40px $black-trans;
+				box-shadow: 0px 0px 20px 40px $black-trans;
+				background-color: $black-trans;
+				color: white;
+				font-size: 26px;
+				float: none;
+				text-align: center;
+			}
+		}
+	}
+}
+
+input.mainSearchInput {
+	color: $brand-primary;
+	line-height: 80px;
+	font-weight: 700;
+	width: 100%;
+	font-size: 36px;
+	padding: 10px;
+	@media screen and (min-width: $screen-sm) {
+		font-size: 65px;
+		padding: 20px 40px;
+	}
+}
+::-webkit-input-placeholder {
+   color: $gray-dark; }
+:-moz-placeholder { 
+   color: $gray-dark; }
+::-moz-placeholder {
+   color: $gray-dark; }
+:-ms-input-placeholder {  
+   color: $gray-dark; }
+.mainSearchInputContainer {
+	display: block;
+	width: 100%;
+	min-height: 100px;
+	.x {
+		padding: 0px;
+		font-size: 65px;
+		right: 20px;
+		top: 0px;
+	}
+	i {
+		margin-left: 30px;
+		color: $gray;
+		&.flaticon-magnifier10:before {
+			font-size: 50px;
+		}
+
+		display: none;
+		@media screen and (min-width: $screen-sm) {
+			display: inline-block;
+		}
+	}
+}
 
 
 ////// Backbone.modal.js 
 
 #login {
-    h3 {
-        margin-bottom: 60px;
-        text-align: center;
-    }
+	h3 {
+		margin-bottom: 60px;
+		text-align: center;
+	}
 }
 #login, #tour {
-    .bbm-modal {
-        max-width: 540px;
-    }
+	.bbm-modal {
+		max-width: 540px;
+	}
 }
 #tour {
-    text-align: center;
-    .largeprofpic {
-        margin: 10px;
-        width: 240px;
-        height: 240px;
-    }
-    i {
-        &:before {
-            padding: 15px;
-            display: inline-block;
-            font-size: 40px;
-            @media screen and (min-width: $screen-sm) {
-                font-size: 80px;
-            }
-        }
-    }
-    a.next, a.back {
-        &:before {
-            padding: 0px;
-            display: inline-block;
-            font-size: 30px;
-            color: $brand-primary;
-            @media screen and (min-width: $screen-sm) {
-                font-size: 40px;
-            }
-        }
-    }
+	text-align: center;
+	.largeprofpic {
+		margin: 10px;
+		width: 240px;
+		height: 240px;
+	}
+	i {
+		&:before {
+			padding: 15px;
+			display: inline-block;
+			font-size: 40px;
+			@media screen and (min-width: $screen-sm) {
+				font-size: 80px;
+			}
+		}
+	}
+	a.next, a.back {
+		&:before {
+			padding: 0px;
+			display: inline-block;
+			font-size: 30px;
+			color: $brand-primary;
+			@media screen and (min-width: $screen-sm) {
+				font-size: 40px;
+			}
+		}
+	}
 
 }
 
 .clearContainer {
-    color: white;
-    margin: 140px auto 140px auto;
-    padding: 10px;
-    @media screen and (min-width: $screen-sm) {
-        padding: inherit;
-    }
+	color: white;
+	margin: 140px auto 140px auto;
+	padding: 10px;
+	@media screen and (min-width: $screen-sm) {
+		padding: inherit;
+	}
 }
 
 .open > img{
-    cursor: zoom-in;
-    cursor: -webkit-zoom-in;
+	cursor: zoom-in;
+	cursor: -webkit-zoom-in;
 }
 .x {
-    cursor: zoom-out;
-    cursor: -webkit-zoom-out;
-    font-size: 36px;
-    position: absolute;
-    right: 5px;
-    padding: 5px;
-    color: $gray;
+	cursor: zoom-out;
+	cursor: -webkit-zoom-out;
+	font-size: 36px;
+	position: absolute;
+	right: 5px;
+	padding: 5px;
+	color: $gray;
 }
 .imageBox {
-    width: 100%;
-    margin-top: 50px;
-    @media screen and (min-width: $screen-md) {
-        width: 59%;
-        display: inline-block;
-    }
-    .fullImage {
-        max-width: 100%;
-        margin-left: auto;
-        margin-right: auto;
-    }
+	width: 100%;
+	margin-top: 50px;
+	@media screen and (min-width: $screen-md) {
+		width: 59%;
+		display: inline-block;
+	}
+	.fullImage {
+		max-width: 100%;
+		margin-left: auto;
+		margin-right: auto;
+	}
 }
 .infoBox {
-    text-align: center;
-    vertical-align: top;
-    color: white;
-    padding: 40px 20px;
-    background: $gray-darker;
-    width: 100%;
-    height: 100%;
-    margin: auto;
-    border-width: 5px;
-    border-image: radial-gradient($gray-darker 80%, $gray-dark 100%, #fff) 1%;
-    // border-image: radial-gradient(black 80%, $gray-dark 100%, #fff) 1%; //alt color
-    span {
-        color: $gray;
-    }
-    margin-top: 0px;
-    @media screen and (min-width: $screen-md) {
-        margin-top: 50px;
-        width: 40%;
-        display: inline-block;
-    }
+	text-align: center;
+	vertical-align: top;
+	color: white;
+	padding: 40px 20px;
+	background: $gray-darker;
+	width: 100%;
+	height: 100%;
+	margin: auto;
+	border-width: 5px;
+	border-image: radial-gradient($gray-darker 80%, $gray-dark 100%, #fff) 1%;
+	// border-image: radial-gradient(black 80%, $gray-dark 100%, #fff) 1%; //alt color
+	span {
+		color: $gray;
+	}
+	margin-top: 0px;
+	@media screen and (min-width: $screen-md) {
+		margin-top: 50px;
+		width: 40%;
+		display: inline-block;
+	}
 }
 
 .bbm-wrapper {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 3000;
-    overflow-x: auto;
-    overflow-y: scroll; 
-    -webkit-overflow-scrolling: touch;
-    * {
-        box-sizing: border-box; }
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 3000;
+	overflow-x: auto;
+	overflow-y: scroll; 
+	-webkit-overflow-scrolling: touch;
+	* {
+		box-sizing: border-box; }
 }
 .bbm-modal {
-    display: block;
-    hr {
-        border-top: 1px solid $gray-darkest;
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-    @extend .container;
+	display: block;
+	hr {
+		border-top: 1px solid $gray-darkest;
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+	@extend .container;
 }
 .bbm-views {
   width: 100%;
@@ -1823,11 +2256,11 @@ span.hover-content {
 /* Open modal */
 @-webkit-keyframes bbm-open {
   0% {
-    -webkit-transform: matrix(0.99126, 0, 0, 0.99126, 0, -15);
-    opacity: 0.1259; }
+	-webkit-transform: matrix(0.99126, 0, 0, 0.99126, 0, -15);
+	opacity: 0.1259; }
   100% {
-    -webkit-transform: matrix(1, 0, 0, 1, 0, 0);
-    opacity: 1; } }
+	-webkit-transform: matrix(1, 0, 0, 1, 0, 0);
+	opacity: 1; } }
 
 .bbm-modal--open {
   -webkit-animation-duration: 0.3s;
@@ -1840,11 +2273,11 @@ span.hover-content {
 /* Close a modal */
 @-webkit-keyframes bbm-close {
   0% {
-    -webkit-transform: matrix(0.99874, 0, 0, 0.99874, 0, 0);
-    opacity: 0.8741; }
+	-webkit-transform: matrix(0.99874, 0, 0, 0.99874, 0, 0);
+	opacity: 0.8741; }
   100% {
-    -webkit-transform: matrix(0.99, 0, 0, 0.99, 0, -15);
-    opacity: 0; } }
+	-webkit-transform: matrix(0.99, 0, 0, 0.99, 0, -15);
+	opacity: 0; } }
 
 .bbm-modal--close {
   -webkit-animation-duration: 0.43333s;
@@ -1858,250 +2291,129 @@ span.hover-content {
 //////// bootstrap-tagsinput.js & search
 
 .bootstrap-tagsinput {
-    display: inline-block;
-    color: #555;
-    border-radius: 4px;
-    max-width: 100%;
-    line-height: 22px;
-    @include transition(all 0.3s ease);
-    &:before {
-        font-family: Flaticon;
-        @extend .flaticon-book104:before;
-        color: $gray-light; }
+	display: inline-block;
+	color: #555;
+	border-radius: 4px;
+	// max-width: 100%;
+	line-height: 22px;
+	@include transition(all 0.3s ease);
 }
 
 #tattooProfile, #editTattoo { 
-    .bootstrap-tagsinput {
-        min-height: 80px;
-        padding: 40px 20px;
-        margin-bottom: 10px;
-        text-align: left; 
-        background-color: $gray-dark;
-        border: 1px solid $gray-dark;
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-        cursor: cell;
-        &:before {
-            padding: 8px;
-            font-size: 30px;
-            top: 5px;
-            position: relative;
-            color: $gray-light; 
-        }
-    }
+	.bootstrap-tagsinput {
+		width: 100%;
+		min-height: 80px;
+		padding: 40px 20px;
+		margin-bottom: 10px;
+		text-align: left; 
+		background-color: $gray-dark;
+		border: 1px solid $gray-dark;
+		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+		cursor: cell;
+		&:before {
+			font-family: Flaticon;
+			@extend .flaticon-book104:before;
+			color: $gray-light;             
+			padding: 8px;
+			font-size: 30px;
+			top: 5px;
+			position: relative;
+			color: $gray-light; 
+		}
+	}
 }
 
-#search {
-    .searchContainer, #tattoosPage {
-        background-color: black;
-    }
-    #artistsPage {
-        background-color: $gray-light;
-    }
-    #tattoosPage {
-        background-color: black;
-        min-height: 100vh;
-        margin-bottom: -99px;
-        padding-bottom: 100px;
-    }
-    // input.tt-input {
-    //     position: absolute !important;
-    //     left: 0px;
-    // }
-    input.tt-input {
-        width:100%;
-        border: none;
-        color: $brand-primary;
-        line-height: 80px;
-        font-weight: 700;
 
-        font-size: 36px;
-        margin-top: 40px;
-        @media screen and (min-width: $screen-sm) {
-            font-size: 65px;
-            margin-top: 0px;
-        }
-        &:focus {outline: none}
-    }
-    ::-webkit-input-placeholder {
-       color: $gray-dark; }
-    :-moz-placeholder { /* Firefox 18- */
-       color: $gray-dark; }
-    ::-moz-placeholder {  /* Firefox 19+ */
-       color: $gray-dark; }
-    :-ms-input-placeholder {  
-       color: $gray-dark; }
-    .bigfatsearch {
-        min-height: 140px;
-        margin-top:60px;
-        display: block;
-    }
-    .bootstrap-tagsinput {
-        display: inline-block;
-        @media screen and (min-width: $screen-sm) {
-            display: inline;
-        }
-        &:before {
-            display: none;
-            @media screen and (min-width: $screen-sm) {
-                display: inline;
-                font-size: 50px;
-                padding: 15px;
-                top: 40px;
-                position: relative;
-                color: white; 
-            }
-        }
-        .tag {
-            position: relative;
-            top: 22px;
-        }
-    }
-    .searchSelection {
-        h5 {
-            margin-top: 5px;
-            margin-bottom: 3px;
-        }
-        text-align: right;
-        display: none;
-        @media screen and (min-width: $screen-sm) {
-            float: right;
-            display: inline;
-        }
-        .dropdown-menu {
-            min-width: 100%;
-            text-align: center;
-        }
-    }
-    .tt-dropdown-menu {
-        width: 100%;
-        float: center;
-        text-align: center;
-        position: fixed !important;
-        top: 120px !important;
-        line-height: 22px !important;
-        @extend .container;
-        vertical-align: top;
-    }
-    .globalBooks{
-        @extend .tt-dropdown-menu;
-        width: inherit !important;
-        z-index: 0 !important;
-        color: $gray-dark;
-    }
-    .twitter-typeahead .tt-hint {
-        color: $gray-darker;
-        line-height: 80px;
-        font-weight: 700;
-
-        font-size: 36px;
-        margin-top: 40px;
-        @media screen and (min-width: $screen-sm) {
-            font-size: 65px;
-            margin-top: 0px;
-        }
-    }
-    .tt-suggestion {
-
-    }
-    .bookSuggestion {
-        margin: 2px;
-        padding: 10px;
-        border: 1px solid $gray-darker;
-        color: white;
-        background-color: $gray-darker !important;
-        border-radius: 4px / 6px;
-        background-color: rgba(0,0,0,0);
-        // @include button-variant($gray-light, $black-trans, rgba(0,0,0,1));
-    }
-}
 .reset {
-    text-align: center;
-    padding: 60px;
-    .btn-submit {
-        margin: 20px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
+	text-align: center;
+	padding: 60px;
+	.btn-submit {
+		margin: 20px;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
 }
 
-#tattooProfile, #editTattoo { 
-    .tt-dropdown-menu {
-        text-align: left;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 1000;
-        display: none;
-        float: left;
-        // min-width: 160px;
-        min-width: 100%;
-        padding: 5px 0;
-        margin: 2px 0 0;
-        list-style: none;
-        font-size: 14px;
-        background-color: #ffffff;
-        border: 1px solid #cccccc;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        border-radius: 4px;
-        -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-        background-clip: padding-box;
-    }
-    .twitter-typeahead .tt-hint {
-        display: none;
-    }
-    .bootstrap-tagsinput.focused {
-        background-color: $black-trans;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
-        cursor: text;
-        @include transition(all 0.3s ease);
 
-    }
-    input.tt-input {
-        margin-left: 5px !important;
-    }
+.tt-dropdown-menu {
+	text-align: left;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	display: none;
+	float: left;
+	// min-width: 160px;
+	min-width: 100%;
+	padding: 5px 0;
+	margin: 2px 0 0;
+	list-style: none;
+	font-size: 14px;
+	background-color: #ffffff;
+	border: 1px solid #cccccc;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+	background-clip: padding-box;
 }
+.twitter-typeahead .tt-hint {
+	display: none;
+}
+.bootstrap-tagsinput.focused {
+	background-color: $black-trans;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
+	cursor: text;
+	@include transition(all 0.3s ease);
+
+}
+input.tt-input {
+	margin-left: 5px !important;
+}
+
+
+
 #editTattoo {
-    hr {
-        border-top: 1px solid $gray-light;
-    }
+	hr {
+		border-top: 1px solid $gray-light;
+	}
 }
 
 .tt-suggestion {
-    display: inline !important;
-    cursor: cell;
-    &:hover {
-        color: $brand-primary;
-    }
+	// display: inline !important;
+	cursor: cell;
+	&:hover {
+		color: $brand-primary;
+	}
 }
 
 .bootstrap-tagsinput input {
-    border: none;
-    box-shadow: none;
-    outline: none;
-    background-color: transparent;
-    padding: 0;
-    margin: 0;
-    width: auto !important;
-    max-width: inherit;
+	border: none;
+	box-shadow: none;
+	outline: none;
+	background-color: transparent;
+	padding: 0;
+	margin: 0;
+	width: auto !important;
+	max-width: inherit;
 }
 .bootstrap-tagsinput input:focus {
-    border: none;
-    box-shadow: none;
+	border: none;
+	box-shadow: none;
 }
 .bootstrap-tagsinput .blured {
-    //padding: 6px 20px;        
-    border: 1px solid $gray-darker;
-    color: white;
-    background-color: $gray-darker !important;
-    @include transition(all 0.5s ease);
+	//padding: 6px 20px;        
+	border: 1px solid $gray-darker;
+	color: white;
+	background-color: $gray-darker !important;
+	@include transition(all 0.5s ease);
 }
 .bootstrap-tagsinput .tag {
-    color: white;
-    @include transition(all 0.3s ease);
-    // background-color: $gray-darker; 
+	color: white;
+	@include transition(all 0.3s ease);
+	// background-color: $gray-darker; 
 }
 .bootstrap-tagsinput .tag [data-role="remove"] {
   margin-left: 8px;
@@ -2112,17 +2424,15 @@ span.hover-content {
   padding: 0px 2px;
 }
 .bootstrap-tagsinput .tag [data-role="remove"]:hover {
-    color: $brand-primary;
+	color: $brand-primary;
 }
-
-.bootstrap-tagsinput { width: 100%; }
 
 .accordion {
-    margin-bottom:-3px;
+	margin-bottom:-3px;
 }
 
-.accordion-group { 
-    border: none;
+.accordion-group {
+	border: none;
 }
 
 .twitter-typeahead .tt-query,

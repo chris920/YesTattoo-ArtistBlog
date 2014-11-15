@@ -14,8 +14,8 @@
   <body>
 
     <div id="body">
-      <div class="modalayheehoo"></div>
-      <div class="navs" id="nav-main"></div>
+      <div id="modalayheehoo"></div>
+      <div id="navs"></div>
       <section id="gutter"></section>
       <section id="app"></section>
       <section id="footer"></section>
@@ -37,43 +37,45 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <% if (!Parse.User.current()) { %>
-                  <li><a href="/featured" class="main-nav-item"><i href="/featured" class="flaticon-trophy4"></i>Featured</a></li>
-                  <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
-                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-black373"></i>Tattoos</a></li>
-                  <li><a href="/join" class="main-nav-item"><i href="/join" class="flaticon-send5"></i>Join</a></li>
-                  <li><a href="/login" class="main-nav-item" id="#login"><i href="/login" class="flaticon-user56"></i>Log In</a></li>
+                  <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Search</a></li>
+                  <li><a href="/featured" class="main-nav-item"><i  class="flaticon-trophy4"></i>Featured</a></li>
+                  <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/tattoos" class="main-nav-item"><i  class="flaticon-black373"></i>Tattoos</a></li>
+                  <li><a href="/login" class="main-nav-item" id="#login"><i  class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
-                  <li><a href="/featured" class="main-nav-item"><i href="/featured" class="flaticon-trophy4"></i>Featured</a></li>
-                  <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
-                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-black373"></i>Tattoos</a></li>
+                  <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Search</a></li>
+                  <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
+                  <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/tattoos" class="main-nav-item"><i class="flaticon-black373"></i>Tattoos</a></li>
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                       <button class="btn-submit" href="/myprofile">View Profile</button>
-                      <li><a href="/myprofile/collection"><i href="/myprofile/collection" class="flaticon-books8 pull-right"></i>Collection</a></li>
-                      <li><a href="/myprofile/books"><i href="/myprofile/books" class="flaticon-book104 pull-right"></i>Books</a></li>
-                      <li><a href="/myprofile/artists"><i href="/myprofile/artists" class="flaticon-tattoo1 pull-right"></i>Artists</a></li>
+                      <li><a href="/myprofile/collection"><i class="flaticon-books8 pull-right"></i>Collection</a></li>
+                      <li><a href="/myprofile/books"><i class="flaticon-book104 pull-right"></i>Books</a></li>
+                      <li><a href="/myprofile/artists"><i class="flaticon-tattoo1 pull-right"></i>Artists</a></li>
                       <li class="divider"></li>
-                      <li><a href="/myprofile/settings"><i href="/myprofile/settings" class="flaticon-settings13 pull-right"></i>Settings</a></li>
+                      <li><a href="/myprofile/settings"><i class="flaticon-settings13 pull-right"></i>Settings</a></li>
                       <li><a id="logout"><i class="flaticon-close20 pull-right"></i>Log Out</a></li>
                     </ul>
                   </li>
 
                 <% } else { %>
-                  <li><a href="/featured" class="main-nav-item"><i href="/featured" class="flaticon-trophy4"></i>Featured</a></li>
-                  <li><a href="/search/artist" class="main-nav-item"><i href="/search/artist" class="flaticon-tattoo1"></i>Artists</a></li>
-                  <li><a href="/search/tattoo" class="main-nav-item"><i href="/search/tattoo" class="flaticon-black373"></i>Tattoos</a></li>
+                  <li><a href="/search"  class="main-nav-item"><i class="flaticon-magnifier10"></i>Search</a></li>
+                  <li><a href="/featured" class="main-nav-item"><i  class="flaticon-trophy4"></i>Featured</a></li>
+                  <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
+                  <li><a href="/tattoos" class="main-nav-item"><i class="flaticon-black373"></i>Tattoos</a></li>
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                      <li><a href="/myprofile/upload"><i href="/myprofile/upload" class="flaticon-camera4 pull-right"></i>Upload Tattoo</a></li>
+                      <li><a href="/myprofile/upload"><i class="flaticon-camera4 pull-right"></i>Upload Tattoo</a></li>
                       <li class="divider"></li>
                       <button class="btn-submit" href="/myprofile">View Profile</button>
-                      <li><a href="/myprofile/portfolio"><i href="/myprofile/portfolio" class="flaticon-black373 pull-right"></i>Portfolio</a></li>
-                      <li><a href="/myprofile/about"><i href="/myprofile/about" class="flaticon-information pull-right"></i>About</a></li>
+                      <li><a href="/myprofile/portfolio"><i class="flaticon-black373 pull-right"></i>Portfolio</a></li>
+                      <li><a href="/myprofile/about"><i class="flaticon-information pull-right"></i>About</a></li>
                       <li class="divider"></li>
-                      <li><a href="/myprofile/settings"><i href="/myprofile/settings" class="flaticon-settings13 pull-right"></i>Settings</a></li>
+                      <li><a href="/myprofile/settings"><i class="flaticon-settings13 pull-right"></i>Settings</a></li>
                       <li><a id="logout"><i class="flaticon-close20 pull-right"></i>Log Out</a></li>
                     </ul>
                   </li>
@@ -113,90 +115,244 @@
     </script>
 
     <!-- Search Page-->
-    <script type="text/html" id="searchTemplate">  
-    
-    <div class="searchContainer"><div class="container">
+    <script type="text/html" id="searchTemplate">
 
-        <div class="globalBooks" style="display:none">
-          <div class="tt-suggestions">
-            <span> Suggested Books: </span>
-            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Animal</span></div>
-            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Black And Gray</span></div>
-            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Color</span></div>
-            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Japanese</span></div>
-            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Portrait</span></div>
-            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Realistic</span></div>
-            <div class="tt-suggestion"><span class="bookSuggestion" style="white-space: normal;">Traditional</span></div>
-          </div>
-        </div>
+      <div class="lg8container">
+        <form class="mainSearchInputContainer" role="search">
+          <input type="text" class="mainSearchInput grayInput"></input>
+          <a href="#" class="btn-text x">x</a>
+        </form>
+      </div>
 
-        <form class="bigfatsearch" role="search">
-          <input type="text" class="typeahead searchInput" placeholder="">
-          <div class="searchSelection">
-            <h5 class="">Searching for</h5>
-            <div class="btn-group">
-              <button class="btn-submit dropdown-toggle" type="button" data-toggle="dropdown">Tattoos</button>
-              <button type="button" class="btn-submit dropdown-toggle" data-toggle="dropdown">
-                  <span class="caret"></span>
-                  <span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a id="forTattoos" style="display:none">Tattoos</a></li>
-                <li><a id="forArtists">Artists</a></li>
-              </ul>
+      <div class="lg6container">
+        <div class="row results">
+        
+          <h3 class="resultsMessage">Searching for tattoos, artists and enthusiasts.</h3>
+
+          <div class="tattooResultsContainer" style="display: none;">
+            <h3>Tattoo Books</h3>
+            <div class="tattooResults">
+
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-color.jpg');"><span>Water Color</span></div>
+              <div class="btn-tag bookSuggestion" style="background-image: url('img/book-real.jpg');"><span>Color</span></div>
             </div>
           </div>
-        </form>
 
-      </div></div>
-          
-      <div id="tattoosPage" style="display:none">
+          <div class="artistResultsContainer" style="display: none;">
+            <h3>Artists</h3>
+
+            <div class="artistResults">
+
+              <div href="" class="row userResult">
+                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
+                  <h4>Color<span> Username </span><span>Shop Name </span></h4>
+              </div>
+              <div href="" class="row userResult">
+                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
+                  <h4>Artist Name<span> Color </span><span>Shop Name </span></h4>
+              </div>
+              <div href="" class="row userResult">
+                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
+                  <h4>Artist Name<span> Username </span><span>Color </span></h4>
+              </div>
+              <div href="" class="row userResult">
+                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
+                  <h4>Artist Name<span> Username </span><span>Shop Name </span></h4>
+              </div>
+
+
+              <div href="" class="row userResult">
+                  <span>Search for artists by books </span>
+              </div>
+
+
+            </div>
+
+
+
+          </div>
+
+          <div class="userResultsContainer" style="display: none;">
+            <h3>Enthusiasts</h3>
+            <div class="userResults">
+
+              <div href="" class="row userResult">
+                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
+                  <h4>User Name<span> Username </span></h4>
+              </div>
+              <div href="" class="row userResult">
+                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
+                  <h4>Color<span> Username </span></h4>
+              </div>
+              <div href="" class="row userResult">
+                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
+                  <h4>User Name<span> Color </span></h4>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="reset" style="display:none"></div>
+      </div>
+
+    </script>
+
+    <!-- Explore page -->
+    <script type="text/html" id="exploreTemplate">
+
+          <div class="findArtistsContainer">
+            <h2>Find Artists</h2>
+            <p>Connect with artists in your area</p>
+            <button id="findArtists" class="btn-submit"><i class="flaticon-home73"></i>Start</button>
+          </div>
+
+
+          <div class="exploreTattoosContainer">
+            <div class="container">
+
+              <h2>Explore Tattoos</h2>
+              <hr>
+              <p>Explore popular tattoo books by the community</p>
+              <div class="explorePopularBooks">
+                <div class="row">
+                  <div class="col-xs-12 col-sm-8 popularBook">
+                    <h2>Color</h2>
+                    <img src="img/book-color.jpg" class="popularBookImage">
+                    <h5 href="/ben1">Benjamin Martinez</h5>
+                  </div>
+                  <div class="col-xs-12 col-sm-4 popularBook">
+                    <h2>Black And Gray</h2>
+                    <img src="img/book-b&g.jpg" class="popularBookImage">
+                    <h5 href="/nick">Nick Devine</h5>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12 col-sm-4 popularBook">
+                    <h2>Animal</h2>
+                    <img src="img/book-animal.jpg" class="popularBookImage">
+                    <h5 href="/davidb">David Brueh</h5>
+                  </div>
+                  <div class="col-xs-12 col-sm-4 popularBook">
+                    <h2>Portrait</h2>
+                    <img src="img/book-portrait.jpg" class="popularBookImage">
+                    <h5 href="/bridget">Bridget Tunstall</h5>
+                  </div>
+                  <div class="col-xs-12 col-sm-4 popularBook">
+                    <h2>Japanese</h2>
+                    <img src="img/book-j.jpg" class="popularBookImage">
+                    <h5 href="/gakkin">Kenji Gakkin</h5>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12 col-sm-4 popularBook">
+                    <h2>Traditional</h2>
+                    <img src="img/book-traditional.jpg" class="popularBookImage">
+                    <h5 href="/bencheese">Ben Cheese</h5>
+                  </div>
+                  <div class="col-xs-12 col-sm-8 popularBook">
+                    <h2>Realistic</h2>
+                    <img src="img/book-real.jpg" class="popularBookImage">
+                    <h5 href="/ryanhadley">Ryan Hadley</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="userContainer">
+            <div class="lg6container">
+              <h2>Start your tattoo collection</h2>
+              <button id="" href="/join" class="btn-submit">Join the community</button>
+            </div>
+          </div>
+
+    </script>
+
+
+    <!-- Book filter header -->
+    <script type="text/html" id="bookFilterTemplate">
+      <div class="filterHeader">
         <div class="container">
-          <div class="row tattoos"></div>
-          <div class="reset" style="display:none"></div>
+          <div class="row filterTitles">
+            <div class="filterOptions">
+              <button class="btn-submit toggleBookFilter">Book Filters</button>
+            </div>
+            <span class="tattoosTitle">Tattoos</span>
+          </div>
+
+          <div class="bookFilterContainer" style="display: none;">
+            <div class="bookSuggestionContainer">
+              <a class="arrow left"><img src="img/icon-arrow-left.png"></a>
+              <a class="arrow right"><img src="img/icon-arrow-right.png"></a>
+              <div class="bookSuggestionScroll">
+                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-color.jpg');"><span>Water Color</span></div>
+                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-real.jpg');"><span>Color</span></div>
+                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-b&g.jpg');"><span>Black And Gray</span></div>
+                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-Traditional.jpg');"><span>Traditional</span></div>
+                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-real.jpg');"><span>Realistic</span></div>
+                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-portrait.jpg');"><span>Portrait</span></div>
+                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-j.jpg');"><span>Japanese</span></div>
+                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-animal.jpg');"><span>Animal</span></div>
+              </div>
+            </div>
+
+            <div class="filterInputContainer">
+              <input type="text" class="typeahead bookFilterInput grayInput" placeholder="">
+            </div>
+
+          </div>  
         </div>
       </div>
-      <div id="artistsPage" style="display:none">
-        <div class="row artists"></div>
-      </div>
-  </script>
+    </script>
 
+    <!-- Popular book-->
+    <script type="text/html" id="popularBookDemo">
+      <div class="btn-tag bookSuggestion" style="background-image: url('<%= imageSmall %>');"><span><%= name %></span></div>
+    </script>
+
+
+    <!-- Tattoos page -->
+    <script type="text/html" id="tattoosPageTemplate">
+      <div class="bookFilterHeader"></div>
+      <div class="container">
+        <div class="row tattoos"></div>
+        <div class="reset" style="display:none"></div>
+      </div>
+    </script>
 
     <!-- Artists page -->
     <script type="text/html" id="artistsTemplate">
-        <div class="container">        
-          <div class="lg8container">
-              <div class="tagFilters" data-toggle="buttons">
-                <div class="row">
-                  <span class="flaticon-home73"></span><button type="button" class="btn-tag changeLocationButton">Worldwide</button>
-                </div>
-              </div>  
+      <div class="artistsResultContainer clearfix">
+        <div class="bookFilterHeader"></div>
+
+
+        <!-- Map view -->
+        <div id="map-container" class="mapContainer"></div>
+
+        <!-- Artists results -->
+        <div class="artists lg8container"></div>
+
+        <!-- Artists paginator -->
+        <div class="text-center" id="artists-paginator"></div>
+
+      </div>
+
+    </script>
+
+    <!-- Artist Thumbnail -->
+    <script type="text/html" id="artistTemplate">
+      <div class="artistThumb" href="/<%= username %>">
+        <div class="row">
+          <div class="artistTitles col-xs-12">
+            <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
+            <h4 class="artistName"><%= (name) ?  name : '' %></h4>
+            <h5 class="artistLoc"><%= (shop) ? shop : '' %><%= (locationName) ? '&nbsp;&nbsp;&nbsp;'+locationName : '' %></h5>
           </div>
+          <div class="artistTattoos col-xs-12"></div>
         </div>
-
-        <div class="changeLocation" style="display: none">
-            <div class="changeLocationOptions">            
-              <div class="error text-center" style="display:none"></div>
-
-              <div class="input-group">
-                <span class="input-group-addon">Find Artists Near </span>
-                <input type="text" class="form-control" id="changeAddressInput" placeholder="Location">
-                <span class="input-group-btn">
-                  <button class="btn-submit byYou" type="button" style="display:none"></button>
-                  <button class="btn-submit worldwide" type="button">Worldwide</button>
-                  <button class="btn-submit cancel" type="button">X</button>
-                </span>
-              </div>
-              
-            </div>
-            <div id="changeAddressMap" style="width: 100%; height: 540px;"></div>
-        </div>
-
-        <div class="container">
-          <div class="artistsSearch"></div>
-          <div class="artists"></div>
-        </div>
-
+        
+      </div>
     </script>
 
     <!-- Landing Page-->
@@ -218,8 +374,8 @@
             <ul class="">
               <li><a href="/feedback">Beta Feedback</a></li>
               <li><a href="/featured"><i class="flaticon-trophy4"></i>Featured</a></li>
-              <li><a href="/search/artist"><i class="flaticon-tattoo1"></i>Artists</a></li>
-              <li><a href="/search/tattoo"><i class="flaticon-black373"></i>Tattoos</a></li>
+              <li><a href="/artists"><i class="flaticon-tattoo1"></i>Artists</a></li>
+              <li><a href="/tattoos"><i class="flaticon-black373"></i>Tattoos</a></li>
               <li><a href="/join"><i class="flaticon-send5"></i>Join</a></li>
               <li><a href="/login" id"#login"><i class="flaticon-user56"></i>Log In</a></li>
             </ul>
@@ -227,6 +383,7 @@
           <a><span class="flaticon-up49"></span></a>
         </div>
     </script>
+
 
     <!-- Featured Artists Page-->
     <script type="text/html" id="featuredContainerTemplate">
@@ -261,25 +418,6 @@
         </div>
         <div class="portfolioContainer">
         </div>
-    </script>
-
-    <!-- Artist Thumbnail -->
-    <script type="text/html" id="artistTemplate">
-      <div class="artistThumb" href="/<%= username %>">
-        <div class="artistTitleBG">
-          <div class="artistTitles">
-            <div class="col-sm-1">
-              <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
-            </div>
-            <div class="col-sm-5 col-sm-offset-0 col-xs-8 col-xs-offset-2">
-              <h4 class="artistName"><%= (name) ?  name : '' %></h4>
-              <h5 class="artistLoc"><%= (shop) ?  shop : '' %><%= (locationName) ? '<br>'+locationName : '' %></h5>
-            </div>
-          </div>
-          <div class="artistTattoos col-sm-6 col-xs-12">
-          </div>
-        </div>
-      </div>
     </script>
 
 
@@ -590,7 +728,7 @@
       <div class="tab-content">
         <!-- Collection / Adds Tab-->
         <div class="tab-pane fade in active" id="collectionTab">
-          <div class="container">          
+          <div class="container">
             <div class="row adds">
 
             </div>
@@ -598,7 +736,7 @@
         </div> 
         <!-- Books Tab-->
         <div class="tab-pane fade in" id="booksTab">
-          <div class="container">          
+          <div class="container">
             <div class="row books">
 
             </div>
@@ -606,8 +744,8 @@
         </div> 
         <!-- Artists Tab-->
         <div class="tab-pane fade in" id="artistsTab">
-          <div class="container">          
-            <div class="row artists">
+          <div class="container">
+            <div class="row lg8container artists">
 
             </div>
           </div>
@@ -1062,7 +1200,7 @@
       <h3>Ready to explore?</h3>
       <div class="row"> <hr>
         <button href="/myprofile/settings" class="btn btn-submit skip">Create your profile</button><br> or <br>
-        <button href="/search/tattoo" class="btn btn-submit done">Search for tattoos</button>
+        <button href="/tattoos" class="btn btn-submit done">Search for tattoos</button>
       </div>
     </script>
 

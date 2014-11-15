@@ -23,6 +23,8 @@ Array.prototype.byCount= function(){
 
 //http://stackoverflow.com/questions/5667888/counting-occurences-of-javascript-array-elements
 Array.prototype.byCountWithCount= function(){
+  var key, 
+      counts;
   return _.reduce(this,function(counts,key){ counts[key]++; return counts },
                 _.object( _.map( _.uniq(this), function(key) { return [key, 0] })));
 }
