@@ -511,11 +511,6 @@ App.Views.ArtistSearchResult = Parse.View.extend({
     }
 });
 
-App.Views.artistSearchResult = Parse.View.extend({
-
-
-});
-
 App.Views.Explore = Parse.View.extend({
     template: _.template($("#exploreTemplate").html()),
     id: 'explore',
@@ -1449,7 +1444,9 @@ App.Views.Artist = Parse.View.extend({
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
 
-	 	var books = App.search ? App.search.searchingForView.query : [];
+	 	//TODO - getActiveBooks from globabl books collection
+        var books = [];
+
 	 	App.query.tattoosByProfile(this.model, books, { limit: 4 })
 	 		.then(function (tats) {
 		  		
