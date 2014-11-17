@@ -404,6 +404,15 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
         return this.filter(function(globalBook) {
             return globalBook.get("active") === true;
         });
+    },
+    // Accepts array of book names
+    // Return an array of global book models
+    booksByName: function (names) {
+		return _.map(names, function (name) {
+			return this.filter(function (model) {
+				return model.get('name') === name;
+			})[0];
+		}, this);
     }
 });
 
@@ -538,61 +547,34 @@ App.Views.Explore = Parse.View.extend({
 App.Views.BookFilter = Parse.View.extend({
     template: _.template($("#bookFilterTemplate").html()),
     el: '.bookFilterHeader',
-    initialize: function(options){
+    initialize: function (options){
         App.bookfilter = this;///clear
-        console.log('Tattos page init');///clear
+        console.log('Book filter init');///clear
 
-        this.query = [];
+        _.bindAll(this, 'disable', 'typeaheadInitialize', /*'setBooks',*/ 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'scrollerInitialize', 'render');
+
+        this.bookFilterShown = false;
+        this.query = this.options.initialBooks ? this.options.initialBooks.split("-").join(" ").split('+') : [];
         this.collection = App.Collections.globalBooks;
         this.collection.resetActive();  // Need to reset active otherwise can't re-select previous book once re-initialized
         
-        this.bookFilterShown = false;
-
-        _.bindAll(this, 'disable', 'typeaheadInitialize', 'setBooks', 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'scrollerInitialize', 'render');
         App.on('app:keypress', this.focusIn);
         this.collection.on('change:active', this.updateBookFilter, this);
 
-        // this.query = [];
-        if (this.options.initialBooks) {
-            console.log('bookFilter init with books');///clear
-            var that = this;
-
-            this.render = _.wrap(this.render, function(render) { 
-                var booksArray = this.options.initialBooks.split("-").join(" ").split('+');
-                render().setBooks(booksArray);
-                // App.trigger('books:book-update', booksArray);
-                return that;
-            });
-        }
-        else {
-            var that = this;
-            this.render = _.wrap(this.render, function(render) { 
-                render();
-                // App.trigger('books:book-update');
-                return that;
-            });
-        }
-
         this.initialized = true;
-    },
-    disable: function () {
-    	if (this.initialized) {
-	        console.log('filter header disabled');///clear
-	        if (this.globalBookManagerView) { this.globalBookManagerView.disable(); }
-	        if (this.activeBookFilterManagerView) { this.activeBookFilterManagerView.disable(); }
+	},
+	disable: function () {
+		if (this.initialized) {
+			console.log('filter header disabled');///clear
+			if (this.globalBookManagerView) { this.globalBookManagerView.disable(); }
+			if (this.activeBookFilterManagerView) { this.activeBookFilterManagerView.disable(); }
 
-	        App.off('app:keypress', this.focusIn);
-	        this.collection.off('change:active', this.updateBookFilter);
+			App.off('app:keypress', this.focusIn);
+			this.collection.off('change:active', this.updateBookFilter);
 
-	        this.initialized = false;
-	    }
-    },
-    setBooks: function(booksArray){
-        console.log(this.globalBookManagerView.collection.byBooks(booksArray));///clear
-        _.each(this.globalBookManagerView.collection.byBooks(booksArray), function(book){
-            this.activateBookFilter(book);
-        }, this);
-    },
+			this.initialized = false;
+		}
+	},
     focusIn: function(){
         if (this.bookFilterShown) {
             this.$('input.bookFilterInput').focus();
@@ -768,16 +750,30 @@ App.Views.BookFilter = Parse.View.extend({
         this.$('.tattoosTitle').html(this.options.title);
         return this;
     },
-    render: function(){
-        var html = this.template();
-        $(this.el).html(html);
-        //TODO wrap in promise. Pull back the initialization.
-        this.globalBookManagerView.setElement(this.$('.bookSuggestionScroll'));
-        this.globalBookManagerView.showAll();
-        this.scrollerInitialize();
-        this.activeBookFilterManagerView.setElement(this.$('.filterTitles'));
-        return this;
-    }
+	render: function () {
+		var self = this;
+		$(this.el).html(this.template()).promise()
+			.done(function _renderChildViews() {
+
+				self.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({ collection: self.collection, el: self.$('.filterTitles') });
+
+				self.globalBookManagerView = new App.Views.GlobalBookManager({ collection: self.collection, el: self.$('.bookSuggestionScroll') });
+				self.globalBookManagerView.showAll();
+
+				self.scrollerInitialize();
+			})
+			.done(function _setInitialBooks() {
+
+				var bookModels = App.Collections.globalBooks.booksByName(self.query);
+				if (bookModels) {
+					for (var i = 0; i < bookModels.length; i++) {
+						bookModels[i].set('active', true);
+					}
+				}
+			});
+
+		return this;
+	}
 });
 
 App.Views.ActiveBookFilterManager = Parse.View.extend({
