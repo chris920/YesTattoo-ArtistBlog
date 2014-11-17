@@ -405,7 +405,8 @@ App.Views.Search = Backbone.Modal.extend({
     template: _.template($("#searchTemplate").html()),
     cancelEl: '.x',
     events: {
-        'keyup': 'keypressSearchTimer'
+        'keyup': 'keypressSearchTimer',
+        'click .artistBookSearch': 'artistBookSearch'
     },
     keypressSearchTimer: function(e){
         if ( e.which === 13 ) {
@@ -462,6 +463,10 @@ App.Views.Search = Backbone.Modal.extend({
             function (error) {
                 console.log("Error: " + error.code + " " + error.message);
             });
+    },
+    artistBookSearch: function(){
+        //TODO ~ Init artists page with current query as the book filter
+        App.trigger('app:artists');
     },
     focusIn: function(){
         this.$('input.mainSearchInput').focus();
