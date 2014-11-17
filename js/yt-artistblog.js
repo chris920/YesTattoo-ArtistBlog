@@ -9,6 +9,7 @@ var App = new (Parse.View.extend({
     Models: {},
     Views: {},
     Collections: {},
+    Promises: {},
     initialize: function(){
         // Setup app proxy for windows events
         $(window).on('scroll', function (e) { App.trigger('app:scroll', e); });
@@ -28,7 +29,6 @@ var App = new (Parse.View.extend({
         });
 
         this.initTypeahead();
-        App.Collections.globalBooks = new App.Collections.GlobalBooks();
         this.setGlobalBooks();
         this.setProfile(this.startRouter);
         this.initScrollToTop;
@@ -68,20 +68,20 @@ var App = new (Parse.View.extend({
                 });
         }
     },
-    setGlobalBooks: function (callBack) {
-        Parse.Promise.when(App.query.allGlobalBooks())
-            .then(function (globalBooks) {
-                    console.log('globalBooks set');
-                    App.Collections.globalBooks.reset(globalBooks);
-                    //Gets the names of the globalBooks and re-init typeahead
-                    var bookNames = App.Collections.globalBooks.pluck('name');
-                    App.initTypeahead(bookNames);
-                },
-                function (error) {
-                    console.log("Error: " + error.code + " " + error.message);
-                });
-
-    },
+	setGlobalBooks: function () {
+		App.Collections.globalBooks = new App.Collections.GlobalBooks();
+		App.Promises.globalBooks = App.query.allGlobalBooks()
+			.then(function (globalBooks) {
+				console.log('globalBooks set');
+				App.Collections.globalBooks.reset(globalBooks);
+				//Gets the names of the globalBooks and re-init typeahead
+				var bookNames = App.Collections.globalBooks.pluck('name');
+				App.initTypeahead(bookNames);
+			},
+			function (error) {
+				console.log("Error: " + error.code + " " + error.message);
+			});
+	},
     initTypeahead: function(books){
         if (!books) {
             var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
@@ -555,12 +555,13 @@ App.Views.BookFilter = Parse.View.extend({
 
         this.bookFilterShown = false;
         this.query = this.options.initialBooks ? this.options.initialBooks.split("-").join(" ").split('+') : [];
+
         this.collection = App.Collections.globalBooks;
         this.collection.resetActive();  // Need to reset active otherwise can't re-select previous book once re-initialized
+        this.collection.on('change:active', this.updateBookFilter, this);
         
         App.on('app:keypress', this.focusIn);
-        this.collection.on('change:active', this.updateBookFilter, this);
-
+        
         this.initialized = true;
 	},
 	disable: function () {
@@ -752,7 +753,8 @@ App.Views.BookFilter = Parse.View.extend({
     },
 	render: function () {
 		var self = this;
-		$(this.el).html(this.template()).promise()
+		var templateRendered = $(this.el).html(this.template()).promise();
+		$.when(templateRendered, App.Promises.globalBooks)
 			.done(function _renderChildViews() {
 
 				self.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({ collection: self.collection, el: self.$('.filterTitles') });
@@ -764,7 +766,7 @@ App.Views.BookFilter = Parse.View.extend({
 			})
 			.done(function _setInitialBooks() {
 
-				var bookModels = App.Collections.globalBooks.booksByName(self.query);
+				var bookModels = self.collection.booksByName(self.query);
 				if (bookModels) {
 					for (var i = 0; i < bookModels.length; i++) {
 						bookModels[i].set('active', true);
