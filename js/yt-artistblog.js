@@ -546,11 +546,7 @@ App.Views.BookFilter = Parse.View.extend({
         this.collection = App.Collections.globalBooks;
         this.collection.resetActive();  // Need to reset active otherwise can't re-select previous book once re-initialized
         
-        this.globalBookManagerView = new App.Views.GlobalBookManager({collection: this.collection});
-        this.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({collection: this.collection});
         this.bookFilterShown = false;
-
-        // this.collection.on('all', function(name){console.log(name)});///clear
 
         _.bindAll(this, 'disable', 'typeaheadInitialize', 'setBooks', 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'scrollerInitialize', 'render');
         App.on('app:keypress', this.focusIn);
