@@ -142,52 +142,15 @@
             <h3>Artists</h3>
 
             <div class="artistResults">
-
-              <div href="" class="row userResult">
-                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
-                  <h4>Color<span> Username </span><span>Shop Name </span></h4>
-              </div>
-              <div href="" class="row userResult">
-                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
-                  <h4>Artist Name<span> Color </span><span>Shop Name </span></h4>
-              </div>
-              <div href="" class="row userResult">
-                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
-                  <h4>Artist Name<span> Username </span><span>Color </span></h4>
-              </div>
-              <div href="" class="row userResult">
-                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
-                  <h4>Artist Name<span> Username </span><span>Shop Name </span></h4>
-              </div>
-
-
-              <div href="" class="row userResult">
-                  <span>Search for artists by books </span>
-              </div>
-
-
             </div>
-
-
-
+            <div href="" class="row userResult">
+                <span>Search for artists by books </span>
+            </div>
           </div>
 
           <div class="userResultsContainer" style="display: none;">
             <h3>Enthusiasts</h3>
             <div class="userResults">
-
-              <div href="" class="row userResult">
-                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
-                  <h4>User Name<span> Username </span></h4>
-              </div>
-              <div href="" class="row userResult">
-                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
-                  <h4>Color<span> Username </span></h4>
-              </div>
-              <div href="" class="row userResult">
-                  <img class="smallprof" src="img/tattooicon-small.png" alt="Artist Prof">
-                  <h4>User Name<span> Color </span></h4>
-              </div>
 
             </div>
           </div>
@@ -195,6 +158,22 @@
         <div class="reset" style="display:none"></div>
       </div>
 
+    </script>
+
+    <!-- User search result -->
+    <script type="text/html" id="userResultTemplate">
+      <div href="/<%= username %>" class="row userResult">
+          <img class="smallprof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/usericon-small.png <% } %>" alt="User Prof">
+          <h4><%= (name) ?  name : '' %><span> <%= (username) ?  username : '' %> </span></h4>
+      </div>
+    </script>
+
+    <!-- Artist search result -->
+    <script type="text/html" id="artistResultTemplate">
+      <div href="/<%= username %>" class="row userResult">
+          <img class="smallprof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
+          <h4><%= (name) ?  name : '' %><span> <%= (username) ?  username : '' %> </span><span> <%= (shop) ?  shop : '' %> </span></h4>
+      </div>
     </script>
 
     <!-- Explore page -->
