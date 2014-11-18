@@ -435,7 +435,7 @@ App.Views.Search = Backbone.Modal.extend({
         App.query.searchArtists(this.query)
             .then(function (artists) {
                 this.$('.artistResults').html('');
-                if (artists) {
+                if (artists.length) {
                     _.each( _.uniq(artists), function(artist){
                         var artistResult = new App.Views.ArtistSearchResult({model: artist});
                         that.$('.artistResults').append(artistResult.render().el);
@@ -452,7 +452,7 @@ App.Views.Search = Backbone.Modal.extend({
         App.query.searchUsers(this.query)
             .then(function (users) {
                 this.$('.userResults').html('');
-                if (users) {
+                if (users.length) {
                     _.each( _.uniq(users), function(user){
                         var userResult = new App.Views.UserSearchResult({model: user});
                         that.$('.userResults').append(userResult.render().el);
@@ -485,7 +485,7 @@ App.Views.UserSearchResult = Parse.View.extend({
         'click': 'viewProfile'
     },
     viewProfile: function () {
-        App.trigger('app:artist-profile', this.model.get('username'));
+        App.trigger('app:user-profile-uname', this.model.get('username'));
     },
     render: function () {
         var that = this;
@@ -501,7 +501,7 @@ App.Views.ArtistSearchResult = Parse.View.extend({
         'click': 'viewProfile'
     },
     viewProfile: function () {
-        App.trigger('app:artist-profile', this.model.get('username'));
+        App.trigger('app:artist-profile-uname', this.model.get('username'));
     },
     render: function () {
         var that = this;
@@ -3937,7 +3937,7 @@ App.controller = (function () {
         // query.first().then(function (user) {
         App.query.usersProfile(uname)
             .then(function (user) {
-                if (user) {
+                if (user.length) {
                     controller.userProfile(user, tab);
                 } else {
                     // Parse.history.navigate('/', { trigger: true });
@@ -3967,7 +3967,7 @@ App.controller = (function () {
         // query.first().then(function (artist) {
         App.query.artistsProfile(uname)
             .then(function (artist) {
-                if (artist) {
+                if (artist.length) {
                     controller.artistProfile(artist, tab);
                 }
                 else {
