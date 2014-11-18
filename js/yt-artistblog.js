@@ -746,7 +746,7 @@ App.Views.BookFilter = Parse.View.extend({
     queryReset: function(){
         this.query = [];
         this.collection.resetActive();
-        $('.reset').fadeOut();
+        // $('.reset').fadeOut();
         this.$('.filterTitle').remove();
         this.$('.tattoosTitle').html(this.options.title);
         return this;
@@ -944,7 +944,7 @@ App.Views.TattoosPage = Parse.View.extend({
             this.initialBooks = options.books;
         }
 
-        _.bindAll(this, 'disable', 'scrollChecker', 'render', 'bookUpdate', 'loadMore');
+        _.bindAll(this, 'disable', 'scrollChecker', 'render', 'bookUpdate', 'showReset', 'loadMore');
         this.collection = new App.Collections.Tattoos();
 
         App.on('app:scroll', this.scrollChecker);
@@ -1003,14 +1003,15 @@ App.Views.TattoosPage = Parse.View.extend({
         App.query.tattoos(books, options)
             .then(function (tats) {
                 that.collection.add(tats);
-                if ( tats.length === 0) {
+                that.showReset();
+                /*if (that.collection.length === 0) {
                     that.moreToLoad = false;
                     that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
                     that.$('.reset').on('click', function(){
                         that.bookFilterView.queryReset();
                         // App.trigger('books:book-update');
                     }).fadeIn();
-                } else if (tats.length < 40) {
+                } else*/ if (tats.length < 40) {
                 // that.$el.append('<div class="end" style="display: none"><img src="img/yt-featuredend.png"></div>');
                     that.moreToLoad = false;
                 } else {
@@ -1022,6 +1023,29 @@ App.Views.TattoosPage = Parse.View.extend({
                 that.moreToLoad = true;
         });
     },
+
+	showReset: function () {
+		var self = this;
+		if (this.collection.length === 0) {
+			this.$('.reset')
+				.html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
+				.fadeIn()
+				.on('click', function () {
+					self.bookFilterView.queryReset();
+					self.hideReset();
+				});
+		}
+		else {
+			this.hideReset();
+		}
+	},
+
+	hideReset: function () {
+		if ($('.reset').length > 0) {
+			$('.reset').fadeOut();
+		}
+	},
+
     render: function(){
         var self = this;
         var html = this.template();
