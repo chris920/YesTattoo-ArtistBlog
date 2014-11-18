@@ -367,8 +367,15 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
     comparator: function(book){
         return -book.get("count");
     },
-    resetActive: function(){
-        this.invoke('set', {active: false});
+    resetActive: function () {
+        // this.invoke('set', { active: false });
+        // Only reset models that are active, 
+        // attempt to minimise the number of events handlers being unnecessarily initiated
+        this.forEach(function (model) {
+        	if (model.get('active') === true) {
+				model.set('active', false);
+        	}
+        });
     },
     // getNext: function(booksArray, perPage){
     //     if(booksArray){
