@@ -566,7 +566,7 @@ App.Views.BookFilter = Parse.View.extend({
         this.collection = App.Collections.globalBooks;
         this.collection.resetActive();  // Need to reset active otherwise can't re-select previous book once re-initialized
         this.collection.on('change:active', this.updateBookFilter, this);
-        
+
         App.on('app:keypress', this.focusIn);
         
         this.initialized = true;
@@ -591,7 +591,7 @@ App.Views.BookFilter = Parse.View.extend({
             this.$('input.bookFilterInput').focus();
         }
     },
-    updateBookFilter: function(book){
+    updateBookFilter: function (book){
         console.log('updateBookFilter called from the bookFilter view');///clear
         console.log(book);///clear
         if (book.get('active') === true) {
@@ -991,9 +991,10 @@ App.Views.TattoosPage = Parse.View.extend({
         } 
         Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
     },
-    loadMore: function(reset){
+
+    loadMore: _.debounce(function (reset) {
         var that = this;
-        console.log('Loadmore triggered with: ' + reset);///clear
+        console.log('*** Loadmore triggered with: ' + reset);///clear
         if (reset) {
             this.collection.reset();
             this.collection.page = 0;
@@ -1005,21 +1006,12 @@ App.Views.TattoosPage = Parse.View.extend({
             limit: 40
         };
         var books = this.bookFilterView ? this.bookFilterView.query : [];
-        console.log(this.collection);///clear
-        console.log(options);///clear
         App.query.tattoos(books, options)
             .then(function (tats) {
                 that.collection.add(tats);
                 that.showReset();
-                /*if (that.collection.length === 0) {
-                    that.moreToLoad = false;
-                    that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
-                    that.$('.reset').on('click', function(){
-                        that.bookFilterView.queryReset();
-                        // App.trigger('books:book-update');
-                    }).fadeIn();
-                } else*/ if (tats.length < 40) {
-                // that.$el.append('<div class="end" style="display: none"><img src="img/yt-featuredend.png"></div>');
+                
+                if (tats.length < 40) {
                     that.moreToLoad = false;
                 } else {
                     that.moreToLoad = true;
@@ -1029,7 +1021,7 @@ App.Views.TattoosPage = Parse.View.extend({
                 console.log(error);
                 that.moreToLoad = true;
         });
-    },
+    }, 500),
 
 	showReset: function () {
 		var self = this;
