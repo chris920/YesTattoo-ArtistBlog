@@ -806,16 +806,22 @@ App.Views.ActiveBookFilterManager = Parse.View.extend({
         }
         this.childViews = [];
     },
-    // renderAllBookTitles: function(){
-    //     this.collection.forEach(this.renderBookTitle, this);
-    // },
-    renderBookTitle: function(book){
-        if(book.attributes.active === true){
+    renderBookTitle: function (book) {
+        if (book.attributes.active === true) {
+        	// Add the new view
             var bookTitle = new App.Views.ActiveBookFilter({model: book});
             this.$el.append(bookTitle.render().el);
             this.childViews.push(bookTitle);
         }
-        // TOOD How are books removed?  They should be removed in this view + handle disabling the child view
+        else {
+        	// Find the view to remove
+        	for (var i = 0; i < this.childViews.length; i++) {
+	            if (book === this.childViews[i].model) {
+	            	this.childViews[i].disable();
+	            	this.childViews.splice(i, 1);
+	            }
+	        }
+        }
     }
 });
 
@@ -823,8 +829,8 @@ App.Views.ActiveBookFilter = Parse.View.extend({
     template: _.template('<%= name %>'),
     className: 'filterTitle',
     tagName: 'span',
-    initialize: function(){
-        _.bindAll(this, 'disable', 'disableBookFilter','removeBookTitle');
+    initialize: function () {
+        _.bindAll(this, 'disable', 'removeBookTitle', 'render');
         this.model.on('change:active', this.removeBookTitle, this);
         this.initialized = true;
     },
@@ -835,20 +841,14 @@ App.Views.ActiveBookFilter = Parse.View.extend({
         }
     },
     events: {
-        'click': 'disableBookFilter',
+        'click': 'removeBookTitle',
     },
-    disableBookFilter: function(){
+    removeBookTitle: function () {
+        this.disable();
         this.model.set('active', false);
-        this.removeBookTitle();
+        this.remove();
     },
-    removeBookTitle: function(){
-        console.log('removeBookTitle triggered');///clear
-        if(this.model.get('active') === false){
-            this.remove();    
-            this.model.off('change:active', this.removeBookTitle, this);
-        }
-    },
-    render: function(){
+    render: function () {
         var attributes = this.model.toJSON();
         $(this.el).append(this.template(attributes));
         return this;
