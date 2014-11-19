@@ -2,13 +2,14 @@
 
 Parse.$ = jQuery;
 
-// Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK"); ///test
-Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live
+Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK"); ///demo
+// Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live
 
 var App = new (Parse.View.extend({
     Models: {},
     Views: {},
     Collections: {},
+    Promises: {},
     initialize: function(){
         // Setup app proxy for windows events
         $(window).on('scroll', function (e) { App.trigger('app:scroll', e); });
@@ -28,6 +29,7 @@ var App = new (Parse.View.extend({
         });
 
         this.initTypeahead();
+        this.setGlobalBooks();
         this.setProfile(this.startRouter);
         this.initScrollToTop;
 
@@ -66,9 +68,24 @@ var App = new (Parse.View.extend({
                 });
         }
     },
-    initTypeahead: function(){
-        var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
-        ///initial books local. needs to pull the user's books.
+	setGlobalBooks: function () {
+		App.Collections.globalBooks = new App.Collections.GlobalBooks();
+		App.Promises.globalBooks = App.query.allGlobalBooks()
+			.then(function (globalBooks) {
+				console.log('globalBooks set');
+				App.Collections.globalBooks.reset(globalBooks);
+				//Gets the names of the globalBooks and re-init typeahead
+				var bookNames = App.Collections.globalBooks.pluck('name');
+				App.initTypeahead(bookNames);
+			},
+			function (error) {
+				console.log("Error: " + error.code + " " + error.message);
+			});
+	},
+    initTypeahead: function(books){
+        if (!books) {
+            var books =  [ "Abstract","Ambigram","Americana","Anchor","Angel","Animal","Ankle","Aquarius","Aries","Arm","Armband","Art","Asian","Astrology","Aztec","Baby","Back","Barcode","Beauty","Bible","Bicep","Biomechanical","Bioorganic","Birds","Black","Black And Gray","Blossom","Blue","Boats","Bold","Bright","Bubble","Buddha","Bugs","Bull","Butterfly","Cancer","Capricorn","Caricature","Cartoon","Cartoons","Cat","Celebrity","Celestial","Celtic","Cherry","Chest","Chinese","Christian","Classic","Clover","Coffin","Color","Comics","Couples","Cover Up","Creatures","Cross","Culture","Dagger","Dc","Death","Demon","Design","Detail","Devil","Disney","Dog","Dolphin","Dotwork","Dove","Dragon","Dragonfly","Dream Catcher","Eagles","Ear","Egyptian","Eye","Face","Fairy","Fantasy","Feather","Fine Line","Fire","Flag","Flash","Flower","Foot","Forearm","Full Back","Full Leg","Gambling","Geisha","Gemini","Geometric","Gore","Graffiti","Graphic","Gray","Green","Gun","Gypsy","Haida","Half Sleeve","Hand","Hands","Hawk","Head","Heart","Hello Kitty","Hip","Hip Hop","Horror","Horse","Icon","Indian","Infinity","Insect","Irish","Jagged Edge","Japanese","Jesus","Joker","Kanji","Knife","Knots","Koi","Leg","Leo","Lettering","Libra","Lion","Lip","Lizard","Looney Toon","Love","Lower Back","Lyric","Macabre","Maori","Marvel","Mashup","Memorial","Mermaid","Mexican","Military","Minimalist","Moari","Money","Monkey","Monsters","Moon","Mummy","Music","Name","Native American","Nature","Nautical","Neck","New School","Numbers","Old School","Orange","Oriental","Other","Owl","Ox","Paint","Panther","Passage","Patriotic","Pattern","Peace","Peacock","People","Phoenix","Photograph","Photoshop","Piercing","Pig","Pinup","Pirate","Pisces","Polynesian","Portrait","Purple","Quote","Rabbit","Realistic","Red","Refined","Religion","Religious","Ribcage","Ring","Roman Numerals","Rooster","Rose","Sagittarius","Saint","Samoan","Samurai","Scorpio","Scorpion","Script","Sea","Sexy","Sheep","Shoulder","Side","Simple","Skull","Sleeve","Snake","Snakes","Space","Sparrow","Spider","Spirals","Spiritual","Sports","Star","Statue","Stomach","Sun","Surreal","Swallow","Symbols","Tahitian","Taurus","Tiger","Traditional","Transformers","Trash Polka","Tree","Tribal","Trinity Knot","Trinket","Unicorn","Upper Back","Viking","Virgo","Warrior","Water Color","Wave","Western","White Ink","Wings","Wizard","Wolf","Women","Wrist","Yellow","Zodiac","Zombie"];
+        }        
         this.booktt = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('books'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -266,80 +283,146 @@ App.Models.Add = Parse.Object.extend({
 });
 
 App.Models.Book = Parse.Object.extend({
-    className: "Book",
+    className: "Book"
 });
 
 App.Models.FeaturedArtist = Parse.User.extend({
     className: "User"
 });
 
+App.Models.GlobalBook = Parse.Object.extend({
+    className: "GlobalBook"
+});
 
 ///////// Collections
 App.Collections.Artists = Parse.Collection.extend({
-	initialize: function(){
-		this.page = 0;
-	},
-	model: App.Models.User
+    initialize: function(){
+        this.page = 0;
+    },
+    model: App.Models.User
 });
 
 App.Collections.Tattoos = Parse.Collection.extend({
-	initialize: function(){
-		this.page = 0;
-	},
-	model: App.Models.Tattoo,
-	getBooksByCount: function(count){
-		this.artistBooks = _.flatten(this.pluck('artistBooks')).byCount();
-		this.popularBooks = _.flatten(this.pluck('books')).byCount();
-		this.allBooks = this.artistBooks.concat(this.popularBooks)
-		return this.allBooks.slice(0, count || 10);
-	},
-	byBooks: function(books){
-		//Takes an array of books, returns the tattoos where the books are inlcuded.
+    initialize: function(){
+        this.page = 0;
+    },
+    model: App.Models.Tattoo,
+    getBooksByCount: function(count){
+        this.artistBooks = _.flatten(this.pluck('artistBooks')).byCount();
+        this.popularBooks = _.flatten(this.pluck('books')).byCount();
+        this.allBooks = this.artistBooks.concat(this.popularBooks);
+        return this.allBooks.slice(0, count || 10);
+    },
+    byBooks: function(books){
+        //Takes an array of books, returns the tattoos where the books are inlcuded.
 
-		return this.filter(function(tat){ 
-			return _.intersection(tat.attributes.books, books).length >= books.length; });
-	}
+        return this.filter(function(tat){ 
+            return _.intersection(tat.attributes.books, books).length >= books.length; });
+    }
 });
 
 App.Collections.Adds = Parse.Collection.extend({
-	model: App.Models.Add,
-	initialize: function(){
+    model: App.Models.Add,
+    initialize: function(){
 
-	},
-	getBooksByCount: function(count){
-		this.popularBooks = _.flatten(this.pluck('books')).byCount().slice(0, count || 10);
-		return this.popularBooks;
-	},
-	getTattoo: function(tattooId){
-		return this.filter(function(add){ return add.get('tattooId') === tattooId; });
-	},
-	getTattoos: function(){
-		this.tattoos = _.map(this.models, function(add){
-			add.attributes.tattoo.attributes.artistProfile = add.attributes.artistProfile;
-			add.attributes.tattoo.attributes.books = add.attributes.books;
-			return add.attributes.tattoo;
-		});
-		return this.tattoos;
-	},
-	getArtists: function(){
-		var allArtists = _.uniq( _.map( this.models, function(add){ return add.attributes.artistProfile; }), function(artist){return JSON.stringify(artist)});
-		this.artists = _.sortBy(allArtists, function(artist){ return artist.get('collectorCount') * -1; });
-		return this.artists;
-	}
+    },
+    getBooksByCount: function(count){
+        this.popularBooks = _.flatten(this.pluck('books')).byCount().slice(0, count || 10);
+        return this.popularBooks;
+    },
+    getTattoo: function(tattooId){
+        return this.filter(function(add){ return add.get('tattooId') === tattooId; });
+    },
+    getTattoos: function(){
+        this.tattoos = _.map(this.models, function(add){
+            add.attributes.tattoo.attributes.artistProfile = add.attributes.artistProfile;
+            add.attributes.tattoo.attributes.books = add.attributes.books;
+            return add.attributes.tattoo;
+        });
+        return this.tattoos;
+    },
+    getArtists: function(){
+        var allArtists = _.uniq( _.map( this.models, function(add){ return add.attributes.artistProfile; }), function(artist){return JSON.stringify(artist)});
+        this.artists = _.sortBy(allArtists, function(artist){ return artist.get('collectorCount') * -1; });
+        return this.artists;
+    }
 });
 
 App.Collections.Books = Parse.Collection.extend({
-	model: App.Models.Book,
-	initialize: function(){
+    model: App.Models.Book,
+    initialize: function(){
 
-	}
+    }
 });
 
 App.Collections.FeaturedArtists = Parse.Collection.extend({
-	model: App.Models.User,
-	page: 0
+    model: App.Models.User,
+    page: 0
 });
 
+App.Collections.GlobalBooks = Parse.Collection.extend({
+    model: App.Models.GlobalBook,
+    initialize: function(){
+
+    },
+    comparator: function(book){
+        return -book.get("count");
+    },
+    resetActive: function () {
+        // this.invoke('set', { active: false });
+        // Only reset models that are active, 
+        // attempt to minimise the number of events handlers being unnecessarily initiated
+        this.forEach(function (model) {
+        	if (model.get('active') === true) {
+				model.set('active', false);
+        	}
+        });
+    },
+    // getNext: function(booksArray, perPage){
+    //     if(booksArray){
+    //         var next = this.byMatches(booksArray);
+    //     } else {
+    //         var next = new App.Collections.GlobalBooks(this.available());
+    //     }
+    //     return next.first(perPage || 10);
+    // },
+    // available: function(){
+    //     //Returns the global books that have not been shown and are not active filters.
+    //     return this.filter(function(globalBook){
+    //         return !globalBook.attributes.active && !globalBook.attributes.shown || globalBook.get("active") === false && globalBook.get("shown") === false;
+    //     });
+    // },
+    // byMatches: function(bookArray){
+    //     //TODO ~ This needs to return multiple books matching fragments as well.
+    //     // Gets the available books that are in the second match (similar tattoos) of the active book filters and returns a new collection
+    //     return new App.Collections.GlobalBooks(this.available().filter(function(globalBook){ 
+    //         return _.intersection(globalBook.attributes.bookMatches, bookArray).length >= bookArray.length;
+    //     }));
+    // },
+    bySearch: function(query){
+        //TODO ~ returns the books that include the query fragment in their name
+    },
+    byBooks: function(bookArray){
+        //TODO ~ This needs to return multiple books based on the array, right now only returns 1.
+        //Takes an array of books, returns the globalBooks where the books are inlcuded.
+        return this.filter(function(globalBook){
+            return !$.inArray(globalBook.attributes.name, bookArray) });
+    },
+    getActiveBooks: function(){
+        return this.filter(function(globalBook) {
+            return globalBook.get("active") === true;
+        });
+    },
+    // Accepts array of book names
+    // Return an array of global book models
+    booksByName: function (names) {
+		return _.map(names, function (name) {
+			return this.filter(function (model) {
+				return model.get('name') === name;
+			})[0];
+		}, this);
+    }
+});
 
 ///////// Views
 App.Views.Nav = Parse.View.extend({
@@ -472,156 +555,387 @@ App.Views.Explore = Parse.View.extend({
 App.Views.BookFilter = Parse.View.extend({
     template: _.template($("#bookFilterTemplate").html()),
     el: '.bookFilterHeader',
-    initialize: function(options){
-        console.log('Tattos page init with = ');///clear
+    initialize: function (options){
+        App.bookfilter = this;///clear
+        console.log('Book filter init');///clear
 
-        _.bindAll(this, 'disable', 'shiftRight', 'shiftLeft', 'showBookFilter', 'hideBookFilter', 'focusIn', 'render', 'addBookSuggestion');
+        _.bindAll(this, 'disable', 'typeaheadInitialize', /*'setBooks',*/ 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'scrollerInitialize', 'render');
+
+        this.bookFilterShown = false;
+        this.query = this.options.initialBooks ? this.options.initialBooks.split("-").join(" ").split('+') : [];
+
+        this.collection = App.Collections.globalBooks;
+        this.collection.resetActive();  // Need to reset active otherwise can't re-select previous book once re-initialized
+        this.collection.on('change:active', this.updateBookFilter, this);
+
         App.on('app:keypress', this.focusIn);
+        
+        this.initialized = true;
+	},
+	disable: function () {
+		if (this.initialized) {
+			console.log('filter header disabled');///clear
+			if (this.globalBookManagerView) { this.globalBookManagerView.disable(); }
+			if (this.activeBookFilterManagerView) { this.activeBookFilterManagerView.disable(); }
 
-        if (this.options.initialBooks) {
-            console.log('bookFilter init with books');///clear
-            var that = this;
+			App.off('app:keypress', this.focusIn);
+			this.collection.off('change:active', this.updateBookFilter);
 
-            this.render = _.wrap(this.render, function(render) { 
-                var booksArray = this.options.initialBooks.split("-").join(" ").split('+');
-                render().setBooks(booksArray);
-                return that;
-            });
-        }
-        else {
-            var that = this;
-            this.render = _.wrap(this.render, function(render) { 
-                render();
-                that.queryReset();
-                return that;
-            });
-        }
-
-    },
-    disable: function () {
-        console.log('filter header disabled');///clear
-        App.off('app:keypress', this.focusIn);
-    },
+			this.initialized = false;
+		}
+	},
     focusIn: function(){
-        this.$('input.bookFilterInput').focus();
+        if (this.bookFilterShown) {
+            this.$('input.bookFilterInput').focus();
+        } else if (!this.bookFilterShown){
+            this.showBookFilter();
+            this.$('input.bookFilterInput').focus();
+        }
     },
-    setBooks: function(booksArray){
+    updateBookFilter: function (book){
+        console.log('updateBookFilter called from the bookFilter view');///clear
+        console.log(book);///clear
+        if (book.get('active') === true) {
+            this.activateBookFilter(book);
+        } else if (book.get('active') === false){
+            this.disableBookFilter(book);
+        }
+    },
+    activateBookFilter: function(book){
+        //TODO ~ Remove this.query, use _.pluck on the activeBookFilter collection in ArtistsPage/TattoosPage
+        this.$('.tattoosTitle').html('');
         var that = this;
-        _.each(booksArray, function(book){
-            that.addQueryTitle(book);
-        });
-        this.query = booksArray;
-        App.trigger('app:book-update');
+        var bookName = book.get('name');
+        var addUniqueBook = function(book) {
+            console.log('Add book to query and trigger update from activateBookFilter in the bookFilter view');///clear
+            that.query.push(bookName);
+            App.trigger('books:book-update', that.query);
+        }
+        var limit = 4;
+        //Prevents duplicate books from being added
+        //TODO ~ There should be no duplicates... Delete?
+        if($.inArray(bookName, this.query) > -1) {
+            this.$( "span.filterTitle:contains("+bookName+")" ).animate({
+                opacity: 0
+            }, 200).delay(400).animate({
+                opacity: 1
+            }, 600);
+        } else {
+            console.log('Adding UNIQUE BOOK from activeBookFilter of the book filter view');///clear
+            addUniqueBook(book);
+        }
+    },
+    disableBookFilter: function(book){
+        this.query = _.without(this.query, book.get('name'));
+        App.trigger('books:book-update', this.query);
+        if(this.activeBookFilterManagerView.collection.getActiveBooks().length === 0){
+            this.$('.tattoosTitle').html(this.options.title);
+        }
+    },
+    scrollerInitialize: function(){
+        this.$('.bookSuggestionScroll').slick({
+          lazyLoad: 'ondemand',
+          infinite: false,
+          slidesToShow: 5,
+          slidesToScroll: 4,
+          centerMode: false,
+          variableWidth: true,
+          speed: 750,
+          nextArrow: this.$('.arrow.right'),
+          prevArrow: this.$('.arrow.left'),
+          responsive: [
+            {
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 4,
+                slidesToScroll: 3,
+              }
+            },
+            {
+              breakpoint: 768,
+              settings: {
+                arrows: false,
+                speed: 300,
+                slidesToShow: 3,
+                slidesToScroll: 2
+              }
+            }
+          ]
+        }).slickPrev();
     },
     typeaheadInitialize: function(){
         var that = this;
         var input = this.$('input.bookFilterInput');
-        input.typeahead(null, {
-            name: 'books',
-            displayKey: 'books',
-            source: App.booktt.ttAdapter(),
-            templates: {
-                // empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
-                // suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
-            }
+        input.typeahead({
+                highlight: false,
+                minLength: 1
+            },
+            {
+                name: 'books',
+                displayKey: 'books',
+                source: App.booktt.ttAdapter(),
+                templates: {
+                    // empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
+                    // suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
+                }
         }).attr('placeholder','Enter any book: style, flavor or placement.').on('typeahead:selected', function (obj,datum) {
             that.addQuery(datum.books);
             input.typeahead('val', '');
         }).on('focus', function () {
             that.$('.tt-input').attr('placeholder','');
         }).on('blur', function () {
-            that.$('.tt-input').attr('placeholder','Enter any book: style, flavor or placement.').val('');
+            that.$('.tt-input').attr('placeholder','Enter any book: style, flavor or placement.');
         });
     },
     events: {
-        'click .arrow.right': 'shiftRight',
-        'click .arrow.left': 'shiftLeft',
-        'click .toggleBookFilter': 'showBookFilter',
+        'click .toggleBookFilter.inactive': 'showBookFilter',
         'click .toggleBookFilter.active': 'hideBookFilter',
-        'click .filterTitle': 'removeQuery',
-        'click .bookSuggestion': 'addBookSuggestion'
+        'keyup': 'keypressFilterTimer',
+        'click .resetSearch': 'unfilterBooks'
     },
-    addPopularBooks: function(){
-        //TODO ~ Popular books should be dynamic from the server. It should continually add book suggestions as the user scrolls.
-        $('.bookSuggestionScroll').append(_.template($("#popularBookDemo").html()));
+    keypressFilterTimer: function(e){
+        if ( e.which === 13 ) {
+            this.filterBooks();
+        } else {
+            this.initSearchTimer(this);
+        }
     },
-    shiftRight: function(){
-        console.log('shiftRight triggered');///clear
-        this.$(".bookSuggestionScroll").animate({scrollLeft: '+='+$('.bookSuggestionScroll').width()}, 750);
-
-        //TODO ~ checks if there is enough books in the slider, adds popular ones if not.
-        this.addPopularBooks();
+    initSearchTimer: _.debounce(function(){ this.filterBooks(); }, 250),
+    filterBooks: function(e){
+        var that = this;
+        var query = that.$('input.bookFilterInput').val().toLowerCase();
+        // var query = that.$('input.bookFilterInput.tt-input').val().toLowerCase(); // needs to specify .tt-input when typeahead is activated ///clear 
+        if (query.length > 0) {
+            // Filters down the book suggestions that match the search fragment
+            this.$('.bookSuggestionScroll').slickFilter(function( index ) {
+                var book = this.textContent.toLowerCase();    
+                return book.indexOf(query) >= 0;
+            });
+            // Gets the length of the results
+            var resultCount = this.$('.bookSuggestion:not(.slick-cloned)').length;
+            // Determines if the results are plural or singular
+            if(resultCount !== 1){
+                var s = 's'
+            } else {
+                var s = ''
+            };
+            this.$('.slick-track').prepend(_.template('<div class="btn-tag bookSuggestion resetSearch"><span>'+resultCount+' Result'+s+':</span><a>Restart search</a></div>'));
+            // Unused full set of blank book suggestions ///clear
+            // this.$('.slick-track').append(_.template('<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>'+'<div class="btn-tag bookSuggestion"></div>')); ///clear
+        } else {
+            this.unfilterBooks();
+        }
     },
-    shiftLeft: function(){
-        console.log('shiftLeft triggered');///clear
-        this.$(".bookSuggestionScroll").animate({scrollRight: '+='+$('.bookSuggestionScroll').width()}, 750);
-        //TODO ~ checks if there is no room to scroll, hides the arrow.
+    unfilterBooks: function(){
+        this.$('input.bookFilterInput').val('');
+        this.$('.bookSuggestionScroll').slickUnfilter();
     },
     showBookFilter: function(){
         console.log('showBookFilter triggered');///clear
-        console.log(this);//clear
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('active');
+        this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('inactive');
         this.$('.bookFilterContainer').slideDown();
         this.$('.toggleBookFilter').html('Hide Filters');
+        this.bookFilterShown = true;
+
+        // var initializeGlobalBooks = _.once(this.globalBookManagerView.updateBooks);
+        // initializeGlobalBooks();
+
+        // var initializeTypeahead = _.once(this.typeaheadInitialize);
+        // initializeTypeahead();
     },
     hideBookFilter: function(){
         this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('active');
+        this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('inactive');
         this.$('.bookFilterContainer').slideUp();
         this.$('.toggleBookFilter').html('Show Filters');
-    },
-    addQuery: function(query){
-        var that = this;
-        var addUniqueBook = function(query) {
-            that.query.push(query);
-            that.addQueryTitle(query);
-            App.trigger('app:book-update');
-        }
-        var limit = 4;
-        if($.inArray(query, this.query) > -1) {
-            this.$( "span.filterTitle:contains("+query+")" ).animate({
-                opacity: 0
-            }, 200).delay(400).animate({
-                opacity: 1
-            }, 600);
-        } 
-        else if (this.query.length >= limit){
-            addUniqueBook(query);
-            this.query = this.query.slice(this.query.length-limit, this.query.length);
-            this.$('.filterTitle:eq('+(this.query.length-limit)+')').remove();
-        }
-        else {
-            addUniqueBook(query);
-        }
-    },
-    addQueryTitle: function(title){
-        this.$('.tattoosTitle').html('');
-        this.$('.filterTitles').append('<span class="filterTitle">'+title+'</span>');
-    },
-    removeQuery: function(e){
-        this.query = _.without(this.query, e.currentTarget.textContent);
-        App.trigger('app:book-update');
-        e.currentTarget.remove();
-        if(this.query.length === 0){
-            this.$('.tattoosTitle').html(this.options.title);
-        }
-    },
-    addBookSuggestion: function(e){
-        e.currentTarget.remove();
-        this.addQuery($(e.currentTarget)[0].textContent);
+        this.bookFilterShown = false;
     },
     queryReset: function(){
         this.query = [];
-        $('.reset').fadeOut();
+        this.collection.resetActive();
+        // $('.reset').fadeOut();
         this.$('.filterTitle').remove();
         this.$('.tattoosTitle').html(this.options.title);
         return this;
     },
+	render: function () {
+		var self = this;
+		var templateRendered = $(this.el).html(this.template()).promise();
+		$.when(templateRendered, App.Promises.globalBooks)
+			.done(function _renderChildViews() {
+
+				self.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({ collection: self.collection, el: self.$('.filterTitles') });
+
+				self.globalBookManagerView = new App.Views.GlobalBookManager({ collection: self.collection, el: self.$('.bookSuggestionScroll') });
+				self.globalBookManagerView.showAll();
+
+				self.scrollerInitialize();
+			})
+			.done(function _setInitialBooks() {
+
+				var bookModels = self.collection.booksByName(self.query);
+				if (bookModels) {
+					for (var i = 0; i < bookModels.length; i++) {
+						bookModels[i].set('active', true);
+					}
+				}
+			});
+
+		return this;
+	}
+});
+
+App.Views.ActiveBookFilterManager = Parse.View.extend({
+    el: '.filterTitles',
+    initialize: function(){
+        _.bindAll(this, 'disable', 'disableChildViews', 'renderBookTitle');
+        this.childViews = [];
+        this.collection.on('change:active', this.renderBookTitle, this);
+        this.initialized = true;
+    },
+    disable: function() {
+    	if (this.initialized) {
+    		this.disableChildViews();
+	        this.collection.off('change:active', this.renderBookTitle);
+	        this.initialized = false;
+	    }
+    },
+    disableChildViews: function () {
+    	for (var i = 0; i < this.childViews.length; i++) {
+            this.childViews[i].disable();
+        }
+        this.childViews = [];
+    },
+    renderBookTitle: function (book) {
+        if (book.attributes.active === true) {
+        	// Add the new view
+            var bookTitle = new App.Views.ActiveBookFilter({model: book});
+            this.$el.append(bookTitle.render().el);
+            this.childViews.push(bookTitle);
+        }
+        else {
+        	// Find the view to remove
+        	for (var i = 0; i < this.childViews.length; i++) {
+	            if (book === this.childViews[i].model) {
+	            	this.childViews[i].disable();
+	            	this.childViews.splice(i, 1);
+	            }
+	        }
+        }
+    }
+});
+
+App.Views.ActiveBookFilter = Parse.View.extend({
+    template: _.template('<%= name %>'),
+    className: 'filterTitle',
+    tagName: 'span',
+    initialize: function () {
+        _.bindAll(this, 'disable', 'removeBookTitle', 'render');
+        this.model.on('change:active', this.removeBookTitle, this);
+        this.initialized = true;
+    },
+    disable: function () {
+    	if (this.initialized) {
+        	this.model.off('change:active', this.removeBookTitle);
+        	this.initialized = false;
+        }
+    },
+    events: {
+        'click': 'removeBookTitle',
+    },
+    removeBookTitle: function () {
+        this.disable();
+        this.model.set('active', false);
+        this.remove();
+    },
+    render: function () {
+        var attributes = this.model.toJSON();
+        $(this.el).append(this.template(attributes));
+        return this;
+    }
+});
+
+App.Views.GlobalBookManager = Parse.View.extend({
+    el: '.bookSuggestionScroll',
+    initialize: function(){
+        console.log('GlobalBookManager collection length is '+ this.collection.length);///clear
+
+        _.bindAll(this, 'disable', 'disableChildViews', 'showAll', 'showOne');
+        this.childViews = [];
+        this.initialized = true;
+    },
+    disable: function(){
+    	if (this.initialized) {
+    		this.disableChildViews();
+    		this.initialized = false;
+    	}
+    },
+    disableChildViews: function () {
+    	for (var i = 0; i < this.childViews.length; i++) {
+            this.childViews[i].disable();
+        }
+        this.childViews = [];
+    },
+    showAll: function(){
+        this.disableChildViews();
+        this.collection.each(function(book){
+            this.showOne(book);
+        }, this);
+    },
+    showOne: function(book){
+        var book = new App.Views.GlobalBookThumbnail({model: book});
+        this.$el.append(book.render().el);
+        this.childViews.push(book);
+    }
+});
+
+App.Views.GlobalBookThumbnail = Parse.View.extend({
+    template: _.template('<span><%= name %></span>'+'<img data-lazy=""/>'),
+    className: 'btn-tag bookSuggestion',
+    initialize: function(){
+        _.bindAll(this, 'disable', 'updateBookFilterClass', 'toggleBookFilter', 'render');
+        this.model.on('change:active', this.updateBookFilterClass, this);
+        this.initialized = true;
+    },
+    disable: function () {
+    	if (this.initialized) {
+    		this.model.off('change:active', this.updateBookFilterClass);
+    		this.initialized = false;	
+    	}
+    },
+    events: {
+        'click': 'toggleBookFilter',
+    },
+    updateBookFilterClass: function(){
+        //TODO / QUESTION ~ Initial click does not always add active glass.
+        console.log(this.model);///clear
+        console.log('updateBookFilterClass triggered from the GlobalBookThumbnail View');///clear
+        if (this.model.get('active') === false) {
+            this.$el.removeClass('active');
+        } else if (this.model.get('active') === true){
+            this.$el.addClass('active');
+        }
+    },
+    toggleBookFilter: function(){
+        console.log('toggleBookFilter triggered from the GlobalBookThumbnail View');///clear
+        console.log(this.model)///clear
+        if (this.model.get('active') === true) {
+            console.log('addBookFilter triggered from the GlobalBookThumbnail View');///clear
+            this.model.set('active', false);
+        } else {
+            console.log('removeBookFilter triggered from the GlobalBookThumbnail View');///clear
+            this.model.set('active', true);
+        }
+    },
     render: function(){
-        var html = this.template();
-        $(this.el).html(html);
+        var attributes = this.model.toJSON();
+        $(this.el).append(this.template(attributes));
 
-        this.typeaheadInitialize();
-
+        //Get's a random image from the array and assigns it as the lazy image loader
+        var picCount = this.model.attributes.pics.length;
+        var randomPicIndex = Math.floor(Math.random() * picCount);
+        this.$('img').attr('data-lazy', this.model.attributes.pics[randomPicIndex]._url);
         return this;
     }
 });
@@ -634,19 +948,28 @@ App.Views.TattoosPage = Parse.View.extend({
 
         if (options && options.books) {
             console.log('tattoosPage init with books');///clear
-            var that = this;
+            // var that = this;
             this.initialBooks = options.books;
         }
 
-        _.bindAll(this, 'disable', 'scrollChecker', 'render', 'bookUpdate');
-        App.on('app:scroll', this.scrollChecker);
-        App.on('app:book-update', this.bookUpdate);
+        _.bindAll(this, 'disable', 'scrollChecker', 'render', 'bookUpdate', 'showReset', 'loadMore');
+        this.collection = new App.Collections.Tattoos();
 
+        App.on('app:scroll', this.scrollChecker);
+        App.on('books:book-update', this.bookUpdate);
+
+        this.initialized = true;
     },
     disable: function () {
-        console.log('tattoos page disabled');///clear
-        App.off('app:scroll', this.scrollChecker);
-        App.off('app:book-update', this.bookUpdate);
+    	if (this.initialized) {
+			console.log('tattoos page disabled');///clear
+			if (this.bookFilterView) { this.bookFilterView.disable(); }
+
+			App.off('app:scroll', this.scrollChecker);
+			App.off('books:book-update', this.bookUpdate);
+
+			this.initialized = false;
+		}
     },
     events: {
 
@@ -655,72 +978,88 @@ App.Views.TattoosPage = Parse.View.extend({
         if (this.moreToLoad && $('#tattoosPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
             this.moreToLoad = false;
             this.collection.page++;
-            this.loadMore();
+            this.loadMore(false);
         }
     },
     bookUpdate: function(){
-        this.collection.reset();
-        this.collection.page = 0;
-        this.moreToLoad = true;
-        this.loadMore();
+        console.log('TattoosPage view called bookUpdate with this:');///clear
+        console.log(this);///clear
+        this.loadMore(true);
 
         var booksRoute;
-        if (this.bookFilterView.query) {
+        if (this.bookFilterView && this.bookFilterView.query) {
             booksRoute = this.bookFilterView.query.join('+').split(" ").join("-");
         } 
         Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
     },
-    loadMore: function(){
+
+    loadMore: _.debounce(function (reset) {
         var that = this;
-        // var query = new Parse.Query('Tattoo');
-        // if(this.query.length > 0) {
-        //  query.containsAll("books", this.query);
-        // }
-        // var skip = this.collection.page * 40;
-        // query.skip(skip);
-        // query.limit(40);
-        // query.include('artistProfile');
-     //     query.descending('updatedAt');
-        // query.find({
-        // var filters = [{ name: 'books', data: this.query }];
+        console.log('*** Loadmore triggered with: ' + reset);///clear
+        if (reset) {
+            this.collection.reset();
+            this.collection.page = 0;
+            this.moreToload = true;
+        }
+
         var options = {
             skip: this.collection.page * 40,
             limit: 40
         };
-        App.query.tattoos(this.bookFilterView.query, options)
+        var books = this.bookFilterView ? this.bookFilterView.query : [];
+        App.query.tattoos(books, options)
             .then(function (tats) {
-                    that.collection.add(tats);
-                    if ( tats.length === 0) {
-                        that.moreToLoad = false;
-                        that.$('.reset').html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
-                        that.$('.reset').on('click', function(){
-                            that.bookFilterView.queryReset();
-                            App.trigger('app:book-update');
-                        }).fadeIn();
-                    } else if (tats.length < 40) {
-                    // that.$el.append('<div class="end" style="display: none"><img src="img/yt-featuredend.png"></div>');
-                        that.moreToLoad = false;
-                    } else {
-                        that.moreToLoad = true;
-                    }
-                },
-                function (error) {
-                    console.log(error);
+                that.collection.add(tats);
+                that.showReset();
+                
+                if (tats.length < 40) {
+                    that.moreToLoad = false;
+                } else {
                     that.moreToLoad = true;
-            });
-    },
+                }
+            },
+            function (error) {
+                console.log(error);
+                that.moreToLoad = true;
+        });
+    }, 500),
+
+	showReset: function () {
+		var self = this;
+		if (this.collection.length === 0) {
+			this.$('.reset')
+				.html('<h5>No tattoos with those books.</h5><button class="btn-submit">Reset filters</button>')
+				.fadeIn()
+				.on('click', function () {
+					self.bookFilterView.queryReset();
+					self.hideReset();
+				});
+		}
+		else {
+			this.hideReset();
+		}
+	},
+
+	hideReset: function () {
+		if ($('.reset').length > 0) {
+			$('.reset').fadeOut();
+		}
+	},
+
     render: function(){
+        var self = this;
         var html = this.template();
-        $(this.el).html(html);
+        $(this.el).html(html).promise().done(function () {
 
-        this.collection = new App.Collections.Tattoos();
-        this.tattoosView = new App.Views.Tattoos({collection: this.collection, el: this.$('.tattoos')});
-        this.tattoosView.render();
+            self.tattoosView = new App.Views.Tattoos({ el: self.$('.tattoos'), collection: self.collection });
+            self.tattoosView.render();
 
-        this.bookFilterView = new App.Views.BookFilter({el: this.$('.bookFilterHeader'), initialBooks: this.initialBooks, title: 'Tattoos'});
-        console.log(this.initialBooks);///clear
-        this.bookFilterView.render();
+            self.bookFilterView = new App.Views.BookFilter({ el: self.$('.bookFilterHeader'), initialBooks: self.initialBooks, title: 'Tattoos' });
+            self.bookFilterView.render();
 
+            self.loadMore(true);
+        });
+        
         return this;
     }
 });

@@ -49,7 +49,7 @@
                   <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                   <li><a href="/tattoos" class="main-nav-item"><i class="flaticon-black373"></i>Tattoos</a></li>
                   <li class="dropdown">
-                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
+                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><i  class="flaticon-user56"></i><%= Parse.User.current().escape("username") %></a>
                     <ul class="dropdown-menu">
                       <button class="btn-submit" href="/myprofile">View Profile</button>
                       <li><a href="/myprofile/collection"><i class="flaticon-books8 pull-right"></i>Collection</a></li>
@@ -67,7 +67,7 @@
                   <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                   <li><a href="/tattoos" class="main-nav-item"><i class="flaticon-black373"></i>Tattoos</a></li>
                   <li class="dropdown">
-                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><%= Parse.User.current().escape("username") %> <b class="caret"></b></a>
+                    <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><i  class="flaticon-user56"></i><%= Parse.User.current().escape("username") %></a>
                     <ul class="dropdown-menu">
                       <li><a href="/myprofile/upload"><i class="flaticon-camera4 pull-right"></i>Upload Tattoo</a></li>
                       <li class="divider"></li>
@@ -276,7 +276,9 @@
         <div class="container">
           <div class="row filterTitles">
             <div class="filterOptions">
-              <button class="btn-submit toggleBookFilter">Book Filters</button>
+              <button class="btn-tag toggleBookFilter inactive">Book Filters
+                <b class="caret"></b>
+              </button>
             </div>
             <span class="tattoosTitle">Tattoos</span>
           </div>
@@ -286,31 +288,18 @@
               <a class="arrow left"><img src="img/icon-arrow-left.png"></a>
               <a class="arrow right"><img src="img/icon-arrow-right.png"></a>
               <div class="bookSuggestionScroll">
-                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-color.jpg');"><span>Water Color</span></div>
-                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-real.jpg');"><span>Color</span></div>
-                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-b&g.jpg');"><span>Black And Gray</span></div>
-                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-Traditional.jpg');"><span>Traditional</span></div>
-                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-real.jpg');"><span>Realistic</span></div>
-                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-portrait.jpg');"><span>Portrait</span></div>
-                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-j.jpg');"><span>Japanese</span></div>
-                <div class="btn-tag bookSuggestion" style="background-image: url('img/book-animal.jpg');"><span>Animal</span></div>
+              
               </div>
             </div>
 
             <div class="filterInputContainer">
-              <input type="text" class="typeahead bookFilterInput grayInput" placeholder="">
+              <input type="text" class="typeahead bookFilterInput grayInput" placeholder="Enter any book: style, flavor or placement.">
             </div>
 
           </div>  
         </div>
       </div>
     </script>
-
-    <!-- Popular book-->
-    <script type="text/html" id="popularBookDemo">
-      <div class="btn-tag bookSuggestion" style="background-image: url('<%= imageSmall %>');"><span><%= name %></span></div>
-    </script>
-
 
     <!-- Tattoos page -->
     <script type="text/html" id="tattoosPageTemplate">
@@ -1289,9 +1278,11 @@
     <script src="js/libs/typeahead.bundle.js"></script>
     <script src="js/libs/bootstrap-tagsinput.js"></script>
     <script src="js/libs/backbone.modal.js"></script>
+    <script src="js/libs/slick.js"></script>
     <!--<script src="js/libs/typeahead.bundle.min.js"></script>
     <script src="js/libs/bootstrap-tagsinput.min.js"></script>
-    <script src="js/libs/backbone.modal-min.js"></script>  -->
+    <script src="js/libs/backbone.modal-min.js"></script>
+    <script src="js/libs/slick.min.js"></script>  -->
     <script src="js/yt-artistblog.js"></script>
     <script src="js/yt-shared.js"></script>
 

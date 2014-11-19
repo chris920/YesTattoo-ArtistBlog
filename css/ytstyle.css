@@ -4023,10 +4023,10 @@ a:focus {
     border-top: 4px solid #c42020;
     border-bottom: 0px solid transparent !important; }
 
-.navs .dropdown-menu {
+#navs .dropdown-menu {
   padding: 20px;
   min-width: 200px; }
-  .navs .dropdown-menu .btn-submit {
+  #navs .dropdown-menu .btn-submit {
     width: 100%;
     margin-bottom: 10px; }
 
@@ -4759,32 +4759,30 @@ span.hover-content {
   background-color: #1a1a1a;
   -webkit-transition: all 0.8s ease;
   transition: all 0.8s ease; }
-#tattoosPage .filterTitles, #artistsPage .filterTitles {
-  padding: 20px 0px; }
-  #tattoosPage .filterTitles .tattoosTitle, #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .tattoosTitle, #artistsPage .filterTitles .filterTitle {
-    position: inline-block;
-    font-size: 28px; }
-    @media screen and (min-width: 768px) {
-      #tattoosPage .filterTitles .tattoosTitle, #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .tattoosTitle, #artistsPage .filterTitles .filterTitle {
-        font-size: 45px; } }
-  #tattoosPage .filterTitles .tattoosTitle, #artistsPage .filterTitles .tattoosTitle {
-    color: white; }
-  #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .filterTitle {
-    color: white;
-    -webkit-transition: all 0.4s ease;
-    transition: all 0.4s ease; }
-    #tattoosPage .filterTitles .filterTitle:nth-child(n + 4):before, #artistsPage .filterTitles .filterTitle:nth-child(n + 4):before {
-      content: " + ";
-      color: #4d4d4d; }
-    #tattoosPage .filterTitles .filterTitle:hover, #artistsPage .filterTitles .filterTitle:hover {
-      -webkit-transition: all 0.8s ease;
-      transition: all 0.8s ease;
-      text-decoration: line-through;
-      color: #c42020;
-      cursor: pointer; }
+#tattoosPage .filterTitles .tattoosTitle, #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .tattoosTitle, #artistsPage .filterTitles .filterTitle {
+  position: inline-block;
+  font-size: 28px; }
+  @media screen and (min-width: 768px) {
+    #tattoosPage .filterTitles .tattoosTitle, #tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .tattoosTitle, #artistsPage .filterTitles .filterTitle {
+      font-size: 45px; } }
+#tattoosPage .filterTitles .tattoosTitle, #artistsPage .filterTitles .tattoosTitle {
+  color: white; }
+#tattoosPage .filterTitles .filterTitle, #artistsPage .filterTitles .filterTitle {
+  color: white;
+  -webkit-transition: all 0.4s ease;
+  transition: all 0.4s ease; }
+  #tattoosPage .filterTitles .filterTitle:nth-child(n + 4):before, #artistsPage .filterTitles .filterTitle:nth-child(n + 4):before {
+    content: " + ";
+    color: #4d4d4d; }
+  #tattoosPage .filterTitles .filterTitle:hover, #artistsPage .filterTitles .filterTitle:hover {
+    -webkit-transition: all 0.8s ease;
+    transition: all 0.8s ease;
+    text-decoration: line-through;
+    color: #c42020;
+    cursor: pointer; }
 
 .filterInputContainer {
-  margin: 40px 0px; }
+  margin: 10px 0px; }
 
 .filterInputContainer, .filterInputContainer > span.twitter-typeahead {
   width: 100%;
@@ -4793,7 +4791,7 @@ span.hover-content {
   .filterInputContainer i, .filterInputContainer > span.twitter-typeahead i {
     padding-left: 15px; }
   .filterInputContainer input, .filterInputContainer > span.twitter-typeahead input {
-    padding: 20px;
+    padding: 15px;
     min-width: 100%; }
     @media screen and (min-width: 768px) {
       .filterInputContainer input, .filterInputContainer > span.twitter-typeahead input {
@@ -4808,9 +4806,10 @@ span.hover-content {
 
 .arrow {
   position: absolute;
-  width: 10%;
+  width: 8%;
   top: 0px;
-  bottom: 0px; }
+  bottom: 0px;
+  z-index: 1000; }
   .arrow img {
     position: absolute;
     top: 45%;
@@ -4851,12 +4850,20 @@ span.hover-content {
     border-bottom: solid 4px transparent; }
 
 button.toggleBookFilter, button.toggleMap {
-  background-color: #c42020;
+  border-color: #c42020;
+  color: #c42020;
+  border-width: 2px;
   float: right;
+  padding: 5px 10px;
   margin: 10px; }
   @media screen and (min-width: 768px) {
     button.toggleBookFilter, button.toggleMap {
+      padding: 10px 20px;
       margin: 20px 10px; } }
+  button.toggleBookFilter.active, button.toggleMap.active {
+    border-color: #1a1a1a;
+    background-color: #1a1a1a;
+    color: gold; }
 
 .profHead {
   min-height: 220px;
@@ -5595,19 +5602,60 @@ button.toggleBookFilter, button.toggleMap {
     white-space: nowrap; }
     .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion {
       display: inline-block;
-      width: 225px;
-      margin: 10px 0px;
-      padding: 40px 20px 80px 20px; }
+      width: 140px;
+      margin: 10px 5px;
+      padding: 40px 20px 40px 20px;
+      position: relative; }
+      .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion img {
+        width: 100%;
+        height: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        width: 100%;
+        min-height: 100%; }
       .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion span {
-        min-width: 225px;
-        -webkit-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
-        -moz-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
-        box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
+        padding: 30px 20px 40px 20px;
+        z-index: 1000;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        min-width: 100%;
+        min-height: 100%;
         background-color: rgba(0, 0, 0, 0.6);
         color: white;
-        font-size: 26px;
+        font-size: 18px;
         float: none;
         text-align: center; }
+      .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion.resetSearch a {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 5px;
+        margin: auto; }
+      .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion.active {
+        border: 1px solid #c42020;
+        -webkit-transition: all 0.3s ease;
+        transition: all 0.3s ease; }
+        .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion.active span {
+          background-color: transparent; }
+      @media screen and (min-width: 768px) {
+        .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion {
+          display: inline-block;
+          width: 225px;
+          padding: 40px 20px 60px 20px; }
+          .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion span {
+            min-width: 225px;
+            -webkit-box-shadow: 0px 0px 10px 20px rgba(0, 0, 0, 0.6);
+            -moz-box-shadow: 0px 0px 20px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0px 0px 10px 20px rgba(0, 0, 0, 0.6);
+            font-size: 26px; } }
 
 input.mainSearchInput {
   color: #c42020;

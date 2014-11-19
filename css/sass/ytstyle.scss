@@ -202,7 +202,7 @@ $footer-height-lg: $footer-height + 120px;
 	}
 }
 
-.navs .dropdown-menu {
+#navs .dropdown-menu {
 	padding: 20px;
 	min-width: 200px;
 	.btn-submit {
@@ -993,7 +993,7 @@ span.hover-content {
 		@include transition(all 0.8s ease);
 	}
 	.filterTitles {
-		padding: 20px 0px;
+		// padding: 20px 0px;
 		.tattoosTitle, .filterTitle {
 			position: inline-block;
 			font-size: 28px;
@@ -1095,7 +1095,7 @@ span.hover-content {
 	// }
 }
 .filterInputContainer {
-	margin: 40px 0px;
+	margin: 10px 0px;
 }
 .filterInputContainer, .filterInputContainer > span.twitter-typeahead  {
 	width: 100%;
@@ -1105,7 +1105,7 @@ span.hover-content {
 		padding-left: 15px;
 	}
 	input {
-		padding: 20px;
+		padding: 15px;
 		min-width: 100%;
 		@media screen and (min-width: $screen-sm) {
 			min-width: 50%;            
@@ -1122,9 +1122,10 @@ span.hover-content {
 }
 .arrow {
 	position: absolute;
-	width: 10%;
+	width: 8%;
 	top: 0px;
 	bottom: 0px;
+	z-index: 1000;
 	img {
 		position: absolute;
 		top: 45%;
@@ -1166,13 +1167,26 @@ span.hover-content {
 }
 
 button.toggleBookFilter, button.toggleMap {
-	background-color: $brand-primary;
-	// background-color: $gray-darker;
+	border-color: $brand-primary;
+	color: $brand-primary;
+	border-width: 2px;
 	float: right;
 
+	padding: 5px 10px;
 	margin: 10px;
 	@media screen and (min-width: $screen-sm) {
+		padding: 10px 20px;
 		margin: 20px 10px;
+	}
+	// .caret {
+	//     margin-left: auto;
+	//     margin-right: auto;
+	// 	display: block;
+	// }
+	&.active {
+		border-color: $gray-darker;
+		background-color: $gray-darker;
+		color: $brand-secondary;
 	}
 }
 
@@ -2057,19 +2071,74 @@ button.toggleBookFilter, button.toggleMap {
 		white-space: nowrap;	
 		.bookSuggestion {
 			display: inline-block;
-			width: 225px;
-			margin: 10px 0px;
-			padding: 40px 20px 80px 20px;
+			width: 140px;
+			margin: 10px 5px;
+			padding: 40px 20px 40px 20px;
+			position: relative;
+			img {
+				width: 100%;
+				height: auto;
+
+				position: absolute; 
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				margin: auto;
+				width: 100%;
+				min-height: 100%;
+
+			}
 			span {
-				min-width: 225px;
-				-webkit-box-shadow: 0px 0px 20px 40px $black-trans;
-				-moz-box-shadow: 0px 0px 20px 40px $black-trans;
-				box-shadow: 0px 0px 20px 40px $black-trans;
+				padding: 30px 20px 40px 20px;
+				z-index: 1000;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0; 
+				bottom: 0; 
+				margin: auto;
+				min-width: 100%;
+				min-height: 100%;
+
+				// -webkit-box-shadow: 0px 0px 20px 40px $black-trans;
+				// -moz-box-shadow: 0px 0px 20px 40px $black-trans;
+				// box-shadow: 0px 0px 20px 40px $black-trans;
 				background-color: $black-trans;
+				
 				color: white;
-				font-size: 26px;
+				font-size: 18px;
 				float: none;
 				text-align: center;
+			}
+			&.resetSearch {
+				a {
+					position: absolute; 
+					left: 0; 
+					right: 0; 
+					bottom: 5px; 
+					margin: auto;
+				}
+			}
+			&.active {
+				border: 1px solid $brand-primary;
+				@include transition(all 0.3s ease);
+				span {
+					background-color: transparent;
+				}
+			}
+			@media screen and (min-width: $screen-sm) {
+				display: inline-block;
+				width: 225px;
+				// margin: 10px 5px;
+				padding: 40px 20px 60px 20px;
+				span {
+					min-width: 225px;
+					-webkit-box-shadow: 0px 0px 10px 20px $black-trans;
+					-moz-box-shadow: 0px 0px 20px 40px $black-trans;
+					box-shadow: 0px 0px 10px 20px $black-trans;
+					font-size: 26px;
+				}
 			}
 		}
 	}
