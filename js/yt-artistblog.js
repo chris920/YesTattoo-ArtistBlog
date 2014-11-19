@@ -1,5 +1,3 @@
-
-
 Parse.$ = jQuery;
 
 Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK"); ///demo
