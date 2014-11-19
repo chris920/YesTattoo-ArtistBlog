@@ -481,11 +481,13 @@ App.Views.Search = Backbone.Modal.extend({
     disable: function () {
         console.log('search disabled');
         App.off('app:keypress', this.focusIn);
+
     },
     template: _.template($("#searchTemplate").html()),
     cancelEl: '.x',
     events: {
-        'keypress': 'keypressSearchTimer'
+        'keyup': 'keypressSearchTimer',
+        'click .artistBookSearch': 'artistBookSearch'
     },
     keypressSearchTimer: function(e){
         if ( e.which === 13 ) {
@@ -496,23 +498,56 @@ App.Views.Search = Backbone.Modal.extend({
     },
     initSearchTimer: _.debounce(function(){ this.searchAll(); }, 1250),
     searchAll: function(){
-        //TODO query all types
         console.log('searchAll triggered');///clear
         var that = this;
-        this.$('.resultsMessage').fadeOut( 800, function(){
-            that.searchTattoo();
-            that.searchArtist();
-            that.searchUser();          
+        this.query = this.$('.mainSearchInput').val();
+        this.$('.resultsMessage, .tattooResultsContainer, .artistResultsContainer, .userResultsContainer').fadeOut( 800, function(){
+            that.searchTattoos();
+            that.searchArtists();
+            that.searchUsers();
         });
     },
-    searchTattoo: function(){
+    searchTattoos: function(){
+        //TODO ~ Query the global books. Needs to be merged with book-filter branch
         this.$('.tattooResultsContainer').fadeIn();
     },
-    searchArtist: function(){
-        this.$('.artistResultsContainer').fadeIn();
+    searchArtists: function(){
+        var that = this;
+        App.query.searchArtists(this.query)
+            .then(function (artists) {
+                this.$('.artistResults').html('');
+                if (artists.length) {
+                    _.each( _.uniq(artists), function(artist){
+                        var artistResult = new App.Views.ArtistSearchResult({model: artist});
+                        that.$('.artistResults').append(artistResult.render().el);
+                    });
+                    that.$('.artistResultsContainer').fadeIn();
+                }
+            },
+            function (error) {
+                console.log("Error: " + error.code + " " + error.message);
+            });
     },
-    searchUser: function(){
-        this.$('.userResultsContainer').fadeIn();
+    searchUsers: function(){
+        var that = this;
+        App.query.searchUsers(this.query)
+            .then(function (users) {
+                this.$('.userResults').html('');
+                if (users.length) {
+                    _.each( _.uniq(users), function(user){
+                        var userResult = new App.Views.UserSearchResult({model: user});
+                        that.$('.userResults').append(userResult.render().el);
+                    });
+                    that.$('.userResultsContainer').fadeIn();
+                }
+            },
+            function (error) {
+                console.log("Error: " + error.code + " " + error.message);
+            });
+    },
+    artistBookSearch: function(){
+        //TODO ~ Init artists page with current query as the book filter
+        App.trigger('app:artists');
     },
     focusIn: function(){
         this.$('input.mainSearchInput').focus();
@@ -522,6 +557,38 @@ App.Views.Search = Backbone.Modal.extend({
     },
     cancel: function(){
         App.trigger('app:modal-close');
+    }
+});
+
+App.Views.UserSearchResult = Parse.View.extend({
+    template: _.template($("#userResultTemplate").html()),
+    events: {
+        'click': 'viewProfile'
+    },
+    viewProfile: function () {
+        App.trigger('app:user-profile-uname', this.model.get('username'));
+    },
+    render: function () {
+        var that = this;
+        var attributes = this.model.toJSON();
+        $(this.el).append(this.template(attributes));
+        return this;
+    }
+});
+
+App.Views.ArtistSearchResult = Parse.View.extend({
+    template: _.template($("#artistResultTemplate").html()),
+    events: {
+        'click': 'viewProfile'
+    },
+    viewProfile: function () {
+        App.trigger('app:artist-profile-uname', this.model.get('username'));
+    },
+    render: function () {
+        var that = this;
+        var attributes = this.model.toJSON();
+        $(this.el).append(this.template(attributes));
+        return this;
     }
 });
 
@@ -1714,7 +1781,9 @@ App.Views.Artist = Parse.View.extend({
 		var attributes = this.model.toJSON();
 		$(this.el).append(this.template(attributes));
 
-	 	var books = App.search ? App.search.searchingForView.query : [];
+	 	//TODO - getActiveBooks from globabl books collection
+        var books = [];
+
 	 	App.query.tattoosByProfile(this.model, books, { limit: 4 })
 	 		.then(function (tats) {
 		  		
@@ -2756,7 +2825,6 @@ App.Views.Book = Parse.View.extend({
     }
 });
 
-
 App.Views.Landing = Parse.View.extend({
     id: 'landing',
     landingTemplate: _.template($("#landingTemplate").html()),
@@ -3002,7 +3070,6 @@ App.Views.FeaturedArtistPage = Parse.View.extend({
         return this;
     }
 });
-
 
 App.Views.FeaturedArtist = Parse.View.extend({
     className: 'featuredArtist',
@@ -4207,7 +4274,7 @@ App.controller = (function () {
         // query.first().then(function (user) {
         App.query.usersProfile(uname)
             .then(function (user) {
-                if (user) {
+                if (user.length) {
                     controller.userProfile(user, tab);
                 } else {
                     // Parse.history.navigate('/', { trigger: true });
@@ -4237,7 +4304,7 @@ App.controller = (function () {
         // query.first().then(function (artist) {
         App.query.artistsProfile(uname)
             .then(function (artist) {
-                if (artist) {
+                if (artist.length) {
                     controller.artistProfile(artist, tab);
                 }
                 else {
@@ -4421,6 +4488,39 @@ App.query = (function () {
 		query.equalTo("username", uname);
 		return query.first();
 	}
+
+    /*
+        Query users, 
+        by username and name
+    */
+    query.searchUsers = function (query) {
+        var queryUsername = new Parse.Query(App.Models.UserProfile);
+        queryUsername.equalTo("username", query);
+
+        var queryName = new Parse.Query(App.Models.UserProfile);
+        queryName.matches("name", query);
+
+        var search = Parse.Query.or(queryUsername, queryName);
+        return search.find();
+    }
+
+    /*
+        Query artists,
+        by username, name and shop
+    */
+    query.searchArtists = function (query) {
+        var queryUsername = new Parse.Query(App.Models.ArtistProfile);
+        queryUsername.equalTo("username", query);
+
+        var queryName = new Parse.Query(App.Models.ArtistProfile);
+        queryName.matches("name", query);
+
+        var queryShop = new Parse.Query(App.Models.ArtistProfile);
+        queryShop.matches("shop", query);
+
+        var search = Parse.Query.or(queryUsername, queryName, queryShop);
+        return search.find();
+    }
 
 	/* 
 		Query users adds
