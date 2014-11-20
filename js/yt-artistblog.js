@@ -2716,7 +2716,7 @@ App.Views.UserProfile = Parse.View.extend({
         // addsQuery.include('tattoo');
         // addsQuery.include('artistProfile');
         // addsQuery.find({
-        App.query.getAdd(this.model.attributes.user)
+        App.query.adds(this.model.attributes.user)
             .then(function (adds) {
                 var addsCollection = new App.Collections.Adds(adds);
                 that.renderAdds(addsCollection);
