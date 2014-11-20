@@ -1,7 +1,7 @@
 Parse.$ = jQuery;
 
-// Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK"); ///demo
-Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live
+Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK"); ///demo
+// Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live
 
 var App = new (Parse.View.extend({
     Models: {},
@@ -501,15 +501,26 @@ App.Views.Search = Backbone.Modal.extend({
         console.log('searchAll triggered');///clear
         var that = this;
         this.query = this.$('.mainSearchInput').val();
-        this.$('.resultsMessage, .tattooResultsContainer, .artistResultsContainer, .userResultsContainer').fadeOut( 800, function(){
-            that.searchTattoos();
+        this.$('.resultsMessage, .bookResultsContainer, .artistResultsContainer, .userResultsContainer').fadeOut( 800, function(){
+            that.searchBooks();
             that.searchArtists();
             that.searchUsers();
         });
     },
-    searchTattoos: function(){
-        //TODO ~ Query the global books. Needs to be merged with book-filter branch
-        this.$('.tattooResultsContainer').fadeIn();
+    searchBooks: function(){
+        var that = this;
+        var bookResults = App.Collections.globalBooks.byBooks([this.query]);
+        if (bookResults.length) {
+            this.$('.bookResults').html('');
+            _.each( _.uniq(bookResults), function(book){
+                var bookModel = new App.Models.GlobalBook(book);
+                var bookResult = new App.Views.BookSearchResult({model: bookModel});
+                that.$('.bookResults').append(bookResult.render().el);
+            });
+            this.$('.bookResultsContainer').fadeIn();
+        } else {
+            this.$('.bookResultsContainer').fadeOut();
+        }
     },
     searchArtists: function(){
         var that = this;
@@ -557,6 +568,37 @@ App.Views.Search = Backbone.Modal.extend({
     },
     cancel: function(){
         App.trigger('app:modal-close');
+    }
+});
+
+App.Views.BookSearchResult = Parse.View.extend({
+    template: _.template('<span><%= name %></span>'),
+    className: 'btn-tag bookSuggestion',
+    initialize: function(){
+        _.bindAll(this, 'viewTattoos', 'render');
+    },
+    disable: function () {
+
+    },
+    events: {
+        'click': 'viewTattoos'
+    },
+    viewTattoos: function(){
+        console.log('viewTattoos triggered');///clear
+        var options = {
+            books: this.model.get('name')
+        };
+        App.trigger('app:tattoos', options);
+    },
+    render: function(){
+        var attributes = this.model.toJSON();
+        $(this.el).append(this.template(attributes));
+
+        //Get's a random image from the array and assigns it to the bg url
+        var picCount = this.model.attributes.pics.length;
+        var randomPicIndex = Math.floor(Math.random() * picCount);
+        $(this.el).attr('style',"background-image: url("+this.model.attributes.pics[randomPicIndex]._url+");");
+        return this;
     }
 });
 
