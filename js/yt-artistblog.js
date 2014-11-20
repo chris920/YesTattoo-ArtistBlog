@@ -4645,6 +4645,15 @@ App.query = (function () {
 		});
 	}
 
+    /*  
+        Query all Global Books, 
+    */
+    query.allGlobalBooks = function () {
+        var query = new Parse.Query('GlobalBook');
+        query.limit(1000);
+        return query.find();
+    }
+
 	return query;
 })();
 
