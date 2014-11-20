@@ -397,28 +397,31 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
     //         return _.intersection(globalBook.attributes.bookMatches, bookArray).length >= bookArray.length;
     //     }));
     // },
-    bySearch: function(query){
-        //TODO ~ returns the books that include the query fragment in their name
-    },
-    byBooks: function(bookArray){
-        //TODO ~ This needs to return multiple books based on the array, right now only returns 1.
-        //Takes an array of books, returns the globalBooks where the books are inlcuded.
-        return this.filter(function(globalBook){
-            return !$.inArray(globalBook.attributes.name, bookArray) });
-    },
-    getActiveBooks: function(){
-        return this.filter(function(globalBook) {
-            return globalBook.get("active") === true;
-        });
-    },
+    // bySearch: function(query){
+    //     //TODO ~ returns the books that include the query fragment in their name
+    // },
+	getActiveBooks: function(){
+	    return this.filter(function(globalBook) {
+	        return globalBook.get("active") === true;
+	    });
+	},
+	// Accepts array of books name filters e.g. partial search strings
+	// Returns array of global books models
+    filterByNames: function (names) {
+		return this.filter(function (model) {
+			return _.some(names, function (name) {
+				return model.get('name').toLowerCase().indexOf(name.toLowerCase()) != -1;
+			});
+		});
+	},
     // Accepts array of book names
     // Return an array of global book models
-    booksByName: function (names) {
-		return _.map(names, function (name) {
-			return this.filter(function (model) {
-				return model.get('name') === name;
-			})[0];
-		}, this);
+    findByNames: function (names) {
+		return this.filter(function (model) {
+			return _.some(names, function (name) {
+				return model.get('name').toLowerCase() === name.toLowerCase();
+			});
+		});
     }
 });
 
@@ -496,7 +499,7 @@ App.Views.Search = Backbone.Modal.extend({
             this.initSearchTimer(this);
         }
     },
-    initSearchTimer: _.debounce(function(){ this.searchAll(); }, 500),
+    initSearchTimer: _.debounce(function(){ this.searchAll(); }, 1000),
     searchAll: function(){
         var that = this;
         
@@ -513,7 +516,7 @@ App.Views.Search = Backbone.Modal.extend({
     },
     searchBooks: function(){
         var that = this;
-        var bookResults = App.Collections.globalBooks.byBooks([this.query]);
+        var bookResults = App.Collections.globalBooks.filtersByNames([this.query]);
         if (bookResults.length) {
             this.$('.bookResults').html('');
             _.each( _.uniq(bookResults), function(book){
@@ -885,7 +888,7 @@ App.Views.BookFilter = Parse.View.extend({
 			})
 			.done(function _setInitialBooks() {
 
-				var bookModels = self.collection.booksByName(self.query);
+				var bookModels = self.collection.findByNames(self.query);
 				if (bookModels) {
 					for (var i = 0; i < bookModels.length; i++) {
 						bookModels[i].set('active', true);
