@@ -1457,7 +1457,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			self.bookFilterView = new App.Views.BookFilter({ el: self.$('.bookFilterHeader'), initialBooks: self.initialBooks, title: 'Artists' });
 			console.log(self.initialBooks);///clear
 			self.bookFilterView.render().$('.toggleBookFilter')
-				.before('<button class="btn-submit toggleMap"> Map </button>');
+				.before('<button class="btn-tag toggleMap"> Map </button>');
 
 			self.artistsView = new App.Views.Artists({ collection: self.collection, el: self.$('.artists') });
 			self.artistsView.render();
