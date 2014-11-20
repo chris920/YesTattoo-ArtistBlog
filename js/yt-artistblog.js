@@ -496,12 +496,16 @@ App.Views.Search = Backbone.Modal.extend({
             this.initSearchTimer(this);
         }
     },
-    initSearchTimer: _.debounce(function(){ this.searchAll(); }, 1250),
+    initSearchTimer: _.debounce(function(){ this.searchAll(); }, 500),
     searchAll: function(){
-        console.log('searchAll triggered');///clear
         var that = this;
+        
         this.query = this.$('.mainSearchInput').val();
-        this.$('.resultsMessage, .bookResultsContainer, .artistResultsContainer, .userResultsContainer').fadeOut( 800, function(){
+
+        var elements = this.$('.resultsMessage, .bookResultsContainer, .artistResultsContainer, .userResultsContainer');
+        var length = elements.length;
+        elements.fadeOut(800, function () {
+        	if (--length > 0) { return; }
             that.searchBooks();
             that.searchArtists();
             that.searchUsers();
