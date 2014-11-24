@@ -1066,7 +1066,7 @@ App.Views.TattoosPage = Parse.View.extend({
             this.initialBooks = options.books;
         }
 
-        _.bindAll(this, 'disable', 'scrollChecker', 'render', 'bookUpdate', 'showReset', 'loadMore');
+        _.bindAll(this, 'disable', 'scrollChecker', 'render', 'bookUpdate', 'showReset', 'loadMore', 'updateURL');
         this.collection = new App.Collections.Tattoos();
 
         App.on('app:scroll', this.scrollChecker);
@@ -1085,9 +1085,7 @@ App.Views.TattoosPage = Parse.View.extend({
 			this.initialized = false;
 		}
     },
-    events: {
 
-    },
     scrollChecker: function(){
         if (this.moreToLoad && $('#tattoosPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
             this.moreToLoad = false;
@@ -1095,16 +1093,24 @@ App.Views.TattoosPage = Parse.View.extend({
             this.loadMore(false);
         }
     },
+
+    updateURL: function (books) {
+    	var url = 'tattoos';
+        if (this.bookFilterView && this.bookFilterView.query) {
+        	var path = this.bookFilterView.query.join('+').split(" ").join("-");
+        	if (path) {
+        		url += '/' + path;
+        	}
+        } 
+        if (Parse.history.fragment !== url) {
+        	Parse.history.navigate(url, { trigger: false });	
+        }
+    },
+
     bookUpdate: function(){
         console.log('TattoosPage view called bookUpdate with this:');///clear
         console.log(this);///clear
         this.loadMore(true);
-
-        var booksRoute;
-        if (this.bookFilterView && this.bookFilterView.query) {
-            booksRoute = this.bookFilterView.query.join('+').split(" ").join("-");
-        } 
-        Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
     },
 
     loadMore: _.debounce(function (reset) {
@@ -1125,6 +1131,7 @@ App.Views.TattoosPage = Parse.View.extend({
             .then(function (tats) {
                 that.collection.add(tats);
                 that.showReset();
+                that.updateURL(books);
                 
                 if (tats.length < 40) {
                     that.moreToLoad = false;
@@ -1314,7 +1321,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	initialize: function (options) {
 		console.log('ArtistsPage init');
 
-		_.bindAll(this, 'disable', 'scrollToTop', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render');
+		_.bindAll(this, 'disable', 'scrollToTop', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render', 'updateURL');
 
 		if (options && options.books) {
 			console.log('ArtistsPage init with books');///clear
@@ -1326,7 +1333,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 		this.collection = new App.Collections.Artists();
 		this.collection.on('reset', this.scrollToTop, this);
 
-		App.on('app:book-update', this.bookUpdate, this);
+		App.on('books:book-update', this.bookUpdate, this);
 		App.on('artists:location-update', this.locationUpdate, this);
 
 		this.initialized = true;
@@ -1342,7 +1349,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 			// Disable our own events
 			this.collection.off('reset', this.scrollToTop);
-			App.off('app:book-update', this.bookUpdate);
+			App.off('books:book-update', this.bookUpdate);
 			App.off('artists:location-update', this.locationUpdate);
 
 			this.initialized = false;
@@ -1374,14 +1381,28 @@ App.Views.ArtistsPage = Parse.View.extend({
 		});
 	},
 
+    updateURL: function (books) {
+    	var url = 'artists';
+        if (this.bookFilterView && this.bookFilterView.query) {
+        	var path = this.bookFilterView.query.join('+').split(" ").join("-");
+        	if (path) {
+        		url += '/' + path;
+        	}
+        } 
+        if (Parse.history.fragment !== url) {
+        	Parse.history.navigate(url, { trigger: false });	
+        }
+    },
+
 	bookUpdate: function () {
+		console.log('artists book update');
 		this.loadArtists(true);
 
-		var booksRoute;
-		if (this.bookFilterView.query) {
-			booksRoute = this.bookFilterView.query.join('+').split(" ").join("-");
-		}
-		Parse.history.navigate('artists' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
+		// var booksRoute;
+		// if (this.bookFilterView.query) {
+		// 	booksRoute = this.bookFilterView.query.join('+').split(" ").join("-");
+		// }
+		// Parse.history.navigate('artists' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
 	},
 
 	locationUpdate: function (location) {
@@ -1442,6 +1463,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			})
 			.then(function (artists) {
 				self.collection.add(artists);
+				self.updateURL(books);
 				if (artists.length < self.requestLimit) {
 					self.moreToLoad = false;
 				} else {
@@ -4158,22 +4180,18 @@ App.controller = (function () {
         console.log('controller artists');
         var artists = new App.Views.ArtistsPage(options);
         App.viewManager.show(artists);
-        Parse.history.navigate('artists', { trigger: false });
+		if (Parse.history.fragment.indexOf('artists') !== 0) {
+			Parse.history.navigate('artists', { trigger: false });	
+		}
     }
 
     controller.tattoos = function (options) {
         console.log('controller tattoos');
         var tattoosPage = new App.Views.TattoosPage(options);
         App.viewManager.show(tattoosPage);
-
-        var booksRoute;
-        if (options.books instanceof Array) {
-            booksRoute = options.books.join('+').split(" ").join("-");
-        } 
-        else if (typeof(options.books) === 'string') {
-            booksRoute = options.books;
-        }
-        Parse.history.navigate('tattoos' + (booksRoute ? '/' + booksRoute : ''), { trigger: false });
+		if (Parse.history.fragment.indexOf('tattoos') !== 0) {
+			Parse.history.navigate('tattoos', { trigger: false });	
+		}
     }
 
     controller.login = function () {
