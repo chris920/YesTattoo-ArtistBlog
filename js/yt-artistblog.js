@@ -4430,6 +4430,7 @@ App.viewManager = (function ViewManager() {
             currentModal.close();
             currentModal.remove();
             currentModal = undefined;
+            $("body").css("overflow", "auto");
         }
 
         render(view);
