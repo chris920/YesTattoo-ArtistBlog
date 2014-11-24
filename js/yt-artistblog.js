@@ -4682,7 +4682,7 @@ App.query = (function () {
 	/*
 		Query random featured artists
 	*/
-	this.randomFeaturedArtists = function (options) {
+	query.randomFeaturedArtists = function (options) {
 		var query = new Parse.Query('ArtistProfile');
 		query.exists('featureId');
 		query.descending('featureId');
