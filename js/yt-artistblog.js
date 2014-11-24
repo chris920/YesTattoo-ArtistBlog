@@ -4342,7 +4342,7 @@ App.controller = (function () {
         // query.first().then(function (user) {
         App.query.usersProfile(uname)
             .then(function (user) {
-                if (user.length) {
+                if (user) {
                     controller.userProfile(user, tab);
                 } else {
                     // Parse.history.navigate('/', { trigger: true });
@@ -4372,7 +4372,7 @@ App.controller = (function () {
         // query.first().then(function (artist) {
         App.query.artistsProfile(uname)
             .then(function (artist) {
-                if (artist.length) {
+                if (artist) {
                     controller.artistProfile(artist, tab);
                 }
                 else {
