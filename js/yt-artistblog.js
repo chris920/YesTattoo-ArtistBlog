@@ -1445,7 +1445,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 		}
 	},
 
-	loadArtists: function (reset) {
+	loadArtists: _.debounce(function (reset) {
 		var self = this;
         self.collection.reset();
         self.moreToload = true;
@@ -1478,7 +1478,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			.then(function () {
 				self.collection.trigger('finito');
 			});
-	},
+	}, 500),
 
 	render: function () {
 		var self = this;
