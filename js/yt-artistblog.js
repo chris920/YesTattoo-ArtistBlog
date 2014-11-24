@@ -516,7 +516,7 @@ App.Views.Search = Backbone.Modal.extend({
     },
     searchBooks: function(){
         var that = this;
-        var bookResults = App.Collections.globalBooks.filtersByNames([this.query]);
+        var bookResults = App.Collections.globalBooks.filterByNames([this.query]);
         if (bookResults.length) {
             this.$('.bookResults').html('');
             _.each( _.uniq(bookResults), function(book){
