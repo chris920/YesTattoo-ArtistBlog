@@ -669,7 +669,6 @@ App.Views.Explore = Parse.View.extend({
         //TODO Start at a random point from the start of popular
         var that = this;
         _.each( this.collection, function(book){
-            // var bookModel = new App.Models.GlobalBook(book);
             var bookThubmnail = new App.Views.ExploreBookThumbnail({model: book});
             that.$('.explorePopularBooks').append(bookThubmnail.render().el);
         });
@@ -691,7 +690,6 @@ App.Views.ExploreBookThumbnail = Parse.View.extend({
         'click': 'viewTattoos'
     },
     viewTattoos: function(){
-        console.log('viewTattoos triggered');///clear
         var options = {
             books: this.model.get('name')
         };
