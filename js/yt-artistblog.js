@@ -673,8 +673,8 @@ App.Views.Explore = Parse.View.extend({
             var bookThubmnail = new App.Views.ExploreBookThumbnail({model: book});
             that.$('.explorePopularBooks').append(bookThubmnail.render().el);
         });
-        
-        //first & last set class to col-sm-8 and remove col-sm-4
+
+        this.$('.popularBook:first, .popularBook:last').removeClass('col-sm-4').addClass('col-sm-8');
     }
 });
 
