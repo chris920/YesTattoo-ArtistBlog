@@ -646,6 +646,7 @@ App.Views.Explore = Parse.View.extend({
     id: 'explore',
     initialize: function(){
         this.moreToLoad = true;
+        this.collection = App.Collections.globalBooks.first(7);
     },
     events: {
         "click #findArtists":   "findArtists",
@@ -661,13 +662,18 @@ App.Views.Explore = Parse.View.extend({
     render: function(){
         var html = this.template();
         $(this.el).html(html);
-        this.renderBookThubmnails();
+        this.renderBookThumbnails();
         return this;
     },
     renderBookThumbnails: function(){
         //TODO Start at a random point from the start of popular
-        //get 7 popular books
-        //render & append each popular book
+        var that = this;
+        _.each( this.collection, function(book){
+            // var bookModel = new App.Models.GlobalBook(book);
+            var bookThubmnail = new App.Views.ExploreBookThumbnail({model: book});
+            that.$('.explorePopularBooks').append(bookThubmnail.render().el);
+        });
+        
         //first & last set class to col-sm-8 and remove col-sm-4
     }
 });
@@ -698,7 +704,7 @@ App.Views.ExploreBookThumbnail = Parse.View.extend({
         //Get's a random image from the array and assigns it to the bg url
         var picCount = this.model.attributes.pics.length;
         var randomPicIndex = Math.floor(Math.random() * picCount);
-        $('.popularBookImage').attr('src',this.model.attributes.pics[randomPicIndex]._url);
+        this.$('.popularBookImage').attr('src',this.model.attributes.pics[randomPicIndex]._url);
         return this;
     }
 });
