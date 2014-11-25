@@ -661,7 +661,44 @@ App.Views.Explore = Parse.View.extend({
     render: function(){
         var html = this.template();
         $(this.el).html(html);
+        this.renderBookThubmnails();
+        return this;
+    },
+    renderBookThumbnails: function(){
+        //TODO Start at a random point from the start of popular
+        //get 7 popular books
+        //render & append each popular book
+        //first & last set class to col-sm-8 and remove col-sm-4
+    }
+});
 
+App.Views.ExploreBookThumbnail = Parse.View.extend({
+    template: _.template('<h2><%= name %></h2><img src="" class="popularBookImage">'),
+    className: 'col-xs-12 col-sm-4 popularBook',
+    initialize: function(){
+        _.bindAll(this, 'viewTattoos', 'render');
+    },
+    disable: function () {
+
+    },
+    events: {
+        'click': 'viewTattoos'
+    },
+    viewTattoos: function(){
+        console.log('viewTattoos triggered');///clear
+        var options = {
+            books: this.model.get('name')
+        };
+        App.trigger('app:tattoos', options);
+    },
+    render: function(){
+        var attributes = this.model.toJSON();
+        $(this.el).append(this.template(attributes));
+
+        //Get's a random image from the array and assigns it to the bg url
+        var picCount = this.model.attributes.pics.length;
+        var randomPicIndex = Math.floor(Math.random() * picCount);
+        $('.popularBookImage').attr('src',this.model.attributes.pics[randomPicIndex]._url);
         return this;
     }
 });
@@ -1016,7 +1053,7 @@ App.Views.GlobalBookThumbnail = Parse.View.extend({
     disable: function () {
     	if (this.initialized) {
     		this.model.off('change:active', this.updateBookFilterClass);
-    		this.initialized = false;	
+    		this.initialized = false;
     	}
     },
     events: {
