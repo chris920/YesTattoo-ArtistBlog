@@ -69,16 +69,20 @@ var App = new (Parse.View.extend({
     },
 	setGlobalBooks: function () {
 		App.Collections.globalBooks = new App.Collections.GlobalBooks();
-		App.Promises.globalBooks = App.query.allGlobalBooks()
+		App.Promises.globalBooks = new $.Deferred();
+		App.query.allGlobalBooks()
 			.then(function (globalBooks) {
 				console.log('globalBooks set');
 				App.Collections.globalBooks.reset(globalBooks);
 				//Gets the names of the globalBooks and re-init typeahead
 				var bookNames = App.Collections.globalBooks.pluck('name');
 				App.initTypeahead(bookNames);
+
+				App.Promises.globalBooks.resolve();
 			},
 			function (error) {
 				console.log("Error: " + error.code + " " + error.message);
+				App.Promises.globalBooks.reject(error);
 			});
 	},
     initTypeahead: function(books){
@@ -878,9 +882,8 @@ App.Views.BookFilter = Parse.View.extend({
 	render: function () {
 		var self = this;
 		var templateRendered = $(this.el).html(this.template()).promise();
-		$.when(templateRendered, App.Promises.globalBooks)
+		$.when(templateRendered, App.Promises.globalBooks.promise())
 			.done(function _renderChildViews() {
-
 				self.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({ collection: self.collection, el: self.$('.filterTitles') });
 
 				self.globalBookManagerView = new App.Views.GlobalBookManager({ collection: self.collection, el: self.$('.bookSuggestionScroll') });
