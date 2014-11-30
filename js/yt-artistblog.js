@@ -682,7 +682,7 @@ App.Views.BookFilter = Parse.View.extend({
 
         this.bookFilterShown = false;
         this.query = [];
-        this.initialQuery = this.options.initialBooks ? this.options.initialBooks.split("-").join(" ").split('+') : [];
+        this.initialQuery = this.options.books ? this.options.books : [];
 
         this.collection = App.Collections.globalBooks;
         this.collection.resetActive();  // Need to reset active otherwise can't re-select previous book once re-initialized
@@ -893,11 +893,13 @@ App.Views.BookFilter = Parse.View.extend({
 			})
 			.done(function _setInitialBooks() {
 
-				var bookModels = self.collection.filterByNames(self.initialQuery);
-				if (bookModels) {
-					for (var i = 0; i < bookModels.length; i++) {
-						bookModels[i].set('active', true);
-					}
+				if (self.initialQuery && self.initialQuery.length > 0) {
+					var bookModels = self.collection.filterByNames(self.initialQuery);
+					if (bookModels) {
+						for (var i = 0; i < bookModels.length; i++) {
+							bookModels[i].set('active', true);
+						}
+					}	
 				}
 			});
 
@@ -1063,13 +1065,7 @@ App.Views.TattoosPage = Parse.View.extend({
     template: _.template($("#tattoosPageTemplate").html()),
     id: 'tattoosPage',
     initialize: function(options){
-        console.log('TattoosPage init');///clear
-
-        if (options && options.books) {
-            console.log('tattoosPage init with books');///clear
-            // var that = this;
-            this.initialBooks = options.books;
-        }
+        console.log('tattoos page init = ' + JSON.stringify(options));///clear
 
         _.bindAll(this, 'disable', 'focus', 'scrollChecker', 'render', 'bookUpdate', 'showReset', 'loadMore', 'updateURL');
         this.collection = new App.Collections.Tattoos();
@@ -1182,12 +1178,15 @@ App.Views.TattoosPage = Parse.View.extend({
         var self = this;
         var html = this.template();
         $(this.el).html(html).promise().done(function () {
+			
+			var options = self.options;
+			options.el = self.$('.bookFilterHeader');
+			options.title = 'Tattoos';
+			self.bookFilterView = new App.Views.BookFilter(options);
+            self.bookFilterView.render();
 
             self.tattoosView = new App.Views.Tattoos({ el: self.$('.tattoos'), collection: self.collection });
             self.tattoosView.render();
-
-            self.bookFilterView = new App.Views.BookFilter({ el: self.$('.bookFilterHeader'), initialBooks: self.initialBooks, title: 'Tattoos' });
-            self.bookFilterView.render();
 
             self.loadMore(true);
         });
@@ -1330,14 +1329,9 @@ App.Views.ArtistsPage = Parse.View.extend({
 			- location: geopoint 	// TODO initial location, to override user location e.g. search by new york
 	*/
 	initialize: function (options) {
-		console.log('ArtistsPage init');
+		console.log('artists page init = ' + JSON.stringify(options));
 
 		_.bindAll(this, 'disable', 'scrollToTop', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render', 'updateURL');
-
-		if (options && options.books) {
-			console.log('ArtistsPage init with books');///clear
-			this.initialBooks = options.books;
-		}
 
 		this.requestLimit = 10;
 
@@ -1505,8 +1499,10 @@ App.Views.ArtistsPage = Parse.View.extend({
 		var self = this;
 		$(this.el).html(this.template()).promise().done(function () { 
 
-			self.bookFilterView = new App.Views.BookFilter({ el: self.$('.bookFilterHeader'), initialBooks: self.initialBooks, title: 'Artists' });
-			console.log(self.initialBooks);///clear
+			var options = self.options;
+			options.el = self.$('.bookFilterHeader');
+			options.title = 'Artists';
+			self.bookFilterView = new App.Views.BookFilter(options);
 			self.bookFilterView.render().$('.toggleBookFilter')
 				.before('<button class="btn-tag toggleMap"> Map </button>');
 
@@ -4015,6 +4011,57 @@ App.Router = Parse.Router.extend({
             this.index();
         }
     },
+
+    /* Options:
+
+    	Parses current url hash fragment and query string into a 
+    	common options objects, to be used in view initialization.
+    	
+    	Accepts: 
+    		/Color+Black-And-Gray?showMap=true&location=London
+
+    	Returns: 
+	    	{
+				books: ['Color',Black And Gray'],
+				showMap: true,
+				location: London
+			}
+    */
+	options: function () {
+
+		var fragment = Parse.history.getFragment();
+
+		var pathIndex = fragment.indexOf('/');
+		var qsIndex = fragment.indexOf('?');
+		if (qsIndex === -1) qsIndex = fragment.length;
+		if (pathIndex === -1) pathIndex = qsIndex;
+		
+		var path = fragment.substring(pathIndex + 1, qsIndex);
+		var qs = fragment.substring(qsIndex + 1, fragment.length)
+
+		var options = {};
+
+		options.books = path ? path.split('-').join(' ').split('+') : [];
+
+		if (qs.indexOf('&') !== -1) {
+			_.each(qsIndex.split('&'), function (kvp) {
+				_addOption(options, kvp);
+			});
+		}
+		else {
+			_addOption(options, qs);
+		}
+
+		return options;
+
+		function _addOption(options, kvp) {
+			var kv;
+			if ((kvp.indexOf('=') !== -1) 
+				&& ((kv = kvp.split('=')).length === 2)) {
+				options[kv[0]] = kv[1];
+			}
+		}
+	},
     index: function(){
         console.log('route index');
         App.controller.index();
@@ -4039,13 +4086,13 @@ App.Router = Parse.Router.extend({
         console.log('route featured : ' + page);
         App.controller.featured(page);
     },
-    artists: function(books){
+    artists: function(/*books*/){
         console.log('route artists');
-        App.controller.artists({books: books});
+        App.controller.artists(this.options());
     },
-    tattoos: function(books){
+    tattoos: function(/*books*/){
         console.log('route tattoos');
-        App.controller.tattoos({books: books});
+        App.controller.tattoos(this.options());
     },
     about: function(){
         console.log('route about');
