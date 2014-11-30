@@ -1,6 +1,7 @@
 Parse.$ = jQuery;
 
 Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK"); ///demo
+// Parse.initialize("IErIorHCGoWUsq2yyUr4XwX5T93NsAGPXvXfAUl7", "FRJ92cNhdzkOGWqwCzyd6ZomtAsNTNMZNaH2ftlO"); ///test
 // Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live
 
 var App = new (Parse.View.extend({
@@ -673,7 +674,7 @@ App.Views.BookFilter = Parse.View.extend({
         App.bookfilter = this;///clear
         console.log('Book filter init');///clear
 
-        _.bindAll(this, 'disable', 'typeaheadInitialize', /*'setBooks',*/ 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'showBookFilter', 'hideBookFilter', 'focusIn', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'scrollerInitialize', 'render');
+        _.bindAll(this, 'disable', 'typeaheadInitialize', /*'setBooks',*/ 'keypressFilterTimer', 'initSearchTimer', 'filterBooks', 'showBookFilter', 'hideBookFilter', 'focus', 'updateBookFilter', 'activateBookFilter', 'disableBookFilter', 'scrollerInitialize', 'render');
 
         this.bookFilterShown = false;
         this.query = [];
@@ -683,7 +684,7 @@ App.Views.BookFilter = Parse.View.extend({
         this.collection.resetActive();  // Need to reset active otherwise can't re-select previous book once re-initialized
         this.collection.on('change:active', this.updateBookFilter, this);
 
-        App.on('app:keypress', this.focusIn);
+        // App.on('app:keypress', this.focus);
         
         this.initialized = true;
 	},
@@ -693,13 +694,13 @@ App.Views.BookFilter = Parse.View.extend({
 			if (this.globalBookManagerView) { this.globalBookManagerView.disable(); }
 			if (this.activeBookFilterManagerView) { this.activeBookFilterManagerView.disable(); }
 
-			App.off('app:keypress', this.focusIn);
+			// App.off('app:keypress', this.focus);
 			this.collection.off('change:active', this.updateBookFilter);
 
 			this.initialized = false;
 		}
 	},
-    focusIn: function(){
+    focus: function(){
         if (this.bookFilterShown) {
             this.$('input.bookFilterInput').focus();
         } else if (!this.bookFilterShown){
@@ -1067,11 +1068,12 @@ App.Views.TattoosPage = Parse.View.extend({
             this.initialBooks = options.books;
         }
 
-        _.bindAll(this, 'disable', 'scrollChecker', 'render', 'bookUpdate', 'showReset', 'loadMore', 'updateURL');
+        _.bindAll(this, 'disable', 'focus', 'scrollChecker', 'render', 'bookUpdate', 'showReset', 'loadMore', 'updateURL');
         this.collection = new App.Collections.Tattoos();
 
         App.on('app:scroll', this.scrollChecker);
         App.on('books:book-update', this.bookUpdate);
+        App.on('app:keypress', this.focus);
 
         this.initialized = true;
     },
@@ -1082,9 +1084,14 @@ App.Views.TattoosPage = Parse.View.extend({
 
 			App.off('app:scroll', this.scrollChecker);
 			App.off('books:book-update', this.bookUpdate);
+			App.off('app:keypress', this.focus);
 
 			this.initialized = false;
 		}
+    },
+
+    focus: function () {
+    	if (this.bookFilterView) this.bookFilterView.focus();
     },
 
     scrollChecker: function(){
@@ -1336,6 +1343,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 		App.on('books:book-update', this.bookUpdate, this);
 		App.on('artists:location-update', this.locationUpdate, this);
+		App.on('app:keypress', this.focus, this);
 
 		this.initialized = true;
 	},
@@ -1352,8 +1360,18 @@ App.Views.ArtistsPage = Parse.View.extend({
 			this.collection.off('reset', this.scrollToTop);
 			App.off('books:book-update', this.bookUpdate);
 			App.off('artists:location-update', this.locationUpdate);
+			App.off('app:keypress', this.focus);
 
 			this.initialized = false;
+		}
+	},
+
+	focus: function () {
+		if (this.artistsMapView && this.artistsMapView.hasFocus()) {
+			this.artistsMapView.focus();
+		}
+		else if (this.bookFilterView) {
+			this.bookFilterView.focus();
 		}
 	},
 
@@ -1529,9 +1547,30 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		scrollwheel: false
 	},
 
+	events: {
+		'mouseenter': 'gotFocus',
+		'mouseleave': 'lostFocus'
+	},
+
+	gotFocus: function () {
+		this.setFocus(true);
+	},
+
+	lostFocus: function () {
+		this.setFocus(false);
+	},
+
+	setFocus: function (focus) {
+		this._hasFocus = focus;
+	},
+
+	hasFocus: function () {
+		return this._hasFocus;
+	},
+
 	initialize: function () {
 		var self = this;
-		_.bindAll(self, 'disable', 'initializeMap', 'setMapLocation', 'requestUsersLocation', 'addUserMarker', 'addArtistMarker', 'render');
+		_.bindAll(self, 'disable', 'focus', 'initializeMap', 'setMapLocation', 'requestUsersLocation', 'addUserMarker', 'addArtistMarker', 'render');
 
         $.when(self.getMapLocation(), self.initializeMap())
     		.done(function _initialize() {
@@ -1565,6 +1604,10 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		}
 	},
 
+	focus: function () {
+		if (this.input) this.input.focus();
+	},
+
 	initializeMap: function () {
 		var deferred = $.Deferred();
 
@@ -1575,19 +1618,19 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		google.maps.event.addListenerOnce(self.map, 'idle', function () {
 
 			// Construct location search input
-			var input = $('<input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">');
-			var cancel = $('<span class="input-group-addon btn-submit cancel grayInput" title="Clear location">X</span>')
+			self.input = $('<input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">');
+			self.cancel = $('<span class="input-group-addon btn-submit cancel grayInput" title="Clear location">X</span>')
 				.on('click', function (e) {
 					e.preventDefault();
-					input.val('');
-					self.setMapLocation(null);
-				});
+					this.input.val('');
+					this.setMapLocation(null);
+				}, self);
 			var div = $('<div class="input-group" id="mapLocation"></div>')
-				.append(input)
-				.append(cancel);
+				.append(self.input)
+				.append(self.cancel);
 
 			// Wire location input to map controls
-			var locationInput = new google.maps.places.SearchBox((input[0]));
+			var locationInput = new google.maps.places.SearchBox((self.input[0]));
 			self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(div[0]);
 
 			// Listen to location changes, trigger map update on change
