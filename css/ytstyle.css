@@ -758,13 +758,13 @@ pre {
   .row:after, #explore > .exploreTattoosContainer:after, #explore > .findArtistsContainer:after, #explore > .userContainer:after {
     clear: both; }
 
-.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-sm-3, .tattooContainer, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .tattooContainer, .col-sm-6, .col-md-6, .md6container, .col-lg-6, .lg6container, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .bookContainer, .md8container, .lightContainer, .lg6container, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .bookContainer, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .bookContainer, .lg6container, .col-sm-12, .col-md-12, .col-lg-12 {
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-sm-3, .col-md-3, .tattooContainer, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .tattooContainer, .col-md-6, .md6container, .col-lg-6, .lg6container, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .lg8container, .bookContainer, .md8container, .lightContainer, .lg6container, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-sm-10, .lg8container, .bookContainer, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .lg8container, .bookContainer, .lg6container, .tattooContainer, .col-sm-12, .col-md-12, .col-lg-12 {
   position: relative;
   min-height: 1px;
   padding-left: 2.5px;
   padding-right: 2.5px; }
 
-.col-xs-1, .col-xs-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-xs-4, .col-xs-5, .col-xs-6, .tattooContainer, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-xs-11, .col-xs-12, .lg8container, .bookContainer, .lg6container {
+.col-xs-1, .col-xs-2, .col-xs-3, #artistsPage .tattooContainer, #featured .tattooContainer, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .md8container, .lightContainer, .md6container, .col-xs-11, .col-xs-12, .lg8container, .bookContainer, .lg6container, .tattooContainer {
   float: left; }
 
 .col-xs-1 {
@@ -782,7 +782,7 @@ pre {
 .col-xs-5 {
   width: 41.66667%; }
 
-.col-xs-6, .tattooContainer {
+.col-xs-6 {
   width: 50%; }
 
 .col-xs-7 {
@@ -800,7 +800,7 @@ pre {
 .col-xs-11 {
   width: 91.66667%; }
 
-.col-xs-12, .lg8container, .bookContainer, .lg6container {
+.col-xs-12, .lg8container, .bookContainer, .lg6container, .tattooContainer {
   width: 100%; }
 
 .col-xs-pull-0 {
@@ -921,7 +921,7 @@ pre {
   margin-left: 100%; }
 
 @media (min-width: 768px) {
-  .col-sm-1, .col-sm-2, .col-sm-3, .tattooContainer, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .lg8container, .bookContainer, .col-sm-11, .col-sm-12 {
+  .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .tattooContainer, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .lg8container, .bookContainer, .col-sm-11, .col-sm-12 {
     float: left; }
 
   .col-sm-1 {
@@ -930,7 +930,7 @@ pre {
   .col-sm-2 {
     width: 16.66667%; }
 
-  .col-sm-3, .tattooContainer {
+  .col-sm-3 {
     width: 25%; }
 
   .col-sm-4 {
@@ -939,7 +939,7 @@ pre {
   .col-sm-5 {
     width: 41.66667%; }
 
-  .col-sm-6 {
+  .col-sm-6, .tattooContainer {
     width: 50%; }
 
   .col-sm-7 {
@@ -1077,7 +1077,7 @@ pre {
   .col-sm-offset-12 {
     margin-left: 100%; } }
 @media (min-width: 992px) {
-  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .md6container, .col-md-7, .col-md-8, .lg8container, .bookContainer, .md8container, .lightContainer, .lg6container, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+  .col-md-1, .col-md-2, .col-md-3, .tattooContainer, .col-md-4, .col-md-5, .col-md-6, .md6container, .col-md-7, .col-md-8, .lg8container, .bookContainer, .md8container, .lightContainer, .lg6container, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
     float: left; }
 
   .col-md-1 {
@@ -1086,7 +1086,7 @@ pre {
   .col-md-2 {
     width: 16.66667%; }
 
-  .col-md-3 {
+  .col-md-3, .tattooContainer {
     width: 25%; }
 
   .col-md-4 {
@@ -4342,21 +4342,11 @@ span.hover-text-content {
   -webkit-opacity: 0;
   -moz-opacity: 0;
   opacity: 0;
+  text-align: center;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease; }
-  span.hover-text-content:span {
-    display: table-cell; }
-  span.hover-text-content .artistName {
-    margin: 0px; }
-  span.hover-text-content .artistLoc {
-    margin: 5px 0 0 0;
-    color: #d9d9d9; }
   span.hover-text-content .prof {
-    margin-left: 5px;
-    right: 10px;
-    bottom: 10px;
-    display: table;
-    float: right; }
+    margin-top: 10px; }
 
 .tattooContainer:hover span.hover-text-content {
   background-color: rgba(0, 0, 0, 0.6);
@@ -4508,49 +4498,6 @@ span.hover-content {
     color: white;
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease; }
-
-.hover-content .btn-tag {
-  color: #d9d9d9;
-  background-color: rgba(50, 50, 50, 0.6);
-  border-color: rgba(50, 50, 50, 0.6);
-  outline: 0 solid transparent;
-  outline-offset: -4px;
-  -webkit-transition: all 0.5s ease;
-  transition: all 0.5s ease; }
-  .hover-content .btn-tag:hover, .hover-content .btn-tag:focus, .hover-content .btn-tag:active, .hover-content .btn-tag.active {
-    color: #d9d9d9;
-    background-color: rgba(30, 30, 30, 0.6);
-    border-color: rgba(19, 19, 19, 0.6); }
-  .open .hover-content .btn-tag.dropdown-toggle {
-    color: #d9d9d9;
-    background-color: rgba(30, 30, 30, 0.6);
-    border-color: rgba(19, 19, 19, 0.6); }
-  .hover-content .btn-tag:active, .hover-content .btn-tag.active {
-    background-image: none; }
-  .open .hover-content .btn-tag.dropdown-toggle {
-    background-image: none; }
-  .hover-content .btn-tag.disabled, .hover-content .btn-tag.disabled:hover, .hover-content .btn-tag.disabled:focus, .hover-content .btn-tag.disabled:active, .hover-content .btn-tag.disabled.active, .hover-content .btn-tag[disabled], .hover-content .btn-tag[disabled]:hover, .hover-content .btn-tag[disabled]:focus, .hover-content .btn-tag[disabled]:active, .hover-content .btn-tag[disabled].active, fieldset[disabled] .hover-content .btn-tag, fieldset[disabled] .hover-content .btn-tag:hover, fieldset[disabled] .hover-content .btn-tag:focus, fieldset[disabled] .hover-content .btn-tag:active, fieldset[disabled] .hover-content .btn-tag.active {
-    background-color: rgba(50, 50, 50, 0.6);
-    border-color: rgba(50, 50, 50, 0.6); }
-  .hover-content .btn-tag .badge {
-    color: rgba(50, 50, 50, 0.6);
-    background-color: #d9d9d9; }
-  .hover-content .btn-tag:hover {
-    outline: 2px solid rgba(255, 255, 255, 0.3);
-    outline-offset: 3px;
-    background-color: black;
-    color: white;
-    -webkit-transition: all 0.3s ease;
-    transition: all 0.3s ease; }
-  .hover-content .btn-tag:active {
-    outline: 1px solid transparent;
-    outline-offset: 3px;
-    background-color: #c42020;
-    -webkit-transition: all 0.2s ease;
-    transition: all 0.2s ease; }
-  .hover-content .btn-tag.active {
-    background-color: black;
-    color: gold; }
 
 .tagFilters {
   margin: 0 auto;

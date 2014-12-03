@@ -510,8 +510,9 @@ $footer-height-lg: $footer-height + 120px;
 ////////// image content 
 .tattooContainer{
 	overflow: hidden;
-	@extend .col-sm-3;
-	@extend .col-xs-6;
+	@extend .col-md-3;
+	@extend .col-sm-6;
+	@extend .col-xs-12;
 	padding: 2.5px;
 }
 #artistsPage .tattooContainer, #featured .tattooContainer{
@@ -558,23 +559,27 @@ span.hover-text-content {
 		padding: 10px;
 		width: 100%;
 		background-color: rgba(0,0,0,0);
-		  -webkit-opacity: 0;
-		  -moz-opacity: 0;
-		  opacity: 0;
+		-webkit-opacity: 0;
+		-moz-opacity: 0;
+		opacity: 0;
+		text-align: center;
 		@include transition(all .2s ease);
-	&:span {
-		display: table-cell; }
-	.artistName {
-		margin: 0px; }
-	.artistLoc {
-		margin: 5px 0 0 0; 
-		color: $gray-light; }
 	.prof {
-		margin-left: 5px;
-		right: 10px;
-		bottom: 10px;
-		display: table;
-		float: right; }
+		margin-top: 10px;
+	}
+
+	// // Unusued left align content
+	// .artistName {
+	// 	margin: 0px; }
+	// .artistLoc {
+	// 	margin: 5px 0 0 0; 
+	// 	color: $gray-light; }
+	// .prof {
+	// 	margin-left: 5px;
+	// 	right: 10px;
+	// 	bottom: 10px;
+	// 	display: table;
+	// 	float: right; }
 }
 
 .tattooContainer:hover span.hover-text-content {
@@ -586,18 +591,18 @@ span.hover-text-content {
 }
 
 span.hover-content {
-		text-align: center;
-		display: table;
-		color: white;
-		cursor: pointer;
-		position: absolute;
-		padding: 10px;
-		width: 100%;
-		top: 30px;
-		-webkit-opacity: 0;
-		-moz-opacity: 0;
-		opacity: 0;
-		@include transition(all .2s ease);
+	text-align: center;
+	display: table;
+	color: white;
+	cursor: pointer;
+	position: absolute;
+	padding: 10px;
+	width: 100%;
+	top: 30px;
+	-webkit-opacity: 0;
+	-moz-opacity: 0;
+	opacity: 0;
+	@include transition(all .2s ease);
 	&:span {
 		display: table-cell;
 	}
@@ -671,7 +676,7 @@ span.hover-content {
 		text-decoration: none;
 		box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1); 
 		@include transition(all 0.3s ease); }
-	&:active,  &:visited, &:focus {
+	&:active, &:visited, &:focus {
 		outline: 1px solid transparent;
 		outline-offset:3px;
 		background-color: $brand-primary;
@@ -702,30 +707,30 @@ span.hover-content {
 	&:active {
 		background-color: $brand-primary;
 		color: white;
-		@include transition(all 0.2s ease); } 
+		@include transition(all 0.2s ease); }
 }
 
-.hover-content .btn-tag {
-	@include button-variant($gray-light, $gray-trans, $gray-trans);
-	outline:0 solid transparent;
-	outline-offset:-4px;
-	@include transition(all .5s ease);
-	&:hover { 
-		outline: 2px solid rgba(255,255,255,.3);
-		outline-offset:3px;
-		background-color: rgba(0,0,0,1);
-		color: white;
-		@include transition(all 0.3s ease); }
-	&:active {
-		outline: 1px solid transparent;
-		outline-offset:3px;
-		background-color: $brand-primary;
-		@include transition(all 0.2s ease); } 
-	&.active {
-		background-color: rgba(0,0,0,1);
-		color: $brand-secondary;
-	}
-}
+// .hover-content .btn-tag {
+// 	@include button-variant($gray-light, $gray-trans, $gray-trans);
+// 	outline:0 solid transparent;
+// 	outline-offset:-4px;
+// 	@include transition(all .5s ease);
+// 	&:hover { 
+// 		outline: 2px solid rgba(255,255,255,.3);
+// 		outline-offset:3px;
+// 		background-color: rgba(0,0,0,1);
+// 		color: white;
+// 		@include transition(all 0.3s ease); }
+// 	&:active {
+// 		outline: 1px solid transparent;
+// 		outline-offset:3px;
+// 		background-color: $brand-primary;
+// 		@include transition(all 0.2s ease); } 
+// 	&.active {
+// 		background-color: rgba(0,0,0,1);
+// 		color: $brand-secondary;
+// 	}
+// }
 
 .tagFilters {
 	margin: 0 auto;
