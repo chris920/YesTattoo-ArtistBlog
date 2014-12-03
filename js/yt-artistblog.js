@@ -3007,20 +3007,20 @@ App.Views.Landing = Parse.View.extend({
     },
     land: function(){
         var that = this;
-        this.$('.welcome').delay( 100 ).fadeIn( 600 ).delay( 1800 ).animate({
+        this.$('.welcome').delay( 100 ).fadeIn( 600 ).delay( 3300 ).animate({
                 marginTop: "5vh",
                 opacity: 0
               }, 600, function() {
                 // Animation complete.
               });
-        this.$('.logo').delay( 500 ).fadeIn( 1000 ).delay( 1000 )
+        this.$('.logo').delay( 500 ).fadeIn( 1000 ).delay( 2500 )
             .animate({
                 marginBottom: "+5vh"
               }, 600, "swing", function() {
                 that.showNextArtist();
               });
         that.$('.landingLinks').fadeIn();
-        this.$('.artistLoc').delay( 1000 ).fadeIn().delay( 1200 ).fadeOut( 300 );
+        this.$('.artistLoc').delay( 1000 ).fadeIn().delay( 2700 ).fadeOut( 300 );
     },
     initiateArtists: function(){
         var that = this;
