@@ -99,7 +99,7 @@ $border-radius-large:       4px;
 $border-radius-small:       2px;
 
 //** Global color for active items (e.g., navs or dropdowns).
-$component-active-color:    #fff !default;
+$component-active-color:    $brand-secondary !default;
 //** Global background color for active items (e.g., navs or dropdowns).
 $component-active-bg:       $brand-primary !default;
 
@@ -159,7 +159,7 @@ $input-border:                   #ccc !default;
 //** `<input>` border radius
 $input-border-radius:            $border-radius-base !default;
 //** Border color for inputs on focus
-$input-border-focus:             $brand-primary;
+$input-border-focus:             $brand-secondary;
 
 //** Placeholder text color
 $input-color-placeholder:        $gray-light !default;
