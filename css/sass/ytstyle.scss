@@ -689,11 +689,16 @@ span.hover-content {
 	background-color: transparent;
 	border-color: $gray-lightish;
 	@include transition(all 0.5s ease);
-	&:hover, &.active { 
+	&:hover { 
 		border: inherit $btn-default-border;
 		background-color: rgba(0,0,0,1);
 		color: white;
 		@include transition(all 0.3s ease); }
+	&.active { 
+		border: inherit $btn-default-border;
+		background-color: rgba(0,0,0,1);
+		color: $brand-secondary;
+		@include transition(all 0.4s ease); }
 	&:active {
 		background-color: $brand-primary;
 		color: white;
@@ -718,7 +723,7 @@ span.hover-content {
 		@include transition(all 0.2s ease); } 
 	&.active {
 		background-color: rgba(0,0,0,1);
-		color: white;
+		color: $brand-secondary;
 	}
 }
 
@@ -1159,7 +1164,7 @@ span.hover-content {
 	border: solid 1px black;
 	border-bottom: solid 4px black;
 	&:focus {
-		box-shadow: inset 0 0 2px $brand-primary;
+		box-shadow: inset 0 0 2px $brand-secondary;
 		outline: none;
 		border: solid 1px transparent;
 		border-bottom: solid 4px transparent;
