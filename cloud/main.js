@@ -863,7 +863,7 @@ Parse.Cloud.job('setArtistProfileRelationships', function (request, status) {
       addQuery.include('user');
       addQuery.include(['user.userProfile']);
       addQuery.each(function(add){
-        collectorRelation.add(add.attributes.user.attributes.userProfile);
+        collectorRelation.add(add.attributes.user.attributes.userprofile);
       });
 
       updates.push(artist.save());
