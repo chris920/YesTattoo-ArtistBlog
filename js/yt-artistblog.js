@@ -597,10 +597,9 @@ App.Views.BookSearchResult = Parse.View.extend({
     },
     viewTattoos: function(){
         console.log('viewTattoos triggered');///clear
-        var options = {
-            books: this.model.get('name')
-        };
-        App.trigger('app:tattoos', options);
+        App.trigger('app:tattoos', {
+            books: [ this.model.get('name') ]
+        });
     },
     render: function(){
         var attributes = this.model.toJSON();
@@ -661,8 +660,9 @@ App.Views.Explore = Parse.View.extend({
         App.trigger('app:artists', { showMap: true });
     },
     tattoosByBook: function(e){
-        var book = e.currentTarget.children[0].textContent;
-        App.trigger('app:tattoos', book);
+        App.trigger('app:tattoos', {
+            books: [ e.currentTarget.children[0].textContent ]
+        });
     },
     render: function(){
         var html = this.template();
@@ -695,10 +695,9 @@ App.Views.ExploreBookThumbnail = Parse.View.extend({
         'click': 'viewTattoos'
     },
     viewTattoos: function(){
-        var options = {
-            books: this.model.get('name')
-        };
-        App.trigger('app:tattoos', options);
+        App.trigger('app:tattoos', {
+            books: [ this.model.get('name') ]
+        });
     },
     render: function(){
         var attributes = this.model.toJSON();
