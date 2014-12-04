@@ -838,3 +838,44 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
     status.error('Failed to update Books');
   });
 });
+
+
+Parse.Cloud.job('setArtistProfileRelationships', function (request, status) {
+  Parse.Cloud.useMasterKey();
+  console.log('Running artist profile relationship update ...');
+
+  var query = new Parse.Query('ArtistProfile');
+  query.find().then(function (artists) {
+    var updates = [];
+    for (var i = 0; i < artists.length; i++) {
+      var artist = artists[i];
+
+      var tattooRelation = artist.relation('tattoos');
+      var tattoosQuery = new Parse.Query('Tattoo');
+      tattoosQuery.equalTo('artistProfile', artist);
+      tattoosQuery.each(function(tattoos){
+        tattooRelation.add(tattoos);
+      });
+      
+      var collectorRelation = artist.relation('collectors');
+      var addQuery = new Parse.Query('Add');
+      addQuery.equalTo('artistProfile', artist);
+      addQuery.include('user');
+      addQuery.include(['user.userProfile']);
+      addQuery.each(function(add){
+          collectorRelation.add(add.attributes.user.attributes.userProfile);
+        });
+
+      });
+
+      updates.push(artist.save());
+    }
+    return Parse.Promise.when(updates);
+  })
+  .then(function () {
+      status.success('Artists relations updated');
+    },
+    function (error) {
+      status.error('Failed to update relations');
+  });
+});
