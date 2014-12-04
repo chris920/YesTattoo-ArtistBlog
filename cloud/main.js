@@ -559,7 +559,7 @@ Parse.Cloud.job("updateGlobalBooks", function(request, status) {
 
 
 
-/////// Upgrade, one time only jobs
+/////// DB Fix, one time only jobs
 
 //adds the emails to the artist profiles.
 Parse.Cloud.job("addEmail", function(request, status) {
@@ -633,7 +633,7 @@ Parse.Cloud.job("addArtistProfile", function(request, status) {
   });
 });
 
-
+//deletes the artists books on tattoos
 Parse.Cloud.job("tattooEmptyArtistBooks", function(request, status) {
   Parse.Cloud.useMasterKey();
   var counter = 0;
@@ -659,6 +659,7 @@ Parse.Cloud.job("tattooEmptyArtistBooks", function(request, status) {
   });
 });
 
+//deletes location for artists that have been set to the default
 Parse.Cloud.job("emptyLocation", function(request, status) {
   Parse.Cloud.useMasterKey();
   var counter = 0;
@@ -682,6 +683,7 @@ Parse.Cloud.job("emptyLocation", function(request, status) {
   });
 });
 
+//deletes the artist's books
 Parse.Cloud.job('addBooksToArtistsProfile', function (request, status) {
   Parse.Cloud.useMasterKey();
   console.log('Running ArtistProfile upgrade');
@@ -699,6 +701,10 @@ Parse.Cloud.job('addBooksToArtistsProfile', function (request, status) {
     status.error('Failed to update ArtistProfile');
   });
 });
+
+
+
+/////// Upgrade live, one time only jobs
 
 Parse.Cloud.job('setArtistFeatureId', function (request, status) {
   Parse.Cloud.useMasterKey();
