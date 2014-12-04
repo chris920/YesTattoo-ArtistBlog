@@ -479,7 +479,7 @@
               <ul class="nav nav-tabs" id="profMenu">
                   <li><span class="subMenuThumb"><img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof"></span></li>
                   <li class="active"><a href="#portfolioTab" data-toggle="tab"><span class="flaticon-black373"></span>Portfolio</a></li>
-                  <% if (desc || featuremonth ) { %>
+                  <% if (desc || featureId ) { %>
                     <li><a href="#aboutTab" data-toggle="tab"><span class="flaticon-information"></span>About</a></li>
                   <% } %>
                   <% if (address) { %>
@@ -509,7 +509,7 @@
                   <h3>About <%= (name) ?  name : '' %> </h3>
                   <p><%= desc %></p><hr><br>
                 <% } %>
-                <% if (featuremonth) { %>
+                <% if (featureId) { %>
                   <h3>Featured Interview</h3>
                   <h5>Q1 ~ <%= q1 %> </h5>
                   <p class="answer"><%= a1 %></p>
@@ -530,7 +530,7 @@
                     <p class="answer"><%= a5 %></p>
                   <% } %>
                   <% if (q1) { %>
-                    <i class="pull-right">Featured on <%= featuremonth %> / <%= featureyear %> by <%= author %></i>
+                    <i class="pull-right">Featured on <%= featureDate.getMonth() %> / <%= featureDate.getDate() %> / <%= featureDate.getFullYear() %> by <%= author %></i>
                   <% } %>
                 <% } %>
             </div>
