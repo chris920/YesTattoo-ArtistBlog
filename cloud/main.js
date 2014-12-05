@@ -746,7 +746,6 @@ Parse.Cloud.job('setArtistFeatureId', function (request, status) {
   });
 });
 
-
 Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
   Parse.Cloud.useMasterKey();
 
@@ -848,36 +847,50 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
   });
 });
 
-
 Parse.Cloud.job('setArtistProfileRelationships', function (request, status) {
   Parse.Cloud.useMasterKey();
   console.log('Running artist profile relationship update ...');
 
+  var allArtists;
   var query = new Parse.Query('ArtistProfile');
   query.find().then(function (artists) {
-    var updates = [];
-    for (var i = 0; i < artists.length; i++) {
-      var artist = artists[i];
-
+    allArtists = artists;
+    var promises = [];
+    _.each(allArtists, function(artist) {
       var tattooRelation = artist.relation('tattoos');
       var tattoosQuery = new Parse.Query('Tattoo');
       tattoosQuery.equalTo('artistProfile', artist);
-      tattoosQuery.each(function(tattoos){
-        tattooRelation.add(tattoos);
+      var promise = tattoosQuery.find();
+      promise = promise.then(function(tattoos){
+        _.each(tattoos, function(tattoo){
+          tattooRelation.add(tattoo);
+        });
       });
-      
+      promises.push(promise);
+    });
+
+    _.each(allArtists, function(artist) {
       var collectorRelation = artist.relation('collectors');
       var addQuery = new Parse.Query('Add');
       addQuery.equalTo('artistProfile', artist);
       addQuery.include('user');
       addQuery.include(['user.userProfile']);
-      addQuery.each(function(add){
-        collectorRelation.add(add.attributes.user.attributes.userprofile);
+      var promise = addQuery.find();
+      promise = promise.then(function(adds){
+        _.each(adds, function(add){
+          collectorRelation.add(add.attributes.user.attributes.userprofile);
+        });
       });
+      promises.push(promise);
+    });
 
-      updates.push(artist.save());
-    }
-    return Parse.Promise.when(updates);
+    return Parse.Promise.when(promises);
+  }).then(function () {
+    var savePromises = [];
+    _.each(allArtists, function(artist) {
+      savePromises.push(artist.save());
+    });
+    return Parse.Promise.when(savePromises);
   }).then(function () {
       status.success('Artists relations updated');
     },
