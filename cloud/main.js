@@ -755,9 +755,12 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
   query.limit(1000);
   query.find().then(function (artists) {
     var artistClearPromises = [];
+    //delays are for the really cool parse.com burst limit
+    var delay = 100;
     _.each(artists, function(artist){
+      delay = delay + 200;
       artist.set('books', []);
-      artistClearPromises.push(artist.save())
+      artistClearPromises.push(_.debounce(artist.save(), delay))
     });
     return Parse.Promise.when(artistClearPromises);
   }).then(function(){
@@ -778,9 +781,11 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
     return query.find();
   }).then(function(tattoos){
     var tattooClearPromises = [];
+    var delay = 100;
     _.each(tattoos, function(tattoo){
+      delay = delay + 200;
       tattoo.set('books', []);
-      tattooClearPromises.push(tattoo.save())
+      tattooClearPromises.push(_.debounce(tattoo.save(), delay))
     });
     return Parse.Promise.when(tattooClearPromises);
   }).then(function(){
@@ -792,7 +797,9 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
     return query.find();
   }).then(function(adds){
     var addPromises = [];
+    var delay = 100;
     _.each(adds, function(add) {
+      delay = delay + 200;
       console.log('ADDING BOOKS FROM THE ADD: ');///clear
       console.log(add);///clear
       var books = _.flatten(add.get('books'));
@@ -805,7 +812,7 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
           tattoo.add('books', book);
         });
       };
-      addPromises.push(add.save());
+      addPromises.push(_.debounce(add.save(), delay));
     });
     return Parse.Promise.when(addPromises);
   }).then(function(){
@@ -818,7 +825,9 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
     return query.find();
   }).then(function(adds){
     var addPromises = [];
+    var delay = 100;
     _.each(adds, function(add) {
+      delay = delay + 200;
       var books = _.flatten(add.get('books'));
       var artist = add.get('artistProfile');
       var tattoo = add.get('tattoo');
@@ -828,7 +837,7 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
           tattoo.add('books', book);
         });
       };
-      addPromises.push(add.save());
+      addPromises.push(_.debounce(add.save(), delay));
     });
     return Parse.Promise.when(addPromises);
   }).then(function () {
