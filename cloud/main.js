@@ -746,7 +746,7 @@ Parse.Cloud.job('setArtistFeatureId', function (request, status) {
   });
 });
 
-Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
+Parse.Cloud.job('updateArtistAndTattooBooksStep1Clear', function (request, status) {
   Parse.Cloud.useMasterKey();
 
   //Empties all of the adds on the artist profile and tattoos
@@ -754,12 +754,13 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
   query.limit(1000);
   query.find().then(function (artists) {
     var artistClearPromises = [];
-    //delays are for the really cool parse.com burst limit
-    var delay = 100;
+    var promise = Parse.Promise.as();
     _.each(artists, function(artist){
-      delay = delay + 200;
       artist.set('books', []);
-      artistClearPromises.push(_.debounce(artist.save(), delay))
+      promise = promise.then(function() {
+        return artist.save();
+      });
+      artistClearPromises.push(promise)
     });
     return Parse.Promise.when(artistClearPromises);
   }).then(function(){
@@ -768,9 +769,13 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
     return query.find();
   }).then(function(tattoos){
     var tattooClearPromises = [];
+    var promise = Parse.Promise.as();
     _.each(tattoos, function(tattoo){
       tattoo.set('books', []);
-      tattooClearPromises.push(tattoo.save())
+      promise = promise.then(function() {
+        return tattoo.save();
+      });
+      tattooClearPromises.push(promise)
     });
     return Parse.Promise.when(tattooClearPromises);
   }).then(function(){
@@ -780,42 +785,54 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
     return query.find();
   }).then(function(tattoos){
     var tattooClearPromises = [];
-    var delay = 100;
+    var promise = Parse.Promise.as();
     _.each(tattoos, function(tattoo){
-      delay = delay + 200;
       tattoo.set('books', []);
-      tattooClearPromises.push(_.debounce(tattoo.save(), delay))
+      promise = promise.then(function() {
+        return tattoo.save();
+      });
+      tattooClearPromises.push(promise)
     });
     return Parse.Promise.when(tattooClearPromises);
-  }).then(function(){
-    //Gets all of the Adds and adds each book
-    var query = new Parse.Query('Add');
-    query.limit(1000);
-    query.include('artistProfile');
-    query.include('tattoo');
-    return query.find();
-  }).then(function(adds){
+  }).then(function () {
+    status.success('Books updated');
+  },
+  function (error) {
+    status.error('Failed to update Books');
+  });
+});
+
+Parse.Cloud.job('updateArtistAndTattooBooksStep2Add', function (request, status) {
+  Parse.Cloud.useMasterKey();
+
+  //Gets all of the Adds and adds each book
+  status.message("Processing first 1k adds.");
+  var query = new Parse.Query('Add');
+  query.limit(1000);
+  query.include('artistProfile');
+  query.include('tattoo');
+  query.find().then(function(adds){
     var addPromises = [];
-    var delay = 100;
+    var promise = Parse.Promise.as();
     _.each(adds, function(add) {
-      delay = delay + 200;
       console.log('ADDING BOOKS FROM THE ADD: ');///clear
       console.log(add);///clear
       var books = _.flatten(add.get('books'));
       var artist = add.get('artistProfile');
       var tattoo = add.get('tattoo');
-      //checks for the artist and tattoo before adding, hack for demo broken data
-      if (artist && tattoo && books) {
-        _.each(books, function(book){
-          artist.add('books', book);
-          tattoo.add('books', book);
-        });
-      };
-      addPromises.push(_.debounce(add.save(), delay));
+      _.each(books, function(book){
+        artist.add('books', book);
+        tattoo.add('books', book);
+      });
+      promise = promise.then(function() {
+        return add.save();
+      });
+      addPromises.push(promise);
     });
     return Parse.Promise.when(addPromises);
   }).then(function(){
-    //Updates the second 1k adds
+    //Updates with the second 1k adds
+    status.message("Processing second 1k adds.");
     var query = new Parse.Query('Add');
     query.limit(1000);
     query.skip(1000);
@@ -824,19 +841,45 @@ Parse.Cloud.job('updateArtistAndTattooBooks', function (request, status) {
     return query.find();
   }).then(function(adds){
     var addPromises = [];
-    var delay = 100;
+    var promise = Parse.Promise.as();
     _.each(adds, function(add) {
-      delay = delay + 200;
       var books = _.flatten(add.get('books'));
       var artist = add.get('artistProfile');
       var tattoo = add.get('tattoo');
-      if (artist && tattoo && books) {
-        _.each(books, function(book){
-          artist.add('books', book);
-          tattoo.add('books', book);
-        });
-      };
-      addPromises.push(_.debounce(add.save(), delay));
+      _.each(books, function(book){
+        artist.add('books', book);
+        tattoo.add('books', book);
+      });
+      promise = promise.then(function() {
+        return add.save();
+      });
+      addPromises.push(promise);
+    });
+    return Parse.Promise.when(addPromises);
+  }).then(function(){
+    //Updates with the third 1k adds
+    status.message("Processing THIRD 1k adds.");
+    var query = new Parse.Query('Add');
+    query.limit(1000);
+    query.skip(2000);
+    query.include('artistProfile');
+    query.include('tattoo');
+    return query.find();
+  }).then(function(adds){
+    var addPromises = [];
+    var promise = Parse.Promise.as();
+    _.each(adds, function(add) {
+      var books = _.flatten(add.get('books'));
+      var artist = add.get('artistProfile');
+      var tattoo = add.get('tattoo');
+      _.each(books, function(book){
+        artist.add('books', book);
+        tattoo.add('books', book);
+      });
+      promise = promise.then(function() {
+        return add.save();
+      });
+      addPromises.push(promise);
     });
     return Parse.Promise.when(addPromises);
   }).then(function () {
@@ -896,5 +939,88 @@ Parse.Cloud.job('setArtistProfileRelationships', function (request, status) {
     },
     function (error) {
       status.error('Failed to update relations');
+  });
+});
+
+
+
+/////// database check jobs
+
+Parse.Cloud.define('bookCheck', function (request, response) {
+
+  var addBooks = [];
+  var artistBooks = [];
+  var tattooBooks = [];
+
+  var addBookCount;
+  var artistBooksCount;
+  var tattooBooksCount;
+
+  var query = new Parse.Query('ArtistProfile');
+  query.find().then(function (artists) {
+    _.each(artists, function(artist){
+      artistBooks.push(artist.get('books'));
+    });
+    var query = new Parse.Query('Add');
+    query.limit(1000);
+    return query.find();
+  }).then(function(adds){
+    _.each(adds, function(add){
+      addBooks.push(add.get('books'));
+    });
+    var query = new Parse.Query('Add');
+    query.limit(1000);
+    query.skip(1000);
+    return query.find();
+  }).then(function(adds){
+    _.each(adds, function(add){
+      addBooks.push(add.get('books'));
+    });
+    var query = new Parse.Query('Add');
+    query.limit(1000);
+    query.skip(2000);
+    return query.find();
+  }).then(function(adds){
+    _.each(adds, function(add){
+      addBooks.push(add.get('books'));
+    });
+    var query = new Parse.Query('Tattoo');
+    query.limit(1000);
+    return query.find();
+  }).then(function(tattoos){
+    _.each(tattoos, function(tattoo){
+      tattooBooks.push(tattoo.get('books'));
+    });
+    var query = new Parse.Query('Tattoo');
+    query.limit(1000);
+    query.skip(1000);
+    return query.find();
+  }).then(function(tattoos){
+    _.each(tattoos, function(tattoo){
+      tattooBooks.push(tattoo.get('books'));
+    });
+    var query = new Parse.Query('Tattoo');
+    query.limit(1000);
+    query.skip(2000);
+    return query.find();
+  }).then(function(tattoos){
+    _.each(tattoos, function(tattoo){
+      tattooBooks.push(tattoo.get('books'));
+    });
+
+  }).then(function(){
+
+    addBooksFlat = _.compact(_.flatten(addBooks));
+    artistBooksFlat = _.compact(_.flatten(artistBooks));
+    tattooBooksFlat = _.compact(_.flatten(tattooBooks));
+
+    addBooksUnique = _.unique(addBooksFlat);
+    artistBooksUnique = _.unique(artistBooksFlat);
+    tattooBooksUnique = _.unique(tattooBooksFlat);
+
+  }).then(function() {
+    response.success('Book counts Unique/Total are: Adds = ' + addBooksUnique.length+'/'+addBooksFlat.length + ', Artists = ' + artistBooksUnique.length + '/' + artistBooksFlat.length + ', Tattoos = ' + tattooBooksUnique.length + '/' + tattooBooksFlat.length);
+  }, function(error) {
+    response.error(error);
   });
 });
