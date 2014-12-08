@@ -1022,12 +1022,21 @@ Parse.Cloud.define('bookCheck', function (request, response) {
   var artistBooks = [];
   var tattooBooks = [];
 
-  var addBookCount;
-  var artistBooksCount;
-  var tattooBooksCount;
+  var addBooksFlat = [];
+  var artistBooksFlat = [];
+  var tattooBooksFlat = [];
+
+  var addBooksUnique = [];
+  var artistBooksUnique = [];
+  var tattooBooksUnique = [];
+
+  var globalBooksUniqueCount = 0;
+  var globalBooksCount = 0;
 
   var query = new Parse.Query('ArtistProfile');
+  query.limit(1000);
   query.find().then(function (artists) {
+    console.log(artists);///clear
     _.each(artists, function(artist){
       artistBooks.push(artist.get('books'));
     });
@@ -1078,6 +1087,15 @@ Parse.Cloud.define('bookCheck', function (request, response) {
       tattooBooks.push(tattoo.get('books'));
     });
 
+    var query = new Parse.Query('GlobalBook');
+    query.limit(1000);
+    return query.find();
+  }).then(function(books){
+    globalBooksUniqueCount = books.length;
+    _.each(books, function(book){
+      globalBooksCount = globalBooksCount + book.get('count');
+    });
+
   }).then(function(){
 
     addBooksFlat = _.compact(_.flatten(addBooks));
@@ -1089,7 +1107,7 @@ Parse.Cloud.define('bookCheck', function (request, response) {
     tattooBooksUnique = _.unique(tattooBooksFlat);
 
   }).then(function() {
-    response.success('Book counts Unique/Total are: Adds = ' + addBooksUnique.length+'/'+addBooksFlat.length + ', Artists = ' + artistBooksUnique.length + '/' + artistBooksFlat.length + ', Tattoos = ' + tattooBooksUnique.length + '/' + tattooBooksFlat.length);
+    response.success('Book counts Unique/Total are: Adds = ' + addBooksUnique.length + '/' + addBooksFlat.length + ', Artists = ' + artistBooksUnique.length + '/' + artistBooksFlat.length + ', Tattoos = ' + tattooBooksUnique.length + '/' + tattooBooksFlat.length + ', Global = ' + globalBooksUniqueCount + '/' + globalBooksCount);
   }, function(error) {
     response.error(error);
   });
