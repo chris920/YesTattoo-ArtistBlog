@@ -802,14 +802,13 @@ Parse.Cloud.job('updateArtistAndTattooBooksStep1Clear', function (request, statu
   });
 });
 
-Parse.Cloud.job('updateArtistAndTattooBooksStep2Add', function (request, status) {
+Parse.Cloud.job('updateArtistAndTattooBooksStep2AddTattoos', function (request, status) {
   Parse.Cloud.useMasterKey();
 
   //Gets all of the Adds and adds each book
   status.message("Processing first 1k adds.");
   var query = new Parse.Query('Add');
   query.limit(1000);
-  query.include('artistProfile');
   query.include('tattoo');
   query.find().then(function(adds){
     var addPromises = [];
@@ -818,10 +817,8 @@ Parse.Cloud.job('updateArtistAndTattooBooksStep2Add', function (request, status)
       console.log('ADDING BOOKS FROM THE ADD: ');///clear
       console.log(add);///clear
       var books = _.flatten(add.get('books'));
-      var artist = add.get('artistProfile');
       var tattoo = add.get('tattoo');
       _.each(books, function(book){
-        artist.add('books', book);
         tattoo.add('books', book);
       });
       promise = promise.then(function() {
@@ -836,7 +833,6 @@ Parse.Cloud.job('updateArtistAndTattooBooksStep2Add', function (request, status)
     var query = new Parse.Query('Add');
     query.limit(1000);
     query.skip(1000);
-    query.include('artistProfile');
     query.include('tattoo');
     return query.find();
   }).then(function(adds){
@@ -844,10 +840,8 @@ Parse.Cloud.job('updateArtistAndTattooBooksStep2Add', function (request, status)
     var promise = Parse.Promise.as();
     _.each(adds, function(add) {
       var books = _.flatten(add.get('books'));
-      var artist = add.get('artistProfile');
       var tattoo = add.get('tattoo');
       _.each(books, function(book){
-        artist.add('books', book);
         tattoo.add('books', book);
       });
       promise = promise.then(function() {
@@ -862,7 +856,6 @@ Parse.Cloud.job('updateArtistAndTattooBooksStep2Add', function (request, status)
     var query = new Parse.Query('Add');
     query.limit(1000);
     query.skip(2000);
-    query.include('artistProfile');
     query.include('tattoo');
     return query.find();
   }).then(function(adds){
@@ -870,11 +863,88 @@ Parse.Cloud.job('updateArtistAndTattooBooksStep2Add', function (request, status)
     var promise = Parse.Promise.as();
     _.each(adds, function(add) {
       var books = _.flatten(add.get('books'));
-      var artist = add.get('artistProfile');
       var tattoo = add.get('tattoo');
       _.each(books, function(book){
-        artist.add('books', book);
         tattoo.add('books', book);
+      });
+      promise = promise.then(function() {
+        return add.save();
+      });
+      addPromises.push(promise);
+    });
+    return Parse.Promise.when(addPromises);
+  }).then(function () {
+    status.success('Books updated');
+  },
+  function (error) {
+    status.error('Failed to update Books');
+  });
+});
+
+Parse.Cloud.job('updateArtistAndTattooBooksStep3AddArtist', function (request, status) {
+  Parse.Cloud.useMasterKey();
+
+  //Gets all of the Adds and adds each book
+  status.message("Processing first 1k adds.");
+  var query = new Parse.Query('Add');
+  query.limit(1000);
+  query.include('artistProfile');
+  query.find().then(function(adds){
+    var addPromises = [];
+    var promise = Parse.Promise.as();
+    _.each(adds, function(add) {
+      console.log('ADDING BOOKS FROM THE ADD: ');///clear
+      console.log(add);///clear
+      var books = _.flatten(add.get('books'));
+      var artist = add.get('artistProfile');
+      _.each(books, function(book){
+        artist.add('books', book);
+      });
+      promise = promise.then(function() {
+        return add.save();
+      });
+      addPromises.push(promise);
+    });
+    return Parse.Promise.when(addPromises);
+  }).then(function(){
+    //Updates with the second 1k adds
+    status.message("Processing second 1k adds.");
+    var query = new Parse.Query('Add');
+    query.limit(1000);
+    query.skip(1000);
+    query.include('artistProfile');
+    return query.find();
+  }).then(function(adds){
+    var addPromises = [];
+    var promise = Parse.Promise.as();
+    _.each(adds, function(add) {
+      var books = _.flatten(add.get('books'));
+      var artist = add.get('artistProfile');
+      _.each(books, function(book){
+        artist.add('books', book);
+      });
+      promise = promise.then(function() {
+        return add.save();
+      });
+      addPromises.push(promise);
+    });
+    return Parse.Promise.when(addPromises);
+  }).then(function(){
+    //Updates with the third 1k adds
+    status.message("Processing THIRD 1k adds.");
+    var query = new Parse.Query('Add');
+    query.limit(1000);
+    query.skip(2000);
+    query.include('artistProfile');
+    return query.find();
+  }).then(function(adds){
+    var addPromises = [];
+    var promise = Parse.Promise.as();
+    _.each(adds, function(add) {
+      var books = _.flatten(add.get('books'));
+      var artist = add.get('artistProfile');
+      _.each(books, function(book){
+        artist.add('books', book);
       });
       promise = promise.then(function() {
         return add.save();
