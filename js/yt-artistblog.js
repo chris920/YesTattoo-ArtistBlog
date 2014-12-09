@@ -1313,16 +1313,25 @@ App.Views.Paginator = Parse.View.extend({
     },
 
     render: function () {
-        var self = this;
 
-        var startIndex = 0;
-        if (self.pageIndex > (self.pageCount - 1)) {
-            startIndex = (self.pageIndex - (self.pageCount - 1));
+        this.$el.empty();
+        if (this.pageMax > 0) {
+            this.$el.append(this.renderPaginator());
         }
 
-        var endIndex = startIndex + self.pageCount;
-        if (endIndex > self.pageMax) {
-            endIndex = self.pageMax;
+        return this;
+    },
+
+    renderPaginator: function () {
+
+        var startIndex = 0;
+        if (this.pageIndex > (this.pageCount - 1)) {
+            startIndex = (this.pageIndex - (this.pageCount - 1));
+        }
+
+        var endIndex = startIndex + this.pageCount;
+        if (endIndex > this.pageMax) {
+            endIndex = this.pageMax;
         }
 
         var paginator = $('<ul class="pagination"></ul>');
@@ -1333,7 +1342,7 @@ App.Views.Paginator = Parse.View.extend({
             );
 
         for (var i = startIndex; i < endIndex; i++) {
-            var isActive = (i === self.pageIndex) ? 'active' : '';
+            var isActive = (i === this.pageIndex) ? 'active' : '';
             paginator.append($('<li class="' + isActive + '"></li>')
                 .append($('<a href="" class="page-select" data-page="' + i + '"></a>')
                     .append(i+1)
@@ -1347,9 +1356,7 @@ App.Views.Paginator = Parse.View.extend({
                 )
             );
 
-        self.$el.empty();
-        self.$el.append(paginator);
-        return self;
+        return paginator;
     }
 });
 
