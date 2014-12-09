@@ -633,7 +633,7 @@ Parse.Cloud.job("addArtistProfile", function(request, status) {
   });
 });
 
-//deletes the artists books on tattoos
+//adds an empty array for undefined artists books on tattoos
 Parse.Cloud.job("tattooEmptyArtistBooks", function(request, status) {
   Parse.Cloud.useMasterKey();
   var counter = 0;
@@ -652,7 +652,33 @@ Parse.Cloud.job("tattooEmptyArtistBooks", function(request, status) {
       counter += 1;
       return tattoo.save();
   }).then(function() {
-    status.success("books emptied.");
+    status.success("empty book arrays added.");
+  }, function(error) {
+    console.log(error);
+    status.error("Uh oh, something went wrong.");
+  });
+});
+
+//adds an empty array for undefined books on tattoos
+Parse.Cloud.job("tattooEmptyBooks", function(request, status) {
+  Parse.Cloud.useMasterKey();
+  var counter = 0;
+  var query = new Parse.Query("Tattoo");
+  query.include('artist');
+  query.each(function(tattoo) {
+
+      if(tattoo.attributes.books === undefined){
+        var emptyArray = [];
+        tattoo.set("books", emptyArray);
+      }
+
+      if (counter % 100 === 0) {
+        status.message(counter + " tattoos processed.");
+      }
+      counter += 1;
+      return tattoo.save();
+  }).then(function() {
+    status.success("empty book arrays added.");
   }, function(error) {
     console.log(error);
     status.error("Uh oh, something went wrong.");
@@ -1011,94 +1037,6 @@ Parse.Cloud.job('setArtistProfileRelationships', function (request, status) {
       status.error('Failed to update relations');
   });
 });
-
-//resaves the thumbnails for images that were not completed in the database migration / duplication
-//TODO - Fix
-Parse.Cloud.job('reprocessTattooImages', function (request, status) {
-  Parse.Cloud.useMasterKey();
-  var allTattoos = new Parse.Collection();
-
-  var query = new Parse.Query('Tattoo');
-  query.limit(1000);
-  query.find().then(function(tattoos){
-    allTattoos.add(tattoos);
-    var query = new Parse.Query('Tattoo');
-    query.limit(1000);
-    query.skip(1000);
-    return query.find();
-  }).then(function(tattoos){
-    allTattoos.add(tattoos);
-    var query = new Parse.Query('Tattoo');
-    query.limit(1000);
-    query.skip(2000);
-    return query.find();
-  }).then(function(tattoos){
-    allTattoos.add(tattoos);
-  }).then(function (){
-    var promises = [];
-
-    _.each(allTattoos, function(tattoo){
-      var promise = Parse.Cloud.httpRequest({
-        url: tattoo.get("file").url()
-      }).then(function(response) {
-        var image = new Image();
-        return image.setData(response.buffer);
-      }).then(function(image) {
-        var width = Math.min(image.height() * 0.75, image.width());   
-        var height = Math.min(image.width() * 1.33, image.height());
-        if (width < 369 ) {
-          return Parse.Promise.error("Choose a bigger image.");;
-        }
-        return image.crop({
-          left: (image.width() - width) / 2,
-          top: (image.height() - height) / 2,
-          width: width,
-          height: height
-        });
-      }).then(function(image) {
-        tattoo.image = image
-        return image.scale({ width: 369, height: 493 }); 
-      }).then(function(image) {
-        return image.setFormat("JPEG");
-      }).then(function(image) {
-        return image.data();
-      }).then(function(buffer) {
-        var base64 = buffer.toString("base64");
-        var cropped = new Parse.File("thumbnail.jpg", { base64: base64 });
-        return cropped.save();
-      }).then(function(cropped) {
-        tattoo.set("fileThumb", cropped);
-      }).then(function() {
-        return tattoo.image.scale({ width: 124, height: 166 });
-      }).then(function(image) {
-        return image.setFormat("JPEG");
-      }).then(function(image) {
-        return image.data();
-      }).then(function(buffer) {
-        var base64 = buffer.toString("base64");
-        var cropped = new Parse.File("thumbnail.jpg", { base64: base64 });
-        return cropped.save();
-      }).then(function(cropped) {
-        tattoo.set("fileThumbSmall", cropped);
-      }).then(function(result) {
-        response.success();
-      }, function(error) {
-        response.error(error);
-      });
-
-      promises.push(promise);
-    });
-
-    return Parse.Promise.when(promises);
-  }).then(function (){
-      status.success(allTattoos.length + ' images processed');
-    },
-    function (error){
-      status.error('Failed to update relations');
-  });
-});
-
-
 
 /////// database check jobs
 
