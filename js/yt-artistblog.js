@@ -2122,7 +2122,7 @@ App.Views.ArtistProfile = Parse.View.extend({
             animation: google.maps.Animation.DROP,
             position: mapLocation,
             map: this.map,
-            icon: ' img/mapmarker.png'
+            icon: 'img/mapmarker-user.png'
         });
     }, 500),
     centerMap: function() {

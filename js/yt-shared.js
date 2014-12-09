@@ -249,7 +249,7 @@ Array.prototype.byCountWithCount= function(){
         var _marker = new google.maps.Marker({
             position: new google.maps.LatLng(54.19335, -3.92695),
             map: _map,
-            icon: ' img/mapmarker.png',
+            icon: 'img/mapmarker-user.png',
             title: "Drag Me",
             draggable: true
         });
