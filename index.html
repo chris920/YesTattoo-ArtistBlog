@@ -479,7 +479,7 @@
               <ul class="nav nav-tabs" id="profMenu">
                   <li><span class="subMenuThumb"><img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof"></span></li>
                   <li class="active"><a href="#portfolioTab" data-toggle="tab"><span class="flaticon-black373"></span>Portfolio</a></li>
-                  <% if (desc || featureId ) { %>
+                  <% if (desc || typeof(featureId)!== 'undefined')  { %>
                     <li><a href="#aboutTab" data-toggle="tab"><span class="flaticon-information"></span>About</a></li>
                   <% } %>
                   <% if (address) { %>
