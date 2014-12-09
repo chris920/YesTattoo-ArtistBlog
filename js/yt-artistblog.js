@@ -4380,8 +4380,10 @@ App.controller = (function () {
         console.log('controller about');
         var about = new App.Views.About();
         App.viewManager.show(about);
-        var join = new App.Views.Join();
-        $('#app').append(join.render().el);
+        if (!Parse.User.current()){
+            var join = new App.Views.Join();
+            $('#app').append(join.render().el);
+        }
         Parse.history.navigate('about', { trigger: false });
     }
 
