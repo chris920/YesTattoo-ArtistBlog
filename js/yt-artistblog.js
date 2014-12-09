@@ -507,7 +507,12 @@ App.Views.Search = Backbone.Modal.extend({
     searchAll: function(){
         var that = this;
         
-        this.query = this.$('.mainSearchInput').val().trim();
+        var newQuery = this.$('.mainSearchInput').val().trim();
+        if (this.query === newQuery) {
+            return;
+        }
+        this.query = newQuery;
+        
         if (this.query.length === 0) {
             this.resetAll();
         }
