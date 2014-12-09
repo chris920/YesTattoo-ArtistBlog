@@ -483,13 +483,12 @@ App.Views.Search = Backbone.Modal.extend({
         console.log('search init');
         this.searchTimer;
 
-        _.bindAll(this, 'focusIn', 'keypressSearchTimer', 'initSearchTimer', 'searchAll');
+        _.bindAll(this, 'focusIn', 'keypressSearchTimer', 'initSearchTimer', 'searchAll', 'resetAll');
         App.on('app:keypress', this.focusIn);
     },
     disable: function () {
         console.log('search disabled');
         App.off('app:keypress', this.focusIn);
-
     },
     template: _.template($("#searchTemplate").html()),
     cancelEl: '.x',
@@ -508,20 +507,33 @@ App.Views.Search = Backbone.Modal.extend({
     searchAll: function(){
         var that = this;
         
-        this.query = this.$('.mainSearchInput').val();
-
-        var elements = this.$('.resultsMessage, .bookResultsContainer, .artistResultsContainer, .userResultsContainer');
-        var length = elements.length;
-        elements.fadeOut(800, function () {
-        	if (--length > 0) { return; }
-            that.searchBooks();
-            that.searchArtists();
-            that.searchUsers();
-        });
+        this.query = this.$('.mainSearchInput').val().trim();
+        if (this.query.length === 0) {
+            this.resetAll();
+        }
+        else {
+            var elements = this.$('.resultsMessage, .bookResultsContainer, .artistResultsContainer, .userResultsContainer');
+            var length = elements.length;
+            elements.fadeOut(800, function () {
+            	if (--length > 0) { return; }
+                that.searchBooks();
+                that.searchArtists();
+                that.searchUsers();
+            });
+        }
+    },
+    resetAll: function () {
+        this.$('.bookResults').html('');
+        this.$('.bookResultsContainer').fadeOut();
+        this.$('.artistResults').html('');
+        this.$('.artistResultsContainer').fadeOut();
+        this.$('.userResults').html('');
+        this.$('.userResultsContainer').fadeOut();
     },
     searchBooks: function(){
         var that = this;
         var bookResults = App.Collections.globalBooks.filterByNames([this.query]);
+        console.log(bookResults);
         if (bookResults.length) {
             this.$('.bookResults').html('');
             _.each( _.uniq(bookResults), function(book){
@@ -546,9 +558,13 @@ App.Views.Search = Backbone.Modal.extend({
                     });
                     that.$('.artistResultsContainer').fadeIn();
                 }
+                else {
+                    that.$('.artistResultsContainer').fadeOut();
+                }
             },
             function (error) {
                 console.log("Error: " + error.code + " " + error.message);
+                that.$('.artistResultsContainer').fadeOut();
             });
     },
     searchUsers: function(){
@@ -563,9 +579,13 @@ App.Views.Search = Backbone.Modal.extend({
                     });
                     that.$('.userResultsContainer').fadeIn();
                 }
+                else {
+                    that.$('.userResultsContainer').fadeOut();
+                }
             },
             function (error) {
                 console.log("Error: " + error.code + " " + error.message);
+                that.$('.userResultsContainer').fadeOut();
             });
     },
     artistBookSearch: function(){
