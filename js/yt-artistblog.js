@@ -722,7 +722,7 @@ App.Views.BookFilter = Parse.View.extend({
 
         this.bookFilterShown = false;
         this.query = [];
-        this.initialQuery = this.options.books ? this.options.books : [];
+        // this.initialQuery = this.options.books ? this.options.books : [];
 
         this.collection = App.Collections.globalBooks;
         this.collection.resetActive();  // Need to reset active otherwise can't re-select previous book once re-initialized
@@ -933,8 +933,8 @@ App.Views.BookFilter = Parse.View.extend({
 			})
 			.done(function _setInitialBooks() {
 
-				if (self.initialQuery && self.initialQuery.length > 0) {
-					var bookModels = self.collection.filterByNames(self.initialQuery);
+				if (self.options.books && self.options.books.length > 0) {
+					var bookModels = self.collection.findByNames(self.options.books);
 					if (bookModels) {
 						for (var i = 0; i < bookModels.length; i++) {
 							bookModels[i].set('active', true);
