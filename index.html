@@ -509,7 +509,7 @@
                   <h3>About <%= (name) ?  name : '' %> </h3>
                   <p><%= desc %></p><hr><br>
                 <% } %>
-                <% if (featureId) { %>
+                <% if ((typeof(featureId)!== 'undefined')) { %>
                   <h3>Featured Interview</h3>
                   <h5>Q1 ~ <%= q1 %> </h5>
                   <p class="answer"><%= a1 %></p>
