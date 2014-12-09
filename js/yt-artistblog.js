@@ -649,8 +649,9 @@ App.Views.Explore = Parse.View.extend({
     template: _.template($("#exploreTemplate").html()),
     id: 'explore',
     initialize: function(){
+        _.bindAll(this, 'render', 'renderBookThumbnails');
         this.moreToLoad = true;
-        this.collection = App.Collections.globalBooks.first(7);
+        // this.collection = App.Collections.globalBooks.first(7);
     },
     events: {
         "click #findArtists":   "findArtists",
@@ -665,19 +666,20 @@ App.Views.Explore = Parse.View.extend({
         });
     },
     render: function(){
-        var html = this.template();
-        $(this.el).html(html);
-        this.renderBookThumbnails();
+        var self = this;
+        var templateRendered = $(this.el).html(this.template()).promise();
+        $.when(templateRendered, App.Promises.globalBooks.promise())
+            .done(self.renderBookThumbnails);
         return this;
     },
     renderBookThumbnails: function(){
         //TODO Start at a random point from the start of popular
-        var that = this;
-        _.each( this.collection, function(book){
+        var self = this;
+        this.collection = App.Collections.globalBooks.first(7);
+        _.each(this.collection, function(book){
             var bookThubmnail = new App.Views.ExploreBookThumbnail({model: book});
-            that.$('.explorePopularBooks').append(bookThubmnail.render().el);
+            self.$('.explorePopularBooks').append(bookThubmnail.render().el);
         });
-
         this.$('.popularBook:first, .popularBook:last').removeClass('col-sm-4').addClass('col-sm-8');
     }
 });
