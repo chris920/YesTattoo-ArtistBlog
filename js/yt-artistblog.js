@@ -1971,7 +1971,7 @@ App.Views.Artist = Parse.View.extend({
     },
 
 	viewProfile: function () {
-		App.trigger('app:artist-profile', this.model.get('username'));
+		App.trigger('app:artist-profile', this.model);
 	},
 
 	render: function () {
