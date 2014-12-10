@@ -2596,8 +2596,6 @@ App.Views.Tattoo = Parse.View.extend({
     },
     open: function(e){
         e.stopPropagation();
-        // TODO Navigating directly because of modal history / back logic. Needs to use this.model
-        // Parse.history.navigate('tattoo/' + this.model.id , { trigger: true });
         App.trigger('app:tattoo-profile-id', this.model.id);
     },
     profile: function(e){
@@ -4602,10 +4600,6 @@ App.viewManager = (function ViewManager() {
 
         // checks if there is a view under the modal, routes accordingly ///clear
         if (currentView) {
-            console.log(currentView);
-            console.log('routing to ' + App.router.hitRoutes);///clear
-            //removes modal from hitRoutes for repeated modal opens. ///clear
-            App.router.hitRoutes.shift();
             Parse.history.navigate(App.router.hitRoutes[0], { trigger: false });
             currentView.initialize();
         } else {
