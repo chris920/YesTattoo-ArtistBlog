@@ -1296,13 +1296,23 @@ App.Views.Paginator = Parse.View.extend({
     setMaxPages: function (query) {
         var self = this;
         query.then(function (count) {
-                self.pageMax = (count / self.pageResults);
-                self.render();
-            },
-            function (error) {
+            self.pageMax = (count / self.pageResults);
+            self.render();
+        },
+        function (error) {
+            if (error.code === 124) {
+                // Error code 124 is documented as timeout, 
+                // timeout occur with results over 1000
+                // so we'll set max pages to 100 (100 * 10 = 1000)
                 self.pageMax = 100;
-                self.render();
-            });
+            }
+            else {
+                // Any other error, 
+                // and there's probably nothing to display
+                self.pageMax = 0;
+            }
+            self.render();
+        });
     },
 
     triggerPageEvent: function () {
