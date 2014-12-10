@@ -1285,7 +1285,7 @@ App.Views.Paginator = Parse.View.extend({
         this.pageIndex = options.pageIndex || 0;
         this.pageCount = options.pageCount || 10;
         this.pageResults = options.pageResults || 10;
-        this.pageMax = options.pageMax || 100;
+        this.pageMax = options.pageMax || 0;
         this.render();
     },
 
