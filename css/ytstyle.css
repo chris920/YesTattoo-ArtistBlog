@@ -5510,23 +5510,25 @@ button.toggleBookFilter, button.toggleMap {
 #search {
   color: white;
   margin-top: 100px; }
-  #search .results h3 {
-    margin-top: 60px; }
-  #search .results .resultsMessage {
-    text-align: center; }
-  #search .results .userResult {
-    padding: 10px;
-    border-radius: 4px / 6px;
-    -webkit-transition: all 0.3s ease;
-    transition: all 0.3s ease; }
-    #search .results .userResult h4 {
-      margin: 5px 10px 5px 45px; }
-    #search .results .userResult span {
-      margin-left: 15px;
-      display: inline;
-      color: gray; }
-    #search .results .userResult:hover {
-      background-color: #1a1a1a; }
+  #search .results {
+    padding-bottom: 200px; }
+    #search .results h3 {
+      margin-top: 60px; }
+    #search .results .resultsMessage {
+      text-align: center; }
+    #search .results .userResult {
+      padding: 10px;
+      border-radius: 4px / 6px;
+      -webkit-transition: all 0.3s ease;
+      transition: all 0.3s ease; }
+      #search .results .userResult h4 {
+        margin: 5px 10px 5px 45px; }
+      #search .results .userResult span {
+        margin-left: 15px;
+        display: inline;
+        color: gray; }
+      #search .results .userResult:hover {
+        background-color: #1a1a1a; }
 
 .bookSuggestion {
   overflow: hidden;
