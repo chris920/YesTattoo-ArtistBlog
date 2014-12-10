@@ -4744,10 +4744,10 @@ App.query = (function () {
     */
     query.searchUsers = function (query) {
         var queryUsername = new Parse.Query(App.Models.UserProfile);
-        queryUsername.equalTo("username", query);
+        queryUsername.matches("username", query, "i");
 
         var queryName = new Parse.Query(App.Models.UserProfile);
-        queryName.matches("name", query);
+        queryName.matches("name", query, "i");
 
         var search = Parse.Query.or(queryUsername, queryName);
         return search.find();
@@ -4759,13 +4759,13 @@ App.query = (function () {
     */
     query.searchArtists = function (query) {
         var queryUsername = new Parse.Query(App.Models.ArtistProfile);
-        queryUsername.equalTo("username", query);
+        queryUsername.matches("username", query, "i");
 
         var queryName = new Parse.Query(App.Models.ArtistProfile);
-        queryName.matches("name", query);
+        queryName.matches("name", query, "i");
 
         var queryShop = new Parse.Query(App.Models.ArtistProfile);
-        queryShop.matches("shop", query);
+        queryShop.matches("shop", query, "i");
 
         var search = Parse.Query.or(queryUsername, queryName, queryShop);
         return search.find();
