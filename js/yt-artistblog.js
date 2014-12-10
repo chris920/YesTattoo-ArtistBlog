@@ -1908,7 +1908,7 @@ App.Views.Artists = Parse.View.extend({
 	el: '.artists',
 
 	initialize: function () {
-		_.bindAll(this, 'disable', 'disableChildViews', 'resetArtists', 'renderArtist', 'setMinHeight');
+		_.bindAll(this, 'disable', 'disableChildViews', 'resetArtists', 'render' ,'renderArtist', 'setMinHeight');
 
 		this.childViews = [];
 
@@ -1949,6 +1949,11 @@ App.Views.Artists = Parse.View.extend({
 		this.disableChildViews();
 		this.$el.empty();
 	},
+
+    render: function () {
+        this.resetArtists();
+        this.collection.forEach(this.renderArtist, this);
+    },
 
 	renderArtist: function (artist) {
 		var artist = new App.Views.Artist({ model: artist });
