@@ -2828,6 +2828,7 @@ App.Views.UserProfile = Parse.View.extend({
     model: App.Models.User,
     id: 'userProfile',
     initialize: function() {
+        this.routePrefix = Parse.history.fragment;
         this.activateAffix();
     },
     template: _.template($("#userProfileTemplate").html()),
@@ -2840,19 +2841,19 @@ App.Views.UserProfile = Parse.View.extend({
         if (e) { e.preventDefault(); }
         $('a[href="#collectionTab"]').tab('show');
         this.scroll();
-        Parse.history.navigate('myprofile/collection', { trigger: false });
+        Parse.history.navigate(this.routePrefix + '/collection', { trigger: false });
     },
     booksTab: function (e) {
         if (e) { e.preventDefault(); }
         $('a[href="#booksTab"]').tab('show');
         this.scroll();
-        Parse.history.navigate('myprofile/books', { trigger: false });
+        Parse.history.navigate(this.routePrefix + '/books', { trigger: false });
     },
     artistsTab: function (e) {
         if (e) { e.preventDefault(); }
         $('a[href="#artistsTab"]').tab('show');
         this.scroll();
-        Parse.history.navigate('myprofile/artists', { trigger: false });
+        Parse.history.navigate(this.routePrefix + '/artists', { trigger: false });
     },
     scroll: function(){
         $("html, body").animate({ scrollTop: $('.userHead').outerHeight(true) + 41  }, 500);
