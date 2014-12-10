@@ -1985,12 +1985,12 @@ App.Views.Artist = Parse.View.extend({
 	 	App.query.tattoosByProfile(this.model, books, { limit: 4 })
 	 		.then(function (tats) {
 		  		
-		  		// console.log(tats);
 	  			_.each(tats, function(tat) {
-	  				var thumb = tat.get('fileThumb').url();
-	  				that.$('.artistTattoos').append(_.template('<a class="tattooContainer open"><img src='+thumb+' class="tattooImg" href="/tattoo/' + tat.id + '"></a>'));
+                    var tattooThumbnail = new App.Views.ArtistsTattooThumbnail({ model: tat });
+                    that.$('.artistTattoos').append(tattooThumbnail.render().el);
 	  			}, that);
 
+                // TODO This could probably be done better using empty view templates; pushed for time right now
 				if (tats.length < 4) {
 					_(4 - tats.length).times(function(){ 
 						that.$('.artistTattoos').append(_.template('<a class="tattooContainer"><img src="img/empty-tattoo.png" class="tattooImg" style="border: 1px solid #d9d9d9;"></a>'));
@@ -2006,6 +2006,29 @@ App.Views.Artist = Parse.View.extend({
 	  		});
 		return this;
 	}
+});
+
+App.Views.ArtistsTattooThumbnail = Parse.View.extend({
+    template: _.template('<a class="tattooContainer open"><img src=<%= fileThumb.url %> class="tattooImg" href="#"></a>'),
+    initialize: function () {
+        _.bindAll(this, 'disable', 'render');
+        this.initialized = true;
+    },
+    disable: function () {
+    },
+    events: {
+        'click': 'openTattoo',
+    },
+    openTattoo: function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        App.trigger('app:tattoo-profile-id', this.model.id);
+    },
+    render: function () {
+        var attributes = this.model.toJSON();
+        $(this.el).append(this.template(attributes));
+        return this;
+    }
 });
 
 App.Views.Login = Backbone.Modal.extend({
