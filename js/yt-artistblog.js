@@ -1449,7 +1449,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	initialize: function (options) {
 		console.log('artists page init = ' + JSON.stringify(options));
 
-		_.bindAll(this, 'disable', 'scrollToTop', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'render', 'updateURL');
+		_.bindAll(this, 'disable', 'scrollToTop', 'bookUpdate', 'locationUpdate', 'hideMap', 'showMap', 'showReset', 'render', 'updateURL');
 
 		this.requestLimit = 10;
 
@@ -1597,6 +1597,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			})
 			.then(function (artists) {
 				self.collection.add(artists);
+                self.showReset();
 				self.updateURL(books);
 				if (artists.length < self.requestLimit) {
 					self.moreToLoad = false;
@@ -1612,6 +1613,28 @@ App.Views.ArtistsPage = Parse.View.extend({
 				self.collection.trigger('finito');
 			});
 	}, 500),
+
+    showReset: function () {
+        var self = this;
+        if (this.collection.length === 0) {
+            this.$('.reset')
+                .html('<h5>No artists with those books.</h5><button class="btn-submit">Reset filters</button>')
+                .fadeIn()
+                .on('click', function () {
+                    self.bookFilterView.queryReset();
+                    self.hideReset();
+                });
+        }
+        else {
+            this.hideReset();
+        }
+    },
+
+    hideReset: function () {
+        if ($('.reset').length > 0) {
+            $('.reset').fadeOut();
+        }
+    },
 
 	render: function () {
 		var self = this;
