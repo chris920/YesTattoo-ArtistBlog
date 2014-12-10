@@ -2152,7 +2152,7 @@ App.Views.ArtistProfile = Parse.View.extend({
             .then(function (tats) {
                 var tattoosCollection = new App.Collections.Tattoos(tats);
                 var tattoosView = new App.Views.Tattoos({collection: tattoosCollection});
-                tattoosView.render().getBooks();
+                tattoosView.render().getAndRenderBooks();
             },
             function (error) {
                 console.log(error);
@@ -2169,7 +2169,7 @@ App.Views.ArtistProfile = Parse.View.extend({
             .then(function(tats) {
                 App.myTattoos = new App.Collections.Tattoos(tats);
                 var portfolio = new App.Views.Tattoos({collection: App.myTattoos, myTattoos: true});
-                portfolio.render().getBooks();
+                portfolio.render().getAndRenderBooks();
             },
             function (error) {
                 console.log(error);
@@ -2497,18 +2497,6 @@ App.Views.Tattoos = Parse.View.extend({
         $('.bookFilter').removeClass('active');
         this.renderTattoos();
     },
-    getBooks: function(count){
-        this.renderBooks(this.collection.getBooksByCount(count || 5));
-
-        if(!count){
-            $('.tagFilters').append(_.template('<a class="more">More</a>'));            
-            $('.more').on('click', this.renderMoreBooks);
-        } else {
-            this.resetFilters();
-        }
-
-        return this;
-    },
     renderBooks: function(books){
         if (books.length > 0){
             $(this.el).before('<div class="tagFilters" data-toggle="buttons"><span class="flaticon-book104"></span></div>');
@@ -2540,10 +2528,23 @@ App.Views.Tattoos = Parse.View.extend({
 
         return this;
     },
-    renderMoreBooks: function(){
+    getAndRenderBooks: function(){
+        var books = this.collection.getBooksByCount(10);
+        this.renderBooks(books.slice(0,5));
+
+        if(books.length > 5){
+            $('.tagFilters').append(_.template('<a class="more">More</a>'));            
+            $('.more').on('click', books, this.renderMoreBooks);
+        } 
+
+        return this;
+    },
+    renderMoreBooks: function(e){
         $('.tagFilters').remove();
-        $('.more').hide();
-        this.getBooks(10);
+        this.resetFilters();
+
+        var books = e.data;
+        this.renderBooks(books);
     },
     render: function () {
       this.renderTattoos();
@@ -2899,7 +2900,7 @@ App.Views.UserProfile = Parse.View.extend({
             .then(function (tats) {
                 var tattoos = new App.Collections.Tattoos(tats);
                 var collection = new App.Views.Tattoos({collection: tattoos});
-                collection.render().getBooks();
+                collection.render().getAndRenderBooks();
             },
             function (error) {
                 console.log(error);
