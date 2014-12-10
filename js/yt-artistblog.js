@@ -483,7 +483,7 @@ App.Views.Search = Backbone.Modal.extend({
         console.log('search init');
         this.searchTimer;
 
-        _.bindAll(this, 'focusIn', 'keypressSearchTimer', 'initSearchTimer', 'searchAll', 'resetAll');
+        _.bindAll(this, 'focusIn', 'keypressSearchTimer', 'initSearchTimer', 'searchAll', 'resetAll', 'showReset', 'clearSearch');
         App.on('app:keypress', this.focusIn);
     },
     disable: function () {
@@ -494,7 +494,8 @@ App.Views.Search = Backbone.Modal.extend({
     cancelEl: '.x',
     events: {
         'keyup': 'keypressSearchTimer',
-        'click .artistBookSearch': 'artistBookSearch'
+        'click .artistBookSearch': 'artistBookSearch',
+        'click .reset': 'clearSearch'
     },
     keypressSearchTimer: function(e){
         if ( e.which === 13 ) {
@@ -521,13 +522,20 @@ App.Views.Search = Backbone.Modal.extend({
             var length = elements.length;
             elements.fadeOut(800, function () {
             	if (--length > 0) { return; }
+                that.resetAll();
                 that.searchBooks();
                 that.searchArtists();
                 that.searchUsers();
+                that.showReset();
             });
         }
     },
     resetAll: function () {
+        this.resetShown = false;
+        this.noResultsFor = [];
+        this.$('.reset span').html('');
+        this.$('.reset').fadeOut();
+        
         this.$('.bookResults').html('');
         this.$('.bookResultsContainer').fadeOut();
         this.$('.artistResults').html('');
@@ -549,6 +557,8 @@ App.Views.Search = Backbone.Modal.extend({
             this.$('.bookResultsContainer').fadeIn();
         } else {
             this.$('.bookResultsContainer').fadeOut();
+            this.noResultsFor.push('Tattoo Books');
+            that.showReset();
         }
     },
     searchArtists: function(){
@@ -565,6 +575,8 @@ App.Views.Search = Backbone.Modal.extend({
                 }
                 else {
                     that.$('.artistResultsContainer').fadeOut();
+                    that.noResultsFor.push('Artists');
+                    that.showReset();
                 }
             },
             function (error) {
@@ -586,12 +598,34 @@ App.Views.Search = Backbone.Modal.extend({
                 }
                 else {
                     that.$('.userResultsContainer').fadeOut();
+                    that.noResultsFor.push('Enthusiasts');
+                    that.showReset();
                 }
             },
             function (error) {
                 console.log("Error: " + error.code + " " + error.message);
                 that.$('.userResultsContainer').fadeOut();
             });
+    },
+    showReset: function(){
+        if (this.noResultsFor.length === 3) {
+            var noResultsMessage = 'No ' + this.noResultsFor[0] + ', ' + this.noResultsFor[1] + ' or ' + this.noResultsFor[2] + ' found.';
+        } else if (this.noResultsFor.length === 2) {
+            var noResultsMessage = 'No ' + this.noResultsFor[0] + ' or ' + this.noResultsFor[1] + ' found.';
+        } else if (this.noResultsFor.length === 1){
+            var noResultsMessage = 'No ' + this.noResultsFor + ' found.';
+        }
+        this.$('.reset span').html(noResultsMessage);
+
+        if (!this.resetShown) {
+            this.$('.reset').fadeIn();
+            this.resetShown = true;
+        }
+    },
+    clearSearch: function(){
+        this.resetAll();
+        this.$('.mainSearchInput').val('').focus();
+        this.$('.resultsMessage').fadeIn();
     },
     artistBookSearch: function(){
         //TODO ~ Init artists page with current query as the book filter
@@ -4738,10 +4772,10 @@ App.query = (function () {
     */
     query.searchUsers = function (query) {
         var queryUsername = new Parse.Query(App.Models.UserProfile);
-        queryUsername.equalTo("username", query);
+        queryUsername.matches("username", query, "i");
 
         var queryName = new Parse.Query(App.Models.UserProfile);
-        queryName.matches("name", query);
+        queryName.matches("name", query, "i");
 
         var search = Parse.Query.or(queryUsername, queryName);
         return search.find();
@@ -4753,13 +4787,13 @@ App.query = (function () {
     */
     query.searchArtists = function (query) {
         var queryUsername = new Parse.Query(App.Models.ArtistProfile);
-        queryUsername.equalTo("username", query);
+        queryUsername.matches("username", query, "i");
 
         var queryName = new Parse.Query(App.Models.ArtistProfile);
-        queryName.matches("name", query);
+        queryName.matches("name", query, "i");
 
         var queryShop = new Parse.Query(App.Models.ArtistProfile);
-        queryShop.matches("shop", query);
+        queryShop.matches("shop", query, "i");
 
         var search = Parse.Query.or(queryUsername, queryName, queryShop);
         return search.find();
