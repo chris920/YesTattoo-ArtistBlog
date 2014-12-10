@@ -2593,33 +2593,15 @@ App.Views.Tattoo = Parse.View.extend({
         'click .add':                   'createAdd',
         'click .edit':                  'edit'
     },
-    open: function(){
-        // e.stopPropagation();
-  //    App.back = Parse.history.getFragment() || '';
-  //    var profile = new App.Views.TattooProfile({model: this.model});
-        // $('#modalayheehoo').html(profile.render().el);
-        // return profile;
-
-        // TODO Not ideal, we shouldn't be calling the router direct or requerying the model 
-        // but better than previous implementation as handled by single route.
-        // Replace with events based architecture
-        // console.log(this.model);
-        // App.router.tattooProfile(this.model.id);
-
-        // App.trigger('app:tattoo-profile', this.model);
-
-
+    open: function(e){
+        e.stopPropagation();
         // TODO Navigating directly because of modal history / back logic. Needs to use this.model
-        Parse.history.navigate('tattoo/' + this.model.id , { trigger: true });
-
-
+        // Parse.history.navigate('tattoo/' + this.model.id , { trigger: true });
+        App.trigger('app:tattoo-profile-id', this.model.id);
     },
     profile: function(e){
         e.stopPropagation();
-        // TODO Replace with event controller, don't call navigate direct.
-        // Parse.history.navigate(this.model.attributes.artistProfile.attributes.username, {trigger: true, replace: true});
         App.trigger('app:artist-profile-uname', this.model.attributes.artistProfile.attributes.username);
-        // $("html, body").animate({ scrollTop: 0 }, 600);
     },
     createAdd: function(e){
         e.stopPropagation();
@@ -2663,20 +2645,14 @@ App.Views.MyTattoo = Parse.View.extend({
         this.model.on('remove', this.remove, this);
     },
     events: {
-        'click button, .open': 'edit',
-        'click .open':  'open'
+        'click .edit': 'edit',
+        'click .open': 'open'
     },
     open: function(){
-  //    var profile = new App.Views.TattooProfile({model: this.model});
-        // // $('#modalayheehoo').html(profile.render().el);
-        // App.viewManager.show(profile);
         App.trigger('app:tattoo-profile', this.model);
     },
     edit: function(e){
         e.stopPropagation();
-        // var edit = new App.Views.EditTattoo({model: this.model});
-        // // $('#modalayheehoo').html(edit.render().el);
-        // App.viewManager.show(edit);
         App.trigger('app:edit-tattoo', this.model);
     },
     render: function(){
