@@ -983,6 +983,7 @@ App.Views.BookFilter = Parse.View.extend({
 	render: function () {
 		var self = this;
 		var templateRendered = $(this.el).html(this.template()).promise();
+        this.$('.tattoosTitle').html(this.options.title);
 		$.when(templateRendered, App.Promises.globalBooks.promise())
 			.done(function _renderChildViews() {
 				self.activeBookFilterManagerView = new App.Views.ActiveBookFilterManager({ collection: self.collection, el: self.$('.filterTitles') });
