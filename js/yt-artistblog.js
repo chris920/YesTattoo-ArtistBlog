@@ -953,24 +953,24 @@ App.Views.BookFilter = Parse.View.extend({
     },
     showBookFilter: function(){
         console.log('showBookFilter triggered');///clear
-        this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('active');
-        this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('inactive');
-        this.$('.bookFilterContainer').slideDown();
-        this.$('.toggleBookFilter').html('Hide Filters');
-        this.bookFilterShown = true;
-
-        // var initializeGlobalBooks = _.once(this.globalBookManagerView.updateBooks);
-        // initializeGlobalBooks();
-
-        // var initializeTypeahead = _.once(this.typeaheadInitialize);
-        // initializeTypeahead();
+        var self =this;
+        self.$('.bookFilterContainer').slideDown(function () {
+            self.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('active');
+            self.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('inactive');
+            self.$('.toggleBookFilter').html('Hide Filters');
+            self.bookFilterShown = true;
+            self.trigger('book-filter:show', {});
+        });
     },
     hideBookFilter: function(){
-        this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('active');
-        this.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('inactive');
-        this.$('.bookFilterContainer').slideUp();
-        this.$('.toggleBookFilter').html('Show Filters');
-        this.bookFilterShown = false;
+        var self = this;
+        self.$('.bookFilterContainer').slideUp(function () {
+            self.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').removeClass('active');
+            self.$('.toggleBookFilter, .filterHeader, .bookFilterContainer').addClass('inactive');    
+            self.$('.toggleBookFilter').html('Show Filters');
+            self.bookFilterShown = false;
+            self.trigger('book-filter:hide', {});
+        });
     },
     queryReset: function(){
         this.query = [];
@@ -1516,6 +1516,11 @@ App.Views.ArtistsPage = Parse.View.extend({
 		});
 	},
 
+    deactivateAffix: function () {
+        $(window).off('.affix');
+        $("#map-container").removeClass("affix affix-top affix-bottom").removeData("bs.affix");
+    },
+
     updateURL: function (books) {
     	var url = 'artists';
         if (this.bookFilterView && this.bookFilterView.query) {
@@ -1577,6 +1582,8 @@ App.Views.ArtistsPage = Parse.View.extend({
 		if (this.artistsMapView) {
 			this.artistsMapView.disable();
 		}
+
+        this.deactivateAffix();
 	},
 
 	loadArtists: _.debounce(function (reset) {
@@ -1647,6 +1654,10 @@ App.Views.ArtistsPage = Parse.View.extend({
 			self.bookFilterView = new App.Views.BookFilter(options);
 			self.bookFilterView.render().$('.toggleBookFilter')
 				.before('<button class="btn-tag toggleMap"> Map </button>');
+            self.bookFilterView.on('book-filter:show book-filter:hide', function () {
+                self.deactivateAffix();
+                self.activateAffix();
+            });
 
 			self.artistsView = new App.Views.Artists({ collection: self.collection, el: self.$('.artists') });
 			self.artistsView.render();
