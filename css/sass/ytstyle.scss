@@ -947,6 +947,18 @@ span.hover-content {
 		}    
 	}
 }
+#myLocation {
+	background-color: $black-trans;
+	color: $brand-primary;
+	position: absolute;
+	top: 60px;
+	left: 0px;
+	padding: 4px 6px;
+	i:before {
+		font-size: 24px;
+		right: 0px;
+	}
+}
 #changeAddressMap {
 	// background: url(../img/yestattoo-map.png) no-repeat center center;
 	// border-top: 4px solid black;

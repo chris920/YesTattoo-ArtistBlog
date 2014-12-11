@@ -1790,6 +1790,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 
 			// Construct location search input
 			self.input = $('<input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">');
+            self.myLocation = $('<button id="myLocation" class="btn-submit"><i class="flaticon-home73"></i></button>');
 			self.cancel = $('<span class="input-group-addon btn-submit cancel grayInput" title="Clear location">X</span>')
 				.on('click', function (e) {
 					e.preventDefault();
@@ -1798,7 +1799,8 @@ App.Views.ArtistsMapView = Parse.View.extend({
 				}, self);
 			var div = $('<div class="input-group" id="mapLocation"></div>')
 				.append(self.input)
-				.append(self.cancel);
+				.append(self.myLocation)
+                .append(self.cancel);
 
 			// Wire location input to map controls
 			var locationInput = new google.maps.places.SearchBox((self.input[0]));

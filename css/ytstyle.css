@@ -4675,6 +4675,17 @@ span.hover-content {
   background-color: #1a1a1a;
   border: 1px solid #e6e6e6; }
 
+#myLocation {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #c42020;
+  position: absolute;
+  top: 60px;
+  left: 0px;
+  padding: 4px 6px; }
+  #myLocation i:before {
+    font-size: 24px;
+    right: 0px; }
+
 #changeAddressMap {
   background-size: 100% auto;
   background-color: transparent !important; }
