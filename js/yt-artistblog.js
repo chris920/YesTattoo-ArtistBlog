@@ -1547,7 +1547,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 	locationUpdate: function (location) {
         if (location) {
-            this.locationQuery = new Parse.GeoPoint({ latitude: location.k, longitude: location.B });    
+            this.locationQuery = new Parse.GeoPoint({ latitude: location.k, longitude: location.D });
         }
         else {
             this.locationQuery = null;
