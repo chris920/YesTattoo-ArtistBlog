@@ -125,6 +125,25 @@ var App = new (Parse.View.extend({
         });
         $('#back-to-top').tooltip('show');
     }),
+
+    // W3C HTML5 recommends using navigator.geolocation
+    // Relies on user granting sites access to location info, can be override in browser settings.
+    getUsersLocation: function (defer) {
+        var deferred = defer || $.Deferred();
+        var self = this;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                self.usersLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                deferred.resolve();
+            }, 
+            deferred.resolve);
+        }
+        else {
+            deferred.resolve();
+        }
+        return deferred.promise();
+    },
+
     mapStyles: [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}]
 }))({el: document.body});
 
