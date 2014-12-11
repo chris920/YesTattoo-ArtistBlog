@@ -1741,7 +1741,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 
 	initialize: function () {
 		var self = this;
-		_.bindAll(self, 'disable', 'focus', 'initializeMap', 'setMapLocation', 'requestUsersLocation', 'addUserMarker', 'addArtistMarker', 'render');
+		_.bindAll(self, 'disable', 'focus', 'initializeMap', 'setMapLocation', /*'requestUsersLocation',*/ 'addUserMarker', 'addArtistMarker', 'render');
 
         $.when(self.getMapLocation(), self.initializeMap())
     		.done(function _initialize() {
@@ -1790,13 +1790,18 @@ App.Views.ArtistsMapView = Parse.View.extend({
 
 			// Construct location search input
 			self.input = $('<input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">');
-            self.myLocation = $('<button id="myLocation" class="btn-submit"><i class="flaticon-home73"></i></button>');
+            self.myLocation = $('<button id="myLocation" class="btn-submit"><i class="flaticon-home73"></i></button>')
+                .on('click', function (e) {
+                    e.preventDefault();
+                    // self.input.val(self.usersLocation);
+                    self.setMapLocation(self.usersLocation);
+                });
 			self.cancel = $('<span class="input-group-addon btn-submit cancel grayInput" title="Clear location">X</span>')
 				.on('click', function (e) {
 					e.preventDefault();
-					this.input.val('');
-					this.setMapLocation(null);
-				}, self);
+					self.input.val('');
+					self.setMapLocation(null);
+				});
 			var div = $('<div class="input-group" id="mapLocation"></div>')
 				.append(self.input)
 				.append(self.myLocation)
@@ -1834,26 +1839,27 @@ App.Views.ArtistsMapView = Parse.View.extend({
 			deferred.resolve();
 		}
 		else {
-			this.requestUsersLocation(deferred);
+			// this.requestUsersLocation(deferred);
+            App.getUsersLocation(deferred);
 		}
 		return deferred.promise();
 	},
 
 	// W3C HTML5 recommends using navigator.geolocation
 	// Relies on user granting sites access to location info, can be override in browser settings.
-	requestUsersLocation: function (deferred) {
-		var self = this;
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function (position) {
-				self.usersLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-				deferred.resolve();
-			}, 
-			deferred.resolve);
-		}
-		else {
-			deferred.resolve();
-		}
-	},
+	// requestUsersLocation: function (deferred) {
+	// 	var self = this;
+	// 	if (navigator.geolocation) {
+	// 		navigator.geolocation.getCurrentPosition(function (position) {
+	// 			self.usersLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	// 			deferred.resolve();
+	// 		}, 
+	// 		deferred.resolve);
+	// 	}
+	// 	else {
+	// 		deferred.resolve();
+	// 	}
+	// },
 
 	addUserMarker: function () {
 		if (this.usersLocation) {
