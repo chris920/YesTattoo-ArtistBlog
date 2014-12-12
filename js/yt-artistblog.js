@@ -125,27 +125,73 @@ var App = new (Parse.View.extend({
         });
         $('#back-to-top').tooltip('show');
     }),
+    mapStyles: [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}]
+}))({el: document.body});
+
+App.geocoder = (function Geocoder() {
+
+    var _location = {
+        location: null,
+        position: {
+            lat: null,
+            lng: null
+        },
+        address: null
+    };
 
     // W3C HTML5 recommends using navigator.geolocation
     // Relies on user granting sites access to location info, can be override in browser settings.
-    getUsersLocation: function (defer) {
+    function getLocation(defer) {
         var deferred = defer || $.Deferred();
-        var self = this;
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                self.usersLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                deferred.resolve();
-            }, 
-            deferred.resolve);
+                _location = {
+                    location: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+                    position: {
+                        lat: position.coords.latitude, 
+                        lng: position.coords.longitude
+                    }
+                };
+                getAddress(defer);
+            }, function (error) {
+                console.log('Error querying current position');
+                deferred.reject();
+            });
         }
         else {
-            deferred.resolve();
+            console.log('Error accessing geolocation');
+            deferred.reject();
         }
         return deferred.promise();
-    },
+    }
 
-    mapStyles: [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}]
-}))({el: document.body});
+    function getAddress(defer) {
+        var deferred = defer || $.Deferred();
+        new google.maps.Geocoder().geocode({'latLng': _location.location }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (results[1]) {
+                    _location.address = results[1].formatted_address;
+                    console.log(_location.address);
+                    console.log(_location);
+                    deferred.resolve();
+                }
+            } else {
+                console.log("Error with reverse geocode : " + status);
+                deferred.reject();
+            }
+        });
+        return deferred.promise();
+    }
+
+    function userLocation () {
+        return _location;
+    }
+
+    return {
+        getLocation: getLocation,
+        userLocation: userLocation
+    };
+})();
 
 ///////// Models
 App.Models.User = Parse.User.extend({
@@ -1789,27 +1835,27 @@ App.Views.ArtistsMapView = Parse.View.extend({
 		google.maps.event.addListenerOnce(self.map, 'idle', function () {
 
 			// Construct location search input
-			self.input = $('<input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">');
-            self.myLocation = $('<button id="myLocation" class="btn-submit"><i class="flaticon-home73"></i></button>')
+			self.inputEl = $('<input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">');
+            self.myLocationEl = $('<button id="myLocation" class="btn-submit" title="' + self.usersLocationName + '"><i class="flaticon-home73"></i></button>')
                 .on('click', function (e) {
                     e.preventDefault();
-                    // self.input.val(self.usersLocation);
+                    self.inputEl.val(self.usersLocationName);
                     self.setMapLocation(self.usersLocation);
                 });
-			self.cancel = $('<span class="input-group-addon btn-submit cancel grayInput" title="Clear location">X</span>')
+			self.cancelEl = $('<span class="input-group-addon btn-submit cancel grayInput" title="Clear location">X</span>')
 				.on('click', function (e) {
 					e.preventDefault();
-					self.input.val('');
+					self.inputEl.val('');
 					self.setMapLocation(null);
 				});
-			var div = $('<div class="input-group" id="mapLocation"></div>')
-				.append(self.input)
-				.append(self.myLocation)
-                .append(self.cancel);
+			var divEl = $('<div class="input-group" id="mapLocation"></div>')
+				.append(self.inputEl)
+				.append(self.myLocationEl)
+                .append(self.cancelEl);
 
 			// Wire location input to map controls
-			var locationInput = new google.maps.places.SearchBox((self.input[0]));
-			self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(div[0]);
+			var locationInput = new google.maps.places.SearchBox((self.inputEl[0]));
+			self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(divEl[0]);
 
 			// Listen to location changes, trigger map update on change
 			google.maps.event.addListener(locationInput, 'places_changed', function () {
@@ -1835,31 +1881,25 @@ App.Views.ArtistsMapView = Parse.View.extend({
 	getMapLocation: function () {
 		var deferred = new $.Deferred();
 		if (App.session.loggedIn() && App.profile.attributes.location) {
+            // User logged in and has location defined, 
+            // so we can take their location from profile
 			this.usersLocation = new google.maps.LatLng(App.profile.attributes.location.latitude, App.profile.attributes.location.longitude);
+            this.usersLocationName = App.profile.attributes.locationName;
 			deferred.resolve();
 		}
 		else {
-			// this.requestUsersLocation(deferred);
-            App.getUsersLocation(deferred);
+            // User is either not logged in, or has not completed their profile
+            // We need to query location info via google geocoder service.
+            var self = this;
+            App.geocoder.getLocation(deferred)
+                .done(function () {
+                    var usersLocation = App.geocoder.userLocation();
+                    self.usersLocation = usersLocation.location;
+                    self.usersLocationName = usersLocation.address;
+                });
 		}
 		return deferred.promise();
 	},
-
-	// W3C HTML5 recommends using navigator.geolocation
-	// Relies on user granting sites access to location info, can be override in browser settings.
-	// requestUsersLocation: function (deferred) {
-	// 	var self = this;
-	// 	if (navigator.geolocation) {
-	// 		navigator.geolocation.getCurrentPosition(function (position) {
-	// 			self.usersLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-	// 			deferred.resolve();
-	// 		}, 
-	// 		deferred.resolve);
-	// 	}
-	// 	else {
-	// 		deferred.resolve();
-	// 	}
-	// },
 
 	addUserMarker: function () {
 		if (this.usersLocation) {
