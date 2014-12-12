@@ -2023,9 +2023,6 @@ button.toggleBookFilter, button.toggleMap {
 .save {
 	float: right;
 }
-.remove {
-	float: left;
-}
 .clear {
 	float: left;
 }
@@ -2376,9 +2373,9 @@ input.mainSearchInput {
 	border-width: 5px;
 	border-image: radial-gradient($gray-darker 80%, $gray-dark 100%, #fff) 1%;
 	// border-image: radial-gradient(black 80%, $gray-dark 100%, #fff) 1%; //alt color
-	span {
-		color: $gray;
-	}
+	// span {
+	// 	color: $gray;
+	// }
 	margin-top: 0px;
 	@media screen and (min-width: $screen-md) {
 		margin-top: 50px;
@@ -2471,7 +2468,7 @@ input.mainSearchInput {
 		padding: 40px 20px;
 		margin-bottom: 10px;
 		text-align: left; 
-		background-color: $gray-dark;
+		// background-color: $gray-dark;
 		border: 1px solid $gray-dark;
 		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 		cursor: cell;
@@ -2484,6 +2481,9 @@ input.mainSearchInput {
 			top: 5px;
 			position: relative;
 			color: $gray-light; 
+		}
+		&:focus {
+			border: 1px solid $brand-secondary;
 		}
 	}
 }

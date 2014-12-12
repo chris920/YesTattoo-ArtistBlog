@@ -2318,7 +2318,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
         'click .add':           'createAdd',
         'click .save':          'saveBooks',
         'click .clear':         'clearBooks',
-        'click .remove':        'removeAdd'
+        'click .removeAdd':      'removeAdd'
     },
     focusIn: function(){
         this.$('.tt-input').focus();
@@ -2433,12 +2433,9 @@ App.Views.TattooProfile = Backbone.Modal.extend({
         this.$('.add').attr('disabled', 'disabled');
 
         if (!Parse.User.current()) {
-            console.log('test login');
-            // Parse.history.navigate('/login', {trigger: true, replace: true});
             App.trigger('app:login');
             $(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
         } else {
-            this.$('.add').html('<span class="flaticon-books8"></span>Collected!!!');
             this.model.createAdd(startupBooks);
         }
     },
@@ -2448,31 +2445,24 @@ App.Views.TattooProfile = Backbone.Modal.extend({
         this.$('.bootstrap-tagsinput').removeClass('bootstrap-tagsinput-max');
         this.$('.booksInput').tagsinput('removeAll');
         this.$('.clear').fadeOut(800,function(){
-            $(this).removeClass('clear').removeAttr("disabled").addClass('remove').html('Remove tattoo').fadeIn();
+            $(this).removeClass('clear').removeAttr("disabled");
             that.saveBooks().focusIn();
         });
     },
     removeAdd: function(){
-        this.$('.remove, .clear').attr('disabled', 'disabled');
-        var user = Parse.User.current();
-        var that = this;
+        this.$('.removeAdd').attr('disabled', 'disabled');
         this.clearBooks();
         this.model.removeAdd(this.add);
     },
     showAddButton: function(){
-        this.add = undefined;
-        this.$('.remove, .clear, .add').fadeOut(800,function(){
-            $(this).removeClass('remove btn-link').removeAttr("disabled").addClass('add btn-block btn-submit').html('<span class="flaticon-books8"></span>Collect').fadeIn( 800 );
-        });
-        $('.yourBooks').fadeOut();
+        this.$('.clear, .save, .yourBooks').fadeOut(800);
+        this.$('.removeAdd').removeClass('removeAdd').removeAttr("disabled").addClass('add').html('<span class="flaticon-books8"></span>Collect');
     },
     showYourBooks: function(add){
         this.add = add;
         var that = this;
 
-        this.$('.add').fadeOut(700,function(){
-            $(this).removeClass('add btn-block btn-submit').removeAttr("disabled").addClass('remove btn-link').html('Remove tattoo').fadeIn( 400 );
-        });
+        this.$('.add').removeClass('add').removeAttr("disabled").addClass('removeAdd').html('<span class="flaticon-books8"></span>Collected');
         this.$('.yourBooks').slideDown(800);
 
         var input = this.$('.booksInput');
@@ -2490,7 +2480,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
             name: 'books',
             displayKey: 'books',
             source: App.booktt.ttAdapter()
-        }).attr('placeholder','Type to create a book').on('typeahead:selected', $.proxy(function (obj, datum) {
+        }).attr('placeholder','Add book').on('typeahead:selected', $.proxy(function (obj, datum) {
             this.tagsinput('add', datum.books);
             this.tagsinput('input').typeahead('val', '');
         }, input)).on('focus', function () {
@@ -2503,7 +2493,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
             if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
                 that.$('.tt-input').attr('placeholder','').val('');
             } else {
-                that.$('.tt-input').attr('placeholder','Add + + +').val('');
+                that.$('.tt-input').attr('placeholder','Add book').val('');
             }
             if(that.$('.save').is(':visible')) {   
                 that.$('.save').click();
@@ -2512,9 +2502,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
 
         input.on('itemAdded', function(event) {
             that.$('.save').fadeIn();
-            that.$('.remove').fadeOut(800,function(){
-                $(this).removeClass('remove').addClass('clear').html('Clear books').fadeIn();
-            });
+            that.$('.clear').fadeIn();
         }).on('itemRemoved', function(event){
             that.$('.save').fadeIn();
         });
@@ -2528,8 +2516,6 @@ App.Views.TattooProfile = Backbone.Modal.extend({
                 that.$('.booksInput').tagsinput('input').attr('placeholder','');
             }
         }, 400);
-        //focus in on the add input on keypress
-        // $(window).bind('keypress', this.focusIn);
     },
     saveBooks: function() {
         $('.save').attr('disabled', 'disabled');
@@ -2722,7 +2708,7 @@ App.Views.Tattoo = Parse.View.extend({
     showRemoveButton: function(add){
         //assigns the add for removing
         this.add = add;
-        
+
         this.$('button').removeClass('add').addClass('removeAdd').html('<span class="flaticon-books8"></span>Collected').removeAttr("disabled");
     },
     render: function(){
