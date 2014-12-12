@@ -5519,6 +5519,25 @@ button.toggleBookFilter, button.toggleMap {
 .otherBooks span {
   overflow: hidden; }
 
+.add {
+  float: left; }
+
+.removeAdd {
+  float: left;
+  background-color: rgba(50, 50, 50, 0.6); }
+  .removeAdd span {
+    color: gold; }
+  .removeAdd:hover {
+    text-decoration: line-through;
+    color: #c42020;
+    background-color: black;
+    -webkit-transition: all 0.4s ease;
+    transition: all 0.4s ease; }
+    .removeAdd:hover span::before {
+      color: #c42020;
+      -webkit-transition: all 0.4s ease;
+      transition: all 0.4s ease; }
+
 .save {
   float: right; }
 

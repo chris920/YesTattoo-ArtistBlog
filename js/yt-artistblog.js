@@ -391,7 +391,6 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
         return -book.get("count");
     },
     resetActive: function () {
-        // this.invoke('set', { active: false });
         // Only reset models that are active, 
         // attempt to minimise the number of events handlers being unnecessarily initiated
         this.forEach(function (model) {
@@ -400,30 +399,6 @@ App.Collections.GlobalBooks = Parse.Collection.extend({
         	}
         });
     },
-    // getNext: function(booksArray, perPage){
-    //     if(booksArray){
-    //         var next = this.byMatches(booksArray);
-    //     } else {
-    //         var next = new App.Collections.GlobalBooks(this.available());
-    //     }
-    //     return next.first(perPage || 10);
-    // },
-    // available: function(){
-    //     //Returns the global books that have not been shown and are not active filters.
-    //     return this.filter(function(globalBook){
-    //         return !globalBook.attributes.active && !globalBook.attributes.shown || globalBook.get("active") === false && globalBook.get("shown") === false;
-    //     });
-    // },
-    // byMatches: function(bookArray){
-    //     //TODO ~ This needs to return multiple books matching fragments as well.
-    //     // Gets the available books that are in the second match (similar tattoos) of the active book filters and returns a new collection
-    //     return new App.Collections.GlobalBooks(this.available().filter(function(globalBook){ 
-    //         return _.intersection(globalBook.attributes.bookMatches, bookArray).length >= bookArray.length;
-    //     }));
-    // },
-    // bySearch: function(query){
-    //     //TODO ~ returns the books that include the query fragment in their name
-    // },
 	getActiveBooks: function(){
 	    return this.filter(function(globalBook) {
 	        return globalBook.get("active") === true;
@@ -2708,15 +2683,15 @@ App.Views.Tattoo = Parse.View.extend({
     className: 'tattoo',
     template: _.template($("#tattooTemplate").html()),
     initialize: function(){
-        _.bindAll(this, 'createAdd', 'edit', 'profile');
-        this.model.on('add:created', this.showEdit, this);
+        _.bindAll(this, 'createAdd', 'removeAdd', 'profile');
+        this.model.on('add:created', this.showRemoveButton, this);
         this.model.on('add:removed', this.showAddButton, this);
     },
     events: {
         'click .open':                  'open',
         'click .hover-text-content':    'profile',
         'click .add':                   'createAdd',
-        'click .edit':                  'edit'
+        'click .removeAdd':             'removeAdd'
     },
     open: function(e){
         e.stopPropagation();
@@ -2736,22 +2711,26 @@ App.Views.Tattoo = Parse.View.extend({
             this.model.createAdd();
         }
     },
-    edit: function(e){
+    removeAdd: function(e){
         e.stopPropagation();
-        this.open();
+        this.$('.removeAdd').attr('disabled', 'disabled');
+        this.model.removeAdd(this.add);
     },
     showAddButton: function(){
-        this.$('button').fadeOut().removeClass('edit').removeAttr("disabled").addClass('add btn-block').html('<span class="flaticon-books8"></span>Collect').fadeIn();
+        this.$('button').removeClass('removeAdd').addClass('add').html('<span class="flaticon-books8"></span>Collect').removeAttr("disabled");
     },
-    showEdit: function(){
-        this.$('button').addClass('add:active').html('<span class="flaticon-books8"></span>Collected');
-        // this.$('button').fadeOut().removeClass('add btn-block').removeAttr("disabled").addClass('edit pull-right').html('Edit&nbsp;&nbsp;<span class="flaticon-books8"></span>').fadeIn();
+    showRemoveButton: function(add){
+        //assigns the add for removing
+        this.add = add;
+        
+        this.$('button').removeClass('add').addClass('removeAdd').html('<span class="flaticon-books8"></span>Collected').removeAttr("disabled");
     },
     render: function(){
         var attributes = this.model.toJSON();
         $(this.el).append(this.template(attributes));
-        if (Parse.User.current() && $.inArray(this.model.id, App.Collections.adds.pluck('tattooId')) > -1) {
-            this.showEdit();
+        var add = App.Collections.adds.getTattoo(this.model.id);
+        if (Parse.User.current() && add.length) {
+            this.showRemoveButton(add[0]);
         }
         return this;
     }

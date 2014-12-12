@@ -2001,7 +2001,24 @@ button.toggleBookFilter, button.toggleMap {
 	}
 }
 .add {
-	
+	float: left;
+}
+.removeAdd {
+	float: left;
+	background-color: $gray-trans;
+	span {
+		color: $brand-secondary;	
+	}
+	&:hover {
+		text-decoration: line-through;
+		color: $brand-primary;
+		background-color: black;
+		@include transition(all 0.4s ease);
+		span::before {
+			color: $brand-primary;
+			@include transition(all 0.4s ease);
+		}
+	}
 }
 .save {
 	float: right;
