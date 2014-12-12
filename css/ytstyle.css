@@ -4036,6 +4036,63 @@ a:focus {
   height: 100%;
   border-bottom: 100px solid black; }
 
+.loading {
+  height: 100vh;
+  background-color: black;
+  padding-top: 30vh; }
+
+.spinner {
+  margin: auto;
+  width: 64px;
+  height: 64px;
+  position: relative; }
+
+.cube1, .cube2 {
+  background-color: #c42020;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-animation: cubemove 1.8s infinite ease-in-out;
+  animation: cubemove 1.8s infinite ease-in-out; }
+
+.cube2 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s; }
+
+@-webkit-keyframes cubemove {
+  25% {
+    -webkit-transform: translateX(42px) rotate(-90deg) scale(0.5); }
+
+  50% {
+    -webkit-transform: translateX(42px) translateY(42px) rotate(-180deg); }
+
+  75% {
+    -webkit-transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5); }
+
+  100% {
+    -webkit-transform: rotate(-360deg); } }
+@keyframes cubemove {
+  25% {
+    transform: translateX(42px) rotate(-93deg) scale(0.5);
+    -webkit-transform: translateX(42px) rotate(-92deg) scale(0.5); }
+
+  50% {
+    transform: translateX(42px) translateY(42px) rotate(-170deg);
+    -webkit-transform: translateX(42px) translateY(42px) rotate(-179deg); }
+
+  50.1% {
+    transform: translateX(42px) translateY(42px) rotate(-187deg);
+    -webkit-transform: translateX(42px) translateY(42px) rotate(-180deg); }
+
+  75% {
+    transform: translateX(0px) translateY(42px) rotate(-273deg) scale(0.5);
+    -webkit-transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5); }
+
+  100% {
+    transform: rotate(-360deg);
+    -webkit-transform: rotate(-360deg); } }
 .artistslide {
   overflow: hidden;
   height: 100vh; }
