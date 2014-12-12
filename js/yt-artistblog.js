@@ -2728,17 +2728,12 @@ App.Views.Tattoo = Parse.View.extend({
     },
     createAdd: function(e){
         e.stopPropagation();
-        // var user = Parse.User.current();
-        // var that = this;
+        this.$('.add').attr('disabled', 'disabled');
         if(!Parse.User.current()) {
-            // TODO Replace with event controller, don't call navigate direct.
-            // Parse.history.navigate('/login', {trigger: true, replace: true});
             App.trigger('app:login');
             $(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
         } else {
-            this.$('button').addClass('add:active').html('<span class="flaticon-books8"></span>Collected!!!');
-            this.open().createAdd();
-            this.showEdit();
+            this.model.createAdd();
         }
     },
     edit: function(e){
@@ -2749,7 +2744,8 @@ App.Views.Tattoo = Parse.View.extend({
         this.$('button').fadeOut().removeClass('edit').removeAttr("disabled").addClass('add btn-block').html('<span class="flaticon-books8"></span>Collect').fadeIn();
     },
     showEdit: function(){
-        this.$('button').fadeOut().removeClass('add btn-block').removeAttr("disabled").addClass('edit pull-right').html('Edit&nbsp;&nbsp;<span class="flaticon-books8"></span>').fadeIn();
+        this.$('button').addClass('add:active').html('<span class="flaticon-books8"></span>Collected');
+        // this.$('button').fadeOut().removeClass('add btn-block').removeAttr("disabled").addClass('edit pull-right').html('Edit&nbsp;&nbsp;<span class="flaticon-books8"></span>').fadeIn();
     },
     render: function(){
         var attributes = this.model.toJSON();
