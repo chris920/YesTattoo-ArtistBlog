@@ -2334,45 +2334,29 @@ App.Views.ArtistProfile = Parse.View.extend({
 App.Views.TattooProfile = Backbone.Modal.extend({
     id: 'tattooProfile',
     initialize: function(){
-        console.log('tattoo profile init');
-        // Parse.history.navigate('/tattoo/'+this.model.id, {trigger: false});
-        _.bindAll(this, 'focusIn', 'saveBooks');
+        console.log('tattoo profile init');///clear
 
-        this.model.on('add:created', this.showYourBooks, this);
+        this.model.on('add:created', this.showRemoveButton, this);
         this.model.on('add:removed', this.showAddButton, this);
 
-        // $(window).unbind();
-        // App.on('app:keypress', this.focusIn);
     },
     disable: function () {
         console.log('tattoo profile disable');
-        // App.off('app:keypress', this.focusIn);
+        this.model.off();
     },
     template: _.template($("#tattooProfileTemplate").html()),
     viewContainer: '.container',
     cancelEl: '.x',
     events: {
-        'click .more':          'renderPopularBooks',
-        'click .otherBook':     'addOtherBook',
-        'click .artistName, h2[href="/myprofile/books"]':   'triggerCancel',
+        'click .artistName':   'triggerCancel',
         'click .add':           'createAdd',
-        'click .save':          'saveBooks',
-        'click .clear':         'clearBooks',
         'click .removeAdd':      'removeAdd'
-    },
-    focusIn: function(){
-        this.$('.tt-input').focus();
-        if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
-            this.$('.tt-input').blur().val(' ');
-        }
-        this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
-        return this;
     },
     onRender: function(){
 
         //checks if the user has added the tattoo
         if ($.inArray(this.model.id, App.Collections.adds.pluck('tattooId')) > -1) {
-            this.showYourBooks(App.Collections.adds.getTattoo(this.model.id)[0]);
+            this.showRemoveButton(App.Collections.adds.getTattoo(this.model.id)[0]);
         }
 
         //checks if the artist was included and fetches the artist if not
@@ -2392,74 +2376,30 @@ App.Views.TattooProfile = Backbone.Modal.extend({
             });
         }
 
-        this.booksByCount = this.model.attributes.books.byCount();
-        this.renderArtistsBooks().renderPopularBooks();
+        this.renderArtistsBooks();
     },
     renderArtistsBooks: function(){
-        if (this.model.attributes.artistBooks.length) {
-            this.$('.byArtist h5').html('By the Artist');
-            _.each(this.model.attributes.artistBooks, function(book) {
-                this.$('.otherBooks span.byArtist').append(_.template('<button type="button" class="btn-tag otherBook artistBook">'+ book +'</button>'));
-            }, this);
-            this.$('.otherBooks').fadeIn( 1000 );
-            var that = this;
-            window.setTimeout(function(){
-                var addTipTitle =  Parse.User.current() && Parse.User.current().attributes.role === 'artist' ? "Created by the artist" : "Add artist's book";
-                $('.otherBook.artistBook').tooltip({
-                    title: addTipTitle,
-                    delay: { show: 200, hide: 200 },
-                    placement: 'auto'
-                });
-            },0);
-            this.popularBooksLimit = 5 - this.model.attributes.artistBooks.length;
-            // this.loadMoreBooks = (this.model.attributes.artistBooks.length < 5) ? true : false;
-        }  else {
-            this.popularBooksLimit = 5;
-        }
-        return this;
-    },
-    renderPopularBooks: function(){
-        if (this.model.attributes.books.length >= 1 && this.popularBooksLimit) {
-            this.$('.byAll h5').html('By Everyone');
-            this.count = this.count || 0;
-            var popularBooks = this.booksByCount.slice(this.count, this.count + this.popularBooksLimit);
-            _.each(popularBooks, function(book) {
-                this.$('.otherBooks span.byAll').append(_.template('<button type="button" class="btn-tag otherBook userBook">'+ book +'</button>'));
-            }, this);
-            this.$('.otherBooks').fadeIn( 1000 );
-            var that = this;
-            window.setTimeout(function(){
-                if($('.otherBook').length >= Math.min(that.booksByCount.length+that.model.attributes.artistBooks.length,10)){
-                    that.$('.more').attr('disabled', 'disabled').fadeOut(300);
-
-                }
-                var addTipTitle =  Parse.User.current() && Parse.User.current().attributes.role === 'artist' ? "Popular books by everyone" : "Add popular book";
-                $('.otherBook.userBook').tooltip({
-                    title: addTipTitle,
-                    delay: { show: 200, hide: 200 },
-                    placement: 'auto'
-                });
-            },0);
-            this.count = this.count + this.popularBooksLimit
-            this.popularBooksLimit = 5;
-        } else { 
-            this.popularBooksLimit = 5;
-        }
-    },
-    addOtherBook: function(e){
-        if (!Parse.User.current()) {
-            // Parse.history.navigate('/login', {trigger: true, replace: true});
-            App.trigger('app:login');
-            $(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
-        } else if(Parse.User.current().attributes.role === 'artist') {
-
-
-
-        } else if(!this.add) {
-            this.createAdd([e.target.textContent])
-        } else if ($(".booksInput").tagsinput('items').length < 5){
-            $('.booksInput').tagsinput('add', e.target.textContent);
-        }
+        // if (this.model.attributes.artistBooks.length) {
+        //     this.$('.byArtist h5').html('By the Artist');
+        //     _.each(this.model.attributes.artistBooks, function(book) {
+        //         this.$('.otherBooks span.byArtist').append(_.template('<button type="button" class="btn-tag otherBook artistBook">'+ book +'</button>'));
+        //     }, this);
+        //     this.$('.otherBooks').fadeIn( 1000 );
+        //     var that = this;
+        //     window.setTimeout(function(){
+        //         var addTipTitle =  Parse.User.current() && Parse.User.current().attributes.role === 'artist' ? "Created by the artist" : "Add artist's book";
+        //         $('.otherBook.artistBook').tooltip({
+        //             title: addTipTitle,
+        //             delay: { show: 200, hide: 200 },
+        //             placement: 'auto'
+        //         });
+        //     },0);
+        //     this.popularBooksLimit = 5 - this.model.attributes.artistBooks.length;
+        //     // this.loadMoreBooks = (this.model.attributes.artistBooks.length < 5) ? true : false;
+        // }  else {
+        //     this.popularBooksLimit = 5;
+        // }
+        // return this;
     },
     setArtist: function(artist) {
         if(artist.profThumb !== undefined){this.$(".prof")[0].src = artist.profThumb.url};
@@ -2468,8 +2408,6 @@ App.Views.TattooProfile = Backbone.Modal.extend({
         this.$(".infoBox").delay( 500 ).fadeIn();
     },
     createAdd: function(startupBooks){
-        var user = Parse.User.current();
-        var that = this;
         this.$('.add').attr('disabled', 'disabled');
 
         if (!Parse.User.current()) {
@@ -2479,101 +2417,16 @@ App.Views.TattooProfile = Backbone.Modal.extend({
             this.model.createAdd(startupBooks);
         }
     },
-    clearBooks: function(){
-        var that = this;
-        this.$('.clear').attr('disabled', 'disabled');
-        this.$('.bootstrap-tagsinput').removeClass('bootstrap-tagsinput-max');
-        this.$('.booksInput').tagsinput('removeAll');
-        this.$('.clear').fadeOut(800,function(){
-            $(this).removeClass('clear').removeAttr("disabled");
-            that.saveBooks().focusIn();
-        });
-    },
     removeAdd: function(){
         this.$('.removeAdd').attr('disabled', 'disabled');
-        this.clearBooks();
         this.model.removeAdd(this.add);
     },
-    showAddButton: function(){
-        this.$('.clear, .save, .yourBooks').fadeOut(800);
-        this.$('.removeAdd').removeClass('removeAdd').removeAttr("disabled").addClass('add').html('<span class="flaticon-books8"></span>Collect');
-    },
-    showYourBooks: function(add){
+    showRemoveButton: function(add){
         this.add = add;
-        var that = this;
-
         this.$('.add').removeClass('add').removeAttr("disabled").addClass('removeAdd').html('<span class="flaticon-books8"></span>Collected');
-        this.$('.yourBooks').slideDown(800);
-
-        var input = this.$('.booksInput');
-        input.tagsinput({
-            tagClass: 'btn-tag',
-            trimValue: true,
-            maxChars: 20,
-            maxTags: 5,
-            onTagExists: function(item, $tag) {
-                $tag.addClass('blured');
-                window.setTimeout(function(){$tag.removeClass('blured');}, 1000);
-            }
-        });
-        input.tagsinput('input').typeahead(null, {
-            name: 'books',
-            displayKey: 'books',
-            source: App.booktt.ttAdapter()
-        }).attr('placeholder','Add book').on('typeahead:selected', $.proxy(function (obj, datum) {
-            this.tagsinput('add', datum.books);
-            this.tagsinput('input').typeahead('val', '');
-        }, input)).on('focus', function () {
-            that.$('.bootstrap-tagsinput > .btn-tag').removeClass('blured');
-            that.$('.bootstrap-tagsinput').addClass('focused');
-            that.$('.tt-input').attr('placeholder','');
-        }).on('blur', function () {
-            that.$('.bootstrap-tagsinput > .btn-tag').addClass('blured');
-            that.$('.bootstrap-tagsinput').removeClass('focused');
-            if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
-                that.$('.tt-input').attr('placeholder','').val('');
-            } else {
-                that.$('.tt-input').attr('placeholder','Add book').val('');
-            }
-            if(that.$('.save').is(':visible')) {   
-                that.$('.save').click();
-            }
-        });
-
-        input.on('itemAdded', function(event) {
-            that.$('.save').fadeIn();
-            that.$('.clear').fadeIn();
-        }).on('itemRemoved', function(event){
-            that.$('.save').fadeIn();
-        });
-        _.each(add.attributes.books, function(book) {
-            that.$('.booksInput').tagsinput('add', book);
-        });
-        window.setTimeout(function(){
-            that.$('.btn-tag').addClass('blured');
-            that.$('.save').hide();
-            if(that.$('.booksInput').tagsinput('items').length === 5) {
-                that.$('.booksInput').tagsinput('input').attr('placeholder','');
-            }
-        }, 400);
     },
-    saveBooks: function() {
-        $('.save').attr('disabled', 'disabled');
-        var that = this;
-
-        this.add.set('books', this.$('.booksInput').tagsinput('items').slice(0));
-        this.add.save(null,{
-            success: function(result) {
-                $('.save').html('Saved!!!').fadeOut( 1200, function(){
-                    $('.save').removeAttr("disabled").html('Save');
-                });
-            },
-            error: function(error) {
-                $('.save').removeAttr("disabled");
-                console.log(error);
-            }
-        });
-        return this;
+    showAddButton: function(){
+        this.$('.removeAdd').removeClass('removeAdd').removeAttr("disabled").addClass('add').html('<span class="flaticon-books8"></span>Collect');
     },
     beforeCancel: function(){
         this.$('booksInput').tagsinput('destroy');
@@ -2583,6 +2436,172 @@ App.Views.TattooProfile = Backbone.Modal.extend({
         App.trigger('app:modal-close');
     }
 });
+
+
+    //Author tattoo profile functions ///clear
+    // initialize: function(){
+    //     _.bindAll(this, 'focusIn', 'saveBooks');
+
+    //     this.model.on('add:created', this.showYourBooks, this);
+    //     this.model.on('add:removed', this.showAddButton, this);
+
+    // },
+    // events: {
+    //     'click .more':          'renderPopularBooks',
+    //     'click .otherBook':     'addOtherBook',
+    //     'click .save':          'saveBooks',
+    //     'click .clear':         'clearBooks'
+    // },
+    // focusIn: function(){
+    //     this.$('.tt-input').focus();
+    //     if (this.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+    //         this.$('.tt-input').blur().val(' ');
+    //     }
+    //     this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
+    //     return this;
+    // },
+    // onRender: function(){
+    //     this.booksByCount = this.model.attributes.books.byCount();
+    //     this.renderArtistsBooks().renderPopularBooks();
+    // },
+    // removeAdd: function(){
+    //     this.$('.removeAdd').attr('disabled', 'disabled');
+    //     this.clearBooks();
+    //     this.model.removeAdd(this.add);
+    // },
+    // showAddButton: function(){
+    //     this.$('.clear, .save, .yourBooks').fadeOut(800);
+    //     this.$('.removeAdd').removeClass('removeAdd').removeAttr("disabled").addClass('add').html('<span class="flaticon-books8"></span>Collect');
+    // },
+    // renderPopularBooks: function(){
+    //     if (this.model.attributes.books.length >= 1 && this.popularBooksLimit) {
+    //         this.$('.byAll h5').html('By Everyone');
+    //         this.count = this.count || 0;
+    //         var popularBooks = this.booksByCount.slice(this.count, this.count + this.popularBooksLimit);
+    //         _.each(popularBooks, function(book) {
+    //             this.$('.otherBooks span.byAll').append(_.template('<button type="button" class="btn-tag otherBook userBook">'+ book +'</button>'));
+    //         }, this);
+    //         this.$('.otherBooks').fadeIn( 1000 );
+    //         var that = this;
+    //         window.setTimeout(function(){
+    //             if($('.otherBook').length >= Math.min(that.booksByCount.length+that.model.attributes.artistBooks.length,10)){
+    //                 that.$('.more').attr('disabled', 'disabled').fadeOut(300);
+
+    //             }
+    //             var addTipTitle =  Parse.User.current() && Parse.User.current().attributes.role === 'artist' ? "Popular books by everyone" : "Add popular book";
+    //             $('.otherBook.userBook').tooltip({
+    //                 title: addTipTitle,
+    //                 delay: { show: 200, hide: 200 },
+    //                 placement: 'auto'
+    //             });
+    //         },0);
+    //         this.count = this.count + this.popularBooksLimit
+    //         this.popularBooksLimit = 5;
+    //     } else { 
+    //         this.popularBooksLimit = 5;
+    //     }
+    // },
+    // addOtherBook: function(e){
+    //     if (!Parse.User.current()) {
+    //         // Parse.history.navigate('/login', {trigger: true, replace: true});
+    //         App.trigger('app:login');
+    //         $(".loginForm .error").html("You need to be logged in to collect tattoos.").show();
+    //     } else if(Parse.User.current().attributes.role === 'artist') {
+
+    //         return;
+    //     } else if(!this.add) {
+    //         this.createAdd([e.target.textContent])
+    //     } else if ($(".booksInput").tagsinput('items').length < 5){
+    //         $('.booksInput').tagsinput('add', e.target.textContent);
+    //     }
+    // },
+    // showYourBooks: function(add){
+    //     this.add = add;
+    //     var that = this;
+
+    //     this.$('.add').removeClass('add').removeAttr("disabled").addClass('removeAdd').html('<span class="flaticon-books8"></span>Collected');
+    //     this.$('.yourBooks').slideDown(800);
+
+    //     var input = this.$('.booksInput');
+    //     input.tagsinput({
+    //         tagClass: 'btn-tag',
+    //         trimValue: true,
+    //         maxChars: 20,
+    //         maxTags: 5,
+    //         onTagExists: function(item, $tag) {
+    //             $tag.addClass('blured');
+    //             window.setTimeout(function(){$tag.removeClass('blured');}, 1000);
+    //         }
+    //     });
+    //     input.tagsinput('input').typeahead(null, {
+    //         name: 'books',
+    //         displayKey: 'books',
+    //         source: App.booktt.ttAdapter()
+    //     }).attr('placeholder','Add book').on('typeahead:selected', $.proxy(function (obj, datum) {
+    //         this.tagsinput('add', datum.books);
+    //         this.tagsinput('input').typeahead('val', '');
+    //     }, input)).on('focus', function () {
+    //         that.$('.bootstrap-tagsinput > .btn-tag').removeClass('blured');
+    //         that.$('.bootstrap-tagsinput').addClass('focused');
+    //         that.$('.tt-input').attr('placeholder','');
+    //     }).on('blur', function () {
+    //         that.$('.bootstrap-tagsinput > .btn-tag').addClass('blured');
+    //         that.$('.bootstrap-tagsinput').removeClass('focused');
+    //         if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+    //             that.$('.tt-input').attr('placeholder','').val('');
+    //         } else {
+    //             that.$('.tt-input').attr('placeholder','Add book').val('');
+    //         }
+    //         if(that.$('.save').is(':visible')) {   
+    //             that.$('.save').click();
+    //         }
+    //     });
+
+    //     input.on('itemAdded', function(event) {
+    //         that.$('.save').fadeIn();
+    //         that.$('.clear').fadeIn();
+    //     }).on('itemRemoved', function(event){
+    //         that.$('.save').fadeIn();
+    //     });
+    //     _.each(add.attributes.books, function(book) {
+    //         that.$('.booksInput').tagsinput('add', book);
+    //     });
+    //     window.setTimeout(function(){
+    //         that.$('.btn-tag').addClass('blured');
+    //         that.$('.save').hide();
+    //         if(that.$('.booksInput').tagsinput('items').length === 5) {
+    //             that.$('.booksInput').tagsinput('input').attr('placeholder','');
+    //         }
+    //     }, 400);
+    // },
+    // saveBooks: function() {
+    //     $('.save').attr('disabled', 'disabled');
+    //     var that = this;
+
+    //     this.add.set('books', this.$('.booksInput').tagsinput('items').slice(0));
+    //     this.add.save(null,{
+    //         success: function(result) {
+    //             $('.save').html('Saved!!!').fadeOut( 1200, function(){
+    //                 $('.save').removeAttr("disabled").html('Save');
+    //             });
+    //         },
+    //         error: function(error) {
+    //             $('.save').removeAttr("disabled");
+    //             console.log(error);
+    //         }
+    //     });
+    //     return this;
+    // },
+    // clearBooks: function(){
+    //     var that = this;
+    //     this.$('.clear').attr('disabled', 'disabled');
+    //     this.$('.bootstrap-tagsinput').removeClass('bootstrap-tagsinput-max');
+    //     this.$('.booksInput').tagsinput('removeAll');
+    //     this.$('.clear').fadeOut(800,function(){
+    //         $(this).removeClass('clear').removeAttr("disabled");
+    //         that.saveBooks().focusIn();
+    //     });
+    // },
 
 App.Views.Tattoos = Parse.View.extend({
     el: '.tattoos',
