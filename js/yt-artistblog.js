@@ -2926,6 +2926,134 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     }
 });
 
+// App.Views.AuthorProfile = Parse.View.extend({
+//     model: App.Models.User,
+//     id: 'userProfile',
+//     initialize: function() {
+//         this.routePrefix = Parse.history.fragment;
+//         this.activateAffix();
+//     },
+//     template: _.template($("#userProfileTemplate").html()),
+//     events: {
+//         'click [href="#collectionTab"]': 'collectionTab',
+//         'click [href="#booksTab"]': 'booksTab',
+//         'click [href="#artistsTab"]': 'artistsTab'
+//     },
+//     collectionTab: function (e) {
+//         if (e) { e.preventDefault(); }
+//         $('a[href="#collectionTab"]').tab('show');
+//         this.scroll();
+//         Parse.history.navigate(this.routePrefix + '/collection', { trigger: false });
+//     },
+//     booksTab: function (e) {
+//         if (e) { e.preventDefault(); }
+//         $('a[href="#booksTab"]').tab('show');
+//         this.scroll();
+//         Parse.history.navigate(this.routePrefix + '/books', { trigger: false });
+//     },
+//     artistsTab: function (e) {
+//         if (e) { e.preventDefault(); }
+//         $('a[href="#artistsTab"]').tab('show');
+//         this.scroll();
+//         Parse.history.navigate(this.routePrefix + '/artists', { trigger: false });
+//     },
+//     scroll: function(){
+//         $("html, body").animate({ scrollTop: $('.userHead').outerHeight(true) + 41  }, 500);
+//     },
+//     activateAffix: _.debounce(function(){
+//         $('.profNavContainer').affix({
+//               offset: { top: $('#userProfile > div.container').outerHeight(true) + 40 }
+//         });
+//     }, 1000),
+//     getAdds: function() {
+//         var that = this;
+//         App.query.adds(this.model.attributes.user)
+//             .then(function (adds) {
+//                 var addsCollection = new App.Collections.Adds(adds);
+//                 that.renderAdds(addsCollection);
+//             },
+//             function (error) {
+//                 console.log(error);
+//             });
+//     },
+//     renderAdds: function(addsCollection){
+//         this.addsTattoosCollection = new App.Collections.Tattoos(addsCollection.getTattoos());
+//         this.userAddsTattoos = new App.Views.Tattoos({collection: this.addsTattoosCollection, el: this.$('.adds')});
+//         var booksByCount =  addsCollection.getBooksByCount( );
+//         this.userAddsTattoos.render().renderBooks( booksByCount );
+//         console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
+
+//         this.renderBooks(addsCollection, booksByCount);
+//         this.renderArtists(addsCollection);
+//         return this;
+//     },
+//     renderBooks: function(addsCollection, booksByCount){
+
+//         this.booksCollection = new App.Collections.Books();
+//         this.booksView = new App.Views.Books({collection: this.booksCollection, el: this.$('.books')});
+
+//         _.each(booksByCount, function(book){
+//             var bookModel = new App.Models.Book({book: book});
+//             ///TODO ~ improve this
+//             bookModel.set('tattoos', this.addsTattoosCollection.byBooks([book]).slice(0,4));
+//             this.booksCollection.add(bookModel);
+//         }, this);
+
+//         this.booksView.render();
+//         return this;
+//     },
+//     renderArtists: function(addsCollection) {
+//         this.artistsCollection = new App.Collections.Artists(addsCollection.getArtists());
+//         this.artistsView = new App.Views.Artists({collection: this.artistsCollection, el: this.$('.artists')});
+//         this.artistsView.render();
+//     },
+//     getTattoos: function() {
+//         console.log('user profile getTattoos');
+//         console.log(this.model);
+//         App.query.tattoosByProfile(this.model, [], {})
+//             .then(function (tats) {
+//                 var tattoos = new App.Collections.Tattoos(tats);
+//                 var collection = new App.Views.Tattoos({collection: tattoos});
+//                 collection.render().getAndRenderBooks();
+//             },
+//             function (error) {
+//                 console.log(error);
+//             });
+//     },
+//     getMyTattoos: function(){
+//         console.log('user profile getMyTattoos');
+//         console.log(App.profile);
+//         App.query.tattoosByProfile(App.profile, [], {})
+//             .then(function (tats) {
+//                 App.myTattoos = new App.Collections.Tattoos(tats);
+//                 var portfolio = new App.Views.Tattoos({collection: App.myTattoos, myTattoos: true});
+//                 portfolio.render();
+//             },
+//             function (error) {
+//                 console.log(error);
+//             });
+//     },
+//     renderMyProfile: function(){
+//         var that = this;
+//         this.userAddsTattoos.bindAddsToProfile();
+//         this.$('.bio').after(_.template('<button href="/myprofile/settings" class="btn-submit"><i class="flaticon-settings13"></i>Edit Profile</button>'));
+//     },
+//     render: function(){
+//         var attributes = this.model.attributes
+//         this.$el.html(this.template(attributes));
+
+//         if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
+//             this.renderAdds(App.Collections.adds);
+//             this.getMyTattoos();
+//             this.renderMyProfile();
+//         } else {
+//             this.getAdds();
+//             this.getTattoos();
+//         }
+//         return this;
+//     }
+// });
+
 App.Views.UserProfile = Parse.View.extend({
     model: App.Models.User,
     id: 'userProfile',
@@ -2935,21 +3063,14 @@ App.Views.UserProfile = Parse.View.extend({
     },
     template: _.template($("#userProfileTemplate").html()),
     events: {
-        'click [href="#collectionTab"]': 'collectionTab',
-        'click [href="#booksTab"]': 'booksTab',
+        'click [href="#favoritesTab"]': 'favoriteTattoosTab',
         'click [href="#artistsTab"]': 'artistsTab'
     },
-    collectionTab: function (e) {
+    favoritesTab: function (e) {
         if (e) { e.preventDefault(); }
-        $('a[href="#collectionTab"]').tab('show');
+        $('a[href="#favoritesTab"]').tab('show');
         this.scroll();
-        Parse.history.navigate(this.routePrefix + '/collection', { trigger: false });
-    },
-    booksTab: function (e) {
-        if (e) { e.preventDefault(); }
-        $('a[href="#booksTab"]').tab('show');
-        this.scroll();
-        Parse.history.navigate(this.routePrefix + '/books', { trigger: false });
+        Parse.history.navigate(this.routePrefix + '/favorites', { trigger: false });
     },
     artistsTab: function (e) {
         if (e) { e.preventDefault(); }
@@ -2967,12 +3088,6 @@ App.Views.UserProfile = Parse.View.extend({
     }, 1000),
     getAdds: function() {
         var that = this;
-        // var addsQuery = new Parse.Query(App.Models.Add);
-        // addsQuery.descending("createdAt");
-        // addsQuery.equalTo('user', this.model.attributes.user);
-        // addsQuery.include('tattoo');
-        // addsQuery.include('artistProfile');
-        // addsQuery.find({
         App.query.adds(this.model.attributes.user)
             .then(function (adds) {
                 var addsCollection = new App.Collections.Adds(adds);
@@ -2984,28 +3099,10 @@ App.Views.UserProfile = Parse.View.extend({
     },
     renderAdds: function(addsCollection){
         this.addsTattoosCollection = new App.Collections.Tattoos(addsCollection.getTattoos());
-        this.userAddsTattoos = new App.Views.Tattoos({collection: this.addsTattoosCollection, el: this.$('.adds')});
-        var booksByCount =  addsCollection.getBooksByCount( );
-        this.userAddsTattoos.render().renderBooks( booksByCount );
-        console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
+        this.userAddsTattoos = new App.Views.Tattoos({collection: this.addsTattoosCollection, el: this.$('.favorites')});
+        this.userAddsTattoos.render();
 
-        this.renderBooks(addsCollection, booksByCount);
         this.renderArtists(addsCollection);
-        return this;
-    },
-    renderBooks: function(addsCollection, booksByCount){
-
-        this.booksCollection = new App.Collections.Books();
-        this.booksView = new App.Views.Books({collection: this.booksCollection, el: this.$('.books')});
-
-        _.each(booksByCount, function(book){
-            var bookModel = new App.Models.Book({book: book});
-            ///TODO ~ improve this
-            bookModel.set('tattoos', this.addsTattoosCollection.byBooks([book]).slice(0,4));
-            this.booksCollection.add(bookModel);
-        }, this);
-
-        this.booksView.render();
         return this;
     },
     renderArtists: function(addsCollection) {
@@ -3016,27 +3113,20 @@ App.Views.UserProfile = Parse.View.extend({
     getTattoos: function() {
         console.log('user profile getTattoos');
         console.log(this.model);
-        // var tattoos = this.model.relation('tattoos');
-        // var uploadsQuery = tattoos.query();
-        // uploadsQuery.descending("createdAt");
-        // uploadsQuery.find({
         App.query.tattoosByProfile(this.model, [], {})
             .then(function (tats) {
                 var tattoos = new App.Collections.Tattoos(tats);
                 var collection = new App.Views.Tattoos({collection: tattoos});
-                collection.render().getAndRenderBooks();
+                collection.render();
             },
             function (error) {
                 console.log(error);
             });
     },
     getMyTattoos: function(){
+        //TODO ~ Render user tattoos
         console.log('user profile getMyTattoos');
         console.log(App.profile);
-        // var tattoos = App.profile.relation('tattoos');
-        // var query = tattoos.query();
-        // query.descending("createdAt");
-        // query.find({
         App.query.tattoosByProfile(App.profile, [], {})
             .then(function (tats) {
                 App.myTattoos = new App.Collections.Tattoos(tats);
