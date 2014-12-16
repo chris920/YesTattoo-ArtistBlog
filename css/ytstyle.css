@@ -5519,11 +5519,27 @@ button.toggleBookFilter, button.toggleMap {
 .otherBooks span {
   overflow: hidden; }
 
+.add {
+  float: left; }
+
+.removeAdd {
+  float: left;
+  background-color: rgba(50, 50, 50, 0.6); }
+  .removeAdd span {
+    color: gold; }
+  .removeAdd:hover {
+    text-decoration: line-through;
+    color: #c42020;
+    background-color: black;
+    -webkit-transition: all 0.4s ease;
+    transition: all 0.4s ease; }
+    .removeAdd:hover span::before {
+      color: #c42020;
+      -webkit-transition: all 0.4s ease;
+      transition: all 0.4s ease; }
+
 .save {
   float: right; }
-
-.remove {
-  float: left; }
 
 .clear {
   float: left; }
@@ -5801,8 +5817,6 @@ input.mainSearchInput {
   border-width: 5px;
   border-image: radial-gradient(#1a1a1a 80%, #4d4d4d 100%, white) 1%;
   margin-top: 0px; }
-  .infoBox span {
-    color: gray; }
   @media screen and (min-width: 992px) {
     .infoBox {
       margin-top: 50px;
@@ -5886,7 +5900,6 @@ input.mainSearchInput {
   padding: 40px 20px;
   margin-bottom: 10px;
   text-align: left;
-  background-color: #4d4d4d;
   border: 1px solid #4d4d4d;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   cursor: cell; }
@@ -5898,6 +5911,8 @@ input.mainSearchInput {
     top: 5px;
     position: relative;
     color: #d9d9d9; }
+  #tattooProfile .bootstrap-tagsinput:focus, #editTattoo .bootstrap-tagsinput:focus {
+    border: 1px solid gold; }
 
 .reset {
   text-align: center;

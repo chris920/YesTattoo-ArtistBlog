@@ -396,14 +396,16 @@
           <img src="<%= file.url %>" class="fullImage">
         </div>
         <div class="infoBox" style="display:none">
-
           <% if(!Parse.User.current() || Parse.User.current().attributes.role !== 'artist') { %>
+            <div class="row">            
+              <button type="button" class="btn-submit btn-block add"><span class="flaticon-books8"></span>Collect</button>
+            </div>
             <div class="yourBooks" style="display:none">
               <h2 href="/myprofile/books">Your Books</h2>
               <input class="booksInput" type="text" data-role="tagsinput" value="" />
             </div>
-            <div class="row">            
-              <button type="button" class="btn-submit btn-block add"><span class="flaticon-books8"></span>Collect</button>
+            <div class="row">
+              <button type="button" class="clear btn-link"style="display:none">Clear Books</button>
               <button type="button" class="save btn-link" style="display:none">Save </button>
             </div>
             <hr>
@@ -420,12 +422,12 @@
             <button class="btn-link more">More</button>
             
           </div>
-          <hr>
           <div class="row artistInfo" href=""><a>
             <img class="prof" src="img/tattooicon-small.png" alt="Artist Prof">
             <h2 class="artistName"> </h2>
             <h5 class="artistLoc"> </h5>
           </a></div>
+          <hr>
           <div class="row">
           </div>
 
@@ -555,7 +557,7 @@
 
           <% if(!Parse.User.current() || Parse.User.current().attributes.role !== 'artist') { %>
             <span class="hover-content" data-toggle="buttons"><span>
-              <button type="button" class="btn-submit btn-block add"><span class="flaticon-books8"></span>Collect</button>
+              <button type="button" class="btn-submit add"><span class="flaticon-books8"></span>Collect</button>
             </span></span>
           <% } %>
 
@@ -996,7 +998,6 @@
     </script>
 
 
-<!--       <a href="#" class="btn-text x">x</a> -->
     <!-- User & Artist Tour -->
     <script type="text/html" id="tourTemplate">
       <div class="clearContainer">
