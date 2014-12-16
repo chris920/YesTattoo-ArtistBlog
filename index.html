@@ -611,8 +611,8 @@
       </div>
     </script>
 
-    <!-- User Profile -->
-    <script type="text/html" id="userProfileTemplate">
+    <!-- Author Profile -->
+    <script type="text/html" id="authorProfileTemplate">
       <div class="container">
         <div class="row userHead">
           <div class="col-xs-12 col-sm-4">
@@ -664,6 +664,59 @@
           </div>
         </div> 
         <!-- Artists Tab-->
+        <div class="tab-pane fade in" id="artistsTab">
+          <div class="container">
+            <div class="row lg8container artists">
+
+            </div>
+          </div>
+        </div>
+    </script>
+
+    <!-- User Profile -->
+    <script type="text/html" id="userProfileTemplate">
+      <div class="container">
+        <div class="row userHead">
+          <div class="col-xs-12 col-sm-4">
+            <div class="row">
+                <img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/usericon-medium.png <% } %>" alt="Prof">
+                <h3 class="artistName"><%= username %></h3>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-4">
+            <h5 class="username"><%= (name) ? name : '' %></h5><h5> <%= (locationName) ? locationName : '' %></h5>
+          </div>
+          <% if (desc) { %>
+            <div class="col-xs-12 col-sm-4">
+              <p class="bio"><span>Bio</span><%= desc %></p>
+            </div>
+          <% } %>
+        </div>
+      </div>
+      
+      <div class="container-fluid">
+        <div class="profNavBG">
+          <div class="profNavContainer col-xs-12 affix-top">
+            <div class="container">
+              <ul class="nav nav-tabs" id="profMenu">
+                <li><span class="subMenuThumb"><img class="prof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url()) } else { %> img/usericon-small.png <% } %>" alt="Artist Prof"></span></li>
+                <li class="active"><a href="#favoriteTattoosTab" data-toggle="tab"><span class="flaticon-black373"></span>Tattoos</a></li>
+                <li><a href="#artistsTab" data-toggle="tab"><span class="flaticon-tattoo1"></span>Artists</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content">
+        <!-- Favorite tattoos Tab-->
+        <div class="tab-pane fade in active" id="favoriteTattoosTab">
+          <div class="container">
+            <div class="row favorites">
+
+            </div>
+          </div>
+        </div> 
+        <!-- Favorite Artists Tab-->
         <div class="tab-pane fade in" id="artistsTab">
           <div class="container">
             <div class="row lg8container artists">
