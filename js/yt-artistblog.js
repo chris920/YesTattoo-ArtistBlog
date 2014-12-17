@@ -4665,7 +4665,7 @@ App.controller = (function () {
         if (tab) {
             myProfile[tab+'Tab']();
         } else {
-            Parse.history.navigate('myprofile/', { trigger: false });
+            Parse.history.navigate('myprofile', { trigger: false });
         }
 
     }
