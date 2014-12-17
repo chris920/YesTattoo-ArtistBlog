@@ -2396,6 +2396,9 @@ input.mainSearchInput {
 	// 	color: $gray;
 	// }
 	margin-top: 0px;
+	.artistName {
+		font-size: 24px;
+	}
 	@media screen and (min-width: $screen-md) {
 		margin-top: 50px;
 		width: 40%;

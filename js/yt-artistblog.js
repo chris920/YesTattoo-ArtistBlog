@@ -2228,6 +2228,14 @@ App.Views.ArtistProfile = Parse.View.extend({
     id: 'artistProfile',
     initialize: function() {
         this.activateAffix();
+
+        if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
+            this.isMyProfile = true;
+            this.routePrefix = 'myprofile';
+        } else {
+            this.isMyProfile = false;
+            this.routePrefix = 'artist/'+this.model.get('username');
+        }
     },
     template: _.template($("#artistProfileTemplate").html()),
     events: {
@@ -2239,20 +2247,20 @@ App.Views.ArtistProfile = Parse.View.extend({
         if (e) { e.preventDefault(); }
         $('a[href="#portfolioTab"]').tab('show');
         this.scroll();
-        Parse.history.navigate(this.model.get('username') + '/portfolio', { trigger: false });
+        Parse.history.navigate(this.routePrefix + '/portfolio', { trigger: false });
     },
     aboutTab: function (e) {
         if (e) { e.preventDefault(); }
         $('a[href="#aboutTab"]').tab('show');
         this.scroll();
-        Parse.history.navigate(this.model.get('username') + '/about', { trigger: false });
+        Parse.history.navigate(this.routePrefix + '/about', { trigger: false });
     },
     shopTab: function (e) {
         if (e) { e.preventDefault(); }
         $('a[href="#shopTab"]').tab('show');
         this.renderMap();
-        this.scroll()
-        // Parse.history.navigate(this.model.get('username') + '/shop', { trigger: false });
+        this.scroll();
+        Parse.history.navigate(this.routePrefix + '/shop', { trigger: false });
     },
     scroll: function(){
         $("html, body").animate({ scrollTop: $('.profHead').outerHeight(true) + 41  }, 500);
@@ -2320,7 +2328,7 @@ App.Views.ArtistProfile = Parse.View.extend({
     render: function(){
         var attributes = this.model.attributes;
         this.$el.html(this.template(attributes));
-        if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
+        if(this.isMyProfile){
             this.renderMyProfile();
             this.getMyTattoos();
         } else {
@@ -2403,7 +2411,8 @@ App.Views.TattooProfile = Backbone.Modal.extend({
     },
     setArtist: function(artist) {
         if(artist.profThumb !== undefined){this.$(".prof")[0].src = artist.profThumb.url};
-        this.$(".artistName").html(artist.name+ ' / ' +'<span>' + artist.username + '</span>').attr('href',"/" + artist.username);
+        this.$(".artistName").html(artist.name + ' / ' +'<span>' + artist.username + '</span>').attr('href',"/" + artist.username);
+        this.$(".name").html(artist.name)
         this.$(".artistLoc").html(artist.shop + ' / ' + artist.locationName);
         this.$(".infoBox").delay( 500 ).fadeIn();
     },
@@ -3077,8 +3086,15 @@ App.Views.UserProfile = Parse.View.extend({
     model: App.Models.User,
     id: 'userProfile',
     initialize: function() {
-        this.routePrefix = Parse.history.fragment;
         this.activateAffix();
+
+        if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
+            this.isMyProfile = true;
+            this.routePrefix = 'myprofile';
+        } else {
+            this.isMyProfile = false;
+            this.routePrefix = 'user/'+this.model.get('username');
+        }
     },
     template: _.template($("#userProfileTemplate").html()),
     events: {
@@ -3165,7 +3181,7 @@ App.Views.UserProfile = Parse.View.extend({
         var attributes = this.model.attributes
         this.$el.html(this.template(attributes));
 
-        if(Parse.User.current() && this.model.attributes.user.id === Parse.User.current().id){
+        if(this.isMyProfile){
             this.renderAdds(App.Collections.adds);
             this.getMyTattoos();
             this.renderMyProfile();
@@ -4646,12 +4662,12 @@ App.controller = (function () {
         }
         App.viewManager.show(myProfile);
 
-        // TODO Bad, should be done in view init
         if (tab) {
             myProfile[tab+'Tab']();
+        } else {
+            Parse.history.navigate('myprofile/', { trigger: false });
         }
 
-        Parse.history.navigate('myprofile', { trigger: false });
     }
 
     controller.tour = function () {
@@ -4750,8 +4766,9 @@ App.controller = (function () {
         App.viewManager.show(userProfile);
         if (tab) {
             userProfile[tab+'Tab']();
-        }
-        Parse.history.navigate('user/' + user.get('username') + (tab ? '/' + tab : ''), { trigger: false });
+        } else {
+            Parse.history.navigate('user/' + user.get('username'), { trigger: false });
+        }        
     }
 
     controller.artistProfileByUname = function (uname, tab) {
@@ -4779,8 +4796,9 @@ App.controller = (function () {
         App.viewManager.show(profile);
         if (tab) {
             profile[tab+'Tab']();
-        }
-        Parse.history.navigate(artist.get('username') + (tab ? '/' + tab : ''), { trigger: false });
+        } else {
+            Parse.history.navigate(artist.get('username'), { trigger: false });
+        }        
     }
 
     return controller;

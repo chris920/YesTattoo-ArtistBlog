@@ -5835,6 +5835,8 @@ input.mainSearchInput {
   border-width: 5px;
   border-image: radial-gradient(#1a1a1a 80%, #4d4d4d 100%, white) 1%;
   margin-top: 0px; }
+  .infoBox .artistName {
+    font-size: 24px; }
   @media screen and (min-width: 992px) {
     .infoBox {
       margin-top: 50px;
