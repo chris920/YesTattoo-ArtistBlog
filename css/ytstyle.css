@@ -3908,6 +3908,9 @@ a:focus {
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px; }
 
+.grayText {
+  color: gray; }
+
 #body {
   min-height: 100%;
   margin-bottom: -420px; }
@@ -5516,7 +5519,7 @@ button.toggleBookFilter, button.toggleMap {
       float: none;
       margin-left: 0px; } }
 
-.otherBooks span {
+.artistBook span {
   overflow: hidden; }
 
 .add {

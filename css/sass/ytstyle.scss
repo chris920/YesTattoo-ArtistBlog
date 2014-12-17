@@ -34,6 +34,9 @@ a {
 	outline: thin dotted;
 	outline: 5px auto -webkit-focus-ring-color;
 	outline-offset: -2px; }
+.grayText {
+	color: $gray;
+}
 
 //Sticky footer
 $footer-height: 300px;
@@ -1995,7 +1998,7 @@ button.toggleBookFilter, button.toggleMap {
 }
 
 ////// tattoo profile page
-.otherBooks {
+.artistBook {
 	span {
 		overflow: hidden;        
 	}

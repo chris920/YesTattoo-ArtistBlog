@@ -2350,7 +2350,8 @@ App.Views.TattooProfile = Backbone.Modal.extend({
     events: {
         'click .artistName':   'triggerCancel',
         'click .add':           'createAdd',
-        'click .removeAdd':      'removeAdd'
+        'click .removeAdd':      'removeAdd',
+        'click .artistBook':    'searchTattoos'
     },
     onRender: function(){
 
@@ -2379,32 +2380,31 @@ App.Views.TattooProfile = Backbone.Modal.extend({
         this.renderArtistsBooks();
     },
     renderArtistsBooks: function(){
-        // if (this.model.attributes.artistBooks.length) {
-        //     this.$('.byArtist h5').html('By the Artist');
-        //     _.each(this.model.attributes.artistBooks, function(book) {
-        //         this.$('.otherBooks span.byArtist').append(_.template('<button type="button" class="btn-tag otherBook artistBook">'+ book +'</button>'));
-        //     }, this);
-        //     this.$('.otherBooks').fadeIn( 1000 );
-        //     var that = this;
-        //     window.setTimeout(function(){
-        //         var addTipTitle =  Parse.User.current() && Parse.User.current().attributes.role === 'artist' ? "Created by the artist" : "Add artist's book";
-        //         $('.otherBook.artistBook').tooltip({
-        //             title: addTipTitle,
-        //             delay: { show: 200, hide: 200 },
-        //             placement: 'auto'
-        //         });
-        //     },0);
-        //     this.popularBooksLimit = 5 - this.model.attributes.artistBooks.length;
-        //     // this.loadMoreBooks = (this.model.attributes.artistBooks.length < 5) ? true : false;
-        // }  else {
-        //     this.popularBooksLimit = 5;
-        // }
-        // return this;
+        if (this.model.attributes.artistBooks.length) {
+            _.each(this.model.attributes.artistBooks, function(book) {
+                this.$('.info .artistBooks').append(_.template('<button type="button" class="btn-link artistBook">'+ book +'</button>'));
+            }, this);
+            this.$('.info').fadeIn( 1000 );
+            window.setTimeout(function(){
+                var addTipTitle =  "Search for more";
+                $('.artistBook').tooltip({
+                    title: addTipTitle,
+                    delay: { show: 200, hide: 200 },
+                    placement: 'auto'
+                });
+            },0);
+        }
+        return this;
+    },
+    searchTattoos: function(e){
+        App.trigger('app:tattoos', {
+            books: [ e.currentTarget.textContent ]
+        });
     },
     setArtist: function(artist) {
         if(artist.profThumb !== undefined){this.$(".prof")[0].src = artist.profThumb.url};
-        this.$(".artistName").html('Artist: ' + artist.name).attr('href',"/" + artist.username);
-        this.$(".artistLoc").html('<span>' + artist.username + '</span><br>' + artist.shop + ' / ' + artist.locationName);
+        this.$(".artistName").html(artist.name+ ' / ' +'<span>' + artist.username + '</span>').attr('href',"/" + artist.username);
+        this.$(".artistLoc").html(artist.shop + ' / ' + artist.locationName);
         this.$(".infoBox").delay( 500 ).fadeIn();
     },
     createAdd: function(startupBooks){
