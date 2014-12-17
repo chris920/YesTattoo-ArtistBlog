@@ -1811,7 +1811,7 @@ App.Views.ArtistsMapView = Parse.View.extend({
 
 			// Construct location search input
 			self.inputEl = $('<input type="text" class="form-control grayInput" id="changeAddressInput" placeholder="Enter your location">');
-            self.myLocationEl = $('<button id="myLocation" class="btn-submit" title="' + self.usersLocationName + '"><i class="flaticon-home73"></i></button>')
+            self.myLocationEl = $('<button id="myLocation" class="btn-submit" title="' + self.usersLocationName + '"><i class="flaticon-cursor6"></i></button>')
                 .on('click', function (e) {
                     e.preventDefault();
                     self.inputEl.val(self.usersLocationName);
@@ -2423,10 +2423,10 @@ App.Views.TattooProfile = Backbone.Modal.extend({
     },
     showRemoveButton: function(add){
         this.add = add;
-        this.$('.add').removeClass('add').removeAttr("disabled").addClass('removeAdd').html('<span class="flaticon-books8"></span>Collected');
+        this.$('.add').removeClass('add').addClass('removeAdd').html('<span class="flaticon-bookmark50"></span>Remove from favorites').removeAttr("disabled");
     },
     showAddButton: function(){
-        this.$('.removeAdd').removeClass('removeAdd').removeAttr("disabled").addClass('add').html('<span class="flaticon-books8"></span>Collect');
+        this.$('.removeAdd').removeClass('removeAdd').addClass('add').html('<span class="flaticon-bookmark50"></span>Add to favorites').removeAttr("disabled");
     },
     beforeCancel: function(){
         this.$('booksInput').tagsinput('destroy');
@@ -2519,7 +2519,7 @@ App.Views.TattooProfile = Backbone.Modal.extend({
     //     this.add = add;
     //     var that = this;
 
-    //     this.$('.add').removeClass('add').removeAttr("disabled").addClass('removeAdd').html('<span class="flaticon-books8"></span>Collected');
+    //     this.$('.add').removeClass('add').addClass('removeAdd').removeAttr("disabled");
     //     this.$('.yourBooks').slideDown(800);
 
     //     var input = this.$('.booksInput');
@@ -2762,13 +2762,13 @@ App.Views.Tattoo = Parse.View.extend({
         this.model.removeAdd(this.add);
     },
     showAddButton: function(){
-        this.$('button').removeClass('removeAdd').addClass('add').html('<span class="flaticon-books8"></span>Collect').removeAttr("disabled");
+        this.$('button').removeClass('removeAdd').addClass('add').removeAttr("disabled");
     },
     showRemoveButton: function(add){
         //assigns the add for removing
         this.add = add;
 
-        this.$('button').removeClass('add').addClass('removeAdd').html('<span class="flaticon-books8"></span>Collected').removeAttr("disabled");
+        this.$('button').removeClass('add').addClass('removeAdd').removeAttr("disabled");
     },
     render: function(){
         var attributes = this.model.toJSON();
@@ -3082,7 +3082,7 @@ App.Views.UserProfile = Parse.View.extend({
     },
     template: _.template($("#userProfileTemplate").html()),
     events: {
-        'click [href="#favoritesTab"]': 'favoriteTattoosTab',
+        'click [href="#favoritesTab"]': 'favoritesTab',
         'click [href="#artistsTab"]': 'artistsTab'
     },
     favoritesTab: function (e) {

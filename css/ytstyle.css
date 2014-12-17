@@ -4212,90 +4212,99 @@ a:focus {
   -ms-transform: rotate(180deg);
   transform: rotate(180deg); }
 
+.flaticon-arrow577:before {
+  content: "\e001"; }
+
 .flaticon-black373:before {
   content: "\e002"; }
 
 .flaticon-book104:before, #tattooProfile .bootstrap-tagsinput:before, #editTattoo .bootstrap-tagsinput:before {
   content: "\e003"; }
 
-.flaticon-books8:before {
+.flaticon-bookmark50:before {
   content: "\e004"; }
 
-.flaticon-camera4:before {
+.flaticon-books8:before {
   content: "\e005"; }
 
-.flaticon-cellphone5:before {
+.flaticon-camera4:before {
   content: "\e006"; }
 
-.flaticon-close20:before {
+.flaticon-cellphone5:before {
   content: "\e007"; }
 
-.flaticon-earth39:before {
+.flaticon-close20:before {
   content: "\e008"; }
 
-.flaticon-external2:before {
+.flaticon-cursor6:before {
   content: "\e009"; }
 
-.flaticon-home73:before {
+.flaticon-earth39:before {
   content: "\e00a"; }
 
-.flaticon-information:before {
+.flaticon-external2:before {
   content: "\e00b"; }
 
-.flaticon-left65:before, .answer:before {
+.flaticon-home73:before {
   content: "\e00c"; }
 
-.flaticon-link35:before, .link:after {
+.flaticon-information:before {
   content: "\e00d"; }
 
-.flaticon-magnifier10:before {
+.flaticon-left65:before, .answer:before {
   content: "\e00e"; }
 
-.flaticon-message7:before {
+.flaticon-link35:before, .link:after {
   content: "\e00f"; }
 
-.flaticon-phone13:before {
+.flaticon-magnifier10:before {
   content: "\e010"; }
 
-.flaticon-pin31:before {
+.flaticon-message7:before {
   content: "\e011"; }
 
-.flaticon-placeholder8:before {
+.flaticon-phone13:before {
   content: "\e012"; }
 
-.flaticon-right44:before {
+.flaticon-pin31:before {
   content: "\e013"; }
 
-.flaticon-right52:before, .answer:after {
+.flaticon-placeholder8:before {
   content: "\e014"; }
 
-.flaticon-screen14:before {
+.flaticon-right44:before {
   content: "\e015"; }
 
-.flaticon-send5:before {
+.flaticon-right52:before, .answer:after {
   content: "\e016"; }
 
-.flaticon-settings13:before {
+.flaticon-screen14:before {
   content: "\e017"; }
 
-.flaticon-sketched20:before {
+.flaticon-send5:before {
   content: "\e018"; }
 
-.flaticon-tattoo1:before {
+.flaticon-settings13:before {
   content: "\e019"; }
 
-.flaticon-trophy4:before {
+.flaticon-sketched20:before {
   content: "\e01a"; }
 
+.flaticon-tattoo1:before {
+  content: "\e01b"; }
+
+.flaticon-trophy4:before {
+  content: "\e01c"; }
+
 .flaticon-up49:before {
-  content: "\e01b";
+  content: "\e01d";
   right: 0px; }
 
 .flaticon-user56:before {
-  content: "\e01c"; }
+  content: "\e01e"; }
 
 .flaticon-user91:before {
-  content: "\e01d"; }
+  content: "\e01f"; }
 
 .facebook, .twitter, .instagram, .tumblr, .message, .link {
   display: inline-block;
@@ -4431,6 +4440,8 @@ span.hover-content {
   transition: all 0.2s ease; }
   span.hover-content:span {
     display: table-cell; }
+  span.hover-content .flaticon-bookmark50:before {
+    right: 0px; }
 
 .tattooContainer:hover span.hover-content {
   top: 0px;
@@ -4994,6 +5005,11 @@ button.toggleBookFilter, button.toggleMap {
 .subMenuThumb img {
   margin: 7px 7px 0 0; }
 
+.favoriteTabTitle {
+  position: relative;
+  display: block;
+  padding: 25px 20px; }
+
 .affix > div > ul > li:first-child {
   left: -32px;
   opacity: 1;
@@ -5522,11 +5538,10 @@ button.toggleBookFilter, button.toggleMap {
 .artistBook span {
   overflow: hidden; }
 
-.add {
-  float: left; }
+.add, .removeAdd {
+  float: right; }
 
 .removeAdd {
-  float: left;
   background-color: rgba(50, 50, 50, 0.6); }
   .removeAdd span {
     color: gold; }
@@ -5686,7 +5701,7 @@ button.toggleBookFilter, button.toggleMap {
         bottom: 5px;
         margin: auto; }
       .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion.active {
-        border: 1px solid #c42020;
+        border: 1px solid gold;
         -webkit-transition: all 0.3s ease;
         transition: all 0.3s ease; }
         .bookSuggestionContainer .bookSuggestionScroll .bookSuggestion.active span {
