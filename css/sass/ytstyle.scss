@@ -1728,6 +1728,18 @@ button.toggleBookFilter, button.toggleMap {
   border-left: 0;
 }
 
+////// edit tattoo
+
+#editTattoo {
+	.tattooImg {
+		width: 50%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	hr {
+		border-top: 1px solid $gray-light;
+	}
+}
 
 ////// Join ~ register page
 .lightContainer {
@@ -2569,14 +2581,6 @@ input.mainSearchInput {
 }
 input.tt-input {
 	margin-left: 5px !important;
-}
-
-
-
-#editTattoo {
-	hr {
-		border-top: 1px solid $gray-light;
-	}
 }
 
 .tt-suggestion {

@@ -5301,6 +5301,13 @@ button.toggleBookFilter, button.toggleMap {
 .input-group-addon:not(:first-child) {
   border-left: 0; }
 
+#editTattoo .tattooImg {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto; }
+#editTattoo hr {
+  border-top: 1px solid #d9d9d9; }
+
 .lightContainer {
   color: #707070;
   background-color: #e6e6e6;
@@ -5980,9 +5987,6 @@ input.mainSearchInput {
 
 input.tt-input {
   margin-left: 5px !important; }
-
-#editTattoo hr {
-  border-top: 1px solid #d9d9d9; }
 
 .tt-suggestion {
   cursor: cell; }

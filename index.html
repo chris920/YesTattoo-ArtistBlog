@@ -586,19 +586,19 @@
         <div class="lightContainer">
           <h3 class="text-center">Edit Tattoo</h3>
           <img src="<%= fileThumb.url %>" class="tattooImg">
-          <div class="otherBooks" style="display:none">
-            <h2>Books</h2>
-            <span></span><br>
-            <button class="btn-link more">More</button>
-          </div><hr>
+          <hr>
           <div class="yourBooks">
-            <h4>Add up to 5 of your own Books</h4>
+            <h4> Add the style or theme</h4>
             <input class="booksInput" type="text" data-role="tagsinput" value="" />
-            <p class="bookMessage">&nbsp;</p>
           </div>
+          <div class="otherBooks" style="display:none">
+            <span>Suggestions: </span><br>
+            <button class="btn-link more">More</button>
+          </div>
+          <p class="bookMessage">&nbsp;</p>
           <div class="row"> <hr>
             <button href="#" class="btn btn-link cancel">Cancel</button>
-            <button href="#" class="btn btn-link delete">Delete</button>
+            <button href="#" class="btn btn-submit delete">Delete</button>
           </div>
         </div>
       </div>

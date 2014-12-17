@@ -2820,7 +2820,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     viewContainer: '.lightContainer',
     cancelEl: '.x, .cancel',
     initialize: function() {
-        // Parse.history.navigate("myprofile/edit/"+this.model.id, {trigger: false, replace: true});
+        _.bindAll(this, 'addOtherBook');
 
         App.on('app:keypress', this.focusIn);
     },
@@ -2829,6 +2829,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         App.off('app:keypress', this.focusIn);
     },
     events: {
+        "click .otherBook":     "addOtherBook",
         "click .delete":        "delete"
     },
     focusIn: function(){
@@ -2855,7 +2856,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
                     that.$('.more').attr('disabled', 'disabled').fadeOut(300);
                 }
                 $('.otherBook').tooltip({
-                    title: "Popular books by everyone",
+                    title: "Add style or theme",
                     delay: { show: 200, hide: 200 },
                     placement: 'auto'
                 });
@@ -2880,7 +2881,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
             name: 'books',
             displayKey: 'books',
             source: App.booktt.ttAdapter()
-        }).attr('placeholder','Type to create a book').on('typeahead:selected', $.proxy(function (obj, datum) {
+        }).attr('placeholder','Enter anything').on('typeahead:selected', $.proxy(function (obj, datum) {
             this.tagsinput('add', datum.books);
             this.tagsinput('input').typeahead('val', '');
         }, input)).on('focus', function () {
@@ -2893,7 +2894,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
             if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
                 that.$('.tt-input').attr('placeholder','').val('');
             } else {
-                that.$('.tt-input').attr('placeholder','Add + + +').val('');
+                that.$('.tt-input').attr('placeholder','Enter anything').val('');
             }
         });
 
@@ -2918,6 +2919,8 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         // $(window).bind('keypress', this.focusIn);
     },
     saveBooks: function(){
+        console.log('save books called');///clear
+        console.log(this.model);///clear
         var that = this;
         this.model.set('artistBooks', this.$('.booksInput').tagsinput('items').slice(0));
         this.model.save(null,{
@@ -2933,6 +2936,9 @@ App.Views.EditTattoo = Backbone.Modal.extend({
             }
         });
     },
+    addOtherBook: function(e){
+        this.$('.booksInput').tagsinput('add', e.target.textContent);
+    },
     delete: function(e){
         this.model.deleteTattoo();
         this.triggerCancel();
@@ -2943,11 +2949,6 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     },
     beforeCancel: function(){
         this.$('booksInput').tagsinput('destroy');
-        // Parse.history.navigate("myprofile", {trigger: false});
-        // $(window).unbind('keypress', this.focusIn);
-        // if(App.currentView){App.currentView.initialize()};
-        // window.history.back();
-        // App.trigger('app:modal-close');
     },
     cancel: function () {
         App.trigger('app:modal-close');
