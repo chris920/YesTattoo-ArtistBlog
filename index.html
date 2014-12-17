@@ -212,7 +212,7 @@
         <div class="container">
           <div class="row filterTitles">
             <div class="filterOptions">
-              <button class="btn-tag toggleBookFilter inactive">Book Filters
+              <button class="btn-tag toggleBookFilter inactive">Show Filters
                 <b class="caret"></b>
               </button>
             </div>
@@ -229,7 +229,7 @@
             </div>
 
             <div class="filterInputContainer">
-              <input type="text" class="typeahead bookFilterInput grayInput" placeholder="Enter any book: style, flavor or placement.">
+              <input type="text" class="typeahead bookFilterInput grayInput" placeholder="Enter a style or theme.">
             </div>
 
           </div>  
@@ -403,7 +403,7 @@
 
           <div class="info" style="display:none">
             <hr>
-            <span class="title">Style:</span><span class="artistBooks"></span>
+            <span class="title">Style or Theme:</span><span class="artistBooks"></span>
           </div>
 
           <% if(!Parse.User.current() || Parse.User.current().attributes.role !== 'artist') { %>

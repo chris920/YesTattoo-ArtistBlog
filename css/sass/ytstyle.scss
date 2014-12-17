@@ -951,6 +951,17 @@ span.hover-content {
 	}
 }
 
+//user profile artists highlight
+#userProfile {
+	.artist.active {
+		.artistThumb {
+			.prof {
+				border: 2px solid $brand-primary;
+			}
+		}
+	}
+}
+
 #mapLocation {
   margin: 20px;
 }

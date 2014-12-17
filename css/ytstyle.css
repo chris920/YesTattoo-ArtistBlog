@@ -4698,6 +4698,9 @@ span.hover-content {
   .artist.active .artistThumb .prof {
     border: 2px solid gold; }
 
+#userProfile .artist.active .artistThumb .prof {
+  border: 2px solid #c42020; }
+
 #mapLocation {
   margin: 20px; }
 

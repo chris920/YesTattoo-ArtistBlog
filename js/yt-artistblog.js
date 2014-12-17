@@ -597,7 +597,7 @@ App.Views.Search = Backbone.Modal.extend({
             this.$('.bookResultsContainer').fadeIn();
         } else {
             this.$('.bookResultsContainer').fadeOut();
-            this.noResultsFor.push('Tattoo Books');
+            this.noResultsFor.push('Tattoo Stlye or Theme');
             that.showReset();
         }
     },
@@ -939,13 +939,13 @@ App.Views.BookFilter = Parse.View.extend({
                     // empty: '<span>No tattoos with that book.</span>',   /// implement once typeahead books pull from server
                     // suggestion: _.template('<span class="bookSuggestion" style="white-space: normal;"><%= books %></span>')
                 }
-        }).attr('placeholder','Enter any book: style, flavor or placement.').on('typeahead:selected', function (obj,datum) {
+        }).attr('placeholder','Enter a style or theme.').on('typeahead:selected', function (obj,datum) {
             that.addQuery(datum.books);
             input.typeahead('val', '');
         }).on('focus', function () {
             that.$('.tt-input').attr('placeholder','');
         }).on('blur', function () {
-            that.$('.tt-input').attr('placeholder','Enter any book: style, flavor or placement.');
+            that.$('.tt-input').attr('placeholder','Enter a style or theme.');
         });
     },
     events: {
@@ -2671,7 +2671,7 @@ App.Views.Tattoos = Parse.View.extend({
                 });
 
                 $('.bookFilter').tooltip({
-                    title: "Filter by",
+                    title: "Filter by style or theme",
                     container: 'body',
                     delay: { show: 200, hide: 200 },
                     placement: 'auto'
