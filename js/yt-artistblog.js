@@ -2836,19 +2836,27 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         return this;
     },
     renderBookSuggestions: function(){
-        this.booksByCount = this.model.attributes.books.byCount();
-        if (this.booksByCount.length >= 1) {
+        this.allBookSuggestions = this.model.attributes.books.byCount();
+
+        if (App.myTattoos) {
+            this.allBookSuggestions.push(App.myTattoos.getBooksByCount());   
+            this.allBookSuggestions = _.unique( _.flatten( this.allBookSuggestions ));
+        }
+
+        if (this.allBookSuggestions.length >= 1) {
             this.count = this.count || 0;
-            var bookSuggestions = this.booksByCount.slice(this.count,(this.count+10));
+            var bookSuggestions = this.allBookSuggestions.slice(this.count,(this.count+10));
+
             _.each(bookSuggestions, function(book) {
                 this.$('.otherBooks span').append(_.template('<button type="button" class="btn-tag otherBook">'+ book +'</button>'));
             }, this);
+
             this.count = this.count + 10;
             this.$('.otherBooks').fadeIn( 1000 );
 
             var that = this;
             window.setTimeout(function(){
-                if($('.otherBooks span').children().length >= Math.min(that.booksByCount.length,10)){
+                if($('.otherBooks span').children().length >= Math.min(that.allBookSuggestions.length,10)){
                     that.$('.more').attr('disabled', 'disabled').fadeOut(300);
                 }
                 $('.otherBook').tooltip({
@@ -4071,7 +4079,7 @@ App.Views.Upload = Backbone.Modal.extend({
                 return tattoo.save();
             }).then(function (tattoo) {
                 this.tattoo = tattoo;
-                
+
                 App.myTattoos.add(tattoo);
                 var tattoos = App.profile.relation("tattoos");
                 tattoos.add(tattoo);
