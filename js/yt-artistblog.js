@@ -324,11 +324,7 @@ App.Models.Tattoo = Parse.Object.extend({
         });
     },
     deleteTattoo: function(){
-        this.destroy().then(function(tattoo){
-            return tattoo;
-        }, function(error){
-            console.log(error);
-        });
+        return this.destroy();
     },
     defaults: function() {
       return {
@@ -2794,7 +2790,7 @@ App.Views.MyTattoo = Parse.View.extend({
     className: 'tattoo',
     template: _.template($("#myTattooTemplate").html()),
     initialize: function(){
-        this.model.on('remove', this.remove, this);
+        this.model.on('destroy', this.remove, this);
     },
     events: {
         'click .edit': 'edit',
@@ -2821,7 +2817,6 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     cancelEl: '.x, .cancel',
     initialize: function() {
         _.bindAll(this, 'addOtherBook');
-
         App.on('app:keypress', this.focusIn);
     },
     disable: function () {
@@ -2840,16 +2835,17 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
         return this;
     },
-    renderPopularBooks: function(){
+    renderBookSuggestions: function(){
         this.booksByCount = this.model.attributes.books.byCount();
         if (this.booksByCount.length >= 1) {
             this.count = this.count || 0;
-            var popularBooks = this.booksByCount.slice(this.count,(this.count+5));
-            _.each(popularBooks, function(book) {
+            var bookSuggestions = this.booksByCount.slice(this.count,(this.count+10));
+            _.each(bookSuggestions, function(book) {
                 this.$('.otherBooks span').append(_.template('<button type="button" class="btn-tag otherBook">'+ book +'</button>'));
             }, this);
-            this.count = this.count + 5;
+            this.count = this.count + 10;
             this.$('.otherBooks').fadeIn( 1000 );
+
             var that = this;
             window.setTimeout(function(){
                 if($('.otherBooks span').children().length >= Math.min(that.booksByCount.length,10)){
@@ -2862,7 +2858,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
                 });
             },0);
         }
-    },  
+    },
     initializeEditBooks: function(){
         var that = this;
 
@@ -2914,9 +2910,6 @@ App.Views.EditTattoo = Backbone.Modal.extend({
                 that.$('.booksInput').tagsinput('input').attr('placeholder','');
             }
         }, 400);
-
-        //focus in on the add input on keypress
-        // $(window).bind('keypress', this.focusIn);
     },
     saveBooks: function(){
         console.log('save books called');///clear
@@ -2940,12 +2933,19 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         this.$('.booksInput').tagsinput('add', e.target.textContent);
     },
     delete: function(e){
-        this.model.deleteTattoo();
-        this.triggerCancel();
+        this.$('.delete').attr("disabled", "disabled");
+        var that = this;
+        this.model.deleteTattoo().then(function(tattoo){
+            //TODO ~ Revisit the destroy listener. trigger myprofile for now.
+            App.trigger('app:myprofile')
+        }, function(error){
+            console.log(error);
+            that.$('.bookMessage').html(error.message);
+        });
     },
     onRender: function(){
         this.initializeEditBooks();
-        this.renderPopularBooks();
+        this.renderBookSuggestions();
     },
     beforeCancel: function(){
         this.$('booksInput').tagsinput('destroy');
