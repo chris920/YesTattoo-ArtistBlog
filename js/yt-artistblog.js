@@ -2844,6 +2844,9 @@ App.Views.EditTattoo = Backbone.Modal.extend({
             this.allBookSuggestions = _.unique( _.flatten( this.allBookSuggestions ));
         }
 
+        // removes already added books
+        this.allBookSuggestions = _.difference(this.allBookSuggestions, this.model.attributes.artistBooks);
+
         if (this.allBookSuggestions.length >= 1) {
             this.count = this.count || 0;
             var bookSuggestions = this.allBookSuggestions.slice(this.count,(this.count+10));
