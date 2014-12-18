@@ -748,6 +748,59 @@ Parse.Cloud.job('addBooksToArtistsProfile', function (request, status) {
 });
 
 
+Parse.Cloud.job('setArtistProfileRelationships', function (request, status) {
+  Parse.Cloud.useMasterKey();
+  console.log('Running artist profile relationship update ...');
+
+  var allArtists;
+  var query = new Parse.Query('ArtistProfile');
+  query.find().then(function (artists) {
+    allArtists = artists;
+    var promises = [];
+    _.each(allArtists, function(artist) {
+      var tattooRelation = artist.relation('tattoos');
+      var tattoosQuery = new Parse.Query('Tattoo');
+      tattoosQuery.equalTo('artistProfile', artist);
+      var promise = tattoosQuery.find();
+      promise = promise.then(function(tattoos){
+        _.each(tattoos, function(tattoo){
+          tattooRelation.add(tattoo);
+        });
+      });
+      promises.push(promise);
+    });
+
+    _.each(allArtists, function(artist) {
+      var collectorRelation = artist.relation('collectors');
+      var addQuery = new Parse.Query('Add');
+      addQuery.equalTo('artistProfile', artist);
+      addQuery.include('user');
+      addQuery.include(['user.userProfile']);
+      var promise = addQuery.find();
+      promise = promise.then(function(adds){
+        _.each(adds, function(add){
+          collectorRelation.add(add.attributes.user.attributes.userprofile);
+        });
+      });
+      promises.push(promise);
+    });
+
+    return Parse.Promise.when(promises);
+  }).then(function () {
+    var savePromises = [];
+    _.each(allArtists, function(artist) {
+      savePromises.push(artist.save());
+    });
+    return Parse.Promise.when(savePromises);
+  }).then(function () {
+      status.success('Artists relations updated');
+    },
+    function (error) {
+      status.error('Failed to update relations');
+  });
+});
+
+
 
 /////// Upgrade live, one time only jobs
 
@@ -1005,57 +1058,65 @@ Parse.Cloud.job('updateArtistAndTattooBooksStep3AddArtist', function (request, s
   });
 });
 
-Parse.Cloud.job('setArtistProfileRelationships', function (request, status) {
+Parse.Cloud.job('updateArtistAndTattooBooksStep4SyncArtistBooks', function (request, status) {
   Parse.Cloud.useMasterKey();
-  console.log('Running artist profile relationship update ...');
+  var tattoosWithArtistBooks = [];
 
-  var allArtists;
-  var query = new Parse.Query('ArtistProfile');
-  query.find().then(function (artists) {
-    allArtists = artists;
-    var promises = [];
-    _.each(allArtists, function(artist) {
-      var tattooRelation = artist.relation('tattoos');
-      var tattoosQuery = new Parse.Query('Tattoo');
-      tattoosQuery.equalTo('artistProfile', artist);
-      var promise = tattoosQuery.find();
-      promise = promise.then(function(tattoos){
-        _.each(tattoos, function(tattoo){
-          tattooRelation.add(tattoo);
+  //Gets all of the tattoos with artist books
+  status.message("Processing first 1k tattoos.");
+  var query = new Parse.Query('Tattoo');
+  query.limit(1000);
+  query.find().then(function(tattoos){
+    _.each(tattoos, function(tattoo) {
+      var artistBooks = tattoo.get('artistBooks');
+      if (artistBooks.length >= 1) {
+        tattoosWithArtistBooks.push(tattoo);
+      }
+    });
+
+    status.message("Processing SECOND 1k tattoos.");
+    var query = new Parse.Query('Tattoo');
+    query.limit(1000);
+    query.skip(1000);
+    return query.find();
+  }).then(function(tattoos){
+    _.each(tattoos, function(tattoo) {
+      var artistBooks = tattoo.get('artistBooks');
+      if (artistBooks.length >= 1) {
+        tattoosWithArtistBooks.push(tattoo);
+      }
+    });
+
+    return tattoosWithArtistBooks;
+  }).then(function(tattoosWithArtistBooks){
+    status.message("Processing:" + tattoosWithArtistBooks);
+    var tattooPromises = [];
+    var promise = Parse.Promise.as();
+    _.each(tattoosWithArtistBooks, function(tattoo) {
+      promise = promise.then(function() {
+        var edit = new Parse.Promise();
+        editBooks({params: {added: tattoo.get('artistBooks'), removed: [], tattooId: tattoo.id}}, {
+          success: function(result) {
+            edit.resolve(result);
+          },
+          error: function(error) {
+            edit.reject(error.message);
+          }
         });
+        return edit;
       });
-      promises.push(promise);
+      tattooPromises.push(promise);
     });
-
-    _.each(allArtists, function(artist) {
-      var collectorRelation = artist.relation('collectors');
-      var addQuery = new Parse.Query('Add');
-      addQuery.equalTo('artistProfile', artist);
-      addQuery.include('user');
-      addQuery.include(['user.userProfile']);
-      var promise = addQuery.find();
-      promise = promise.then(function(adds){
-        _.each(adds, function(add){
-          collectorRelation.add(add.attributes.user.attributes.userprofile);
-        });
-      });
-      promises.push(promise);
-    });
-
-    return Parse.Promise.when(promises);
+    return Parse.Promise.when(tattooPromises);
   }).then(function () {
-    var savePromises = [];
-    _.each(allArtists, function(artist) {
-      savePromises.push(artist.save());
-    });
-    return Parse.Promise.when(savePromises);
-  }).then(function () {
-      status.success('Artists relations updated');
-    },
-    function (error) {
-      status.error('Failed to update relations');
+    status.success('Books updated');
+  },
+  function (error) {
+    status.error('Failed to update Books');
   });
 });
+
+
 
 /////// database check jobs
 
