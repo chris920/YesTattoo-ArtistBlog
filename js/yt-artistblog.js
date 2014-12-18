@@ -4039,7 +4039,7 @@ App.Views.Upload = Backbone.Modal.extend({
     viewContainer: '.lightContainer',
     cancelEl: '.x, .cancel',
     initialize: function() {
-        Parse.history.navigate("myprofile/upload", {trigger: false, replace: true});
+        
     },
     events: {
         "click [data-dismiss='fileinput'],[data-trigger='fileinput']":      "clear",
