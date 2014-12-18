@@ -2825,6 +2825,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     },
     events: {
         "click .otherBook":     "addOtherBook",
+        "click .otherBooks .more":     "renderMoreBookSuggestions",
         "click .delete":        "delete"
     },
     focusIn: function(){
@@ -2835,7 +2836,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         this.$('.tt-input').val(this.$('input.tt-input:last').val().toProperCase());
         return this;
     },
-    renderBookSuggestions: function(){
+    initializeBookSuggestions: function(){
         this.allBookSuggestions = this.model.attributes.books.byCount();
 
         if (App.myTattoos) {
@@ -2846,26 +2847,33 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         if (this.allBookSuggestions.length >= 1) {
             this.count = this.count || 0;
             var bookSuggestions = this.allBookSuggestions.slice(this.count,(this.count+10));
-
-            _.each(bookSuggestions, function(book) {
-                this.$('.otherBooks span').append(_.template('<button type="button" class="btn-tag otherBook">'+ book +'</button>'));
-            }, this);
+            this.renderBookSuggestions(bookSuggestions);
 
             this.count = this.count + 10;
             this.$('.otherBooks').fadeIn( 1000 );
 
-            var that = this;
-            window.setTimeout(function(){
-                if($('.otherBooks span').children().length >= Math.min(that.allBookSuggestions.length,10)){
-                    that.$('.more').attr('disabled', 'disabled').fadeOut(300);
-                }
-                $('.otherBook').tooltip({
-                    title: "Add style or theme",
-                    delay: { show: 200, hide: 200 },
-                    placement: 'auto'
-                });
-            },0);
         }
+    },
+    renderBookSuggestions: function(bookSuggestions){
+        _.each(bookSuggestions, function(book) {
+            this.$('.otherBooks span').append(_.template('<button type="button" class="btn-tag otherBook">'+ book +'</button>'));
+        }, this);
+
+        var that = this;
+        window.setTimeout(function(){
+            if($('.otherBooks span').children('.otherBook').length >= that.allBookSuggestions.length){
+                that.$('.more').attr('disabled', 'disabled').fadeOut(300);
+            }
+            $('.otherBook').tooltip({
+                title: "Add style or theme",
+                delay: { show: 200, hide: 200 },
+                placement: 'auto'
+            });
+        },0);
+    },
+    renderMoreBookSuggestions: function(){
+        var bookSuggestions = this.allBookSuggestions.slice(this.count,(this.count+20));
+        this.renderBookSuggestions(bookSuggestions);
     },
     initializeEditBooks: function(){
         var that = this;
@@ -2953,7 +2961,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     },
     onRender: function(){
         this.initializeEditBooks();
-        this.renderBookSuggestions();
+        this.initializeBookSuggestions();
     },
     beforeCancel: function(){
         this.$('booksInput').tagsinput('destroy');
