@@ -4070,12 +4070,15 @@ App.Views.Upload = Backbone.Modal.extend({
                 }
                 return tattoo.save();
             }).then(function (tattoo) {
+                this.tattoo = tattoo;
+                
                 App.myTattoos.add(tattoo);
                 var tattoos = App.profile.relation("tattoos");
                 tattoos.add(tattoo);
                 return App.profile.save();
             }).then(function() {
-                that.triggerCancel();
+                // that.triggerCancel();
+                App.trigger('app:edit-tattoo', this.tattoo);
             }, function(error) {
                 console.log(error);
                 $("#upload .error").html(error.message).show();
@@ -4086,9 +4089,6 @@ App.Views.Upload = Backbone.Modal.extend({
     onRender: function(){
     },
     cancel: function(e){
-        // Parse.history.navigate("myprofile", {trigger: false});
-        // if(App.currentView){App.currentView.initialize()};
-        // window.history.back();s
         App.trigger('app:modal-close');
     }
 });
