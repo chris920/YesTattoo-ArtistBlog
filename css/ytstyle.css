@@ -4591,6 +4591,49 @@ span.hover-content {
   right: 30px;
   display: none; }
 
+@-webkit-keyframes spaceboots {
+  0% {
+    -webkit-transform: translate(2px, 0px) rotate(0deg); }
+
+  10% {
+    -webkit-transform: translate(-1px, 0px) rotate(-1deg); }
+
+  20% {
+    -webkit-transform: translate(-3px, 0px) rotate(1deg); }
+
+  30% {
+    -webkit-transform: translate(0px, 0px) rotate(0deg); }
+
+  40% {
+    -webkit-transform: translate(1px, 0px) rotate(1deg); }
+
+  50% {
+    -webkit-transform: translate(-1px, 0px) rotate(-1deg); }
+
+  60% {
+    -webkit-transform: translate(0px, 0px) rotate(0deg); }
+
+  70% {
+    -webkit-transform: translate(1px, 0px) rotate(-1deg); }
+
+  80% {
+    -webkit-transform: translate(-1px, 0px) rotate(1deg); }
+
+  90% {
+    -webkit-transform: translate(1px, 0px) rotate(0deg); }
+
+  100% {
+    -webkit-transform: translate(1px, 0px) rotate(-1deg); } }
+.shake {
+  color: gold !important;
+  -webkit-animation-name: spaceboots;
+  -webkit-animation-duration: 0.8s;
+  -webkit-transform-origin: 50% 50%;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-timing-function: linear;
+  -webkit-transition: all 0.4s ease;
+  transition: all 0.4s ease; }
+
 .intro {
   padding: 40px;
   color: inherit;
@@ -5930,9 +5973,19 @@ input.mainSearchInput {
   padding: 40px 20px;
   margin-bottom: 10px;
   text-align: left;
-  border: 1px solid #4d4d4d;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 2px solid #c42020;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  cursor: cell; }
+  cursor: cell;
+  color: red; }
+  #tattooProfile .bootstrap-tagsinput ::-webkit-input-placeholder, #editTattoo .bootstrap-tagsinput ::-webkit-input-placeholder {
+    color: #d9d9d9; }
+  #tattooProfile .bootstrap-tagsinput :-moz-placeholder, #editTattoo .bootstrap-tagsinput :-moz-placeholder {
+    color: #d9d9d9; }
+  #tattooProfile .bootstrap-tagsinput ::-moz-placeholder, #editTattoo .bootstrap-tagsinput ::-moz-placeholder {
+    color: #d9d9d9; }
+  #tattooProfile .bootstrap-tagsinput :-ms-input-placeholder, #editTattoo .bootstrap-tagsinput :-ms-input-placeholder {
+    color: #d9d9d9; }
   #tattooProfile .bootstrap-tagsinput:before, #editTattoo .bootstrap-tagsinput:before {
     font-family: Flaticon;
     color: #d9d9d9;
@@ -5941,8 +5994,22 @@ input.mainSearchInput {
     top: 5px;
     position: relative;
     color: #d9d9d9; }
-  #tattooProfile .bootstrap-tagsinput:focus, #editTattoo .bootstrap-tagsinput:focus {
-    border: 1px solid gold; }
+  #tattooProfile .bootstrap-tagsinput:focus, #tattooProfile .bootstrap-tagsinput.focused, #editTattoo .bootstrap-tagsinput:focus, #editTattoo .bootstrap-tagsinput.focused {
+    border: 2px solid #4d4d4d;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px gold;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px gold; }
+    #tattooProfile .bootstrap-tagsinput:focus ::-webkit-input-placeholder, #tattooProfile .bootstrap-tagsinput.focused ::-webkit-input-placeholder, #editTattoo .bootstrap-tagsinput:focus ::-webkit-input-placeholder, #editTattoo .bootstrap-tagsinput.focused ::-webkit-input-placeholder {
+      color: #4d4d4d; }
+    #tattooProfile .bootstrap-tagsinput:focus :-moz-placeholder, #tattooProfile .bootstrap-tagsinput.focused :-moz-placeholder, #editTattoo .bootstrap-tagsinput:focus :-moz-placeholder, #editTattoo .bootstrap-tagsinput.focused :-moz-placeholder {
+      color: #4d4d4d; }
+    #tattooProfile .bootstrap-tagsinput:focus ::-moz-placeholder, #tattooProfile .bootstrap-tagsinput.focused ::-moz-placeholder, #editTattoo .bootstrap-tagsinput:focus ::-moz-placeholder, #editTattoo .bootstrap-tagsinput.focused ::-moz-placeholder {
+      color: #4d4d4d; }
+    #tattooProfile .bootstrap-tagsinput:focus :-ms-input-placeholder, #tattooProfile .bootstrap-tagsinput.focused :-ms-input-placeholder, #editTattoo .bootstrap-tagsinput:focus :-ms-input-placeholder, #editTattoo .bootstrap-tagsinput.focused :-ms-input-placeholder {
+      color: #4d4d4d; }
+  #tattooProfile .bootstrap-tagsinput.bootstrap-tagsinput-max, #editTattoo .bootstrap-tagsinput.bootstrap-tagsinput-max {
+    border: 2px solid #d9d9d9;
+    background-color: rgba(0, 0, 0, 0.6);
+    cursor: default; }
 
 .reset {
   text-align: center;
@@ -5977,14 +6044,6 @@ input.mainSearchInput {
 .twitter-typeahead .tt-hint {
   display: none; }
 
-.bootstrap-tagsinput.focused {
-  background-color: rgba(0, 0, 0, 0.6);
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 12px rgba(196, 32, 32, 0.6);
-  cursor: text;
-  -webkit-transition: all 0.3s ease;
-  transition: all 0.3s ease; }
-
 input.tt-input {
   margin-left: 5px !important; }
 
@@ -6008,14 +6067,14 @@ input.tt-input {
   box-shadow: none; }
 
 .bootstrap-tagsinput .blured {
-  border: 1px solid #1a1a1a;
-  color: white;
-  background-color: #1a1a1a !important;
+  border: 1px solid gray;
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease; }
 
 .bootstrap-tagsinput .tag {
   color: white;
+  border: 1px solid #1a1a1a;
+  background-color: #1a1a1a !important;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease; }
 
