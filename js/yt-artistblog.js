@@ -1534,6 +1534,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	},
 	
 	activateAffix: function () {
+        console.log('artists map affix activated');///clear
 		$('#map-container').affix({
 			offset: { 
 				top: $('.bookFilterHeader').outerHeight(true),
@@ -1706,6 +1707,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 
 			if (self.options.showMap) {
 				self.showMap();
+                _.debounce(function(){self.activateAffix();},1000);
 			}
 
             self.loadArtists(true);
