@@ -167,42 +167,37 @@
     <!-- Artist search result -->
     <script type="text/html" id="artistResultTemplate">
       <div href="/<%= username %>" class="row userResult">
-          <img class="smallprof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
-          <h4><%= (name) ?  name : '' %><span> <%= (username) ?  username : '' %> </span><span> <%= (shop) ?  shop : '' %> </span></h4>
+        <img class="smallprof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
+        <h4><%= (name) ?  name : '' %><span> <%= (username) ?  username : '' %> </span><span> <%= (shop) ?  shop : '' %> </span></h4>
       </div>
     </script>
 
     <!-- Explore page -->
     <script type="text/html" id="exploreTemplate">
-
           <div class="findArtistsContainer">
             <h2>Find Artists</h2>
             <p>Connect with artists in your area</p>
             <button id="findArtists" class="btn-submit"><i class="flaticon-home73"></i>Start</button>
           </div>
 
-
           <div class="exploreTattoosContainer">
             <div class="container">
-
               <h2>Explore Tattoos</h2>
               <hr>
               <p>Browse popular styles and themes</p>
               <div class="explorePopularBooks">
-              
               </div>
-      
             </div>
           </div>
 
-
-          <div class="userContainer">
-            <div class="lg6container">
-              <h2>Start your tattoo collection</h2>
-              <button id="" href="/join" class="btn-submit">Join the community</button>
+          <% if (!Parse.User.current()) { %>
+            <div class="userContainer">
+              <div class="lg6container">
+                <h2>Start your tattoo collection</h2>
+                <button id="" href="/join" class="btn-submit">Join the community</button>
+              </div>
             </div>
-          </div>
-
+          <% } %>
     </script>
 
 
