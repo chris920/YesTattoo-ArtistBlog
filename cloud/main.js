@@ -478,6 +478,7 @@ Parse.Cloud.job("updateGlobalBooks", function(request, status) {
   var bookSets = [];
   var bookArray = [];
   var newBooks = [];
+  var deletedBooks = [];
   // var allBooksByCount = [];
   var allBooksByCountWithCount = [];
   var query = new Parse.Query('ArtistProfile');
@@ -489,14 +490,10 @@ Parse.Cloud.job("updateGlobalBooks", function(request, status) {
     _.each(artists, function(artist) {
         bookSets.push(artist.get('books'));
     });
-    console.log(bookSets);///clear
-
     //removes the undefined values and flattens to one array///clear
     bookArray = _.flatten(_.compact(bookSets));
-    console.log(bookArray);///clear
 
     //converts the array into an object with the book name key and the count as the value///clear
-    // allBooksByCountWithCount = bookArray.byCountWithCount();///clear
     var key,
       counts;
     allBooksByCountWithCount = _.reduce(bookArray,function(counts,key){ counts[key]++; return counts },
@@ -518,10 +515,16 @@ Parse.Cloud.job("updateGlobalBooks", function(request, status) {
       globalBookNames.push(name);
     });
 
-    //gets the GlobalBooks that have not been created yet ///clear
-    var newBooks = _.unique(_.difference(bookArray, globalBookNames));
+    //the books that have global books created but don't exist anymore ///clear
+    deletedBooks = _.unique(_.difference(globalBookNames, bookArray));
+    //the GlobalBooks that have not been created yet ///clear
+    newBooks = _.unique(_.difference(bookArray, globalBookNames));
+
+    console.log('Deleted books: ');///clear
+    console.log(deletedBooks);///clear
     console.log('Making the new books: ');///clear
     console.log(newBooks);///clear
+
     //Creates new objects and assigns the name & picture URL ///clear
     var GlobalBook = Parse.Object.extend("GlobalBook");
     _.each(newBooks, function(book){
@@ -552,21 +555,24 @@ Parse.Cloud.job("updateGlobalBooks", function(request, status) {
       }
     });
     return Parse.Promise.when(picPromises);
-
   }).then(function () {
     var promises = [];
     //Sets the count from the all count object ///clear
-    //Filters down to the matching books sets and removes duplicates. ///clear
     _.each(that.globalBooks, function(globalBook) {
       var name = globalBook.get('name');
       var count = allBooksByCountWithCount[name];
       globalBook.set('count', count);
-      // var matchingBookSets = _.filter(bookSets, function(bookSet){ 
-      //   return _.contains(bookSet, name);
-      // });
-      // var bookMatches = _.unique(_.flatten(matchingBookSets));
-      // globalBook.set('bookMatches', bookMatches);
       promises.push(globalBook.save());
+    });
+    return Parse.Promise.when(promises);
+  }).then(function () {
+    var promises = [];
+    //destroys the deleted books ///clear
+    _.each(that.globalBooks, function(globalBook) {
+      if (_.intersection(deletedBooks, [globalBook.get('name')]).length >= 1) {
+        console.log('destroying: '+globalBook.get('name'));///clear
+        promises.push(globalBook.destroy());
+      }
     });
     return Parse.Promise.when(promises);
   }).then(function() {
