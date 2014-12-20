@@ -347,10 +347,14 @@ App.Collections.Tattoos = Parse.Collection.extend({
     },
     model: App.Models.Tattoo,
     getBooksByCount: function(count){
-        this.artistBooks = _.flatten(this.pluck('artistBooks')).byCount();
-        this.popularBooks = _.flatten(this.pluck('books')).byCount();
-        this.allBooks = this.artistBooks.concat(this.popularBooks);
-        return this.allBooks.slice(0, count || 10);
+        this.booksByCount = _.flatten(this.pluck('books')).byCount();
+        console.log('got books: ' + this.booksByCount);   ///c
+        return this.booksByCount.slice(0, count || 10);
+    },
+    getArtistBooksByCount: function(count){
+        this.artistBooksByCount = _.flatten(this.pluck('artistBooks')).byCount();
+        console.log('got artist books: ' + this.artistBooksByCount);   ///c
+        return this.artistBooksByCount.slice(0, count || 10);
     },
     byBooks: function(books){
         //Takes an array of books, returns the tattoos where the books are inlcuded.    ///c
@@ -361,7 +365,7 @@ App.Collections.Tattoos = Parse.Collection.extend({
 
 App.Collections.Adds = Parse.Collection.extend({
     model: App.Models.Add,
-    getBooksByCount: function(count){
+    getAddBooksByCount: function(count){
         this.popularBooks = _.flatten(this.pluck('books')).byCount().slice(0, count || 10);
         return this.popularBooks;
     },
@@ -2616,9 +2620,10 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     initializeBookSuggestions: function(){
         // gets all the books, unique in order of count
         this.allBookSuggestions = this.model.attributes.books.byCount();
+
         if (App.myTattoos) {
             // adds other books the user has added to other tattoos
-            this.allBookSuggestions.push(App.myTattoos.getBooksByCount());   
+            this.allBookSuggestions.push(App.myTattoos.getArtistBooksByCount());   
             this.allBookSuggestions = _.unique( _.flatten( this.allBookSuggestions ));
         }
 
@@ -2810,9 +2815,9 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 //     renderAdds: function(addsCollection){
 //         this.addsTattoosCollection = new App.Collections.Tattoos(addsCollection.getTattoos());
 //         this.userAddsTattoos = new App.Views.Tattoos({collection: this.addsTattoosCollection, el: this.$('.adds')});
-//         var booksByCount =  addsCollection.getBooksByCount( );
+//         var booksByCount =  addsCollection.getAddBooksByCount( );
 //         this.userAddsTattoos.render().renderBooks( booksByCount );
-//         console.log('renderBooks called on ~ addsCollection.getBooksByCount()');
+//         console.log('renderBooks called on ~ addsCollection.getAddBooksByCount()');
 
 //         this.renderBooks(addsCollection, booksByCount);
 //         this.renderArtists(addsCollection);
