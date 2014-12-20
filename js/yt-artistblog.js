@@ -2460,11 +2460,11 @@ App.Views.Tattoos = Parse.View.extend({
         return this;
     },
     getAndRenderBooks: function(){
-        var books = this.collection.getBooksByCount(10);
+        var books = this.collection.getArtistBooksByCount(10);
         this.renderBooks(books.slice(0,5));
 
         if(books.length > 5){
-            $('.tagFilters').append(_.template('<a class="more">More</a>'));            
+            $('.tagFilters').append(_.template('<a class="more">More</a>'));
             $('.more').on('click', books, this.renderMoreBooks);
         } 
         return this;
@@ -2710,6 +2710,8 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         this.model.set('artistBooks', this.$('.booksInput').tagsinput('items').slice(0));
         this.model.save(null,{
             success: function(result) {
+                console.log('tattoo saved');    ///c
+                console.log(result);    ///c
                 that.$('.bookMessage').html('Tattoo saved.');
                 window.setTimeout(function(){
                     that.$('.bookMessage').html('&nbsp;');

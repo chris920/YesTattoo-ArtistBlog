@@ -241,8 +241,6 @@ Parse.Cloud.afterSave('UserProfile', function(request) {
 Parse.Cloud.beforeSave("Tattoo", function(request, response) {
   var user = request.user;
   var tattoo = request.object;
-  console.log('tattoo.getWriteAccess(request.user.id) is = ');///c
-  console.log(tattoo.attributes.ACL.getWriteAccess(request.user.id));///c
 
   if (!tattoo.existed()) {
     var userACL = new Parse.ACL(user);
