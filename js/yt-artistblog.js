@@ -619,7 +619,6 @@ App.Views.Search = Backbone.Modal.extend({
         this.$('.resultsMessage').fadeIn();
     },
     artistBookSearch: function(){
-        //TODO ~ Init artists page with current query as the book filter
         App.trigger('app:artists');
     },
     focusIn: function(){
@@ -2615,8 +2614,10 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         return this;
     },
     initializeBookSuggestions: function(){
+        // gets all the books, unique in order of count
         this.allBookSuggestions = this.model.attributes.books.byCount();
         if (App.myTattoos) {
+            // adds other books the user has added to other tattoos
             this.allBookSuggestions.push(App.myTattoos.getBooksByCount());   
             this.allBookSuggestions = _.unique( _.flatten( this.allBookSuggestions ));
         }

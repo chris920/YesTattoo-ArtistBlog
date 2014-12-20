@@ -241,9 +241,10 @@ Parse.Cloud.afterSave('UserProfile', function(request) {
 Parse.Cloud.beforeSave("Tattoo", function(request, response) {
   var user = request.user;
   var tattoo = request.object;
+  console.log('tattoo.getWriteAccess(request.user.id) is = ');///c
+  console.log(tattoo.attributes.ACL.getWriteAccess(request.user.id));///c
 
   if (!tattoo.existed()) {
-
     var userACL = new Parse.ACL(user);
     userACL.setRoleWriteAccess("Admin",true);
     userACL.setPublicReadAccess(true);
@@ -296,8 +297,8 @@ Parse.Cloud.beforeSave("Tattoo", function(request, response) {
     }, function(error) {
       response.error(error);
     });
-
-  } else if (tattoo.dirty('artistBooks')) {
+  // updates books if artist has edit && checks access because parse runs beforesave even if there is none
+  } else if (tattoo.dirty('artistBooks') && tattoo.attributes.ACL.getWriteAccess(request.user.id)) {
     var oldBooks = tattoo.get('oldArtistBooks');
     var newBooks = tattoo.get('artistBooks');
     var removed = _.difference(oldBooks, newBooks);
@@ -317,7 +318,6 @@ Parse.Cloud.beforeSave("Tattoo", function(request, response) {
   } else {
     response.success();
   }
-
 });
 
 Parse.Cloud.beforeDelete("Tattoo", function(request, response) {
@@ -352,7 +352,6 @@ Parse.Cloud.beforeDelete("Tattoo", function(request, response) {
   }, function(error) {
     return response.error(error);
   });
-
 });
 
 Parse.Cloud.beforeSave("Add", function(request, response) {
@@ -400,7 +399,7 @@ Parse.Cloud.beforeSave("Add", function(request, response) {
       }
     });
 
-  } else if (add.dirty('books')) {
+  } else if (add.dirty('books') && add.attributes.ACL.getWriteAccess(request.user.id)) {
     var oldBooks = add.get('oldBooks');
     var newBooks = add.get('books');
     var removed = _.difference(oldBooks, newBooks);
