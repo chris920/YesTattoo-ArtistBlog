@@ -1509,7 +1509,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 	loadArtists: function (reset) {
 		var that = this;
         that.collection.reset();
-        that.moreToload = true;
+        that.moreToLoad = true;
         var location = that.locationQuery;
         var books = that.bookFilterView ? that.bookFilterView.query : [];
 
