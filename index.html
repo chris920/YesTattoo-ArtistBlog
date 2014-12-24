@@ -158,7 +158,7 @@
 
     <!-- User search result -->
     <script type="text/html" id="userResultTemplate">
-      <div href="/<%= username %>" class="row userResult">
+      <div href="/#<%= username %>" class="row userResult">
           <img class="smallprof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/usericon-small.png <% } %>" alt="User Prof">
           <h4><%= (name) ?  name : '' %><span> <%= (username) ?  username : '' %> </span></h4>
       </div>
@@ -166,7 +166,7 @@
 
     <!-- Artist search result -->
     <script type="text/html" id="artistResultTemplate">
-      <div href="/<%= username %>" class="row userResult">
+      <div href="/#<%= username %>" class="row userResult">
         <img class="smallprof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
         <h4><%= (name) ?  name : '' %><span> <%= (username) ?  username : '' %> </span><span> <%= (shop) ?  shop : '' %> </span></h4>
       </div>

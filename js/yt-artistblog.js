@@ -668,12 +668,7 @@ App.Views.BookSearchResult = Parse.View.extend({
 
 App.Views.UserSearchResult = Parse.View.extend({
     template: _.template($("#userResultTemplate").html()),
-    events: {
-        'click': 'viewProfile'
-    },
-    viewProfile: function () {
-        App.trigger('app:user-profile-uname', this.model.get('username'));
-    },
+    // view user event triggered by app link router handler
     render: function () {
         var that = this;
         var attributes = this.model.toJSON();
@@ -684,12 +679,7 @@ App.Views.UserSearchResult = Parse.View.extend({
 
 App.Views.ArtistSearchResult = Parse.View.extend({
     template: _.template($("#artistResultTemplate").html()),
-    events: {
-        'click': 'viewProfile'
-    },
-    viewProfile: function () {
-        App.trigger('app:artist-profile-uname', this.model.get('username'));
-    },
+    // view user event triggered by app link router handler
     render: function () {
         var that = this;
         var attributes = this.model.toJSON();
@@ -2467,6 +2457,7 @@ App.Views.Tattoos = Parse.View.extend({
         return this;
     },
     getAndRenderBooks: function(){
+        console.log('get and render books called from the tattoos view');   ///c
         var books = this.collection.getArtistBooksByCount(10);
         this.renderBooks(books.slice(0,5));
 
