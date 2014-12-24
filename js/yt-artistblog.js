@@ -1,7 +1,7 @@
 Parse.$ = jQuery;
 // Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK"); ///demo    ///c
-Parse.initialize("IErIorHCGoWUsq2yyUr4XwX5T93NsAGPXvXfAUl7", "FRJ92cNhdzkOGWqwCzyd6ZomtAsNTNMZNaH2ftlO"); ///test    ///c
-// Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live
+// Parse.initialize("IErIorHCGoWUsq2yyUr4XwX5T93NsAGPXvXfAUl7", "FRJ92cNhdzkOGWqwCzyd6ZomtAsNTNMZNaH2ftlO"); ///test    ///c
+Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live
 
 var App = new (Parse.View.extend({
     Models: {},
@@ -2037,7 +2037,7 @@ App.Views.ArtistProfile = Parse.View.extend({
             this.routePrefix = 'myprofile';
         } else {
             this.isMyProfile = false;
-            this.routePrefix = 'artist/'+this.model.get('username');
+            this.routePrefix = this.model.get('username');
         }
     },
     template: _.template($("#artistProfileTemplate").html()),
