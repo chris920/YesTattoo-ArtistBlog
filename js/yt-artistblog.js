@@ -1,7 +1,7 @@
 Parse.$ = jQuery;
 // Parse.initialize("ngHZQH087POwJiSqLsNy0QBPpVeq3rlu8WEEmrkR", "J1Co4nzSDVoQqC1Bp5KU7sFH3DY7IaskiP96kRaK"); ///demo    ///c
-Parse.initialize("IErIorHCGoWUsq2yyUr4XwX5T93NsAGPXvXfAUl7", "FRJ92cNhdzkOGWqwCzyd6ZomtAsNTNMZNaH2ftlO"); ///test 
-// Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live    ///c
+Parse.initialize("IErIorHCGoWUsq2yyUr4XwX5T93NsAGPXvXfAUl7", "FRJ92cNhdzkOGWqwCzyd6ZomtAsNTNMZNaH2ftlO"); ///test    ///c
+// Parse.initialize("1r0HsPw8zOPEX5NMWnoKw43AIrJza3RiXdKJQ2D7", "yyb4DXWL5BPdMq2y1HikNT1n5knp1rO4Z3dM6Rqr"); ///live
 
 var App = new (Parse.View.extend({
     Models: {},
@@ -4701,6 +4701,7 @@ App.query = (function () {
 			query.containsAll('books', books);
 		}
 		
+        query.equalTo("complete", true);
 		query.skip(options.skip || 0);
 		query.limit(options.limit || 1000);
 		return query.find();

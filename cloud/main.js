@@ -1119,7 +1119,28 @@ Parse.Cloud.job('updateArtistAndTattooBooksStep4SyncArtistBooks', function (requ
   });
 });
 
+//sets all the artist profiles "complete" to true
+Parse.Cloud.job('setAllArtistProfilesComplete', function (request, status) {
+  Parse.Cloud.useMasterKey();
+  console.log('Running artist profile complete = true update ...');
 
+  var allArtists;
+  var query = new Parse.Query('ArtistProfile');
+  query.limit(1000);
+  query.find().then(function (artists) {
+    allArtists = artists;
+    _.each(allArtists, function(artist) {
+      artist.set('complete', true);
+    });
+
+    return Parse.Object.saveAll(allArtists);
+  }).then(function () {
+      status.success('Artists profile complete updated');
+    },
+    function (error) {
+      status.error('Failed to update completeness');
+  });
+});
 
 /////// database check jobs
 
