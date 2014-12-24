@@ -1198,13 +1198,14 @@ App.Views.TattoosPage = Parse.View.extend({
         console.log(this);  ///c
         this.loadMore(true);
     },
-    loadMore: _.debounce(function (reset) {
+    loadMore: function (reset) {
         var that = this;
-        console.log('*** Loadmore triggered with: ' + reset);   ///c
+        console.log('*** Loadmore triggered with reset: ' + reset);   ///c
         if (reset) {
             this.collection.reset();
             this.collection.page = 0;
-            this.moreToload = true;
+            this.moreToLoad = true;
+            console.log('moreToLoad = ' + this.moreToLoad);   ///c
         }
         var options = {
             skip: this.collection.page * 40,
@@ -1219,15 +1220,19 @@ App.Views.TattoosPage = Parse.View.extend({
                 
                 if (tats.length < 40) {
                     that.moreToLoad = false;
+                    console.log('moreToLoad = ' + that.moreToLoad);   ///c
                 } else {
-                    that.moreToLoad = true;
+                    window.setTimeout( function(){
+                        that.moreToLoad = true;
+                        console.log('moreToLoad = ' + that.moreToLoad);   ///c
+                    }, 500);
                 }
             },
             function (error) {
                 console.log(error);
                 that.moreToLoad = true;
         });
-    }, 500),
+    },
 	showReset: function () {
 		var that = this;
 		if (this.collection.length === 0) {
@@ -1501,7 +1506,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 		}
         this.deactivateAffix();
 	},
-	loadArtists: _.debounce(function (reset) {
+	loadArtists: function (reset) {
 		var that = this;
         that.collection.reset();
         that.moreToload = true;
@@ -1524,7 +1529,9 @@ App.Views.ArtistsPage = Parse.View.extend({
 				if (artists.length < that.requestLimit) {
 					that.moreToLoad = false;
 				} else {
-					that.moreToLoad = true;
+                    window.setTimeout( function(){
+                        that.moreToLoad = true;
+                    }, 500);
 				}
 			},
 			function (error) {
@@ -1534,7 +1541,7 @@ App.Views.ArtistsPage = Parse.View.extend({
 			.then(function () {
 				that.collection.trigger('finito');
 			});
-	}, 500),
+	},
     showReset: function () {
         var that = this;
         if (this.collection.length === 0) {
