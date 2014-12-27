@@ -2084,7 +2084,10 @@ App.Views.ArtistProfile = Parse.View.extend({
         var that = this;
         console.log('getTattoos triggered');    ///c
         console.log(this.model);    ///c
-        App.query.tattoosByProfile(this.model, [], {})
+        var options = {
+            order: 'createdAt'
+        };
+        App.query.tattoosByProfile(this.model, [], options)
             .then(function (tats) {
                 var tattoosCollection = new App.Collections.Tattoos(tats);
                 var tattoosView = new App.Views.Tattoos({collection: tattoosCollection});
@@ -2097,7 +2100,10 @@ App.Views.ArtistProfile = Parse.View.extend({
     getMyTattoos: function(){
         console.log('getMyTattoos triggered');  ///c
         console.log(App.profile);   ///c
-        App.query.tattoosByProfile(App.profile, [], {})
+        var options = {
+            order: 'createdAt'
+        };
+        App.query.tattoosByProfile(App.profile, [], options)
             .then(function(tats) {
                 App.myTattoos = new App.Collections.Tattoos(tats);
                 var portfolio = new App.Views.Tattoos({collection: App.myTattoos, myTattoos: true});
@@ -2846,7 +2852,10 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 //     getTattoos: function() {
 //         console.log('user profile getTattoos');
 //         console.log(this.model);
-//         App.query.tattoosByProfile(this.model, [], {})
+        // var options = {
+        //     order: 'createdAt'
+        // };
+//         App.query.tattoosByProfile(this.model, [], options)
 //             .then(function (tats) {
 //                 var tattoos = new App.Collections.Tattoos(tats);
 //                 var collection = new App.Views.Tattoos({collection: tattoos});
@@ -2859,7 +2868,10 @@ App.Views.EditTattoo = Backbone.Modal.extend({
 //     getMyTattoos: function(){
 //         console.log('user profile getMyTattoos');
 //         console.log(App.profile);
-//         App.query.tattoosByProfile(App.profile, [], {})
+        // var options = {
+        //     order: 'createdAt'
+        // };
+//         App.query.tattoosByProfile(App.profile, [], options)
 //             .then(function (tats) {
 //                 App.myTattoos = new App.Collections.Tattoos(tats);
 //                 var portfolio = new App.Views.Tattoos({collection: App.myTattoos, myTattoos: true});
@@ -2955,8 +2967,10 @@ App.Views.UserProfile = Parse.View.extend({
     },
     getTattoos: function() {
         console.log('user profile getTattoos'); ///c
-        console.log(this.model);    ///c
-        App.query.tattoosByProfile(this.model, [], {})
+        var options = {
+            order: 'createdAt'
+        };
+        App.query.tattoosByProfile(this.model, [], options)
             .then(function (tats) {
                 var tattoos = new App.Collections.Tattoos(tats);
                 var collection = new App.Views.Tattoos({collection: tattoos});
@@ -2968,7 +2982,10 @@ App.Views.UserProfile = Parse.View.extend({
     },
     getMyTattoos: function(){
         console.log('user profile getMyTattoos');   ///c
-        App.query.tattoosByProfile(App.profile, [], {})
+        var options = {
+            order: 'createdAt'
+        };
+        App.query.tattoosByProfile(App.profile, [], options)
             .then(function (tats) {
                 App.myTattoos = new App.Collections.Tattoos(tats);
                 var portfolio = new App.Views.Tattoos({collection: App.myTattoos, myTattoos: true});
@@ -4658,7 +4675,7 @@ App.query = (function () {
 		query.skip(options.skip || 0);
 		query.limit(options.limit || 1000);
 		query.include('artistProfile');
-		query.descending('updatedAt');
+		query.descending(options.order || 'updatedAt');
 		return query.find();
 	}
 
@@ -4668,6 +4685,7 @@ App.query = (function () {
 	  	if (books && books.length > 0) {
 			query.containsAll('books', books);
 		}
+        query.descending(options.order || 'updatedAt');
 		query.skip(options.skip || 0);
 		query.limit(options.limit || 1000);
 		return query.find();
