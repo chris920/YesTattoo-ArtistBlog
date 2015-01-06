@@ -806,12 +806,54 @@ Parse.Cloud.job('setArtistProfileRelationships', function (request, status) {
 
 
 /////// Upgrade live, one time only jobs
+Parse.Cloud.job('setFutureArtistFeatureId', function (request, status) {
+  Parse.Cloud.useMasterKey();
+  console.log('Running future featured artist update ...');
+
+  var currentDate = new Date();
+  currentDate.setHours(0);
+  currentDate.setMinutes(0);
+  currentDate.setSeconds(0);
+  currentDate.setMilliseconds(0);
+
+  //current amount of featured artists
+  var count = 90;
+
+  var query = new Parse.Query('ArtistProfile');
+  query.equalTo('featureId', undefined);
+  query.notEqualTo('q1','');
+  query.ascending('createdAt');
+  query.find().then(function(artists) {
+      var updates = [];
+      _.each(artists, function(artist){
+        console.log(artist);
+        console.log(count);
+        console.log(currentDate);
+
+        artist.set("featureId", count);
+        artist.set("featureDate", currentDate);
+
+        count += 1;
+        currentDate = new Date(currentDate.getTime() + 86400000);
+
+        updates.push(artist.save());
+      });
+
+      return Parse.Promise.when(updates);
+  }).then(function () {
+      status.success('Artists future featured id updated');
+    },
+    function (error) {
+      status.error('Failed to update future featured id');
+  });
+});
+
 
 Parse.Cloud.job('setArtistFeatureId', function (request, status) {
   Parse.Cloud.useMasterKey();
   console.log('Running featured artist update ...');
 
-  var today = new Date()
+  var today = new Date();
   today.setHours(0);
   today.setMinutes(0);
   today.setSeconds(0);
