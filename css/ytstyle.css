@@ -4218,7 +4218,7 @@ a:focus {
 .flaticon-black373:before {
   content: "\e002"; }
 
-.flaticon-book104:before, #tattooProfile .bootstrap-tagsinput:before, #editTattoo .bootstrap-tagsinput:before {
+.flaticon-book104:before, #tattooProfile .bootstrap-tagsinput:before, #editTattoo .bootstrap-tagsinput:before, #editPortfolio .bootstrap-tagsinput:before {
   content: "\e003"; }
 
 .flaticon-bookmark50:before {
@@ -5967,7 +5967,7 @@ input.mainSearchInput {
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease; }
 
-#tattooProfile .bootstrap-tagsinput, #editTattoo .bootstrap-tagsinput {
+#tattooProfile .bootstrap-tagsinput, #editTattoo .bootstrap-tagsinput, #editPortfolio .bootstrap-tagsinput {
   width: 100%;
   min-height: 80px;
   padding: 40px 20px;
@@ -5978,15 +5978,15 @@ input.mainSearchInput {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   cursor: cell;
   color: red; }
-  #tattooProfile .bootstrap-tagsinput ::-webkit-input-placeholder, #editTattoo .bootstrap-tagsinput ::-webkit-input-placeholder {
+  #tattooProfile .bootstrap-tagsinput ::-webkit-input-placeholder, #editTattoo .bootstrap-tagsinput ::-webkit-input-placeholder, #editPortfolio .bootstrap-tagsinput ::-webkit-input-placeholder {
     color: #d9d9d9; }
-  #tattooProfile .bootstrap-tagsinput :-moz-placeholder, #editTattoo .bootstrap-tagsinput :-moz-placeholder {
+  #tattooProfile .bootstrap-tagsinput :-moz-placeholder, #editTattoo .bootstrap-tagsinput :-moz-placeholder, #editPortfolio .bootstrap-tagsinput :-moz-placeholder {
     color: #d9d9d9; }
-  #tattooProfile .bootstrap-tagsinput ::-moz-placeholder, #editTattoo .bootstrap-tagsinput ::-moz-placeholder {
+  #tattooProfile .bootstrap-tagsinput ::-moz-placeholder, #editTattoo .bootstrap-tagsinput ::-moz-placeholder, #editPortfolio .bootstrap-tagsinput ::-moz-placeholder {
     color: #d9d9d9; }
-  #tattooProfile .bootstrap-tagsinput :-ms-input-placeholder, #editTattoo .bootstrap-tagsinput :-ms-input-placeholder {
+  #tattooProfile .bootstrap-tagsinput :-ms-input-placeholder, #editTattoo .bootstrap-tagsinput :-ms-input-placeholder, #editPortfolio .bootstrap-tagsinput :-ms-input-placeholder {
     color: #d9d9d9; }
-  #tattooProfile .bootstrap-tagsinput:before, #editTattoo .bootstrap-tagsinput:before {
+  #tattooProfile .bootstrap-tagsinput:before, #editTattoo .bootstrap-tagsinput:before, #editPortfolio .bootstrap-tagsinput:before {
     font-family: Flaticon;
     color: #d9d9d9;
     padding: 8px;
@@ -5994,19 +5994,19 @@ input.mainSearchInput {
     top: 5px;
     position: relative;
     color: #d9d9d9; }
-  #tattooProfile .bootstrap-tagsinput:focus, #tattooProfile .bootstrap-tagsinput.focused, #editTattoo .bootstrap-tagsinput:focus, #editTattoo .bootstrap-tagsinput.focused {
+  #tattooProfile .bootstrap-tagsinput:focus, #tattooProfile .bootstrap-tagsinput.focused, #editTattoo .bootstrap-tagsinput:focus, #editTattoo .bootstrap-tagsinput.focused, #editPortfolio .bootstrap-tagsinput:focus, #editPortfolio .bootstrap-tagsinput.focused {
     border: 2px solid #4d4d4d;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px gold;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px gold; }
-    #tattooProfile .bootstrap-tagsinput:focus ::-webkit-input-placeholder, #tattooProfile .bootstrap-tagsinput.focused ::-webkit-input-placeholder, #editTattoo .bootstrap-tagsinput:focus ::-webkit-input-placeholder, #editTattoo .bootstrap-tagsinput.focused ::-webkit-input-placeholder {
+    #tattooProfile .bootstrap-tagsinput:focus ::-webkit-input-placeholder, #tattooProfile .bootstrap-tagsinput.focused ::-webkit-input-placeholder, #editTattoo .bootstrap-tagsinput:focus ::-webkit-input-placeholder, #editTattoo .bootstrap-tagsinput.focused ::-webkit-input-placeholder, #editPortfolio .bootstrap-tagsinput:focus ::-webkit-input-placeholder, #editPortfolio .bootstrap-tagsinput.focused ::-webkit-input-placeholder {
       color: #4d4d4d; }
-    #tattooProfile .bootstrap-tagsinput:focus :-moz-placeholder, #tattooProfile .bootstrap-tagsinput.focused :-moz-placeholder, #editTattoo .bootstrap-tagsinput:focus :-moz-placeholder, #editTattoo .bootstrap-tagsinput.focused :-moz-placeholder {
+    #tattooProfile .bootstrap-tagsinput:focus :-moz-placeholder, #tattooProfile .bootstrap-tagsinput.focused :-moz-placeholder, #editTattoo .bootstrap-tagsinput:focus :-moz-placeholder, #editTattoo .bootstrap-tagsinput.focused :-moz-placeholder, #editPortfolio .bootstrap-tagsinput:focus :-moz-placeholder, #editPortfolio .bootstrap-tagsinput.focused :-moz-placeholder {
       color: #4d4d4d; }
-    #tattooProfile .bootstrap-tagsinput:focus ::-moz-placeholder, #tattooProfile .bootstrap-tagsinput.focused ::-moz-placeholder, #editTattoo .bootstrap-tagsinput:focus ::-moz-placeholder, #editTattoo .bootstrap-tagsinput.focused ::-moz-placeholder {
+    #tattooProfile .bootstrap-tagsinput:focus ::-moz-placeholder, #tattooProfile .bootstrap-tagsinput.focused ::-moz-placeholder, #editTattoo .bootstrap-tagsinput:focus ::-moz-placeholder, #editTattoo .bootstrap-tagsinput.focused ::-moz-placeholder, #editPortfolio .bootstrap-tagsinput:focus ::-moz-placeholder, #editPortfolio .bootstrap-tagsinput.focused ::-moz-placeholder {
       color: #4d4d4d; }
-    #tattooProfile .bootstrap-tagsinput:focus :-ms-input-placeholder, #tattooProfile .bootstrap-tagsinput.focused :-ms-input-placeholder, #editTattoo .bootstrap-tagsinput:focus :-ms-input-placeholder, #editTattoo .bootstrap-tagsinput.focused :-ms-input-placeholder {
+    #tattooProfile .bootstrap-tagsinput:focus :-ms-input-placeholder, #tattooProfile .bootstrap-tagsinput.focused :-ms-input-placeholder, #editTattoo .bootstrap-tagsinput:focus :-ms-input-placeholder, #editTattoo .bootstrap-tagsinput.focused :-ms-input-placeholder, #editPortfolio .bootstrap-tagsinput:focus :-ms-input-placeholder, #editPortfolio .bootstrap-tagsinput.focused :-ms-input-placeholder {
       color: #4d4d4d; }
-  #tattooProfile .bootstrap-tagsinput.bootstrap-tagsinput-max, #editTattoo .bootstrap-tagsinput.bootstrap-tagsinput-max {
+  #tattooProfile .bootstrap-tagsinput.bootstrap-tagsinput-max, #editTattoo .bootstrap-tagsinput.bootstrap-tagsinput-max, #editPortfolio .bootstrap-tagsinput.bootstrap-tagsinput-max {
     border: 2px solid #d9d9d9;
     background-color: rgba(0, 0, 0, 0.6);
     cursor: default; }
