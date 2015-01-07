@@ -3567,7 +3567,9 @@ App.Views.EditArtistPortfolio = Parse.View.extend({
     id: 'editPortfolio',
     template: _.template($("#editArtistPortfolioTemplate").html()),
     initialize: function(){
+        _.bindAll(this, 'renderProfileBooks');
         //listen to edit on tattoos, re-render profile books and counts
+
 
     },
     events: {
@@ -3577,21 +3579,40 @@ App.Views.EditArtistPortfolio = Parse.View.extend({
         this.$('.editTattoos').hide();
         _.each(App.myTattoos.models, function(tattoo){
             var editArtistPortfolioTattoo = new App.Views.EditArtistPortfolioTattoo({model: tattoo});
-            console.log(tattoo);
             $('.editTattoosContainer').append(editArtistPortfolioTattoo.render().el);
         });
     },
+    update: function(){
+        this.setPortfolioCount();
+
+        var books = App.myTattoos.getArtistBooksByCount();
+        var count = books.length;
+
+        this.setBookCount(count);
+        this.renderProfileBooks(books);
+    },
+    renderProfileBooks: function(books){
+        if (books.length !== 0) {
+            _.each(books, function(book){
+                $('.profileBooks').append('<button type="button" class="btn-tag">'+ book +'</button>');
+            });
+        } else {
+            $('.editTattoos').html('Add your first style or theme')
+        }
+    },
     setPortfolioCount: function(){
-
+        this.$('div.portfolioCount h1').html(App.myTattoos.models.length || 0);
     },
-    setBookCount: function(){
-
-    },
-    renderProfileBooks: function(e){
-        //if none, make change edit text
+    setBookCount: function(count){
+        this.$('div.bookCount h1').html(count || 0);
     },
     render: function(){
         this.$el.html(this.template());
+
+        var that = this;
+        window.setTimeout(function(){
+            that.update();
+        }, 500);
         return this;
     }
 });
