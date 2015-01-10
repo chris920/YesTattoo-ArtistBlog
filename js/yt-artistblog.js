@@ -3567,22 +3567,22 @@ App.Views.EditArtistPortfolio = Parse.View.extend({
     id: 'editPortfolio',
     template: _.template($("#editArtistPortfolioTemplate").html()),
     initialize: function(){
-        _.bindAll(this, 'renderProfileBooks');
-        //listen to edit on tattoos, re-render profile books and counts
-
-
+        _.bindAll(this, 'renderEditTattoos', 'renderProfileBooks', 'update');
     },
     events: {
         'click .editTattoos': 'renderEditTattoos'
     },
     renderEditTattoos: function(){
         this.$('.editTattoos').hide();
-        _.each(App.myTattoos.models, function(tattoo){
+        $('.editTattoosContainer').html('');
+        var tattoos = this.bookFilter ? App.myTattoos.byBooks([this.bookFilter]) : App.myTattoos.models
+        _.each(tattoos, function(tattoo){
             var editArtistPortfolioTattoo = new App.Views.EditArtistPortfolioTattoo({model: tattoo});
             $('.editTattoosContainer').append(editArtistPortfolioTattoo.render().el);
         });
     },
     update: function(){
+        console.log('updating edit portfolio counts and books'); ///c
         this.setPortfolioCount();
 
         var books = App.myTattoos.getArtistBooksByCount();
@@ -3592,12 +3592,36 @@ App.Views.EditArtistPortfolio = Parse.View.extend({
         this.renderProfileBooks(books);
     },
     renderProfileBooks: function(books){
+        var that = this;
+        $('.profileBooks').html('');
+        $('.editTattoos').html('Edit').fadeIn();
         if (books.length !== 0) {
+            $('.profileBooks').append('<span class="flaticon-book104"></span>');
             _.each(books, function(book){
-                $('.profileBooks').append('<button type="button" class="btn-tag">'+ book +'</button>');
+                $('.profileBooks').append('<button type="button" class="btn-tag artistBook">'+ book +'</button>');
             });
+            $('.artistBook').tooltip({
+                title: "Filter portfolio by",
+                container: 'body',
+                delay: { show: 200, hide: 200 },
+                placement: 'auto'
+            });
+            $('.artistBook').on('click', function(e){ 
+                if($(e.target).hasClass('active')){
+                    that.renderEditTattoos();
+                    that.bookFilter = undefined;
+                    $(e.target).removeClass('active');
+                } else {
+                    $('.artistBook').removeClass('active');
+                    that.bookFilter = e.target.textContent;
+                    that.renderEditTattoos();
+                    $(e.target).addClass('active');
+                }
+            });
+        } else if (App.myTattoos.length === 0) {
+            $('.editTattoos').html('').fadeOut();
         } else {
-            $('.editTattoos').html('Add your first style or theme')
+            $('.editTattoos').html('Add your first style or theme').fadeIn();
         }
     },
     setPortfolioCount: function(){
@@ -3612,6 +3636,8 @@ App.Views.EditArtistPortfolio = Parse.View.extend({
         var that = this;
         window.setTimeout(function(){
             that.update();
+            App.myTattoos.on('change',that.update);
+            App.myTattoos.on('remove',that.update);
         }, 500);
         return this;
     }
@@ -3680,7 +3706,7 @@ App.Views.EditArtistPortfolioTattoo = Parse.View.extend({
                 that.$('.bookMessage').html('Tattoo saved.');
                 window.setTimeout(function(){
                     that.$('.bookMessage').html('&nbsp;');
-                },2000)
+                },2000);
             },
             error: function(error) {
                 that.$('.bookMessage').html(error.message);
@@ -3711,11 +3737,9 @@ App.Views.EditArtistPortfolioTattoo = Parse.View.extend({
             that.$el.fadeOut();
         }, function(error){
             console.log(error); ///c
+            that.$('.delete').removeAttr("disabled");
             that.$('.bookMessage').html(error.message);
         });
-    },
-    renderAddBooksButton: function(){
-
     },
     render: function(){
         var that = this;
