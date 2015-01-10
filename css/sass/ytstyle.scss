@@ -1332,11 +1332,12 @@ button.toggleBookFilter, button.toggleMap {
 		}
 	}
 	.btn-submit {
+		margin-right: 5px;
 		float: none;
 	}
 	@media screen and (min-width: $screen-sm) {
 		.btn-submit {
-			margin-right: 40px;
+			margin-right: 20px;
 			float: right;
 		}
 	}

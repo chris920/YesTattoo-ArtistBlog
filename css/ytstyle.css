@@ -4962,10 +4962,11 @@ button.toggleBookFilter, button.toggleMap {
     .profHead span:before {
       content: "\00a0\00a0/\00a0"; }
   .profHead .btn-submit {
+    margin-right: 5px;
     float: none; }
   @media screen and (min-width: 768px) {
     .profHead .btn-submit {
-      margin-right: 40px;
+      margin-right: 20px;
       float: right; } }
 
 .userHead {
