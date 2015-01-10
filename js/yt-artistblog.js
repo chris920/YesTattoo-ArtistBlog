@@ -3608,8 +3608,8 @@ App.Views.EditArtistPortfolio = Parse.View.extend({
             });
             $('.artistBook').on('click', function(e){ 
                 if($(e.target).hasClass('active')){
-                    that.renderEditTattoos();
                     that.bookFilter = undefined;
+                    that.renderEditTattoos();
                     $(e.target).removeClass('active');
                 } else {
                     $('.artistBook').removeClass('active');
