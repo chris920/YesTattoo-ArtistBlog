@@ -2374,7 +2374,8 @@ App.Views.TattooProfile = Backbone.Modal.extend({
     //     $('.save').attr('disabled', 'disabled');
     //     var that = this;
 
-    //     this.add.set('books', this.$('.booksInput').tagsinput('items').slice(0));
+    //     var books = _.map(this.$('.booksInput').tagsinput('items').slice(0), function(book) { return book.toProperCase(); });
+    //     this.add.set('books', books);
     //     this.add.save(null,{
     //         success: function(result) {
     //             $('.save').html('Saved!!!').fadeOut( 1200, function(){
@@ -2711,7 +2712,8 @@ App.Views.EditTattoo = Backbone.Modal.extend({
     saveBooks: function(){
         console.log('save books called');   ///c
         var that = this;
-        this.model.set('artistBooks', this.$('.booksInput').tagsinput('items').slice(0));
+        var books = _.map(this.$('.booksInput').tagsinput('items').slice(0), function(book) { return book.toProperCase(); });
+        this.model.set('artistBooks', books);
         this.model.save(null,{
             success: function(result) {
                 console.log('tattoo saved');    ///c
@@ -3698,7 +3700,8 @@ App.Views.EditArtistPortfolioTattoo = Parse.View.extend({
     saveBooks: function(){
         console.log('save books called');   ///c
         var that = this;
-        this.model.set('artistBooks', this.$('.booksInput').tagsinput('items').slice(0));
+        var books = _.map(this.$('.booksInput').tagsinput('items').slice(0), function(book) { return book.toProperCase(); });
+        this.model.set('artistBooks', books);
         this.model.save(null,{
             success: function(result) {
                 console.log('tattoo saved');    ///c
@@ -4217,7 +4220,7 @@ App.Router = Parse.Router.extend({
         ":uname/:tab":                  "artistProfile"
     },
     initialize: function(){
-        console.log('router init');    ///c
+        console.log('router init');        ///c 
         // for modal routers    ///c
         this.hitRoutes = [];
         this.on('all', function () { this.hitRoutes.unshift(Parse.history.getFragment()); }, this);
