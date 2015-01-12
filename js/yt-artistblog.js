@@ -4714,13 +4714,14 @@ App.viewManager = (function ViewManager() {
             if (currentView.disable) { currentView.disable(); };
         } else if (currentView) {
             console.log('view manager - disposing view...');    ///c
-            currentView.remove();
             if (currentView.disable) { currentView.disable(); };
+            currentView.remove();
             currentView = undefined;
         }
 
         if (currentModal) {
             console.log('view manager - disposing modal...');   ///c
+            if (currentModal.disable) { currentModal.disable(); };
             currentModal.close();
             currentModal.remove();
             currentModal = undefined;
@@ -4730,9 +4731,10 @@ App.viewManager = (function ViewManager() {
     }
 
     function closeModal() {
-        console.log('view manager - hide modal');   ///c
+        console.log('view manager - close modal');   ///c
         if (currentModal) {
             console.log('view manager - disposing modal...');   ///c
+            if (currentModal.disable) { currentModal.disable(); };
             currentModal = undefined;
         }
 
@@ -4780,18 +4782,18 @@ App.transition = (function Transition() {
 
     function scrollIntoView() {
         if ($(window).scrollTop().valueOf()) {
-            console.log('Scrolling into view top scroll value: ' + $(window).scrollTop().valueOf());    ///c
+            console.log('Scrolling into view top scroll value: ' + $(window).scrollTop().valueOf() + 'from App.transition');    ///c
             $('body, html').animate({ scrollTop: 0 }, duration);    
         }
     }
 
     function initModal() {
-        console.log('initModal called');    ///c
+        console.log('initModal called from App.transition');    ///c
         $("body").css("overflow", "hidden");
     }
 
     function disableModal() {
-        console.log('disable called');  ///c
+        console.log('disable called from App.transition');  ///c
         $("body").css("overflow", "auto");
     }
 
