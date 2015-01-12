@@ -4217,10 +4217,11 @@ App.Router = Parse.Router.extend({
         ":uname/:tab":                  "artistProfile"
     },
     initialize: function(){
-        console.log('router init');     
+        console.log('router init');    ///c
         // for modal routers    ///c
         this.hitRoutes = [];
         this.on('all', function () { this.hitRoutes.unshift(Parse.history.getFragment()); }, this);
+        this.on('all', function () { console.log(Parse.history.getFragment() + ' added to hitRoutes'); }, this); ///c
 
         App.controller.initialize();
         //google analtic tracking   ///c
