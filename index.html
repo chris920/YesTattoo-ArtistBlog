@@ -592,7 +592,7 @@
           </div>
           <p class="bookMessage">&nbsp;</p>
           <div class="row"> <hr>
-            <button href="#" class="btn btn-link cancel">Cancel</button>
+            <button href="#" class="btn btn-link cancel">Close</button>
             <button href="#" class="btn btn-submit delete">Delete</button>
           </div>
         </div>
@@ -910,19 +910,64 @@
                 <span class="input-group-addon">Twitter Name</span>
                 <input type="text" class="form-control" id="editTwitter" placeholder="twitter.com/" value="<%= (twitter) ?  twitter : '' %>">
               </div>
-
-              <a href="/myprofile/upload" class="btn btn-link"><span class="flaticon-camera4"></span>Upload Tattoo</a>
             <% } %>
 
-            
             <button type="submit" class="btn-submit saveProfile">Submit</button>
+
+            <% if (Parse.User.current().attributes.role === 'artist') { %>
+              <div class="editPortfolioContainer">
+              </div>
+            <% } %>
+
           </form>
 
         </div>
       </div>
     </script>
 
-    <!-- edit artist interview -->
+    <!-- Edit Artist Portfolio -->
+    <script type="text/html" id="editArtistPortfolioTemplate">
+        <h3 id="portfolioSettings" class="text-center">Portfolio</h3>
+        <div class="portfolioInfo">
+          <div class="portfolioCount col-sm-6">
+            <h1>0</h1>
+            <h5>Tattoos</h5>
+          </div>
+          <div class="bookCount col-sm-6">
+            <h1>0</h1>
+            <h5>Styles & Themes</h5>
+          </div>
+        </div>
+
+        <div class="row profileBooks">
+        </div>
+
+        <div class="editTattoosContainer"></div>
+        <button type="submit" class="btn-submit editTattoos">Edit</button>
+        <hr>
+        <a href="/myprofile/upload" class="btn-submit uploadTattoo"><span class="flaticon-camera4"></span>Upload Tattoo</a>
+
+    </script>
+
+    <!-- Edit Artist Portfolio Tattoo -->
+    <script type="text/html" id="editArtistPortfolioTattooTemplate">
+      <div class="row"><hr>
+        <div class="col-md-6">
+          <img src="<%= fileThumb.url %>" class="tattooImg">
+        </div>
+
+        <div class="col-md-6">
+          <div class="books"></div>
+          <div class="yourBooks">
+            <input class="booksInput" type="text" data-role="tagsinput" value="" />
+          </div>
+          <p class="bookMessage">&nbsp;</p>
+          <button href="#" class="btn btn-submit delete">Delete Tattoo</button>
+        </div>
+      </div>
+    </script>
+
+    <!-- Edit Artist Interview -->
     <script type="text/html" id="artistInterviewTemplate">
       <div class="container">
         <div class="lightContainer">

@@ -3554,12 +3554,204 @@ App.Views.Settings = Parse.View.extend({
             if(Parse.FacebookUtils.isLinked(that.user)) {
                 that.$('#facebookLogin').html('<i class="facebook"></i>Unlink Facebook').css({'background-color':'#cccccc'});
             }
+            if(Parse.User.current().attributes.role === 'artist') {
+                var editTattoos = new App.Views.EditArtistPortfolio();
+                $('.editPortfolioContainer').html(editTattoos.render().el);
+            }
         },0);
         return this;
     }
 });
 
-App.Views.Interview = Parse.View.extend({
+App.Views.EditArtistPortfolio = Parse.View.extend({
+    id: 'editPortfolio',
+    template: _.template($("#editArtistPortfolioTemplate").html()),
+    initialize: function(){
+        _.bindAll(this, 'renderEditTattoos', 'renderProfileBooks', 'update');
+    },
+    events: {
+        'click .editTattoos': 'renderEditTattoos'
+    },
+    renderEditTattoos: function(){
+        this.$('.editTattoos').hide();
+        $('.editTattoosContainer').html('');
+        var tattoos = this.bookFilter ? App.myTattoos.byBooks([this.bookFilter]) : App.myTattoos.models
+        _.each(tattoos, function(tattoo){
+            var editArtistPortfolioTattoo = new App.Views.EditArtistPortfolioTattoo({model: tattoo});
+            $('.editTattoosContainer').append(editArtistPortfolioTattoo.render().el);
+        });
+    },
+    update: function(){
+        console.log('updating edit portfolio counts and books'); ///c
+        this.setPortfolioCount();
+
+        var books = App.myTattoos.getArtistBooksByCount();
+        var count = books.length;
+
+        this.setBookCount(count);
+        this.renderProfileBooks(books);
+    },
+    renderProfileBooks: function(books){
+        var that = this;
+        $('.profileBooks').html('');
+        $('.editTattoos').html('Edit').fadeIn();
+        if (books.length !== 0) {
+            $('.profileBooks').append('<span class="flaticon-book104"></span>');
+            _.each(books, function(book){
+                $('.profileBooks').append('<button type="button" class="btn-tag artistBook">'+ book +'</button>');
+            });
+            $('.artistBook').tooltip({
+                title: "Filter portfolio by",
+                container: 'body',
+                delay: { show: 200, hide: 200 },
+                placement: 'auto'
+            });
+            $('.artistBook').on('click', function(e){ 
+                if($(e.target).hasClass('active')){
+                    that.bookFilter = undefined;
+                    that.renderEditTattoos();
+                    $(e.target).removeClass('active');
+                } else {
+                    $('.artistBook').removeClass('active');
+                    that.bookFilter = e.target.textContent;
+                    that.renderEditTattoos();
+                    $(e.target).addClass('active');
+                }
+            });
+        } else if (App.myTattoos.length === 0) {
+            $('.editTattoos').html('').fadeOut();
+        } else {
+            $('.editTattoos').html('Add your first style or theme').fadeIn();
+        }
+    },
+    setPortfolioCount: function(){
+        this.$('div.portfolioCount h1').html(App.myTattoos.models.length || 0);
+    },
+    setBookCount: function(count){
+        this.$('div.bookCount h1').html(count || 0);
+    },
+    render: function(){
+        this.$el.html(this.template());
+
+        var that = this;
+        window.setTimeout(function(){
+            that.update();
+            App.myTattoos.on('change',that.update);
+            App.myTattoos.on('remove',that.update);
+        }, 500);
+        return this;
+    }
+});
+
+App.Views.EditArtistPortfolioTattoo = Parse.View.extend({
+    id: 'editPortfolioTattoo',
+    template: _.template($("#editArtistPortfolioTattooTemplate").html()),
+    initialize: function(){
+        _.bindAll(this,'delete');
+    },
+    events: {
+        'click .delete': 'delete'
+    },
+    initializeEditBooks: function(){
+        var that = this;
+        var input = this.$('.booksInput');
+        input.tagsinput({
+            tagClass: 'btn-tag',
+            trimValue: true,
+            maxChars: 20,
+            maxTags: 5,
+            onTagExists: function(item, $tag) {
+                $tag.addClass('shake');
+                window.setTimeout(function(){$tag.removeClass('shake');}, 1000);
+            }
+        });
+        input.tagsinput('input').typeahead(null, {
+            name: 'books',
+            displayKey: 'books',
+            source: App.booktt.ttAdapter()
+        }).attr('placeholder','Add+').on('typeahead:selected', $.proxy(function (obj, datum) {
+            this.tagsinput('add', datum.books);
+            this.tagsinput('input').typeahead('val', '');
+        }, input)).on('focus', function () {
+            that.$('.bootstrap-tagsinput').addClass('focused');
+        }).on('blur', function () {
+            that.$('.bootstrap-tagsinput').removeClass('focused');
+            that.maxBookInput();
+        });
+
+        _.each(this.model.attributes.artistBooks, function(book) {
+            that.$('.booksInput').tagsinput('add', book);
+        });
+
+        input.on('itemAdded', function(event) {
+            that.saveBooks();
+        }).on('itemRemoved', function(event){
+            that.saveBooks();
+        });
+
+        window.setTimeout(function(){
+            if(that.$('.booksInput').tagsinput('items').length === 5) {
+                that.$('.booksInput').tagsinput('input').attr('placeholder','');
+            }
+        }, 400);
+    },
+    saveBooks: function(){
+        console.log('save books called');   ///c
+        var that = this;
+        this.model.set('artistBooks', this.$('.booksInput').tagsinput('items').slice(0));
+        this.model.save(null,{
+            success: function(result) {
+                console.log('tattoo saved');    ///c
+                console.log(result);    ///c
+                that.$('.bookMessage').html('Tattoo saved.');
+                window.setTimeout(function(){
+                    that.$('.bookMessage').html('&nbsp;');
+                },2000);
+            },
+            error: function(error) {
+                that.$('.bookMessage').html(error.message);
+                console.log(error); ///c
+            }
+        });
+
+        this.maxBookInput();
+    },
+    maxBookInput: function(){
+        var that = this;
+        if (that.$('.bootstrap-tagsinput').hasClass('bootstrap-tagsinput-max')) {
+            that.$('.tt-input').attr('placeholder','').val('');
+            that.$('.bookMessage').html('5 max, remove one first.');
+            that.$('.otherBook').attr("disabled", "disabled");
+            window.setTimeout(function(){
+                that.$('.bookMessage').html('&nbsp;');
+            },3000)
+        } else {
+            that.$('.tt-input').attr('placeholder','Add+').val('');
+            that.$('.otherBook').removeAttr("disabled");
+        }
+    },
+    delete: function(e){
+        this.$('.delete').attr("disabled", "disabled");
+        var that = this;
+        this.model.deleteTattoo().then(function(tattoo){
+            that.$el.fadeOut();
+        }, function(error){
+            console.log(error); ///c
+            that.$('.delete').removeAttr("disabled");
+            that.$('.bookMessage').html(error.message);
+        });
+    },
+    render: function(){
+        var that = this;
+        var attributes = this.model.toJSON();
+        this.$el.html(this.template(attributes));
+
+        this.initializeEditBooks();
+        return this;
+    }
+});
+
+App.Views.EditInterview = Parse.View.extend({
     id: 'settings',
     template: _.template($("#artistInterviewTemplate").html()),
     initialize: function(){
@@ -4338,7 +4530,7 @@ App.controller = (function () {
 
     controller.interview = function () {
         console.log('controller interview');    ///c
-        var interview = new App.Views.Interview();
+        var interview = new App.Views.EditInterview();
         App.viewManager.show(interview);
         Parse.history.navigate('interview', { trigger: false });
     }
