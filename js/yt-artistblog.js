@@ -3366,6 +3366,7 @@ App.Views.Settings = Parse.View.extend({
                 },
                 error: function(user, error) {
                     $(".accountForm .error").html(error.message).show();
+                    this.$('#facebookLogin').removeAttr("disabled");
                 }
             });
         } else if (Parse.FacebookUtils.isLinked(this.user)) {
@@ -3395,6 +3396,7 @@ App.Views.Settings = Parse.View.extend({
             },
             error: function(user, error) {
                 $(".accountForm .error").html(error.message).show();
+                this.$('.saveAccount').removeAttr("disabled");
             }
         });
         this.profile.set("username", this.$("#editUsername").val());
@@ -3424,6 +3426,7 @@ App.Views.Settings = Parse.View.extend({
             },
             error: function(user, error) {
                 $(".profileForm .error").html(error.message).show();
+                this.$('.saveProfile').removeAttr("disabled");
             }
         });
     },
@@ -3491,7 +3494,8 @@ App.Views.Settings = Parse.View.extend({
                 this.$('.clearLocation').removeAttr("disabled").fadeOut();
             },
             error: function(user, error) {
-                $(".profileForm .error").html(error.message).show();
+                this.$(".profileForm .error").html(error.message).show();
+                this.$('.clearLocation').removeAttr("disabled");
             }
         });
     },
@@ -3512,7 +3516,8 @@ App.Views.Settings = Parse.View.extend({
                 that.$('.saveLocation').removeAttr("disabled");
             },
             error: function(user, error) {
-                $(".profileForm .error").html(error.message).show();
+                this.$(".profileForm .error").html(error.message).show();
+                this.$('.saveLocation').removeAttr("disabled");
             }
         });
     },
