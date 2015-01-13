@@ -4634,12 +4634,6 @@ span.hover-content {
   -webkit-transition: all 0.4s ease;
   transition: all 0.4s ease; }
 
-.intro {
-  padding: 40px;
-  color: inherit;
-  background-color: #e6e6e6;
-  text-align: center; }
-
 .page-header i {
   color: gray;
   position: relative;
