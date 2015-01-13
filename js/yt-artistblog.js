@@ -472,7 +472,7 @@ App.Views.Nav = Parse.View.extend({
     },
     upload: function(){
         console.log('upload triggered from nav view'); ///c
-        // navigate first so currentView is myprofile and App.router.hitRoutes is not stored
+        // navigate first so currentView is myprofile and App.router.hitRoutes is not stored    ///c
         Parse.history.navigate('myprofile', {trigger: true});
         App.trigger('app:upload');
     },
@@ -640,7 +640,8 @@ App.Views.Search = Backbone.Modal.extend({
         this.$('.resultsMessage').fadeIn();
     },
     artistBookSearch: function(){
-        App.trigger('app:artists');
+        // navigate instead of App.trigger so App.router.hitRoutes is stored ///c
+        Parse.history.navigate('artists', {trigger: true});
     },
     focusIn: function(){
         this.$('input.mainSearchInput').focus();
@@ -667,9 +668,8 @@ App.Views.BookSearchResult = Parse.View.extend({
     },
     viewTattoos: function(){
         console.log('viewTattoos triggered');   ///c
-        App.trigger('app:tattoos', {
-            books: [ this.model.get('name') ]
-        });
+        // navigate instead of App.trigger so App.router.hitRoutes is stored ///c
+        Parse.history.navigate('tattoos' + '/' + this.model.get('name'), {trigger: true});
     },
     render: function(){
         var attributes = this.model.toJSON();
@@ -713,16 +713,12 @@ App.Views.Explore = Parse.View.extend({
         this.moreToLoad = true;
     },
     events: {
-        "click #findArtists":   "findArtists",
-        "click .popularBook":   "tattoosByBook"
+        "click #findArtists":   "findArtists"
     },
     findArtists: function(){
-        App.trigger('app:artists', { showMap: true });
-    },
-    tattoosByBook: function(e){
-        App.trigger('app:tattoos', {
-            books: [ e.currentTarget.children[0].textContent ]
-        });
+        // navigate instead of App.trigger so App.router.hitRoutes is stored ///c
+        // TODO ~ add ?showmap=true to the router once router options can accept
+        Parse.history.navigate('artists', {trigger: true});
     },
     render: function(){
         var that = this;
@@ -756,9 +752,8 @@ App.Views.ExploreBookThumbnail = Parse.View.extend({
         'click': 'viewTattoos'
     },
     viewTattoos: function(){
-        App.trigger('app:tattoos', {
-            books: [ this.model.get('name') ]
-        });
+        // navigate instead of App.trigger so App.router.hitRoutes is stored ///c
+        Parse.history.navigate('tattoos' + '/' + this.model.get('name'), {trigger: true});
     },
     render: function(){
         var attributes = this.model.toJSON();
@@ -1906,11 +1901,10 @@ App.Views.Artist = Parse.View.extend({
             $(this.el).removeClass('visible');
         }
     },
-
 	viewProfile: function () {
-		App.trigger('app:artist-profile', this.model);
+        // navigate instead of App.trigger so App.router.hitRoutes is stored ///c
+        Parse.history.navigate(this.model.get('username'), {trigger: true});
 	},
-
 	render: function () {
 		var that = this;
 		var attributes = this.model.toJSON();
@@ -1985,7 +1979,7 @@ App.Views.Login = Backbone.Modal.extend({
                     user.destroy().then(function(user){
                         App.session.logout();
                         that.triggerCancel();
-                        App.trigger('app:join');
+                        Parse.history.navigate('join', {trigger: true});
                     });
                 } else {
                     that.undelegateEvents();
@@ -2022,10 +2016,11 @@ App.Views.Login = Backbone.Modal.extend({
         $("#login .btn-submit").attr('disabled', !enable);
     },
     passwordForm: function(){
-        App.trigger('app:forgot');
+        // navigate instead of App.trigger so App.router.hitRoutes is stored ///c
+        Parse.history.navigate('forgot', {trigger: true});
     },
     joinForm: function () {
-        App.trigger('app:join');
+        Parse.history.navigate('join', {trigger: true});
     },
     onRender: function(){
     },
@@ -2135,7 +2130,7 @@ App.Views.ArtistProfile = Parse.View.extend({
         this.$('.profButtons').before(_.template('<button href="/myprofile/settings" class="btn-submit"><i class="flaticon-settings13"></i>Edit Profile</button><button class="btn-submit" id="uploadButton"><i class="flaticon-camera4"></i>Upload Tattoo</button>'));
     },
     upload: function(){
-        // navigate to myprofile first so currentView is myprofile and App.router.hitRoutes is not stored
+        // navigate to myprofile first so currentView is myprofile and App.router.hitRoutes is not stored ///c
         Parse.history.navigate('myprofile', {trigger: true});
         App.trigger('app:upload');
     },
@@ -2215,9 +2210,8 @@ App.Views.TattooProfile = Backbone.Modal.extend({
         return this;
     },
     searchTattoos: function(e){
-        App.trigger('app:tattoos', {
-            books: [ e.currentTarget.textContent ]
-        });
+        // navigate instead of App.trigger so App.router.hitRoutes is stored ///c
+        Parse.history.navigate('tattoos/' + e.currentTarget.textContent, {trigger: true});
     },
     setArtist: function(artist) {
         if(artist.profThumb !== undefined){this.$(".prof")[0].src = artist.profThumb.url};
@@ -2558,7 +2552,8 @@ App.Views.Tattoo = Parse.View.extend({
     },
     profile: function(e){
         e.stopPropagation();
-        App.trigger('app:artist-profile-uname', this.model.attributes.artistProfile.attributes.username);
+        // navigate instead of App.trigger so App.router.hitRoutes is stored ///c
+        Parse.history.navigate(this.model.attributes.artistProfile.attributes.username, {trigger: true});
     },
     createAdd: function(e){
         e.stopPropagation();
@@ -2775,7 +2770,7 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         this.$('.delete').attr("disabled", "disabled");
         var that = this;
         this.model.deleteTattoo().then(function(tattoo){
-            App.trigger('app:myprofile')
+            Parse.history.navigate('myprofile', {trigger: true});
         }, function(error){
             console.log(error); ///c
             that.$('.bookMessage').html(error.message);
@@ -3304,12 +3299,6 @@ App.Views.FeaturedArtist = Parse.View.extend({
         "style": "display: none;"
     },
     template: _.template($("#featuredArtistTemplate").html()),
-    events: {
-      'click button, .prof, h4': 'viewProfile'
-    },
-    viewProfile: function(){
-        App.trigger('app:artist-profile-uname', this.model.get('username'));
-    },
     render: function(){
         var that = this;
         var attributes = this.model.toJSON();
@@ -3470,7 +3459,7 @@ App.Views.Settings = Parse.View.extend({
         }
     },
     interview: function(){
-          App.trigger('app:interview');
+        Parse.history.navigate('interview', {trigger: true});
     },
     scrollTo: function(e){
         //get the section to scroll to from the data target attribute   ///c
@@ -3983,7 +3972,7 @@ App.Views.Join = Parse.View.extend({
                     });
                 } else {
                     var nav = new App.Views.Nav();
-                    App.trigger('app:featured');
+                    Parse.history.navigate('featured', {trigger: true});
                 }
             },
             error: function(user, error) {
@@ -4066,7 +4055,7 @@ App.Views.ForgotPassword = Parse.View.extend({
         Parse.User.requestPasswordReset(info, {
           success: function() {
             this.$('p').html('Check your email for the password reset link!')
-            setTimeout(function() { App.trigger('app:index'); }, 2400);
+            setTimeout(function() { Parse.history.navigate('', {trigger: true}); }, 2400);
           },
           error: function(error) {
             $(".passwordForm .error").html(error.message).show();
@@ -4120,7 +4109,7 @@ App.Views.UserTour = Backbone.Modal.extend({
     },
     editProfile: function(e) {
         e.preventDefault();
-        App.trigger('app:settings');
+        Parse.history.navigate("settings", {trigger: true});
         this.triggerCancel();
     },
     cancel: function(e){
@@ -4174,7 +4163,7 @@ App.Views.ArtistTour = Backbone.Modal.extend({
     editProfile: function(e) {
         e.preventDefault();
         this.triggerCancel();
-        App.trigger('app:settings');
+        Parse.history.navigate("settings", {trigger: true});
     },
     onRender: function(){
 
