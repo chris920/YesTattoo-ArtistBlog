@@ -37,14 +37,14 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <% if (!Parse.User.current()) { %>
-                  <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Search</a></li>
+                  <li><a class="main-nav-item" id="searchButton"><i class="flaticon-magnifier10"></i>Search</a></li>
                   <li><a href="/featured" class="main-nav-item"><i  class="flaticon-trophy4"></i>Featured</a></li>
                   <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                   <li><a href="/tattoos" class="main-nav-item"><i  class="flaticon-black373"></i>Tattoos</a></li>
-                  <li><a href="/login" class="main-nav-item" id="#login"><i  class="flaticon-user56"></i>Log In</a></li>
+                  <li><a class="main-nav-item" id="logInButton"><i  class="flaticon-user56"></i>Log In</a></li>
 
                 <% } else if(Parse.User.current().attributes.role === 'user') { %>
-                  <li><a href="/search" class="main-nav-item"><i class="flaticon-magnifier10"></i>Search</a></li>
+                  <li><a class="main-nav-item" id="searchButton"><i class="flaticon-magnifier10"></i>Search</a></li>
                   <li><a href="/featured" class="main-nav-item"><i class="flaticon-trophy4"></i>Featured</a></li>
                   <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                   <li><a href="/tattoos" class="main-nav-item"><i class="flaticon-black373"></i>Tattoos</a></li>
@@ -56,26 +56,26 @@
                       <li><a href="/myprofile/artists">Favorite Artists</a></li>
                       <li class="divider"></li>
                       <li><a href="/myprofile/settings"><i class="flaticon-settings13 pull-right"></i>Settings</a></li>
-                      <li><a id="logout"><i class="flaticon-close20 pull-right"></i>Log Out</a></li>
+                      <li><a id="logOutButton"><i class="flaticon-close20 pull-right"></i>Log Out</a></li>
                     </ul>
                   </li>
 
                 <% } else { %>
-                  <li><a href="/search"  class="main-nav-item"><i class="flaticon-magnifier10"></i>Search</a></li>
+                  <li><a class="main-nav-item" id="searchButton"><i class="flaticon-magnifier10"></i>Search</a></li>
                   <li><a href="/featured" class="main-nav-item"><i  class="flaticon-trophy4"></i>Featured</a></li>
                   <li><a href="/artists" class="main-nav-item"><i class="flaticon-tattoo1"></i>Artists</a></li>
                   <li><a href="/tattoos" class="main-nav-item"><i class="flaticon-black373"></i>Tattoos</a></li>
                   <li class="dropdown">
                     <a href="#" id="profilebutton" class="dropdown-toggle main-nav-item" data-toggle="dropdown"><i  class="flaticon-user56"></i><%= Parse.User.current().escape("username") %></a>
                     <ul class="dropdown-menu">
-                      <li><a href="/myprofile/upload"><i class="flaticon-camera4 pull-right"></i>Upload Tattoo</a></li>
+                      <li><a id="uploadButton"><i class="flaticon-camera4 pull-right"></i>Upload Tattoo</a></li>
                       <li class="divider"></li>
                       <button class="btn-submit" href="/myprofile">View Profile</button>
                       <li><a href="/myprofile/portfolio">Portfolio</a></li>
                       <li><a href="/myprofile/about">About</a></li>
                       <li class="divider"></li>
                       <li><a href="/myprofile/settings"><i class="flaticon-settings13 pull-right"></i>Settings</a></li>
-                      <li><a id="logout"><i class="flaticon-close20 pull-right"></i>Log Out</a></li>
+                      <li><a id="logOutButton"><i class="flaticon-close20 pull-right"></i>Log Out</a></li>
                     </ul>
                   </li>
                 <% } %>
@@ -398,7 +398,7 @@
 
           <div class="info" style="display:none">
             <hr>
-            <span class="title">Style or Theme:</span><span class="artistBooks"></span>
+            <span class="title">Styles & Themes:</span><span class="artistBooks"></span>
           </div>
 
           <% if(!Parse.User.current() || Parse.User.current().attributes.role !== 'artist') { %>
@@ -411,7 +411,7 @@
               <input class="booksInput" type="text" data-role="tagsinput" value="" />
             </div>
             <div class="row">
-              <button type="button" class="clear btn-link"style="display:none">Clear Books</button>
+              <button type="button" class="clear btn-link"style="display:none">Clear All</button>
               <button type="button" class="save btn-link" style="display:none">Save </button>
             </div>
           <% } %>
@@ -583,7 +583,7 @@
           <img src="<%= fileThumb.url %>" class="tattooImg">
           <hr>
           <div class="yourBooks">
-            <h4> Add the style or theme</h4>
+            <h4> Add the styles & themes</h4>
             <input class="booksInput" type="text" data-role="tagsinput" value="" />
           </div>
           <div class="otherBooks" style="display:none">
@@ -945,7 +945,7 @@
         <div class="editTattoosContainer"></div>
         <button type="submit" class="btn-submit editTattoos">Edit</button>
         <hr>
-        <a href="/myprofile/upload" class="btn-submit uploadTattoo"><span class="flaticon-camera4"></span>Upload Tattoo</a>
+        <a class="btn-submit uploadTattoo" id="uploadButton"><span class="flaticon-camera4"></span>Upload Tattoo</a>
 
     </script>
 

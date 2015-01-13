@@ -447,9 +447,16 @@ App.Views.Nav = Parse.View.extend({
     },
     template: _.template($("#navTemplate").html()),
     events: {
-        "click #logout": "logout"
+        "click #logOutButton": "logOut",
+        "click #logInButton": "logIn",
+        "click #searchButton": "search",
+        "click #uploadButton": "upload",
     },
-    logout: function () {
+    logIn: function(){
+        console.log('login triggered from nav view'); ///c
+        App.trigger('app:login');
+    },
+    logOut: function () {
         App.session.logout();
         // TODO This needs reviewing, should use events ///c
         var current = Parse.history.getFragment();
@@ -458,6 +465,16 @@ App.Views.Nav = Parse.View.extend({
         } else {
             Parse.history.navigate(current, {trigger: true});
         }
+    },
+    search: function(){
+        console.log('search triggered from nav view'); ///c
+        App.trigger('app:search');
+    },
+    upload: function(){
+        console.log('upload triggered from nav view'); ///c
+        // navigate first so currentView is myprofile and App.router.hitRoutes is not stored
+        Parse.history.navigate('myprofile', {trigger: true});
+        App.trigger('app:upload');
     },
     render: function () {
         $('#navs').html(this.template());
@@ -2034,7 +2051,8 @@ App.Views.ArtistProfile = Parse.View.extend({
     events: {
         'click [href="#portfolioTab"]': 'portfolioTab',
         'click [href="#aboutTab"]':     'aboutTab',
-        'click [href="#shopTab"]':      'shopTab'
+        'click [href="#shopTab"]':      'shopTab',
+        'click #uploadButton':  'upload'
     },
     portfolioTab: function (e) {
         if (e) { e.preventDefault(); }
@@ -2114,7 +2132,12 @@ App.Views.ArtistProfile = Parse.View.extend({
             });
     },
     renderMyProfile: function(){
-        this.$('.profButtons').before(_.template('<button href="/myprofile/settings" class="btn-submit"><i class="flaticon-settings13"></i>Edit Profile</button><button href="/myprofile/upload" class="btn-submit"><i class="flaticon-camera4"></i>Upload Tattoo</button>'));
+        this.$('.profButtons').before(_.template('<button href="/myprofile/settings" class="btn-submit"><i class="flaticon-settings13"></i>Edit Profile</button><button class="btn-submit" id="uploadButton"><i class="flaticon-camera4"></i>Upload Tattoo</button>'));
+    },
+    upload: function(){
+        // navigate to myprofile first so currentView is myprofile and App.router.hitRoutes is not stored
+        Parse.history.navigate('myprofile', {trigger: true});
+        App.trigger('app:upload');
     },
     render: function(){
         var attributes = this.model.attributes;
@@ -3297,7 +3320,11 @@ App.Views.FeaturedArtist = Parse.View.extend({
             .then(function (tats) {
                 _.each(tats, function(tat) {
                     var thumb = tat.get('fileThumbSmall').url();
-                    that.$('.portfolioContainer').append(_.template('<a class="tattooContainer open"><img src='+thumb+' class="tattooImg" href="/tattoo/' + tat.id + '"></a>'));
+                    var tattoo = $('<a class="tattooContainer open"><img src='+thumb+' class="tattooImg"></a>');
+                    that.$('.portfolioContainer').append(tattoo);
+                    $(tattoo).on('click', function(){
+                        App.trigger('app:tattoo-profile-id', tat.id);
+                    });
                 }, that);
             },
             function (error) {
@@ -3335,7 +3362,7 @@ App.Views.Settings = Parse.View.extend({
         "change #profUpload":               "updateProf",
         "dblclick #profileSettings":        "interview",
         "click li":                         "scrollTo",
-        "click [href='/myprofile/upload']": "upload",
+        "click #uploadButton":              "upload",
         'focus #settingsMapAddress':        'initializeLocationPicker',
         'click .saveLocation':              'saveLocation',
         'click .clearLocation':             'clearLocation'
@@ -3453,8 +3480,9 @@ App.Views.Settings = Parse.View.extend({
             scrollTop: $(section).offset().top - 110
         }, 1200);
     },
-    upload: function(e){
-        e.preventDefault();
+    upload: function(){
+        // navigate first so currentView is myprofile and App.router.hitRoutes is not stored
+        Parse.history.navigate('myprofile', {trigger: true});
         App.trigger('app:upload');
     },
     clearLocation: function(){
@@ -4231,6 +4259,7 @@ App.Router = Parse.Router.extend({
         this.bind('route', this._pageView);
     },
     back: function () {
+        console.log('router back called');        ///c 
         if (this.hitRoutes.length > 1) {
             window.history.back();
         } else {
@@ -4595,7 +4624,6 @@ App.controller = (function () {
 
     controller.upload = function () {
         console.log('controller upload');   ///c
-        this.myProfile();
         var upload = new App.Views.Upload();
         App.viewManager.show(upload);
         Parse.history.navigate('myprofile/upload', { trigger: false });
@@ -4740,6 +4768,8 @@ App.viewManager = (function ViewManager() {
 
         // checks if there is a view under the modal, routes accordingly    ///c
         if (currentView) {
+            console.log('currentView is:');   ///c
+            console.log(currentView);   ///c
             console.log('Routing to currentView: ' + App.router.hitRoutes[0]);  ///c
             Parse.history.navigate(App.router.hitRoutes[0], { trigger: false });
             currentView.initialize();
@@ -4788,12 +4818,12 @@ App.transition = (function Transition() {
     }
 
     function initModal() {
-        console.log('initModal called from App.transition');    ///c
+        console.log('init modal called from App.transition');    ///c
         $("body").css("overflow", "hidden");
     }
 
     function disableModal() {
-        console.log('disable called from App.transition');  ///c
+        console.log('disable modal called from App.transition');  ///c
         $("body").css("overflow", "auto");
     }
 
