@@ -3451,14 +3451,18 @@ App.Views.Settings = Parse.View.extend({
             this.profile.save().then(function (profile) {
                 var file = profile.get("profThumb");
                 $(".prof")[0].src = file.url();
-                $("#profUpload").removeAttr("disabled");
-                $( "span:contains('Choose Profile Picture')" ).removeClass( "disabled" );
+                enableProfUpload();
             }, function(error) {
                 console.log(error); ///c
                 $(".error:eq( 3 )").html(error.message).show();
-                $("#profUpload").removeAttr("disabled");
-                $("span:contains('Choose Profile Picture')").removeClass( "disabled" );
+                enableProfUpload();
             });
+        } else {
+            enableProfUpload();
+        }
+        function enableProfUpload() {
+            $("#profUpload").removeAttr("disabled");
+            $("span:contains('Choose Profile Picture')").removeClass( "disabled" );
         }
     },
     interview: function(){
@@ -3578,7 +3582,7 @@ App.Views.Settings = Parse.View.extend({
             if(Parse.FacebookUtils.isLinked(that.user)) {
                 that.$('#facebookLogin').html('<i class="facebook"></i>Unlink Facebook').css({'background-color':'#cccccc'});
             }
-            if(Parse.User.current().attributes.role === 'artist') {
+            if(Parse.User.current() && Parse.User.current().attributes.role === 'artist') {
                 var editTattoos = new App.Views.EditArtistPortfolio();
                 $('.editPortfolioContainer').html(editTattoos.render().el);
             }
@@ -3823,7 +3827,7 @@ App.Views.EditInterview = Parse.View.extend({
     		error: function (error) {
     			$(".featureForm .error").html(error.message).show();
     		}
-    	})
+    	});
     },
 	render: function(){
 		this.$el.html(this.template({ model: this.profile.attributes }));
