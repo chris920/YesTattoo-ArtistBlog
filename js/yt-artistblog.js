@@ -1178,6 +1178,7 @@ App.Views.TattoosPage = Parse.View.extend({
     },
     scrollChecker: function(){
         if (this.moreToLoad && $('#tattoosPage').height()-$(window).height()*2 <= $(window).scrollTop()) {
+            console.log('load more triggered from scroll checker'); ///c
             this.moreToLoad = false;
             this.collection.page++;
             this.loadMore(false);
@@ -1202,7 +1203,7 @@ App.Views.TattoosPage = Parse.View.extend({
     },
     loadMore: function (reset) {
         var that = this;
-        console.log('*** Loadmore triggered with reset: ' + reset);   ///c
+        console.log('1*** Loadmore triggered with reset: ' + reset);   ///c
         if (reset) {
             this.collection.reset();
             this.collection.page = 0;
@@ -1214,8 +1215,11 @@ App.Views.TattoosPage = Parse.View.extend({
             limit: 40
         };
         var books = this.bookFilterView ? this.bookFilterView.query : [];
+        console.log('2*** App.query.tattoos triggered with books: ' + books);   ///c
         App.query.tattoos(books, options)
             .then(function (tats) {
+                console.log('3*** Adding tattoos to collection: ');   ///c
+                console.log(that.collection);   ///c
                 that.collection.add(tats);
                 that.showReset();
                 that.updateURL(books);
