@@ -460,7 +460,7 @@ App.Views.Nav = Parse.View.extend({
         App.session.logout();
         // TODO This needs reviewing, should use events ///c
         var current = Parse.history.getFragment();
-        if ( current == 'settings' || current == 'upload' || current == 'myprofile' ) {
+        if ( current.startsWith('myprofile') ) {
             Parse.history.navigate('', {trigger: true});
         } else {
             Parse.history.navigate(current, {trigger: true});
