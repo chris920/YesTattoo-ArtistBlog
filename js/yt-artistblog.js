@@ -312,7 +312,8 @@ App.Models.Tattoo = Parse.Object.extend({
                 that.trigger('add:created', add);
                 $.growl({
                     message: "Added to favorites", 
-                    icon: add.attributes.tattoo.attributes.fileThumbSmall.url()
+                    icon: add.attributes.tattoo.attributes.fileThumbSmall.url(),
+                    url: '/myprofile'
                 }, {
                     icon_type: 'img'
                 });
