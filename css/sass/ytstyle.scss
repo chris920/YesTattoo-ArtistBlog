@@ -274,16 +274,24 @@ $footer-height-lg: $footer-height + 120px;
 }
 
 //alert window
+.alert {
+	img {
+		max-height: 64px;
+		margin-right: 10px;
+	}
+}
 .liftIn {
 	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
 	-webkit-animation-duration: 0.32s;
 	-webkit-animation-iteration-count: 1;
 	-webkit-animation-timing-function: linear;
 	-webkit-animation-name: liftIn;
+    -webkit-animation-fill-mode: both;
 		animation-duration: 0.32s;
 		animation-iteration-count: 1;
 		animation-timing-function: linear;
 		animation-name: liftIn;
+		animation-fill-mode: both;
 }
 @-webkit-keyframes liftIn {
   0% {
@@ -329,10 +337,12 @@ $footer-height-lg: $footer-height + 120px;
 	-webkit-animation-iteration-count: 1;
 	-webkit-animation-timing-function: linear;
 	-webkit-animation-name: liftOut;
+	-webkit-animation-fill-mode: both;
 		animation-duration: 0.32s;
 		animation-iteration-count: 1;
 		animation-timing-function: liftOut;
 		animation-name: liftOut;
+		animation-fill-mode: both;
 }
 @-webkit-keyframes liftOut {
   0% {

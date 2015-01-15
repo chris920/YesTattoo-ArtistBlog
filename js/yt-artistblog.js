@@ -310,6 +310,12 @@ App.Models.Tattoo = Parse.Object.extend({
             add.save().then(function(add){
                 App.Collections.adds.add(add);
                 that.trigger('add:created', add);
+                $.growl({
+                    message: "Added to favorites", 
+                    icon: add.attributes.tattoo.attributes.fileThumbSmall.url()
+                }, {
+                    icon_type: 'img'
+                });
             }, function(error){
                 if(error.message === JSON.stringify('Tattoo already added')) {
                     that.trigger('add:created', add);
