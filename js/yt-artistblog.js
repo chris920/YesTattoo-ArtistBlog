@@ -2813,6 +2813,12 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         var that = this;
         this.model.deleteTattoo().then(function(tattoo){
             Parse.history.navigate('myprofile', {trigger: true});
+            $.growl({
+                message: "Deleted",
+                icon: tattoo.attributes.fileThumbSmall.url()
+            }, {
+                icon_type: 'img'
+            });
         }, function(error){
             console.log(error); ///c
             that.$('.bookMessage').html(error.message);
