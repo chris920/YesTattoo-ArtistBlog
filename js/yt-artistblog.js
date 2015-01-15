@@ -311,7 +311,7 @@ App.Models.Tattoo = Parse.Object.extend({
                 App.Collections.adds.add(add);
                 that.trigger('add:created', add);
                 $.growl({
-                    message: "Added to favorites", 
+                    message: "Added to favorites",
                     icon: add.attributes.tattoo.attributes.fileThumbSmall.url(),
                     url: '/myprofile'
                 }, {
@@ -329,6 +329,13 @@ App.Models.Tattoo = Parse.Object.extend({
         var that = this;
         add.destroy().then(function(add) {
             that.trigger('add:removed', add);
+            $.growl({
+                message: "Removed from favorites",
+                icon: add.attributes.tattoo.attributes.fileThumbSmall.url(),
+                url: '/myprofile'
+            }, {
+                icon_type: 'img'
+            });
         }, function(error) {
             console.log(error); ///c
         });
