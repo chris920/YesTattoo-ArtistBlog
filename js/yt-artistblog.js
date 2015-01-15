@@ -130,10 +130,10 @@ var App = new (Parse.View.extend({
             timer: 1000,
             url_target: '_self',
             mouse_over: true,
-            // animate: {
-            //     enter: '',
-            //     exit: ''
-            // },
+            animate: {
+                enter: 'liftIn',
+                exit: 'liftOut'
+            },
             icon_type: 'class',
             template: '<div data-growl="container" class="alert" role="alert"><button type="button" class="close" data-growl="dismiss"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><span data-growl="icon"></span><span data-growl="title"></span><span data-growl="message"></span><a href="#" data-growl="url"></a></div>'
         });

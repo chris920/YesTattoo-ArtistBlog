@@ -273,6 +273,106 @@ $footer-height-lg: $footer-height + 120px;
 	}
 }
 
+//alert window
+.liftIn {
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+	-webkit-animation-duration: 0.32s;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-name: liftIn;
+		animation-duration: 0.32s;
+		animation-iteration-count: 1;
+		animation-timing-function: linear;
+		animation-name: liftIn;
+}
+@-webkit-keyframes liftIn {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 20%, 0);
+            transform: translate3d(0, 20%, 0);
+  }
+  60% {
+    opacity: 1;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
+    -webkit-transform: translate3d(0, 10%, 0);
+            transform: translate3d(0, 10%, 0);
+  }
+  100% {
+  	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  	opacity: 1;
+    -webkit-transform: none;
+            transform: none;
+  }
+}
+@keyframes liftIn {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 20%, 0);
+            transform: translate3d(0, 20%, 0);
+  }
+  60% {
+    opacity: 1;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
+    -webkit-transform: translate3d(0, 10%, 0);
+            transform: translate3d(0, 10%, 0);
+  }
+  100% {
+  	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  	opacity: 1;
+    -webkit-transform: none;
+            transform: none;
+  }
+}
+
+.liftOut {
+	-webkit-animation-duration: 0.32s;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-name: liftOut;
+		animation-duration: 0.32s;
+		animation-iteration-count: 1;
+		animation-timing-function: liftOut;
+		animation-name: liftOut;
+}
+@-webkit-keyframes liftOut {
+  0% {
+  	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  	opacity: 1;
+    -webkit-transform: none;
+            transform: none;
+  }
+  40% {
+    opacity: 1;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
+    -webkit-transform: translate3d(0, 10%, 0);
+            transform: translate3d(0, 10%, 0);
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 30%, 0);
+            transform: translate3d(0, 30%, 0);
+  }
+}
+@keyframes liftOut {
+  0% {
+  	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  	opacity: 1;
+    -webkit-transform: none;
+            transform: none;
+  }
+  40% {
+    opacity: 1;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
+    -webkit-transform: translate3d(0, 10%, 0);
+            transform: translate3d(0, 10%, 0);
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 30%, 0);
+            transform: translate3d(0, 30%, 0);
+  }
+}
+
 /////// landing page
 .artistslide {
 		overflow: hidden;
