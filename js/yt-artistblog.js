@@ -29,6 +29,7 @@ var App = new (Parse.View.extend({
         this.setGlobalBooks();
         this.setProfile(this.startRouter);
         this.initScrollToTop();
+        this.initAlertWindow();
 
         var nav = new App.Views.Nav();
         var footer = new App.Views.Footer();
