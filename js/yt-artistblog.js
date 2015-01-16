@@ -29,6 +29,7 @@ var App = new (Parse.View.extend({
         this.setGlobalBooks();
         this.setProfile(this.startRouter);
         this.initScrollToTop();
+        this.initAlertWindow();
 
         var nav = new App.Views.Nav();
         var footer = new App.Views.Footer();
@@ -113,6 +114,30 @@ var App = new (Parse.View.extend({
             return false;
         });
         $('#back-to-top').tooltip('show');
+    },
+    initAlertWindow: function(){
+        $.growl(false, {
+            element: 'body',
+            type: "info",
+            allow_dismiss: true,
+            placement: {
+                from: "bottom",
+                align: "right"
+            },
+            offset: 20,
+            spacing: 20,
+            z_index: 5000,
+            delay: 2500,
+            timer: 1000,
+            url_target: '_self',
+            mouse_over: true,
+            animate: {
+                enter: 'liftIn',
+                exit: 'liftOut'
+            },
+            icon_type: 'class',
+            template: '<div data-growl="container" class="alert" role="alert"><button type="button" class="close" data-growl="dismiss"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button><span data-growl="icon"></span><span data-growl="title"></span><span data-growl="message"></span><a href="#" data-growl="url"></a></div>'
+        });
     },
     mapStyles: [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-100},{"lightness":40}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"saturation":-10},{"lightness":30}]},{"featureType": "water","elementType": "geometry.fill","stylers": [{ "color": "#d9d9d9" }]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":10}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":-60},{"lightness":5}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]}]
 }))({el: document.body});
@@ -285,6 +310,13 @@ App.Models.Tattoo = Parse.Object.extend({
             add.save().then(function(add){
                 App.Collections.adds.add(add);
                 that.trigger('add:created', add);
+                $.growl({
+                    message: "Added to favorites",
+                    icon: add.attributes.tattoo.attributes.fileThumbSmall.url(),
+                    url: '/myprofile'
+                }, {
+                    icon_type: 'img'
+                });
             }, function(error){
                 if(error.message === JSON.stringify('Tattoo already added')) {
                     that.trigger('add:created', add);
@@ -297,6 +329,13 @@ App.Models.Tattoo = Parse.Object.extend({
         var that = this;
         add.destroy().then(function(add) {
             that.trigger('add:removed', add);
+            $.growl({
+                message: "Removed from favorites",
+                icon: add.attributes.tattoo.attributes.fileThumbSmall.url(),
+                url: '/myprofile'
+            }, {
+                icon_type: 'img'
+            });
         }, function(error) {
             console.log(error); ///c
         });
@@ -458,9 +497,8 @@ App.Views.Nav = Parse.View.extend({
     },
     logOut: function () {
         App.session.logout();
-        // TODO This needs reviewing, should use events ///c
         var current = Parse.history.getFragment();
-        if ( current.startsWith('myprofile') ) {
+        if ( current.substr(0, 9) == "myprofile" ) {
             Parse.history.navigate('', {trigger: true});
         } else {
             Parse.history.navigate(current, {trigger: true});
@@ -2740,10 +2778,9 @@ App.Views.EditTattoo = Backbone.Modal.extend({
             success: function(result) {
                 console.log('tattoo saved');    ///c
                 console.log(result);    ///c
-                that.$('.bookMessage').html('Tattoo saved.');
-                window.setTimeout(function(){
-                    that.$('.bookMessage').html('&nbsp;');
-                },2000)
+                $.growl({
+                    message: "Tattoo saved"
+                });
             },
             error: function(error) {
                 that.$('.bookMessage').html(error.message);
@@ -2775,6 +2812,12 @@ App.Views.EditTattoo = Backbone.Modal.extend({
         var that = this;
         this.model.deleteTattoo().then(function(tattoo){
             Parse.history.navigate('myprofile', {trigger: true});
+            $.growl({
+                message: "Deleted",
+                icon: tattoo.attributes.fileThumbSmall.url()
+            }, {
+                icon_type: 'img'
+            });
         }, function(error){
             console.log(error); ///c
             that.$('.bookMessage').html(error.message);
@@ -3366,6 +3409,7 @@ App.Views.Settings = Parse.View.extend({
         if(!Parse.FacebookUtils.isLinked(this.user)) {
             Parse.FacebookUtils.link(this.user, 'user_photos,user_location,user_friends,email,user_about_me,user_website', {
                 success: function(user) {
+                    that.alertSaved("Facebook linked");
                     that.$('#facebookLogin').html('<i class="facebook"></i>Unlink Facebook').css({'background-color':'#cccccc'}).removeAttr("disabled");
                 },
                 error: function(user, error) {
@@ -3376,6 +3420,7 @@ App.Views.Settings = Parse.View.extend({
         } else if (Parse.FacebookUtils.isLinked(this.user)) {
             Parse.FacebookUtils.unlink(this.user, {
                 success: function(user) {
+                    that.alertSaved("Facebook bailed");
                     that.$('#facebookLogin').html('<i class="facebook"></i>Link Facebook').css({'background-color':'#4f78b4'}).removeAttr("disabled");
                     console.log("User no longer associated with their Facebook account.");  ///c
                 }
@@ -3385,12 +3430,14 @@ App.Views.Settings = Parse.View.extend({
     saveAccount: function(e){
         this.$('.saveAccount').attr("disabled", "disabled");
         e.preventDefault();
+        var that = this;
         this.user.set("username", this.$("#editUsername").val().replace(/\W/g, '').toLowerCase());
         this.user.set("email", this.$("#editEmail").val());
         this.user.set("password", this.$("#editPassword").val());
         this.user.save(null,{
             success: function(user) {
                 // flash the success class  ///c
+                that.alertSaved("Account saved");
                 $(".accountForm").each(function(){
                     $(".input-group").addClass("has-success").fadeIn("slow");
                     setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
@@ -3412,6 +3459,7 @@ App.Views.Settings = Parse.View.extend({
     },
     saveProfile: function(e){
         e.preventDefault();
+        var that = this;
         this.$('.saveProfile').attr("disabled", "disabled");
         this.profile.set("name", this.$("#editName").val());
         this.profile.set("shop", this.$("#editShop").val());
@@ -3422,6 +3470,7 @@ App.Views.Settings = Parse.View.extend({
         this.profile.set("twitter", this.$("#editTwitter").val());
         this.profile.save(null,{
             success: function(user) {
+                that.alertSaved();
                 $(".profileForm").each(function(){
                     $(".input-group").addClass("has-success").fadeIn("slow");
                     setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
@@ -3443,6 +3492,7 @@ App.Views.Settings = Parse.View.extend({
         }
     },
     updateProf: function(e) {
+        var that = this;
         e.preventDefault();
         $( "span:contains('Choose Profile Picture')" ).addClass( "disabled" );
         $("#profUpload").attr("disabled", "disabled");
@@ -3453,6 +3503,7 @@ App.Views.Settings = Parse.View.extend({
             var file = new Parse.File(name, upload);
             this.profile.set("prof", file);
             this.profile.save().then(function (profile) {
+                that.alertSaved();
                 var file = profile.get("profThumb");
                 $(".prof")[0].src = file.url();
                 enableProfUpload();
@@ -3486,6 +3537,7 @@ App.Views.Settings = Parse.View.extend({
         App.trigger('app:upload');
     },
     clearLocation: function(){
+        var that = this;
         this.locationPickerCreated = false;
         this.$('.saveLocation, .gm-style').fadeOut();
         this.$('.clearLocation').attr("disabled", "disabled");
@@ -3496,6 +3548,7 @@ App.Views.Settings = Parse.View.extend({
             success: function(user) {
                 $(".editLocation").addClass("has-success").fadeIn("slow");
                 setTimeout(function() { $(".editLocation").removeClass("has-success") }, 2400);
+                that.alertSaved();
 
                 $("#locationSettings ~ .error").hide();
                 this.$('#settingsMapAddress').val('');
@@ -3515,6 +3568,7 @@ App.Views.Settings = Parse.View.extend({
         App.profile.set("locationName", this.locationName);
         App.profile.save(null,{
             success: function(user) {
+                that.alertSaved();
                 $(".editLocation").addClass("has-success").fadeIn("slow");
                 setTimeout(function() { $(".editLocation").removeClass("has-success") }, 2400);
                 $("#locationSettings ~ .error").hide();
@@ -3527,6 +3581,12 @@ App.Views.Settings = Parse.View.extend({
                 this.$(".profileForm .error").html(error.message).show();
                 this.$('.saveLocation').removeAttr("disabled");
             }
+        });
+    },
+    alertSaved: function(message){
+        $.growl({
+            message: message || "Profile saved",
+            url: '/myprofile'
         });
     },
     initializeLocationPicker: function(e){
@@ -3567,7 +3627,6 @@ App.Views.Settings = Parse.View.extend({
             });
             this.locationPickerCreated = true;
         }
-
     },
     renderProf: function(){
         if(this.profile.get("prof")) {
@@ -3736,10 +3795,9 @@ App.Views.EditArtistPortfolioTattoo = Parse.View.extend({
             success: function(result) {
                 console.log('tattoo saved');    ///c
                 console.log(result);    ///c
-                that.$('.bookMessage').html('Tattoo saved.');
-                window.setTimeout(function(){
-                    that.$('.bookMessage').html('&nbsp;');
-                },2000);
+                $.growl({
+                    message: "Tattoo saved"
+                });
             },
             error: function(error) {
                 that.$('.bookMessage').html(error.message);
