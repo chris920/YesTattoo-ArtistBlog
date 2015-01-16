@@ -2778,10 +2778,9 @@ App.Views.EditTattoo = Backbone.Modal.extend({
             success: function(result) {
                 console.log('tattoo saved');    ///c
                 console.log(result);    ///c
-                that.$('.bookMessage').html('Tattoo saved.');
-                window.setTimeout(function(){
-                    that.$('.bookMessage').html('&nbsp;');
-                },2000)
+                $.growl({
+                    message: "Tattoo saved"
+                });
             },
             error: function(error) {
                 that.$('.bookMessage').html(error.message);
@@ -3796,10 +3795,9 @@ App.Views.EditArtistPortfolioTattoo = Parse.View.extend({
             success: function(result) {
                 console.log('tattoo saved');    ///c
                 console.log(result);    ///c
-                that.$('.bookMessage').html('Tattoo saved.');
-                window.setTimeout(function(){
-                    that.$('.bookMessage').html('&nbsp;');
-                },2000);
+                $.growl({
+                    message: "Tattoo saved"
+                });
             },
             error: function(error) {
                 that.$('.bookMessage').html(error.message);
