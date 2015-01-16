@@ -3410,6 +3410,7 @@ App.Views.Settings = Parse.View.extend({
         if(!Parse.FacebookUtils.isLinked(this.user)) {
             Parse.FacebookUtils.link(this.user, 'user_photos,user_location,user_friends,email,user_about_me,user_website', {
                 success: function(user) {
+                    that.alertSaved("Facebook linked");
                     that.$('#facebookLogin').html('<i class="facebook"></i>Unlink Facebook').css({'background-color':'#cccccc'}).removeAttr("disabled");
                 },
                 error: function(user, error) {
@@ -3420,6 +3421,7 @@ App.Views.Settings = Parse.View.extend({
         } else if (Parse.FacebookUtils.isLinked(this.user)) {
             Parse.FacebookUtils.unlink(this.user, {
                 success: function(user) {
+                    that.alertSaved("Facebook bailed");
                     that.$('#facebookLogin').html('<i class="facebook"></i>Link Facebook').css({'background-color':'#4f78b4'}).removeAttr("disabled");
                     console.log("User no longer associated with their Facebook account.");  ///c
                 }
@@ -3429,12 +3431,14 @@ App.Views.Settings = Parse.View.extend({
     saveAccount: function(e){
         this.$('.saveAccount').attr("disabled", "disabled");
         e.preventDefault();
+        var that = this;
         this.user.set("username", this.$("#editUsername").val().replace(/\W/g, '').toLowerCase());
         this.user.set("email", this.$("#editEmail").val());
         this.user.set("password", this.$("#editPassword").val());
         this.user.save(null,{
             success: function(user) {
                 // flash the success class  ///c
+                that.alertSaved("Account saved");
                 $(".accountForm").each(function(){
                     $(".input-group").addClass("has-success").fadeIn("slow");
                     setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
@@ -3456,6 +3460,7 @@ App.Views.Settings = Parse.View.extend({
     },
     saveProfile: function(e){
         e.preventDefault();
+        var that = this;
         this.$('.saveProfile').attr("disabled", "disabled");
         this.profile.set("name", this.$("#editName").val());
         this.profile.set("shop", this.$("#editShop").val());
@@ -3466,6 +3471,7 @@ App.Views.Settings = Parse.View.extend({
         this.profile.set("twitter", this.$("#editTwitter").val());
         this.profile.save(null,{
             success: function(user) {
+                that.alertSaved();
                 $(".profileForm").each(function(){
                     $(".input-group").addClass("has-success").fadeIn("slow");
                     setTimeout(function() { $(".input-group").removeClass("has-success") }, 2400);
@@ -3487,6 +3493,7 @@ App.Views.Settings = Parse.View.extend({
         }
     },
     updateProf: function(e) {
+        var that = this;
         e.preventDefault();
         $( "span:contains('Choose Profile Picture')" ).addClass( "disabled" );
         $("#profUpload").attr("disabled", "disabled");
@@ -3497,6 +3504,7 @@ App.Views.Settings = Parse.View.extend({
             var file = new Parse.File(name, upload);
             this.profile.set("prof", file);
             this.profile.save().then(function (profile) {
+                that.alertSaved();
                 var file = profile.get("profThumb");
                 $(".prof")[0].src = file.url();
                 enableProfUpload();
@@ -3530,6 +3538,7 @@ App.Views.Settings = Parse.View.extend({
         App.trigger('app:upload');
     },
     clearLocation: function(){
+        var that = this;
         this.locationPickerCreated = false;
         this.$('.saveLocation, .gm-style').fadeOut();
         this.$('.clearLocation').attr("disabled", "disabled");
@@ -3540,6 +3549,7 @@ App.Views.Settings = Parse.View.extend({
             success: function(user) {
                 $(".editLocation").addClass("has-success").fadeIn("slow");
                 setTimeout(function() { $(".editLocation").removeClass("has-success") }, 2400);
+                that.alertSaved();
 
                 $("#locationSettings ~ .error").hide();
                 this.$('#settingsMapAddress').val('');
@@ -3559,6 +3569,7 @@ App.Views.Settings = Parse.View.extend({
         App.profile.set("locationName", this.locationName);
         App.profile.save(null,{
             success: function(user) {
+                that.alertSaved();
                 $(".editLocation").addClass("has-success").fadeIn("slow");
                 setTimeout(function() { $(".editLocation").removeClass("has-success") }, 2400);
                 $("#locationSettings ~ .error").hide();
@@ -3571,6 +3582,12 @@ App.Views.Settings = Parse.View.extend({
                 this.$(".profileForm .error").html(error.message).show();
                 this.$('.saveLocation').removeAttr("disabled");
             }
+        });
+    },
+    alertSaved: function(message){
+        $.growl({
+            message: message || "Profile saved",
+            url: '/myprofile'
         });
     },
     initializeLocationPicker: function(e){
@@ -3611,7 +3628,6 @@ App.Views.Settings = Parse.View.extend({
             });
             this.locationPickerCreated = true;
         }
-
     },
     renderProf: function(){
         if(this.profile.get("prof")) {
