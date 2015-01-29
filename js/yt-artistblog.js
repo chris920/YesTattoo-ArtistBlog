@@ -2476,7 +2476,7 @@ App.Views.Tattoos = Parse.View.extend({
         }, this);
         App.Collections.adds.on('add', function(add) {
             var added = add.get('tattoo');
-            this.collection.add(added);
+            this.collection.add(added,{at:0});
             this.renderTattoos();
         }, this);
     },

@@ -7,11 +7,54 @@ Array.prototype.byCountWithCount= function(){
                 _.object( _.map( _.uniq(this), function(key) { return [key, 0] })));
 }
 
-
 var Image = require("parse-image");
 var _ = require('underscore');
- 
-var editBooks = function(request, callback) {
+
+
+////// Email Integration
+var Mandrill = require('mandrill');
+Mandrill.initialize('jeNQuWnKlP6rMV3CVaTDdg');
+
+var sendEmail = function(request, response) {
+  Mandrill.sendEmail({
+    message: {
+      text: request.params.text,
+      subject: request.params.subject,
+      from_email: "chris@yestattoo.com",
+      from_name: "Chris",
+      to: [
+        {
+          email: request.params.toEmail,
+          name: request.params.toName
+        }
+      ]
+    },
+    async: true
+  },{
+    success: function(httpResponse) {
+      console.log(httpResponse);
+      response.success("Email sent!");
+    },
+    error: function(httpResponse) {
+      console.error(httpResponse);
+      response.error("Uh oh, something went wrong");
+    }
+  });
+};
+
+Parse.Cloud.define("send", function(request, response) {
+  sendEmail(request, {
+    success: function(result) {
+      response.success(result);
+    },
+    error: function(error) {
+      response.error(error);
+    }
+  });
+});
+
+////// Functions
+var editBooks = function(request, response) {
 
   console.log('editBooks called with the request:');///clear
   console.log(request);///clear
@@ -63,11 +106,11 @@ var editBooks = function(request, callback) {
     })
     .then(function(result){
         console.log(result);
-        callback.success(result);
+        response.success(result);
       }, 
       function(error){
         console.log(error);
-        callback.error(error);
+        response.error(error);
     });
 };
 
@@ -81,7 +124,6 @@ Parse.Cloud.define("books", function(request, response) {
     }
   });
 });
-
 
 Parse.Cloud.define('featureArtist', function (request, response) {
 
@@ -111,6 +153,8 @@ Parse.Cloud.define('featureArtist', function (request, response) {
   });
 });
 
+
+////// Object modifications
 Parse.Cloud.beforeSave('ArtistProfile', function(request, response) {
   var profile = request.object;
 
