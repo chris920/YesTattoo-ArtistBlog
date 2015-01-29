@@ -4992,7 +4992,7 @@ App.query = (function () {
 		if (location) {
 			query.near("location", location);
 		} else {
-			query.descending('createdAt');
+			query.descending('updatedAt');
 		}
 		if (books && books.length > 0) {
 			query.containsAll('books', books);
