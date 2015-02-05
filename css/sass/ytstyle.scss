@@ -49,11 +49,10 @@ $footer-height-lg: $footer-height + 120px;
 	}
 }
 #app {
+	border-top: 100px solid black;
 	padding-bottom: 100px;
 }
 #footer {
-	// background-color: black;
-	// background: url('../img/scribble_dark_@2X.png') repeat;
 	background-color: $gray-darker;
 	height: $footer-height-lg;
 	@media screen and (min-width: $screen-sm) {
@@ -212,14 +211,6 @@ $footer-height-lg: $footer-height + 120px;
 		width: 100%;
 		margin-bottom: 10px;
 	}
-}
-
-/////// home page
-#gutter {
-	text-align:center;
-	background: black;
-	height:100%;
-	border-bottom: 100px solid black;
 }
 
 //loading screen
@@ -384,6 +375,11 @@ $footer-height-lg: $footer-height + 120px;
 }
 
 /////// landing page
+#landing {
+	text-align:center;
+	background: black;
+	height:100%;
+}
 .artistslide {
 		overflow: hidden;
 		height: 100vh;

@@ -3144,7 +3144,6 @@ App.Views.Landing = Parse.View.extend({
     landingTemplate: _.template($("#landingTemplate").html()),
     initialize: function(){
         var that = this;
-        $('#navs').hide();
         this.initiateArtists();
 
         /// Workaround for getting a random artist. Will not scale over 1,000 due to query constraint....   ///c
@@ -3252,17 +3251,7 @@ App.Views.Landing = Parse.View.extend({
     },
     hideLanding:function(){
         var that = this;
-        this.$el.stop(true, true).animate({
-            height:"toggle",
-            opacity:"toggle"
-        },900, function(){
-            that.remove();
-        });
-        clearInterval(this.artistTimer);
-        $('#navs').fadeIn( 900 );
-
-        console.log('landing hidden');  ///c
-        this.disable();
+        this.$('.artistslide').children().fadeOut();
     }
 });
 
@@ -4545,7 +4534,7 @@ App.controller = (function () {
     controller.landing = function () {
         console.log('controller landing');  ///c
         var landing = new App.Views.Landing();
-        $('#gutter').html(landing.render().el);
+        App.viewManager.show(landing);
     }
 
     controller.explore = function () {
@@ -4992,7 +4981,7 @@ App.query = (function () {
 		if (location) {
 			query.near("location", location);
 		} else {
-			query.descending('createdAt');
+			query.descending('updatedAt');
 		}
 		if (books && books.length > 0) {
 			query.containsAll('books', books);

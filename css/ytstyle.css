@@ -3919,6 +3919,7 @@ a:focus {
       margin-bottom: -300px; } }
 
 #app {
+  border-top: 100px solid black;
   padding-bottom: 100px; }
 
 #footer {
@@ -4032,12 +4033,6 @@ a:focus {
   #navs .dropdown-menu .btn-submit {
     width: 100%;
     margin-bottom: 10px; }
-
-#gutter {
-  text-align: center;
-  background: black;
-  height: 100%;
-  border-bottom: 100px solid black; }
 
 .loading {
   height: 100vh;
@@ -4193,6 +4188,11 @@ a:focus {
     opacity: 0;
     -webkit-transform: translate3d(0, 30%, 0);
     transform: translate3d(0, 30%, 0); } }
+#landing {
+  text-align: center;
+  background: black;
+  height: 100%; }
+
 .artistslide {
   overflow: hidden;
   height: 100vh; }
