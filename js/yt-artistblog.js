@@ -3164,18 +3164,20 @@ App.Views.Landing = Parse.View.extend({
     },
     land: function(){
         var that = this;
-        this.$('.welcome').delay( 100 ).fadeIn( 600 ).delay( 3300 ).animate({
-            marginTop: "5vh",
-            opacity: 0
-        }, 600);
-        this.$('.logo').delay( 500 ).fadeIn( 1000 ).delay( 2500 )
-            .animate({
-                marginBottom: "+5vh"
-              }, 600, "swing", function() {
-                that.showNextArtist();
-              });
-        this.$('.landingLinks').fadeIn();
-        this.$('.artistLoc').delay( 1000 ).fadeIn().delay( 2700 ).fadeOut( 300 );
+        // this.$('.welcome').delay( 100 ).fadeIn( 600 ).delay( 3300 ).animate({
+        //     marginTop: "5vh",
+        //     opacity: 0
+        // }, 600);
+        // this.$('.logo').delay( 500 ).fadeIn( 1000 ).delay( 2500 )
+        //     .animate({
+        //         marginBottom: "+5vh"
+        //       }, 600, "swing", function() {
+        //         that.showNextArtist();
+        //       });
+        this.$('.landingLinks').fadeIn( 600, "swing", function() {
+            that.showNextArtist();
+        });
+        // this.$('.artistLoc').delay( 1000 ).fadeIn().delay( 2700 ).fadeOut( 300 );
     },
     initiateArtists: function(){
         var that = this;
@@ -3247,6 +3249,10 @@ App.Views.Landing = Parse.View.extend({
     render: function(){
         $(this.el).append(this.landingTemplate());
         this.land();
+
+        // append explore and show continue arrow if new user
+        // else render home
+
         return this;
     },
     hideLanding:function(){
