@@ -380,7 +380,7 @@ $footer-height-lg: $footer-height + 120px;
 	background: black;
 	height:100%;
 }
-.artistslide {
+.artistSlideContainer {
 		overflow: hidden;
 		height: 100vh;
 	.artistName {
@@ -408,20 +408,23 @@ $footer-height-lg: $footer-height + 120px;
 	}
 }
 .landingText {
-  margin-top: 10vh;
+  margin: 60px 0px;
   width: 100%;
   color: $gray;
+	@media screen and (max-width: $screen-sm) {
+		margin: 40px 0px;
+	}
 }
 .landingTattooContainer {
 	width: 100%;
-	position: absolute;
+	height: calc(100% - 200px);
 	bottom: 20px;
-	height: 45vh;
 	white-space: nowrap;
 	overflow: hidden;
 	> img {
 		display: inline-block;
-		height:100%;
+		position: relative;
+		max-height: 80%;
 		width: auto;
 	}
 }

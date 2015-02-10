@@ -282,24 +282,25 @@
 
     <!-- Landing Page-->
     <script type="text/html" id="landingTemplate">
-        <div class="artistslide">
-          <div class="landingText">
-            <a href=""><h2 class="artistName" href="" style="display:none"></h2></a>
-            <h5 class="artistLoc" style="display:none">Let&#39;s find you an artist</h5>
-          </div>
+        <div class="artistSlideContainer">
 
-          <div class="landingTattooContainer row" style="display:none">
-          </div>
-          <div class="landingTattooContainer row" style="display:none">
-          </div>
-
-          <div class="landingLinks" style="display:none">
-
+          <div class="landingLinks">
           </div>
 
           <a><span class="flaticon-up49" style="display:none"></span></a>
         </div>
     </script>
+
+    <script type="text/html" id="artistSlideTemplate">
+      <div class="landingArtist">
+        <div class="landingText">
+          <a href=""><h2 class="artistName" href=""><%= (name) ? name : '' %></h2></a>
+          <h5 class="artistLoc"><%= (locationName) ? locationName : '' %></h5>
+        </div>
+        <div class="landingTattooContainer row"></div>
+      </div>
+    </script>
+
 
     <!-- Featured Artists Page-->
     <script type="text/html" id="featuredContainerTemplate">
