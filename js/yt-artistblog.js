@@ -776,7 +776,7 @@ App.Views.Explore = Parse.View.extend({
         "click .flaticon-up49":  "continue"
     },
     continue:function(){
-        //TODO scroll down
+        $('body, html').animate({ scrollTop: $(window).height() }, 500); 
     },
     renderNextArtist: function(){
         if (this.currentArtistView) { this.currentArtistView.removeSlide() };

@@ -4194,8 +4194,10 @@ a:focus {
   .landingText img {
     margin: 0px 10px; }
   @media screen and (max-width: 768px) {
-    .landingText .artistName {
-      font-size: 16px; } }
+    .landingText {
+      top: 100px; }
+      .landingText .artistName {
+        font-size: 16px; } }
 
 .landingTattooContainer {
   width: 100%;
