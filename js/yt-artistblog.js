@@ -3144,8 +3144,14 @@ App.Views.Landing = Parse.View.extend({
     landingTemplate: _.template($("#landingTemplate").html()),
     initialize: function(){
         var that = this;
-        this.artistQueCollection = new App.Collections.FeaturedArtists();
-        this.getArtists();
+        App.query.randomFeaturedArtists({ limit: 4 })
+            .then(function (artists) {
+                that.artistQueCollection = new App.Collections.FeaturedArtists(artists);
+                that.renderNextArtist();
+            },
+            function (error) {
+                console.log(error); ///c
+            });
 
         that.artistTimer = setInterval(function(){
             that.renderNextArtist();
@@ -3162,6 +3168,8 @@ App.Views.Landing = Parse.View.extend({
         "click a":  "continue"
     },
     renderNextArtist: function(){
+        if (this.currentArtistView) { this.currentArtistView.removeSlide() };
+
         var that = this;
         var nextArtist = this.artistQueCollection.at(0);
         this.artistQueCollection.remove(nextArtist);
@@ -3169,11 +3177,11 @@ App.Views.Landing = Parse.View.extend({
             this.getArtists();
         }
 
-        this.$('.landingArtist:visible:first').fadeOut( 800 );
-
         var nextArtistView = new App.Views.LandingArtistSlide({model: nextArtist});
         console.log(nextArtistView); ///c
         this.$('.artistSlideContainer').append(nextArtistView.render().el);
+
+        this.currentArtistView = nextArtistView;
     },
     getArtists: function(){
         var that = this;
@@ -3181,7 +3189,6 @@ App.Views.Landing = Parse.View.extend({
             .then(function (artists) {
                 console.log(artists); ///c
                 that.artistQueCollection.reset(artists);
-                that.renderNextArtist();
             },
             function (error) {
                 console.log(error); ///c
@@ -3223,18 +3230,22 @@ App.Views.LandingArtistSlide = Parse.View.extend({
                     var thumb = tat.get('fileThumb').url();
                     that.$('.landingTattooContainer').append(_.template('<img src='+thumb+' class="tattooImg open">'));
                 }, that);
-
-                that.$('.landingArtist').fadeIn();
-                that.$('.landingTattooContainer').scrollLeft( 0 ).animate({scrollLeft: 300}, {
-                    duration: 6000,
-                    easing: "linear"
-                });
-
+                that.showSlide();
             }, function (error) {
                 console.log(error); ///c
             });
 
         return this;
+    },
+    showSlide: function(){
+        this.$('.landingArtist').fadeIn( 800 );
+        this.$('.landingTattooContainer').scrollLeft( 0 ).animate({scrollLeft: 300}, {
+            duration: 6000,
+            easing: "linear"
+        });
+    },
+    removeSlide: function(){
+        $(this.el).fadeOut( 300, function() { $(this).remove(); });
     }
 });
 

@@ -4196,12 +4196,6 @@ a:focus {
 .artistSlideContainer {
   overflow: hidden;
   height: 100vh; }
-  .artistSlideContainer .artistName {
-    display: inline-block;
-    color: white;
-    margin: 0px; }
-  .artistSlideContainer .artistLoc {
-    display: block; }
   .artistSlideContainer .flaticon-up49 {
     color: white;
     padding: 0 40px 20px 40px;
@@ -4221,23 +4215,31 @@ a:focus {
       font-size: 36px; }
 
 .landingText {
-  margin: 60px 0px;
-  width: 100%;
-  color: gray; }
-  @media screen and (max-width: 768px) {
-    .landingText {
-      margin: 40px 0px; } }
+  z-index: 1000;
+  bottom: 0px;
+  right: 0px;
+  margin: 20px;
+  position: absolute; }
+  .landingText .artistName {
+    display: inline-block;
+    color: white;
+    margin: 0px; }
+  .landingText img {
+    margin: 0px 10px; }
 
 .landingTattooContainer {
   width: 100%;
-  height: calc(100% - 200px);
-  bottom: 20px;
+  height: 100vh;
+  position: absolute;
+  bottom: 0px;
+  top: 100px;
   white-space: nowrap;
   overflow: hidden; }
   .landingTattooContainer > img {
+    opacity: 0.4;
     display: inline-block;
     position: relative;
-    max-height: 80%;
+    max-height: 100%;
     width: auto; }
 
 .landingLinks {

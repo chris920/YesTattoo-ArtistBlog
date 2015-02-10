@@ -292,10 +292,10 @@
     </script>
 
     <script type="text/html" id="artistSlideTemplate">
-      <div class="landingArtist">
-        <div class="landingText">
-          <a href=""><h2 class="artistName" href=""><%= (name) ? name : '' %></h2></a>
-          <h5 class="artistLoc"><%= (locationName) ? locationName : '' %></h5>
+      <div class="landingArtist" style="display:none">
+        <div class="landingText" href="/<%= username %>">
+          <img class="smallprof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
+          <a href=""><h2 class="artistName"><%= (name) ? name : '' %></h2></a>
         </div>
         <div class="landingTattooContainer row"></div>
       </div>
