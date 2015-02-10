@@ -375,15 +375,13 @@ $footer-height-lg: $footer-height + 120px;
 }
 
 /////// landing page
-#landing {
-	text-align:center;
-	background: black;
-	height:100%;
-}
 .artistSlideContainer {
 	overflow: hidden;
+	background: black;
+	text-align:center;
 	height: 100vh;
 	.flaticon-up49 {
+		z-index: 1000;
 		color: white;
 		padding: 0 40px 20px 40px;
 		left: calc(50% - 45px);
@@ -414,7 +412,9 @@ $footer-height-lg: $footer-height + 120px;
 		margin: 0px 10px;
 	}
 	@media screen and (max-width: $screen-sm) {
-
+		.artistName {
+			font-size: 16px;
+		}
 	}
 }
 .landingTattooContainer {
@@ -806,7 +806,7 @@ span.hover-content {
 // 		outline-offset:10px;
 // 		@include transition(all 0.2s ease); } 
 // }
-.btn-landing {
+.btn-huge {
 	padding: 10px 15px;
 	font-size: 48px;
 	font-weight: bold;

@@ -179,32 +179,51 @@
 
     <!-- Explore page -->
     <script type="text/html" id="exploreTemplate">
-          <div class="findArtistsContainer">
-            <h2>Find Artists</h2>
-            <p>Connect with artists in your area</p>
-            <button id="findArtists" class="btn-submit"><i class="flaticon-home73"></i>Start</button>
+        <div class="artistSlideContainer">
+          <div class="landingLinks">
+            <div class="btn btn-huge" href="/artists">Find an artist</div>
+            <div class="btn btn-huge" href="/tattoos">Explore tattoos</div>
+            <h5 href="/about"><a>Are you an artist?</a></h5>
           </div>
+          <a><span class="flaticon-up49" style="display:none" ></span></a>
+        </div>
 
-          <div class="exploreTattoosContainer">
-            <div class="container">
-              <h2>Explore Tattoos</h2>
-              <hr>
-              <p>Browse popular styles and themes</p>
-              <div class="explorePopularBooks">
-              </div>
+
+        <div class="findArtistsContainer">
+          <h2>Find Artists</h2>
+          <p>Connect with artists in your area</p>
+          <button id="findArtists" class="btn-submit"><i class="flaticon-home73"></i>Start</button>
+        </div>
+
+        <div class="exploreTattoosContainer">
+          <div class="container">
+            <h2>Explore Tattoos</h2>
+            <hr>
+            <p>Browse popular styles and themes</p>
+            <div class="explorePopularBooks">
             </div>
           </div>
+        </div>
 
-          <% if (!Parse.User.current()) { %>
-            <div class="userContainer">
-              <div class="lg6container">
-                <h2>Start your tattoo collection</h2>
-                <button id="" href="/join" class="btn-submit">Join the community</button>
-              </div>
+        <% if (!Parse.User.current()) { %>
+          <div class="userContainer">
+            <div class="lg6container">
+              <h2>Start your tattoo collection</h2>
+              <button id="" href="/join" class="btn-submit">Join the community</button>
             </div>
-          <% } %>
+          </div>
+        <% } %>
     </script>
 
+    <script type="text/html" id="artistSlideTemplate">
+      <div class="landingArtist" style="display:none">
+        <div class="landingText" href="/<%= username %>">
+          <img class="smallprof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
+          <a href=""><h2 class="artistName"><%= (name) ? name : '' %></h2></a>
+        </div>
+        <div class="landingTattooContainer row"></div>
+      </div>
+    </script>
 
     <!-- Book filter header -->
     <script type="text/html" id="bookFilterTemplate">
@@ -279,31 +298,6 @@
         
       </div>
     </script>
-
-    <!-- Landing Page-->
-    <script type="text/html" id="landingTemplate">
-        <div class="artistSlideContainer">
-
-          <div class="landingLinks">
-            <div class="btn btn-landing" href="/artists">Find an artist</div>
-            <div class="btn btn-landing" href="/tattoos">Explore tattoos</div>
-            <h5 href="/about"><a>Are you an artist?</a></h5>
-          </div>
-
-          <a><span class="flaticon-up49" style="display:none"></span></a>
-        </div>
-    </script>
-
-    <script type="text/html" id="artistSlideTemplate">
-      <div class="landingArtist" style="display:none">
-        <div class="landingText" href="/<%= username %>">
-          <img class="smallprof" src="<% if (typeof(profThumb)!== 'undefined') { print(profThumb.url) } else { %> img/tattooicon-small.png <% } %>" alt="Artist Prof">
-          <a href=""><h2 class="artistName"><%= (name) ? name : '' %></h2></a>
-        </div>
-        <div class="landingTattooContainer row"></div>
-      </div>
-    </script>
-
 
     <!-- Featured Artists Page-->
     <script type="text/html" id="featuredContainerTemplate">

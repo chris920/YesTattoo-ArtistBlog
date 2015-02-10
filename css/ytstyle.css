@@ -4157,15 +4157,13 @@ a:focus {
     opacity: 0;
     -webkit-transform: translate3d(0, 30%, 0);
     transform: translate3d(0, 30%, 0); } }
-#landing {
-  text-align: center;
-  background: black;
-  height: 100%; }
-
 .artistSlideContainer {
   overflow: hidden;
+  background: black;
+  text-align: center;
   height: 100vh; }
   .artistSlideContainer .flaticon-up49 {
+    z-index: 1000;
     color: white;
     padding: 0 40px 20px 40px;
     left: calc(50% - 45px);
@@ -4195,6 +4193,9 @@ a:focus {
     margin: 0px; }
   .landingText img {
     margin: 0px 10px; }
+  @media screen and (max-width: 768px) {
+    .landingText .artistName {
+      font-size: 16px; } }
 
 .landingTattooContainer {
   width: 100%;
@@ -4509,7 +4510,7 @@ span.hover-content {
   -moz-opacity: 1;
   opacity: 1; }
 
-.btn-landing {
+.btn-huge {
   padding: 10px 15px;
   font-size: 48px;
   font-weight: bold;
@@ -4518,9 +4519,9 @@ span.hover-content {
   margin: 5px 2px;
   border: 3px #c42020 solid; }
   @media screen and (max-width: 768px) {
-    .btn-landing {
+    .btn-huge {
       font-size: 32px; } }
-  .btn-landing:hover {
+  .btn-huge:hover {
     outline: 3px solid rgba(255, 255, 255, 0.3);
     border: 3px transparent solid;
     color: gold;
