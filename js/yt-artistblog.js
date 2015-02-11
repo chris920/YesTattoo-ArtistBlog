@@ -753,7 +753,7 @@ App.Views.Explore = Parse.View.extend({
                 that.artistQueCollection = new App.Collections.FeaturedArtists(artists);
                 that.renderNextArtist();
 
-                //TODO ~ Fix the timing issue with the view manager
+                //TODO ~ Fix the timing issue with the view manager, used scrollIntoView here for now
                 App.transition.scrollIntoView();
                 that.$('.flaticon-up49').delay( 400 ).fadeIn( 900 );
             },
@@ -820,12 +820,11 @@ App.Views.Explore = Parse.View.extend({
     renderBookThumbnails: function(){
         //TODO Start at a random point from the start of popular    ///c
         var that = this;
-        this.collection = App.Collections.globalBooks.first(7);
+        this.collection = App.Collections.globalBooks.first(6);
         _.each(this.collection, function(book){
             var bookThubmnail = new App.Views.ExploreBookThumbnail({model: book});
             that.$('.explorePopularBooks').append(bookThubmnail.render().el);
         });
-        this.$('.popularBook:first, .popularBook:last').removeClass('col-sm-4').addClass('col-sm-8');
     }
 });
 
@@ -864,7 +863,7 @@ App.Views.LandingArtistSlide = Parse.View.extend({
 
 App.Views.ExploreBookThumbnail = Parse.View.extend({
     template: _.template('<h2><%= name %></h2><img src="" class="popularBookImage">'),
-    className: 'col-xs-12 col-sm-4 popularBook',
+    className: 'col-xs-6 col-sm-4 popularBook',
     initialize: function(){
         _.bindAll(this, 'viewTattoos', 'render');
     },
@@ -2926,7 +2925,7 @@ App.Views.Book = Parse.View.extend({
 App.Views.FeaturedArtistPage = Parse.View.extend({
     id: 'featured',
     featuredContainerTemplate: _.template($("#featuredContainerTemplate").html()),
-    // loadTemplate: _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><br><br><button type="button" id="more" class="btn-lg">More Artists</button></div>'),
+    loadTemplate: _.template(' <div class="end" style="display: none"><img src="img/yt-featuredend.png"><br><br><button type="button" id="more" class="btn-submit">More Artists</button></div>'),
     initialize: function(){
         _.bindAll(this,'addAll', 'addOne', 'render')
         this.collection.on('reset', this.render, this);

@@ -4183,7 +4183,7 @@ a:focus {
 
 .landingText {
   z-index: 1000;
-  bottom: 0px;
+  top: 100px;
   right: 0px;
   margin: 20px;
   position: absolute; }
@@ -4194,10 +4194,8 @@ a:focus {
   .landingText img {
     margin: 0px 10px; }
   @media screen and (max-width: 768px) {
-    .landingText {
-      top: 100px; }
-      .landingText .artistName {
-        font-size: 16px; } }
+    .landingText .artistName {
+      font-size: 16px; } }
 
 .landingTattooContainer {
   width: 100%;
@@ -5675,8 +5673,7 @@ button.toggleBookFilter, button.toggleMap {
   min-height: 100vh;
   margin-bottom: -99px; }
   #explore > .exploreTattoosContainer, #explore > .findArtistsContainer, #explore > .userContainer {
-    padding-top: 80px;
-    padding-bottom: 80px; }
+    padding: 120px 0px; }
   #explore > .exploreTattoosContainer .popularBook {
     border: 2.5px solid black;
     height: 360px;
@@ -5702,7 +5699,7 @@ button.toggleBookFilter, button.toggleMap {
       position: absolute;
       top: -5%;
       left: 0;
-      width: 100%;
+      min-width: 100%;
       min-height: 105%;
       -webkit-transition: all 0.4s ease;
       transition: all 0.4s ease; }

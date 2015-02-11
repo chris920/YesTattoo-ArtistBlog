@@ -404,7 +404,7 @@ $footer-height-lg: $footer-height + 120px;
 		margin: 0px;
 	}
 	z-index: 1000;
-	bottom: 0px;
+	top: 100px;
 	right: 0px;
 	margin: 20px;
 	position: absolute;
@@ -412,7 +412,6 @@ $footer-height-lg: $footer-height + 120px;
 		margin: 0px 10px;
 	}
 	@media screen and (max-width: $screen-sm) {
-		top: 100px;
 		.artistName {
 			font-size: 16px;
 		}
@@ -787,26 +786,6 @@ span.hover-content {
 
 ////////// Buttons 
 
-// .btn-lg {
-// 	@extend .btn;
-// 	@extend .btn-primary;
-// 	border-radius: 8px / 12px;
-// 	min-width: 140px;
-// 	border: 5px solid $gray-light;
-// 	outline:0 solid transparent;
-// 	outline-offset:-5px;
-// 	@include transition(all .5s ease);
-// 	&:hover { 
-// 		border: 5px solid $gray-lighter;
-// 		outline: 3px solid $gray-light;
-// 		outline-offset:3px;
-// 		background-color: $brand-primary;
-// 		@include transition(all 0.3s ease); }
-// 	&:active {
-// 		outline: 5px solid transparent;
-// 		outline-offset:10px;
-// 		@include transition(all 0.2s ease); } 
-// }
 .btn-huge {
 	padding: 10px 15px;
 	font-size: 48px;
@@ -2222,8 +2201,7 @@ button.toggleBookFilter, button.toggleMap {
 	margin-bottom: -99px;
 	> .exploreTattoosContainer, > .findArtistsContainer, > .userContainer {
 		@extend .row;
-		padding-top: 80px;
-		padding-bottom: 80px;
+		padding: 120px 0px;
 	}
 	> .exploreTattoosContainer {
 		.popularBook {
@@ -2253,7 +2231,7 @@ button.toggleBookFilter, button.toggleMap {
 				position:absolute;
 				top:-5%;
 				left:0; 
-				width:100%;
+				min-width:100%;
 				min-height:105%;
 				@include transition(all 0.4s ease);
 				&:hover {

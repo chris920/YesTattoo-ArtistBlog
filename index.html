@@ -181,36 +181,29 @@
     <script type="text/html" id="exploreTemplate">
         <div class="artistSlideContainer">
           <div class="landingLinks">
-            <div class="btn btn-huge" href="/artists">Find an artist</div>
             <div class="btn btn-huge" href="/tattoos">Explore tattoos</div>
+            <div class="btn btn-huge" href="/artists">Find an artist</div>
             <h5 href="/about"><a>Are you an artist?</a></h5>
           </div>
           <a><span class="flaticon-up49" style="display:none" ></span></a>
         </div>
 
-
-        <div class="findArtistsContainer">
-          <h2>Find Artists</h2>
-          <p>Connect with artists in your area</p>
-          <button id="findArtists" class="btn-submit"><i class="flaticon-home73"></i>Start</button>
-        </div>
-
         <div class="exploreTattoosContainer">
           <div class="container">
-            <h2>Explore Tattoos</h2>
-            <hr>
-            <p>Browse popular styles and themes</p>
+            <h2>Browse popular tattoo styles and themes</h2>
             <div class="explorePopularBooks">
             </div>
           </div>
         </div>
 
+        <div class="findArtistsContainer">
+          <h2>Search for artists around you</h2>
+          <button id="findArtists" class="btn-submit"><i class="flaticon-home73"></i>Start</button>
+        </div>
+
         <% if (!Parse.User.current()) { %>
           <div class="userContainer">
-            <div class="lg6container">
-              <h2>Start your tattoo collection</h2>
-              <button id="" href="/join" class="btn-submit">Join the community</button>
-            </div>
+            <div class="btn btn-huge" href="/join">Join the community</div>
           </div>
         <% } %>
     </script>
