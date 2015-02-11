@@ -277,7 +277,7 @@ $footer-height-lg: $footer-height + 120px;
 	-webkit-animation-iteration-count: 1;
 	-webkit-animation-timing-function: linear;
 	-webkit-animation-name: liftIn;
-    -webkit-animation-fill-mode: both;
+	-webkit-animation-fill-mode: both;
 		animation-duration: 0.32s;
 		animation-iteration-count: 1;
 		animation-timing-function: linear;
@@ -286,40 +286,40 @@ $footer-height-lg: $footer-height + 120px;
 }
 @-webkit-keyframes liftIn {
   0% {
-    opacity: 0;
-    -webkit-transform: translate3d(0, 20%, 0);
-            transform: translate3d(0, 20%, 0);
+	opacity: 0;
+	-webkit-transform: translate3d(0, 20%, 0);
+			transform: translate3d(0, 20%, 0);
   }
   60% {
-    opacity: 1;
-    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
-    -webkit-transform: translate3d(0, 10%, 0);
-            transform: translate3d(0, 10%, 0);
+	opacity: 1;
+	box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
+	-webkit-transform: translate3d(0, 10%, 0);
+			transform: translate3d(0, 10%, 0);
   }
   100% {
-  	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  	opacity: 1;
-    -webkit-transform: none;
-            transform: none;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+	opacity: 1;
+	-webkit-transform: none;
+			transform: none;
   }
 }
 @keyframes liftIn {
   0% {
-    opacity: 0;
-    -webkit-transform: translate3d(0, 20%, 0);
-            transform: translate3d(0, 20%, 0);
+	opacity: 0;
+	-webkit-transform: translate3d(0, 20%, 0);
+			transform: translate3d(0, 20%, 0);
   }
   60% {
-    opacity: 1;
-    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
-    -webkit-transform: translate3d(0, 10%, 0);
-            transform: translate3d(0, 10%, 0);
+	opacity: 1;
+	box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
+	-webkit-transform: translate3d(0, 10%, 0);
+			transform: translate3d(0, 10%, 0);
   }
   100% {
-  	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  	opacity: 1;
-    -webkit-transform: none;
-            transform: none;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+	opacity: 1;
+	-webkit-transform: none;
+			transform: none;
   }
 }
 
@@ -337,40 +337,40 @@ $footer-height-lg: $footer-height + 120px;
 }
 @-webkit-keyframes liftOut {
   0% {
-  	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  	opacity: 1;
-    -webkit-transform: none;
-            transform: none;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+	opacity: 1;
+	-webkit-transform: none;
+			transform: none;
   }
   40% {
-    opacity: 1;
-    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
-    -webkit-transform: translate3d(0, 10%, 0);
-            transform: translate3d(0, 10%, 0);
+	opacity: 1;
+	box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
+	-webkit-transform: translate3d(0, 10%, 0);
+			transform: translate3d(0, 10%, 0);
   }
   100% {
-    opacity: 0;
-    -webkit-transform: translate3d(0, 30%, 0);
-            transform: translate3d(0, 30%, 0);
+	opacity: 0;
+	-webkit-transform: translate3d(0, 30%, 0);
+			transform: translate3d(0, 30%, 0);
   }
 }
 @keyframes liftOut {
   0% {
-  	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  	opacity: 1;
-    -webkit-transform: none;
-            transform: none;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+	opacity: 1;
+	-webkit-transform: none;
+			transform: none;
   }
   40% {
-    opacity: 1;
-    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
-    -webkit-transform: translate3d(0, 10%, 0);
-            transform: translate3d(0, 10%, 0);
+	opacity: 1;
+	box-shadow: 0 0px 0px rgba(0, 0, 0, 0.175);
+	-webkit-transform: translate3d(0, 10%, 0);
+			transform: translate3d(0, 10%, 0);
   }
   100% {
-    opacity: 0;
-    -webkit-transform: translate3d(0, 30%, 0);
-            transform: translate3d(0, 30%, 0);
+	opacity: 0;
+	-webkit-transform: translate3d(0, 30%, 0);
+			transform: translate3d(0, 30%, 0);
   }
 }
 
@@ -762,20 +762,20 @@ span.hover-content {
 	top: 30px;
 	-webkit-opacity: 0;
 	-moz-opacity: 0;
-    opacity: 0;
-    @include transition(all .2s ease);
-    @media screen and (max-width: $screen-xs) {
-        top: 0px;
-        -webkit-opacity: 1;
-        -moz-opacity: 1;
-        opacity: 1;
-    }
-    &:span {
-      display: table-cell;
-    }
-    .flaticon-bookmark50:before {
-      right: 0px;
-    }
+	opacity: 0;
+	@include transition(all .2s ease);
+	@media screen and (max-width: $screen-xs) {
+		top: 0px;
+		-webkit-opacity: 1;
+		-moz-opacity: 1;
+		opacity: 1;
+	}
+	&:span {
+	  display: table-cell;
+	}
+	.flaticon-bookmark50:before {
+	  right: 0px;
+	}
 }
 .tattooContainer:hover span.hover-content {
 	top: 0px;
@@ -1882,6 +1882,11 @@ button.toggleBookFilter, button.toggleMap {
 .roleSelection, .signUpSelection {
 	margin: 20px 0px;
 }
+.roleSelection > .btn-tag {
+	width: 32%;
+	padding: 40px;
+}
+
 #inputEmail {
 	@include transition(all 1.6s ease);
 }
@@ -2666,7 +2671,7 @@ input.mainSearchInput {
 			:-ms-input-placeholder {  
 			   color: $gray-dark; }
 			border: 2px solid $gray-dark;
-	        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px $brand-secondary;
+			-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px $brand-secondary;
 			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px $brand-secondary;
 		}
 		&.bootstrap-tagsinput-max {

@@ -5432,6 +5432,10 @@ button.toggleBookFilter, button.toggleMap {
 .roleSelection, .signUpSelection {
   margin: 20px 0px; }
 
+.roleSelection > .btn-tag {
+  width: 32%;
+  padding: 40px; }
+
 #inputEmail {
   -webkit-transition: all 1.6s ease;
   transition: all 1.6s ease; }
