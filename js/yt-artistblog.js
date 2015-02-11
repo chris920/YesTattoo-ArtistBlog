@@ -836,7 +836,7 @@ App.Views.LandingArtistSlide = Parse.View.extend({
         $(this.el).append(this.template(attributes));
 
         var that = this;
-        App.query.tattoosByProfile(this.model, [], { limit: 8 })
+        App.query.tattoosByProfile(this.model, [], { limit: 6 })
             .then(function (tats) {
                 _.each(tats, function(tat) {
                     var thumb = tat.get('fileThumb').url();
