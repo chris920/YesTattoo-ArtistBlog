@@ -4475,6 +4475,13 @@ span.hover-text-content {
   text-align: center;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease; }
+  @media screen and (max-width: 480px) {
+    span.hover-text-content {
+      background-color: rgba(0, 0, 0, 0.6);
+      bottom: 2.5px;
+      -webkit-opacity: 1;
+      -moz-opacity: 1;
+      opacity: 1; } }
   span.hover-text-content .prof {
     margin-top: 10px; }
 
@@ -4499,6 +4506,12 @@ span.hover-content {
   opacity: 0;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease; }
+  @media screen and (max-width: 480px) {
+    span.hover-content {
+      top: 0px;
+      -webkit-opacity: 1;
+      -moz-opacity: 1;
+      opacity: 1; } }
   span.hover-content:span {
     display: table-cell; }
   span.hover-content .flaticon-bookmark50:before {

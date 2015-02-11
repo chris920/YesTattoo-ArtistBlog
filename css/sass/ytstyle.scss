@@ -730,23 +730,17 @@ span.hover-text-content {
 		-moz-opacity: 0;
 		opacity: 0;
 		text-align: center;
-		@include transition(all .2s ease);
+	@include transition(all .2s ease);
+	@media screen and (max-width: $screen-xs) {
+		background-color: $black-trans;
+		bottom: 2.5px;
+		-webkit-opacity: 1;
+		-moz-opacity: 1;
+		opacity: 1;
+	}
 	.prof {
 		margin-top: 10px;
 	}
-
-	// // Unusued left align content
-	// .artistName {
-	// 	margin: 0px; }
-	// .artistLoc {
-	// 	margin: 5px 0 0 0; 
-	// 	color: $gray-light; }
-	// .prof {
-	// 	margin-left: 5px;
-	// 	right: 10px;
-	// 	bottom: 10px;
-	// 	display: table;
-	// 	float: right; }
 }
 
 .tattooContainer:hover span.hover-text-content {
@@ -768,14 +762,20 @@ span.hover-content {
 	top: 30px;
 	-webkit-opacity: 0;
 	-moz-opacity: 0;
-	opacity: 0;
-	@include transition(all .2s ease);
-	&:span {
-		display: table-cell;
-	}
-	.flaticon-bookmark50:before {
-		right: 0px;
-	}
+    opacity: 0;
+    @include transition(all .2s ease);
+    @media screen and (max-width: $screen-xs) {
+        top: 0px;
+        -webkit-opacity: 1;
+        -moz-opacity: 1;
+        opacity: 1;
+    }
+    &:span {
+      display: table-cell;
+    }
+    .flaticon-bookmark50:before {
+      right: 0px;
+    }
 }
 .tattooContainer:hover span.hover-content {
 	top: 0px;
