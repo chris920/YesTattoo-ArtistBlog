@@ -1884,7 +1884,12 @@ button.toggleBookFilter, button.toggleMap {
 }
 .roleSelection > .btn-tag {
 	width: 32%;
-	padding: 40px;
+	padding: 40px 0px;
+	@media screen and (max-width: $screen-xs) {
+		margin: 0px;
+		padding: 10px 0px;
+		width: 100%;
+	}
 }
 
 #inputEmail {
